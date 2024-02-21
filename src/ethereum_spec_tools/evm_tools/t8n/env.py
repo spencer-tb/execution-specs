@@ -70,7 +70,12 @@ class Env:
             self.parent_beacon_block_root = Bytes32(
                 hex_to_bytes(data["parentBeaconBlockRoot"])
             )
-            self.excess_blob_gas = parse_hex_or_int(data["excessBlobGas"], U64)
+            self.excess_blob_gas = parse_hex_or_int(
+                data.get(
+                    "currentExcessBlobGas", data.get("parentExcessBlobGas")
+                ),
+                U64,
+            )
         else:
             self.parent_beacon_block_root = None
             self.excess_blob_gas = None
