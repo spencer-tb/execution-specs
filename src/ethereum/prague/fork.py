@@ -430,8 +430,6 @@ def check_transaction(
         max_gas_fee = tx.gas * tx.gas_price
 
     if isinstance(tx, BlobTransaction):
-        if len(tx.blob_versioned_hashes) == 0:
-            raise InvalidBlock
         for blob_versioned_hash in tx.blob_versioned_hashes:
             if blob_versioned_hash[0:1] != VERSIONED_HASH_VERSION_KZG:
                 raise InvalidBlock
