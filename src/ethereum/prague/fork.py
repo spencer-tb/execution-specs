@@ -435,6 +435,7 @@ def check_transaction(
                 raise InvalidBlock
 
         if tx.max_fee_per_blob_gas < calculate_blob_gas_price(excess_blob_gas):
+            raise Exception(f"InvalidBlock: max_fee_per_blob_gas {tx.max_fee_per_blob_gas} < {calculate_blob_gas_price(excess_blob_gas)}")
             raise InvalidBlock
 
         max_gas_fee += calculate_total_blob_gas(tx) * tx.max_fee_per_blob_gas
