@@ -19,6 +19,9 @@ from .utils.hexadecimal import hex_to_address
 DEPOSIT_CONTRACT_ADDRESS = hex_to_address(
     "0x00000000219ab540356cbb839cbe05303d7705fa"
 )
+SEPOLIA_CONTRACT_ADDRESS = hex_to_address(
+    "0x7F02C3E3C98B133055B8B348B2AC625669ED295D"
+)
 DEPOSIT_REQUEST_TYPE = b"\x00"
 WITHDRAWAL_REQUEST_TYPE = b"\x01"
 CONSOLIDATION_REQUEST_TYPE = b"\x02"
@@ -46,7 +49,7 @@ def parse_deposit_requests_from_receipt(
     deposit_requests: Bytes = b""
     decoded_receipt = decode_receipt(receipt)
     for log in decoded_receipt.logs:
-        if log.address == DEPOSIT_CONTRACT_ADDRESS:
+        if log.address == DEPOSIT_CONTRACT_ADDRESS or log.address == SEPOLIA_CONTRACT_ADDRESS:
             request = extract_deposit_data(log.data)
             deposit_requests += request
 
