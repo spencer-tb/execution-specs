@@ -567,6 +567,8 @@ def process_system_transaction(
     target_address: Address,
     system_contract_code: Bytes,
     data: Bytes,
+    raise_on_empty_code: bool,
+    raise_on_error: bool,
 ) -> MessageCallOutput:
     """
     Process a system transaction with the given code.
@@ -591,6 +593,13 @@ def process_system_transaction(
     system_tx_output : `MessageCallOutput`
         Output of processing the system transaction.
     """
+    system_contract_code = get_account(block_env.state, target_address).code
+    
+    if len(system_contract_code) == 0 and raise_on_empty_code:
+        raise InvalidBlock(
+            f"System contract address {target_address.hex()} does not contain code"
+        )
+
     tx_env = vm.TransactionEnvironment(
         origin=SYSTEM_ADDRESS,
         gas_price=block_env.base_fee_per_gas,
@@ -634,6 +643,8 @@ def process_checked_system_transaction(
     block_env: vm.BlockEnvironment,
     target_address: Address,
     data: Bytes,
+    raise_on_empty_code: bool,
+    raise_on_error: bool,
 ) -> MessageCallOutput:
     """
     Process a system transaction and raise an error if the contract does not
@@ -666,6 +677,8 @@ def process_checked_system_transaction(
         target_address,
         system_contract_code,
         data,
+        raise_on_empty_code,
+        raise_on_error,
     )
 
     if system_tx_output.error:
@@ -681,6 +694,8 @@ def process_unchecked_system_transaction(
     block_env: vm.BlockEnvironment,
     target_address: Address,
     data: Bytes,
+    raise_on_empty_code: bool,
+    raise_on_error: bool,
 ) -> MessageCallOutput:
     """
     Process a system transaction without checking if the contract contains code
@@ -706,6 +721,8 @@ def process_unchecked_system_transaction(
         target_address,
         system_contract_code,
         data,
+        raise_on_empty_code,
+        raise_on_error,
     )
 
 
@@ -744,12 +761,16 @@ def apply_body(
         block_env=block_env,
         target_address=BEACON_ROOTS_ADDRESS,
         data=block_env.parent_beacon_block_root,
+        raise_on_empty_code=False,
+        raise_on_error=False,
     )
 
     process_unchecked_system_transaction(
         block_env=block_env,
         target_address=HISTORY_STORAGE_ADDRESS,
         data=block_env.block_hashes[-1],  # The parent hash
+        raise_on_empty_code=False,
+        raise_on_error=False,
     )
 
     for i, tx in enumerate(map(decode_transaction, transactions)):
@@ -789,6 +810,8 @@ def process_general_purpose_requests(
         block_env=block_env,
         target_address=WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS,
         data=b"",
+        raise_on_empty_code=True,
+        raise_on_error=True,
     )
 
     if len(system_withdrawal_tx_output.return_data) > 0:
@@ -800,6 +823,8 @@ def process_general_purpose_requests(
         block_env=block_env,
         target_address=CONSOLIDATION_REQUEST_PREDEPLOY_ADDRESS,
         data=b"",
+        raise_on_empty_code=True,
+        raise_on_error=True,
     )
 
     if len(system_consolidation_tx_output.return_data) > 0:
