@@ -211,6 +211,8 @@ class T8N(Load):
                 block_env=block_env,
                 target_address=self.fork.HISTORY_STORAGE_ADDRESS,
                 data=block_env.block_hashes[-1],  # The parent hash
+                raise_on_empty_code=False,
+                raise_on_error=False,
             )
 
         if self.fork.is_after_fork("ethereum.cancun"):
@@ -218,6 +220,8 @@ class T8N(Load):
                 block_env=block_env,
                 target_address=self.fork.BEACON_ROOTS_ADDRESS,
                 data=block_env.parent_beacon_block_root,
+                raise_on_empty_code=False,
+                raise_on_error=False,
             )
 
         for i, tx in zip(self.txs.successfully_parsed, self.txs.transactions):
