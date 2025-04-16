@@ -516,6 +516,8 @@ def process_system_transaction(
     block_env: vm.BlockEnvironment,
     target_address: Address,
     data: Bytes,
+    raise_on_empty_code: bool,
+    raise_on_error: bool,
 ) -> MessageCallOutput:
     """
     Process a system transaction.
@@ -535,6 +537,11 @@ def process_system_transaction(
         Output of processing the system transaction.
     """
     system_contract_code = get_account(block_env.state, target_address).code
+    
+    if len(system_contract_code) == 0 and raise_on_empty_code:
+        raise InvalidBlock(
+            f"System contract address {target_address.hex()} does not contain code"
+        )
 
     tx_env = vm.TransactionEnvironment(
         origin=SYSTEM_ADDRESS,
@@ -571,6 +578,12 @@ def process_system_transaction(
     )
 
     system_tx_output = process_message_call(system_tx_message)
+
+    if system_tx_output.error and raise_on_error:
+        raise InvalidBlock(
+            f"System contract ({target_address.hex()}) call failed: "
+            f"{system_tx_output.error}"
+        )
 
     # TODO: Empty accounts in post-merge forks are impossible
     # see Ethereum Improvement Proposal 7523.
@@ -619,12 +632,16 @@ def apply_body(
         block_env=block_env,
         target_address=BEACON_ROOTS_ADDRESS,
         data=block_env.parent_beacon_block_root,
+        raise_on_empty_code=False,
+        raise_on_error=False,
     )
 
     process_system_transaction(
         block_env=block_env,
         target_address=HISTORY_STORAGE_ADDRESS,
         data=block_env.block_hashes[-1],  # The parent hash
+        raise_on_empty_code=False,
+        raise_on_error=False,
     )
 
     for i, tx in enumerate(map(decode_transaction, transactions)):
@@ -664,6 +681,8 @@ def process_general_purpose_requests(
         block_env=block_env,
         target_address=WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS,
         data=b"",
+        raise_on_empty_code=True,
+        raise_on_error=True,
     )
 
     if len(system_withdrawal_tx_output.return_data) > 0:
@@ -675,6 +694,8 @@ def process_general_purpose_requests(
         block_env=block_env,
         target_address=CONSOLIDATION_REQUEST_PREDEPLOY_ADDRESS,
         data=b"",
+        raise_on_empty_code=True,
+        raise_on_error=True,
     )
 
     if len(system_consolidation_tx_output.return_data) > 0:
