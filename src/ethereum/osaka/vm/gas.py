@@ -279,50 +279,79 @@ def init_code_cost(init_code_length: Uint) -> Uint:
     """
     return GAS_INIT_CODE_WORD_COST * ceil32(init_code_length) // Uint(32)
 
-
 def calculate_excess_blob_gas(parent_header: Header) -> U64:
     """
     Calculated the excess blob gas for the current block based
     on the gas used in the parent block.
-
     Parameters
     ----------
     parent_header :
         The parent block of the current block.
-
     Returns
     -------
     excess_blob_gas: `ethereum.base_types.U64`
         The excess blob gas for the current block.
     """
+    print(f"🔧 EIP-7918 DEBUG: calculate_excess_blob_gas called")
+    
     # At the fork block, these are defined as zero.
     excess_blob_gas = U64(0)
     blob_gas_used = U64(0)
     base_fee_per_gas = Uint(0)
-
+    
     if isinstance(parent_header, Header):
+        print(f"🔧 Reading from parent header")
         # After the fork block, read them from the parent header.
         excess_blob_gas = parent_header.excess_blob_gas
         blob_gas_used = parent_header.blob_gas_used
         base_fee_per_gas = parent_header.base_fee_per_gas
-
+        print(f"🔧   excess_blob_gas: {excess_blob_gas} (0x{excess_blob_gas:x})")
+        print(f"🔧   blob_gas_used: {blob_gas_used} (0x{blob_gas_used:x})")
+        print(f"🔧   base_fee_per_gas: {base_fee_per_gas} (0x{base_fee_per_gas:x})")
+    else:
+        print(f"🔧 Using default values (fork block)")
+    
     parent_blob_gas = excess_blob_gas + blob_gas_used
+    print(f"🔧 parent_blob_gas: {parent_blob_gas} (0x{parent_blob_gas:x})")
+    print(f"🔧 TARGET_BLOB_GAS_PER_BLOCK: {TARGET_BLOB_GAS_PER_BLOCK}")
+    
     if parent_blob_gas < TARGET_BLOB_GAS_PER_BLOCK:
+        print(f"🔧 Under target, returning 0")
         return U64(0)
-
+    
+    print(f"🔧 Above target, calculating reserve price condition...")
+    
+    # Calculate blob gas price
+    blob_gas_price = calculate_blob_gas_price(excess_blob_gas)
+    print(f"🔧 calculate_blob_gas_price({excess_blob_gas}) = {blob_gas_price}")
+    
     target_blob_gas_price = Uint(GAS_PER_BLOB)
-    target_blob_gas_price *= calculate_blob_gas_price(excess_blob_gas)
-
+    target_blob_gas_price *= blob_gas_price
+    print(f"🔧 target_blob_gas_price = {GAS_PER_BLOB} * {blob_gas_price} = {target_blob_gas_price}")
+    
     base_blob_tx_price = BLOB_BASE_COST * base_fee_per_gas
-    if base_blob_tx_price > target_blob_gas_price:
+    print(f"🔧 base_blob_tx_price = {BLOB_BASE_COST} * {base_fee_per_gas} = {base_blob_tx_price}")
+    
+    condition_result = base_blob_tx_price > target_blob_gas_price
+    print(f"🔧 Reserve price condition: {base_blob_tx_price} > {target_blob_gas_price} = {condition_result}")
+    
+    if condition_result:
+        print(f"🔧 Taking EIP-7918 path (reserve price active)")
         blob_schedule_delta = BLOB_SCHEDULE_MAX - BLOB_SCHEDULE_TARGET
-        return (
-            excess_blob_gas
-            + blob_gas_used * blob_schedule_delta // BLOB_SCHEDULE_MAX
-        )
-
-    return parent_blob_gas - TARGET_BLOB_GAS_PER_BLOCK
-
+        print(f"🔧 blob_schedule_delta = {BLOB_SCHEDULE_MAX} - {BLOB_SCHEDULE_TARGET} = {blob_schedule_delta}")
+        
+        adjustment = blob_gas_used * blob_schedule_delta // BLOB_SCHEDULE_MAX
+        result = excess_blob_gas + adjustment
+        print(f"🔧 adjustment = {blob_gas_used} * {blob_schedule_delta} // {BLOB_SCHEDULE_MAX} = {adjustment}")
+        print(f"🔧 EIP-7918 result = {excess_blob_gas} + {adjustment} = {result} (0x{result:x})")
+        
+        return result
+    
+    print(f"🔧 Taking EIP-4844 path (blob fees dominate)")
+    result = parent_blob_gas - TARGET_BLOB_GAS_PER_BLOCK
+    print(f"🔧 EIP-4844 result = {parent_blob_gas} - {TARGET_BLOB_GAS_PER_BLOCK} = {result} (0x{result:x})")
+    
+    return result
 
 def calculate_total_blob_gas(tx: Transaction) -> U64:
     """
