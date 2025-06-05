@@ -129,6 +129,7 @@ class Env:
             self.excess_blob_gas = U64(0)
             return
 
+        self.excess_blob_gas = parent_blob_gas - target_blob_gas_per_block
         if t8n.fork.is_after_fork("ethereum.osaka"):
             assert self.parent_base_fee_per_gas is not None
 
@@ -151,8 +152,6 @@ class Env:
                     * blob_schedule_delta
                     // BLOB_SCHEDULE_MAX
                 )
-        else:
-            self.excess_blob_gas = parent_blob_gas - target_blob_gas_per_block
 
     def read_base_fee_per_gas(self, data: Any, t8n: "T8N") -> None:
         """
