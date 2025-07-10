@@ -57,6 +57,11 @@ Gas cost for including a storage key in the access list of a transaction.
 
 TX_MAX_GAS_LIMIT = Uint(16_777_216)
 
+MAX_BLOBS_PER_TX = 6
+"""
+Maximum number of blobs that can be included in a blob transaction.
+"""
+
 
 @slotted_freezable
 @dataclass
@@ -534,6 +539,8 @@ def validate_transaction(tx: Transaction) -> Tuple[Uint, Uint]:
     Also, the code size of a contract creation transaction must be within
     limits of the protocol.
 
+    The number of blobs in a blob transaction must not exceed the maximum.
+
     This function takes a transaction as a parameter and returns the intrinsic
     gas cost and the minimum calldata gas cost for the transaction after
     validation. It throws an `InvalidTransaction` exception
@@ -553,6 +560,8 @@ def validate_transaction(tx: Transaction) -> Tuple[Uint, Uint]:
         raise InvalidTransaction("Code size too large")
     if tx.gas > TX_MAX_GAS_LIMIT:
         raise InvalidTransaction("Gas limit too high")
+    if isinstance(tx, BlobTransaction) and len(tx.blob_versioned_hashes) > MAX_BLOBS_PER_TX:
+        raise InvalidTransaction("Too many blobs in transaction")
 
     return intrinsic_gas, calldata_floor_gas_cost
 
