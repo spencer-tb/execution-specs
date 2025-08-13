@@ -118,7 +118,7 @@ def get_module_name(
         fork_module = fork.name.split(".")[-1]
         key = "".join(x.title() for x in fork_module.split("_"))
 
-        if key == options.state_fork:
+        if key.lower() == options.state_fork.lower():
             return fork_module, 0
 
     # Neither in exception nor a standard fork name.
