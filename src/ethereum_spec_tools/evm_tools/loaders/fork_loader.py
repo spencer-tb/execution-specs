@@ -15,10 +15,12 @@ class ForkLoad:
 
     _fork_module: str
     _forks: Any
+    _bpo: bool
 
     def __init__(self, fork_module: str):
         self._fork_module = fork_module
         self._forks = Hardfork.discover()
+        self._bpo = fork_module.startswith("bpo")
 
     @property
     def fork_module(self) -> str:
@@ -46,6 +48,10 @@ class ForkLoad:
             if fork.name == "ethereum." + self._fork_module:
                 break
         return return_value
+    
+    def is_bpo_fork(self) -> bool:
+        """Return whether this fork is a Blob-Parameter-Only fork or not"""
+        return self._bpo
 
     @property
     def BEACON_ROOTS_ADDRESS(self) -> Any:

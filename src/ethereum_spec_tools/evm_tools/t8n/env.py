@@ -130,7 +130,7 @@ class Env:
         else:
             self.excess_blob_gas = parent_blob_gas - target_blob_gas_per_block
 
-            if t8n.fork.is_after_fork("ethereum.osaka"):
+            if t8n.fork.is_after_fork("ethereum.osaka") or t8n.fork.is_bpo_fork():
                 # Under certain conditions specified in EIP-7918, the
                 # the excess_blob_gas is calculated differently in osaka
                 assert self.parent_base_fee_per_gas is not None
