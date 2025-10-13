@@ -3,7 +3,6 @@
 from typing import List
 
 import pytest
-
 from ethereum_test_execution import BaseExecute, LabeledExecuteFormat
 from ethereum_test_fixtures import BaseFixture, LabeledFixtureFormat
 from ethereum_test_specs import BaseTest

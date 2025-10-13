@@ -6,13 +6,12 @@ from pathlib import Path
 from typing import Any, Dict, Generator, List, Type
 
 import pytest
-from pytest_metadata.plugin import metadata_key  # type: ignore
-
 from ethereum_test_execution import BaseExecute
 from ethereum_test_forks import Fork
 from ethereum_test_rpc import EngineRPC, EthRPC
 from ethereum_test_tools import BaseTest
 from ethereum_test_types import ChainConfigDefaults, EnvironmentDefaults, TransactionDefaults
+from pytest_metadata.plugin import metadata_key  # type: ignore
 
 from ..shared.execute_fill import ALL_FIXTURE_PARAMETERS
 from ..shared.helpers import (

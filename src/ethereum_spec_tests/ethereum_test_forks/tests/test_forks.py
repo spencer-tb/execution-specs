@@ -3,9 +3,8 @@
 from typing import Dict, cast
 
 import pytest
-from pydantic import BaseModel
-
 from ethereum_test_base_types import BlobSchedule
+from pydantic import BaseModel
 
 from ..forks.forks import (
     BPO1,

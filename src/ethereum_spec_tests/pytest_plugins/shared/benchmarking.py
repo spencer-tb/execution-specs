@@ -1,7 +1,6 @@
 """The module contains the pytest hooks for the gas benchmark values."""
 
 import pytest
-
 from ethereum_test_tools import Environment
 from ethereum_test_types import EnvironmentDefaults
 

@@ -7,7 +7,6 @@ abstract: Tests [EIP-7251: Increase the MAX_EFFECTIVE_BALANCE](https://eips.ethe
 from typing import List
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     Address,

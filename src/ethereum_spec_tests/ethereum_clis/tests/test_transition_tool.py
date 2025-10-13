@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Type
 
 import pytest
-
 from ethereum_clis import (
     CLINotFoundInPathError,
     EvmOneTransitionTool,

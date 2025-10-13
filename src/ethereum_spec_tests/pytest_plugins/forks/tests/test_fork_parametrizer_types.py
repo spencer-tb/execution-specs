@@ -4,7 +4,6 @@ from typing import List
 
 import pytest
 from _pytest.mark.structures import ParameterSet
-
 from ethereum_test_forks import Frontier
 
 from ..forks import (

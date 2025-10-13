@@ -8,11 +8,10 @@ import io
 from typing import Mapping
 
 import pytest
-from hive.client import Client
-
 from ethereum_test_exceptions import ExceptionMapper
 from ethereum_test_fixtures import BlockchainEngineFixture
 from ethereum_test_rpc import EngineRPC
+from hive.client import Client
 
 pytest_plugins = (
     "pytest_plugins.pytest_hive.pytest_hive",

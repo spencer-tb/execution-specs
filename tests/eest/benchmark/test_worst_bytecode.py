@@ -8,7 +8,6 @@ Tests that benchmark EVMs in worst-case opcode scenarios.
 import math
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     Account,

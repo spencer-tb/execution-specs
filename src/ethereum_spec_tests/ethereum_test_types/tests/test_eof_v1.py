@@ -3,7 +3,6 @@
 from typing import List, Tuple
 
 import pytest
-
 from ethereum_test_base_types import to_json
 from ethereum_test_base_types.pydantic import CopyValidateModel
 from ethereum_test_vm import Opcodes as Op

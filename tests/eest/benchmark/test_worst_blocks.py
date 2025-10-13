@@ -8,7 +8,6 @@ Tests running worst-case block scenarios for EVMs.
 import random
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     AccessList,

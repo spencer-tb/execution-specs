@@ -6,10 +6,6 @@ from functools import cached_property
 from typing import Any, Dict, Generic, List, Sequence
 
 import ethereum_rlp as eth_rlp
-from ethereum_types.numeric import Uint
-from pydantic import Field, computed_field
-from trie import HexaryTrie
-
 from ethereum_test_base_types import (
     Address,
     Bytes,
@@ -21,6 +17,9 @@ from ethereum_test_base_types import (
     ZeroPaddedHexNumber,
 )
 from ethereum_test_forks import Fork
+from ethereum_types.numeric import Uint
+from pydantic import Field, computed_field
+from trie import HexaryTrie
 
 DEFAULT_BASE_FEE = 7
 CURRENT_MAINNET_BLOCK_GAS_LIMIT = 45_000_000

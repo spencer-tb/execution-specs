@@ -4,7 +4,6 @@ abstract: Test [EIP-7823: Set upper bounds for MODEXP](https://eips.ethereum.org
 """
 
 import pytest
-
 from ethereum_test_forks import Fork, Osaka
 from ethereum_test_tools import Account, Alloc, Bytes, Environment, StateTestFiller, Transaction
 from ethereum_test_tools.vm.opcode import Opcodes as Op

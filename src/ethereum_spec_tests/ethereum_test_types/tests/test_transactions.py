@@ -3,7 +3,6 @@
 from typing import Tuple
 
 import pytest
-
 from ethereum_test_base_types import AccessList, Hash
 
 from ..transaction_types import Transaction

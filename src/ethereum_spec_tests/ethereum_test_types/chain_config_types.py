@@ -1,8 +1,7 @@
 """Chain Configuration related types for Ethereum tests."""
 
-from pydantic import Field
-
 from ethereum_test_base_types import CamelModel
+from pydantic import Field
 
 
 class ChainConfigDefaults:

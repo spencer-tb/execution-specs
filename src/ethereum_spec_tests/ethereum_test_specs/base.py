@@ -9,9 +9,6 @@ from pathlib import Path
 from typing import Callable, ClassVar, Dict, Generator, List, Sequence, Type
 
 import pytest
-from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
-from typing_extensions import Self
-
 from ethereum_clis import Result, TransitionTool
 from ethereum_test_base_types import to_hex
 from ethereum_test_execution import BaseExecute, ExecuteFormat, LabeledExecuteFormat
@@ -24,6 +21,8 @@ from ethereum_test_fixtures import (
 )
 from ethereum_test_forks import Fork
 from ethereum_test_types import Alloc, Environment, Withdrawal
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
+from typing_extensions import Self
 
 
 class HashMismatchExceptionError(Exception):

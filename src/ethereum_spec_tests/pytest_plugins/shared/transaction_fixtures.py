@@ -5,7 +5,6 @@ Each fixture can be overridden in test files to customize transaction behavior.
 """
 
 import pytest
-
 from ethereum_test_base_types import AccessList
 from ethereum_test_tools import Opcodes as Op
 from ethereum_test_types import AuthorizationTuple, Transaction, add_kzg_version

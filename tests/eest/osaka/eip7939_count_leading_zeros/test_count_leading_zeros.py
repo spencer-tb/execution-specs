@@ -4,7 +4,6 @@ abstract: Tests [EIP-7939: Count leading zeros (CLZ) opcode](https://eips.ethere
 """
 
 import pytest
-
 from ethereum_test_base_types import Storage
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (

@@ -4,7 +4,6 @@ abstract: Tests BLS12_PAIRING precompile of [EIP-2537: Precompile for BLS12-381 
 """  # noqa: E501
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     EOA,

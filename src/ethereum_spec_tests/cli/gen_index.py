@@ -8,6 +8,9 @@ from typing import List
 
 import click
 import rich
+from ethereum_test_base_types import HexNumber
+from ethereum_test_fixtures.consume import IndexFile, TestCaseIndexFile
+from ethereum_test_fixtures.file import Fixtures
 from rich.progress import (
     BarColumn,
     Column,
@@ -16,10 +19,6 @@ from rich.progress import (
     TextColumn,
     TimeElapsedColumn,
 )
-
-from ethereum_test_base_types import HexNumber
-from ethereum_test_fixtures.consume import IndexFile, TestCaseIndexFile
-from ethereum_test_fixtures.file import Fixtures
 
 from .hasher import HashableItem
 

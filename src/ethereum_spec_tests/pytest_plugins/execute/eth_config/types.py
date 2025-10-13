@@ -7,8 +7,6 @@ from pathlib import Path
 from typing import Annotated, Any, ClassVar, Dict, List, Self, Set
 
 import yaml
-from pydantic import BaseModel, BeforeValidator, Field, model_validator
-
 from ethereum_test_base_types import (
     Address,
     Bytes,
@@ -28,6 +26,7 @@ from ethereum_test_rpc import (
     ForkConfigBlobSchedule,
 )
 from ethereum_test_types import Alloc, Environment
+from pydantic import BaseModel, BeforeValidator, Field, model_validator
 
 
 class AddressOverrideDict(EthereumTestRootModel):

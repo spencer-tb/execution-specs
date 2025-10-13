@@ -3,7 +3,6 @@
 from typing import List
 
 import pytest
-
 from ethereum_clis import TransitionTool
 
 

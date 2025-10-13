@@ -18,7 +18,6 @@ from pathlib import Path
 from typing import Any, Dict, no_type_check
 
 import click
-
 from ethereum_clis import CLINotFoundInPathError
 from ethereum_clis.clis.evmone import EvmOneTransitionTool
 from ethereum_test_base_types import Bytes, EthereumTestRootModel

@@ -3,7 +3,6 @@
 from enum import Enum, IntEnum
 
 import pytest
-
 from ethereum_test_forks import Fork, GasCosts
 from ethereum_test_tools import (
     AccessList,

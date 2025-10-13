@@ -4,7 +4,6 @@ abstract: Tests [EIP-7069: Revamped CALL instructions](https://eips.ethereum.org
 """  # noqa: E501
 
 import pytest
-
 from ethereum_test_base_types import Address
 from ethereum_test_forks import Fork
 from ethereum_test_tools import Alloc, Environment, StateTestFiller

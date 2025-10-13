@@ -4,10 +4,9 @@ import re
 from abc import ABC, abstractmethod
 from typing import Any, ClassVar, Dict, Generic, Mapping, TypeVar
 
-from pydantic import BaseModel, model_validator
-
 from ethereum_test_base_types import Address, Bytes, Hash, HexNumber
 from ethereum_test_types import EOA, compute_create2_address, compute_create_address
+from pydantic import BaseModel, model_validator
 
 TagDict = Dict[str, Address | EOA]
 

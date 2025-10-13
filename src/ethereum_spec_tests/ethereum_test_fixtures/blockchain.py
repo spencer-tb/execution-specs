@@ -18,9 +18,6 @@ from typing import (
 
 import ethereum_rlp as eth_rlp
 import pytest
-from ethereum_types.numeric import Uint
-from pydantic import AliasChoices, Field, PlainSerializer, computed_field, model_validator
-
 from ethereum_test_base_types import (
     Address,
     Alloc,
@@ -46,6 +43,8 @@ from ethereum_test_types import (
 )
 from ethereum_test_types.block_types import WithdrawalGeneric
 from ethereum_test_types.transaction_types import TransactionFixtureConverter, TransactionGeneric
+from ethereum_types.numeric import Uint
+from pydantic import AliasChoices, Field, PlainSerializer, computed_field, model_validator
 
 from .base import BaseFixture, FixtureFillingPhase
 from .common import FixtureAuthorizationTuple, FixtureBlobSchedule

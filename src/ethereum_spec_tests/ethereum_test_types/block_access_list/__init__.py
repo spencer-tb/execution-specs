@@ -9,8 +9,6 @@ from functools import cached_property
 from typing import Any, Callable, ClassVar, Dict, List
 
 import ethereum_rlp as eth_rlp
-from pydantic import Field, PrivateAttr
-
 from ethereum_test_base_types import (
     Address,
     Bytes,
@@ -22,6 +20,7 @@ from ethereum_test_base_types import (
     StorageKey,
 )
 from ethereum_test_base_types.serialization import to_serializable_element
+from pydantic import Field, PrivateAttr
 
 
 def compose(

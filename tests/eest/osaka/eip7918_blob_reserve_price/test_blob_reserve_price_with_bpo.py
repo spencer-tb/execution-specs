@@ -5,7 +5,6 @@ abstract:  [EIP-7918: Blob base fee bounded by execution cost](https://eips.ethe
 """  # noqa: E501
 
 import pytest
-
 from ethereum_test_tools import (
     Alloc,
     Block,

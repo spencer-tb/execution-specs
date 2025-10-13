@@ -7,9 +7,8 @@ Classes:
 
 from pathlib import Path
 
-from pydantic import BaseModel
-
 import pytest_plugins.consume.releases as releases
+from pydantic import BaseModel
 
 
 class AppConfig(BaseModel):

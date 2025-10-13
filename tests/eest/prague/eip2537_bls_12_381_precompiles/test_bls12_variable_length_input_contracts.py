@@ -6,7 +6,6 @@ abstract: Tests minimum gas and input length for BLS12_G1MSM, BLS12_G2MSM, BLS12
 from typing import Callable, List, SupportsBytes
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import Alloc, Bytecode, Environment, StateTestFiller, Storage, Transaction
 from ethereum_test_tools import Opcodes as Op

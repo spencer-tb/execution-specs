@@ -4,8 +4,6 @@ from pprint import pprint
 from typing import Any, Callable, ClassVar, Dict, Generator, List, Optional, Sequence, Type
 
 import pytest
-from pydantic import Field
-
 from ethereum_clis import TransitionTool, TransitionToolOutput
 from ethereum_test_base_types import HexNumber
 from ethereum_test_exceptions import BlockException, EngineAPIError, TransactionException
@@ -35,6 +33,7 @@ from ethereum_test_types import (
     Environment,
     Transaction,
 )
+from pydantic import Field
 from pytest_plugins.logging import get_logger
 
 from .base import BaseTest, OpMode

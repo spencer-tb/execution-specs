@@ -4,7 +4,6 @@ abstract: Tests `MAX_BLOBS_PER_TX` limit for [EIP-7594: PeerDAS - Peer Data Avai
 """  # noqa: E501
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     Address,

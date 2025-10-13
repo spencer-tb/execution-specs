@@ -12,7 +12,6 @@ from pathlib import Path
 
 import click
 import jinja2
-
 from config.docs import DocsConfig
 from ethereum_test_forks import get_development_forks, get_forks
 

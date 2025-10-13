@@ -1,14 +1,10 @@
-"""
-Ethereum Specs EVM Transition Tool Interface.
-"""
+"""Ethereum Specs EVM Transition Tool Interface."""
+
 import json
 import tempfile
 from io import StringIO
 from typing import Any, ClassVar, Dict, Optional
 
-from ethereum_clis.file_utils import dump_files_to_directory
-from ethereum_clis.transition_tool import TransitionTool, model_dump_config
-from ethereum_clis.types import TransitionToolOutput
 from ethereum_test_exceptions import (
     BlockException,
     ExceptionBase,
@@ -16,14 +12,14 @@ from ethereum_test_exceptions import (
     TransactionException,
 )
 from ethereum_test_forks import Fork
-from pytest_plugins.logging import get_logger
 
 import ethereum
+from ethereum_clis.file_utils import dump_files_to_directory
+from ethereum_clis.transition_tool import TransitionTool, model_dump_config
+from ethereum_clis.types import TransitionToolOutput
 from ethereum_spec_tools.evm_tools import create_parser
 from ethereum_spec_tools.evm_tools.t8n import T8N
 from ethereum_spec_tools.evm_tools.utils import get_supported_forks
-
-from ..transition_tool import TransitionTool
 
 
 class ExecutionSpecsTransitionTool(TransitionTool):
@@ -54,14 +50,10 @@ class ExecutionSpecsTransitionTool(TransitionTool):
         debug_output_path: str = "",
         slow_request: bool = False,
     ) -> TransitionToolOutput:
-        """
-        Evaluate using the EELS T8N entry point.
-        """
+        """Evaluate using the EELS T8N entry point."""
         del slow_request
         request_data = transition_tool_data.get_request_data()
-        request_data_json = request_data.model_dump(
-            mode="json", **model_dump_config
-        )
+        request_data_json = request_data.model_dump(mode="json", **model_dump_config)
 
         t8n_args = [
             "t8n",
@@ -127,9 +119,7 @@ class ExecutionSpecsTransitionTool(TransitionTool):
             )
 
         if self.trace:
-            self.collect_traces(
-                output.result.receipts, temp_dir, debug_output_path
-            )
+            self.collect_traces(output.result.receipts, temp_dir, debug_output_path)
         temp_dir.cleanup()
 
         return output

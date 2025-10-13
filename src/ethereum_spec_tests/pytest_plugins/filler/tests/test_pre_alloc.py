@@ -3,7 +3,6 @@
 from itertools import count
 
 import pytest
-
 from ethereum_test_base_types import Address, TestPrivateKey, TestPrivateKey2
 from ethereum_test_types import EOA
 from ethereum_test_vm import EVMCodeType

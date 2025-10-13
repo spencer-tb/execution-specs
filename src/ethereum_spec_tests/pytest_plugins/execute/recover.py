@@ -1,7 +1,6 @@
 """Pytest plugin to recover funds from a failed remote execution."""
 
 import pytest
-
 from ethereum_test_base_types import Address, HexNumber
 from ethereum_test_types import EOA
 

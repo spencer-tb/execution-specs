@@ -6,8 +6,6 @@ from enum import Enum
 from hashlib import sha256
 from typing import Annotated, Any, Dict, List, Self
 
-from pydantic import AliasChoices, Field, model_validator
-
 from ethereum_test_base_types import (
     Address,
     Bytes,
@@ -27,6 +25,7 @@ from ethereum_test_exceptions import (
 )
 from ethereum_test_fixtures.blockchain import FixtureExecutionPayload
 from ethereum_test_types import EOA, Transaction, Withdrawal
+from pydantic import AliasChoices, Field, model_validator
 
 
 class JSONRPCError(Exception):

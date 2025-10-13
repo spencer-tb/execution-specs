@@ -1,7 +1,6 @@
 """Test ModExp gas cost transition from EIP-7883 before and after the Osaka hard fork."""
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import Account, Alloc, Block, BlockchainTestFiller, Transaction
 from ethereum_test_tools.vm.opcode import Opcodes as Op

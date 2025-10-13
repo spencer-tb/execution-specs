@@ -3,12 +3,11 @@
 from abc import abstractmethod
 from typing import Annotated, Any, ClassVar, Dict, Type
 
-from pydantic import PlainSerializer, PlainValidator
-from pytest import FixtureRequest
-
 from ethereum_test_base_types import CamelModel
 from ethereum_test_forks import Fork
 from ethereum_test_rpc import EngineRPC, EthRPC
+from pydantic import PlainSerializer, PlainValidator
+from pytest import FixtureRequest
 
 
 class BaseExecute(CamelModel):

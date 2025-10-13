@@ -7,11 +7,10 @@ from typing import Any, Dict, List, Mapping, Union
 
 from eth_abi import encode
 from eth_utils import function_signature_to_4byte_selector
+from ethereum_test_base_types import AccessList, Address, CamelModel, Hash, HexNumber
 from pydantic import BaseModel, BeforeValidator, Field, PrivateAttr, model_validator
 from pydantic_core import core_schema
 from typing_extensions import Annotated
-
-from ethereum_test_base_types import AccessList, Address, CamelModel, Hash, HexNumber
 
 from .compile_yul import compile_yul
 from .tags import (

@@ -1,7 +1,6 @@
 """Test suite for `cli.evm_bytes` module."""
 
 import pytest
-
 from ethereum_test_tools import Opcodes as Op
 
 from ..evm_bytes import process_evm_bytes_string

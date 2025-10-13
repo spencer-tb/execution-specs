@@ -1,7 +1,6 @@
 """abstract: Test delegatecall to Blake2B Precompile before and after it was added."""
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_forks.forks.forks import Istanbul
 from ethereum_test_tools import (

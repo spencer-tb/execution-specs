@@ -12,7 +12,6 @@ from typing import Any, List, Optional, Set
 import pytest
 from _pytest.nodes import Item, Node
 from _pytest.python import Module
-
 from ethereum_test_tools import ReferenceSpec, ReferenceSpecTypes
 
 GITHUB_TOKEN_HELP = textwrap.dedent(

@@ -19,9 +19,6 @@ import pytest
 import xdist
 from _pytest.compat import NotSetType
 from _pytest.terminal import TerminalReporter
-from filelock import FileLock
-from pytest_metadata.plugin import metadata_key  # type: ignore
-
 from cli.gen_index import generate_fixtures_index
 from ethereum_clis import TransitionTool
 from ethereum_clis.clis.geth import FixtureConsumerTool
@@ -44,6 +41,8 @@ from ethereum_test_tools.utility.versioning import (
     get_current_commit_hash_or_tag,
 )
 from ethereum_test_types import EnvironmentDefaults
+from filelock import FileLock
+from pytest_metadata.plugin import metadata_key  # type: ignore
 
 from ..shared.execute_fill import ALL_FIXTURE_PARAMETERS
 from ..shared.helpers import (

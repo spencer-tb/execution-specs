@@ -5,7 +5,6 @@ from pprint import pprint
 from typing import List
 
 import pytest
-
 from ethereum_test_tools import Opcodes as Op
 
 

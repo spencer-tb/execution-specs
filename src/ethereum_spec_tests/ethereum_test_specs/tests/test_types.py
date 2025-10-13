@@ -1,7 +1,6 @@
 """Test types from ethereum_test_specs."""
 
 import pytest
-
 from ethereum_test_base_types import Address, Bloom, Bytes, Hash, HeaderNonce
 from ethereum_test_fixtures.blockchain import FixtureHeader
 

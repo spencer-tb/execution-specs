@@ -4,7 +4,6 @@ import json
 import os
 
 import pytest
-
 from ethereum_test_fixtures import TransactionFixture
 from ethereum_test_forks import Fork, Shanghai
 from ethereum_test_types import Transaction

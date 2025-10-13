@@ -26,7 +26,6 @@ abstract: Tests the nested CALL/CALLCODE opcode gas consumption with a positive 
 from typing import Dict
 
 import pytest
-
 from ethereum_test_tools import (
     EOA,
     Account,

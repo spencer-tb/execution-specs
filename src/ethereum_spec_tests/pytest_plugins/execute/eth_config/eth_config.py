@@ -8,8 +8,8 @@ from urllib.parse import urlparse
 
 import pytest
 import requests
-
 from ethereum_test_rpc import EthRPC
+
 from pytest_plugins.logging import get_logger
 
 from .types import Genesis, NetworkConfigFile

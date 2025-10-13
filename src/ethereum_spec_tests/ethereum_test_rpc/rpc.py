@@ -6,11 +6,10 @@ from pprint import pprint
 from typing import Any, ClassVar, Dict, List, Literal
 
 import requests
-from jwt import encode
-from pydantic import ValidationError
-
 from ethereum_test_base_types import Address, Bytes, Hash, to_json
 from ethereum_test_types import Transaction
+from jwt import encode
+from pydantic import ValidationError
 from pytest_plugins.logging import get_logger
 
 from .types import (

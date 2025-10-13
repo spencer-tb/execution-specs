@@ -10,7 +10,6 @@ import subprocess
 from typing import Callable, List
 
 import pytest
-
 from ethereum_test_base_types import EthereumTestRootModel
 from ethereum_test_fixtures.blockchain import BlockchainFixture, FixtureBlock, WitnessChunk
 from ethereum_test_forks import Paris

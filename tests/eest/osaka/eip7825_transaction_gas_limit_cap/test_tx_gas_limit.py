@@ -6,7 +6,6 @@ abstract: Tests [EIP-7825 Transaction Gas Limit Cap](https://eips.ethereum.org/E
 from typing import List
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     AccessList,

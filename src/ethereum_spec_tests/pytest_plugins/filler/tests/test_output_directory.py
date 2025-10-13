@@ -4,9 +4,8 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-from pytest import TempPathFactory
-
 from ethereum_clis import TransitionTool
+from pytest import TempPathFactory
 
 from ..fixture_output import FixtureOutput
 

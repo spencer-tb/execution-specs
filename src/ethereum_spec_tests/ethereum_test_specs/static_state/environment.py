@@ -2,10 +2,9 @@
 
 from typing import Any, Dict
 
-from pydantic import BaseModel, Field, model_validator
-
 from ethereum_test_base_types import Address
 from ethereum_test_types import Environment
+from pydantic import BaseModel, Field, model_validator
 
 from .common import AddressOrTagInFiller, Tag, TagDict, ValueInFiller
 

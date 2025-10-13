@@ -4,7 +4,6 @@ abstract: Tests BLS12_G1ADD precompile of [EIP-2537: Precompile for BLS12-381 cu
 """  # noqa: E501
 
 import pytest
-
 from ethereum_test_tools import Alloc, Environment, StateTestFiller, Transaction
 from ethereum_test_tools import Opcodes as Op
 

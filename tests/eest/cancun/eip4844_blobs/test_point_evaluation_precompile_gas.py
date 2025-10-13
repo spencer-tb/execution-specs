@@ -7,7 +7,6 @@ abstract: Tests gas usage on point evaluation precompile for [EIP-4844: Shard Bl
 from typing import Dict, Literal
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     Account,

@@ -6,7 +6,6 @@ abstract: Tests for [EIP-1153: Transient Storage](https://eips.ethereum.org/EIPS
 from enum import unique
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Address,

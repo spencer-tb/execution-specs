@@ -4,7 +4,6 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-
 from ethereum_test_base_types import Alloc
 from ethereum_test_fixtures import (
     FixtureFillingPhase,

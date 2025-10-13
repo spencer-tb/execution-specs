@@ -18,7 +18,6 @@ note: Adding a new test
 from typing import List, Optional, Tuple
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     EOA,

@@ -1,7 +1,6 @@
 """Seed sender on a remote execution client."""
 
 import pytest
-
 from ethereum_test_base_types import Hash, Number
 from ethereum_test_rpc import EthRPC
 from ethereum_test_types import EOA

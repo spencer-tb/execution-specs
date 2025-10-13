@@ -3,7 +3,6 @@
 from typing import Any, Dict, List
 
 import pytest
-
 from ethereum_test_base_types import (
     AccessList,
     Account,

@@ -8,8 +8,6 @@ from itertools import count
 from typing import Iterator, List, Literal
 
 import pytest
-from pydantic import PrivateAttr
-
 from ethereum_test_base_types import (
     Account,
     Address,
@@ -32,6 +30,7 @@ from ethereum_test_types import EOA
 from ethereum_test_types import Alloc as BaseAlloc
 from ethereum_test_types.eof.v1 import Container
 from ethereum_test_vm import Bytecode, EVMCodeType, Opcodes
+from pydantic import PrivateAttr
 
 CONTRACT_START_ADDRESS_DEFAULT = 0x1000000000000000000000000000000000001000
 CONTRACT_ADDRESS_INCREMENTS_DEFAULT = 0x100

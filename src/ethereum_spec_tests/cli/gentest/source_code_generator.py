@@ -10,7 +10,6 @@ import tempfile
 from pathlib import Path
 
 import jinja2
-
 from config import AppConfig
 
 from .test_context_providers import Provider

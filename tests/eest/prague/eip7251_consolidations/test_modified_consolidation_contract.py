@@ -7,7 +7,6 @@ abstract: Tests [EIP-7251: Execution layer triggerable consolidation](https://ei
 from typing import List
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Address,

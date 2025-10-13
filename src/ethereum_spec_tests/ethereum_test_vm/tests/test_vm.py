@@ -1,7 +1,6 @@
 """Test suite for `ethereum_test_vm` module."""
 
 import pytest
-
 from ethereum_test_base_types import Address
 
 from ..opcode import Bytecode

@@ -16,11 +16,10 @@ from abc import ABC, abstractmethod
 from sys import stderr
 from typing import Any, Dict, Optional
 
-from pydantic import BaseModel
-
 from ethereum_test_base_types import Account, Hash
 from ethereum_test_rpc.types import TransactionByHashResponse
 from ethereum_test_tools import Environment, Transaction
+from pydantic import BaseModel
 
 from .request_manager import RPCRequest
 

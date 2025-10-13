@@ -9,13 +9,12 @@ import json
 from typing import Generator, Mapping, cast
 
 import pytest
-from hive.client import Client, ClientType
-from hive.testing import HiveTest
-
 from ethereum_test_base_types import to_json
 from ethereum_test_exceptions import ExceptionMapper
 from ethereum_test_fixtures import BlockchainEngineSyncFixture
 from ethereum_test_rpc import AdminRPC, EngineRPC, EthRPC, NetRPC
+from hive.client import Client, ClientType
+from hive.testing import HiveTest
 
 pytest_plugins = (
     "pytest_plugins.pytest_hive.pytest_hive",

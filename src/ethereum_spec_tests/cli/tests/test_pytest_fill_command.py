@@ -5,9 +5,8 @@ from tempfile import TemporaryDirectory
 from typing import Generator
 
 import pytest
-from click.testing import CliRunner
-
 import pytest_plugins.filler.filler
+from click.testing import CliRunner
 
 from ..pytest_commands.fill import fill
 

@@ -3,7 +3,6 @@
 import itertools
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Alloc,

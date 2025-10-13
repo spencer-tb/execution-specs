@@ -8,8 +8,6 @@ from subprocess import CompletedProcess
 from typing import Annotated, Callable, ClassVar, Dict, Generator, List, Optional, Sequence, Type
 
 import pytest
-from pydantic import Field, TypeAdapter
-
 from ethereum_clis import EvmoneExceptionMapper, TransitionTool
 from ethereum_test_base_types import Account, Bytes, HexNumber
 from ethereum_test_exceptions import (
@@ -37,6 +35,7 @@ from ethereum_test_types import EOA, Alloc, Environment, Transaction
 from ethereum_test_types.eof.v1 import Container, ContainerKind, Section, SectionKind
 from ethereum_test_types.helpers import compute_eofcreate_address
 from ethereum_test_vm import Opcodes as Op
+from pydantic import Field, TypeAdapter
 
 from .base import BaseTest
 from .state import StateTest

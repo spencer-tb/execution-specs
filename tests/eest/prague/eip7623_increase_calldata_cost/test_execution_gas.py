@@ -6,7 +6,6 @@ abstract: Test [EIP-7623: Increase calldata cost](https://eips.ethereum.org/EIPS
 from typing import List
 
 import pytest
-
 from ethereum_test_forks import Fork, Prague
 from ethereum_test_tools import (
     AccessList,

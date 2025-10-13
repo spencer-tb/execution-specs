@@ -6,12 +6,11 @@ import logging
 from typing import Generator, Literal, cast
 
 import pytest
-from hive.client import Client, ClientType
-from hive.testing import HiveTest
-
 from ethereum_test_base_types import Number, to_json
 from ethereum_test_fixtures import BlockchainFixtureCommon
 from ethereum_test_fixtures.blockchain import FixtureHeader
+from hive.client import Client, ClientType
+from hive.testing import HiveTest
 
 from .helpers.ruleset import (
     ruleset,  # TODO: generate dynamically

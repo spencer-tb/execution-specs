@@ -9,11 +9,10 @@ from typing import Any, ClassVar, List, Literal, cast
 
 import ckzg  # type: ignore
 import platformdirs
-from filelock import FileLock
-
 from ethereum_test_base_types.base_types import Bytes, Hash
 from ethereum_test_base_types.pydantic import CamelModel
 from ethereum_test_forks import Fork
+from filelock import FileLock
 from pytest_plugins.logging import get_logger
 
 CACHED_BLOBS_DIRECTORY: Path = (

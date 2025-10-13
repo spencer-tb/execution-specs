@@ -5,12 +5,11 @@ from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
 import click
+from ethereum_test_base_types import CamelModel
+from ethereum_test_fixtures import PreAllocGroups
 from pydantic import Field
 from rich.console import Console
 from rich.table import Table
-
-from ethereum_test_base_types import CamelModel
-from ethereum_test_fixtures import PreAllocGroups
 
 
 def extract_test_module(test_id: str) -> str:

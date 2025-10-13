@@ -5,9 +5,8 @@ import tarfile
 from pathlib import Path
 
 import pytest
-from pydantic import BaseModel, Field
-
 from ethereum_test_fixtures.blockchain import BlockchainEngineXFixture
+from pydantic import BaseModel, Field
 
 
 class FixtureOutput(BaseModel):

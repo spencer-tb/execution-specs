@@ -4,8 +4,6 @@ import json
 from pathlib import Path
 from typing import Annotated, Any, Dict, List, Self
 
-from pydantic import Field
-
 from ethereum_test_base_types import (
     BlobSchedule,
     Bloom,
@@ -29,6 +27,7 @@ from ethereum_test_types import (
     Transaction,
     TransactionReceipt,
 )
+from pydantic import Field
 from pytest_plugins.logging import get_logger
 
 logger = get_logger(__name__)

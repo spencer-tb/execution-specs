@@ -3,7 +3,6 @@
 from typing import Dict
 
 import pytest
-
 from ethereum_clis import ExecutionSpecsTransitionTool, TransitionTool
 from ethereum_test_base_types import Account, Address, TestAddress, TestPrivateKey
 from ethereum_test_forks import (

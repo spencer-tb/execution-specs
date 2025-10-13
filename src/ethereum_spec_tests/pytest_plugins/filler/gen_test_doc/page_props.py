@@ -16,9 +16,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import IO, Any, ContextManager, Dict, List, Protocol
 
-from jinja2 import Environment
-
 from ethereum_test_tools import Opcodes
+from jinja2 import Environment
 
 
 def apply_name_filters(input_string: str):

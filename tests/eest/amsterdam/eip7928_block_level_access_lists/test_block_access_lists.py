@@ -1,7 +1,6 @@
 """Tests for EIP-7928 using the consistent data class pattern."""
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Alloc,

@@ -2,11 +2,10 @@
 
 from typing import Any, Dict, Generator, List, Mapping
 
-from pydantic import BaseModel, Field, field_validator, model_validator
-
 from ethereum_test_base_types import Address, CamelModel, EthereumTestRootModel, Hash
 from ethereum_test_exceptions import TransactionExceptionInstanceOrList
 from ethereum_test_types import Transaction
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from .common import (
     AccessListInFiller,

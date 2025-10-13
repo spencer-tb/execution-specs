@@ -7,7 +7,6 @@ from enum import EnumMeta, unique
 from typing import Dict, Mapping
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Address,

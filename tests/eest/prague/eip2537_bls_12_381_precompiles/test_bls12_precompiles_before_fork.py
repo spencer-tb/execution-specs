@@ -5,7 +5,6 @@ abstract: Tests BLS12 precompiles of [EIP-2537: Precompile for BLS12-381 curve o
 """  # noqa: E501
 
 import pytest
-
 from ethereum_test_tools import Alloc, Environment, StateTestFiller, Transaction
 
 from .spec import FP, FP2, Scalar, Spec, ref_spec_2537

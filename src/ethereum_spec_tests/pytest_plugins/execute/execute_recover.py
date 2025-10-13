@@ -1,7 +1,6 @@
 """Pytest test to recover funds from a failed remote execution."""
 
 import pytest
-
 from ethereum_test_base_types import Address
 from ethereum_test_rpc import EthRPC
 from ethereum_test_types import EOA, Transaction

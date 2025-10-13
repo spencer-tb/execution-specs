@@ -4,9 +4,6 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List
 
-from filelock import FileLock
-from pydantic import RootModel
-
 from ethereum_test_base_types import HexNumber
 from ethereum_test_forks import Fork
 from ethereum_test_rpc import EngineRPC
@@ -23,6 +20,8 @@ from ethereum_test_tools import (
     Transaction,
 )
 from ethereum_test_types.trie import keccak256
+from filelock import FileLock
+from pydantic import RootModel
 
 
 class HashList(RootModel[List[Hash]]):

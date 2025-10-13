@@ -1,8 +1,8 @@
 """Unit tests for BlockAccessListExpectation validation."""
 
 import pytest
-
 from ethereum_test_base_types import Address
+
 from ethereum_test_types.block_access_list import (
     BalAccountChange,
     BalAccountExpectation,

@@ -5,19 +5,18 @@ from enum import Enum, IntEnum, auto
 from functools import cached_property
 from typing import Any, Dict, List, Optional, Tuple
 
-from pydantic import Field, GetCoreSchemaHandler
-from pydantic_core.core_schema import (
-    PlainValidatorFunctionSchema,
-    no_info_plain_validator_function,
-    to_string_ser_schema,
-)
-
 from ethereum_test_base_types import Bytes, Hash
 from ethereum_test_base_types.conversions import BytesConvertible
 from ethereum_test_base_types.pydantic import CopyValidateModel
 from ethereum_test_exceptions.exceptions import EOFExceptionInstanceOrList
 from ethereum_test_vm import Bytecode
 from ethereum_test_vm import Opcodes as Op
+from pydantic import Field, GetCoreSchemaHandler
+from pydantic_core.core_schema import (
+    PlainValidatorFunctionSchema,
+    no_info_plain_validator_function,
+    to_string_ser_schema,
+)
 
 from ..constants import EOF_HEADER_TERMINATOR, EOF_MAGIC
 from .constants import (

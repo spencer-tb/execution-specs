@@ -1,7 +1,6 @@
 """Tests for the eofwrap module and click CLI."""
 
 import pytest
-
 from ethereum_test_base_types.conversions import to_hex
 from ethereum_test_tools import Opcodes as Op
 from ethereum_test_types.eof.v1 import Container

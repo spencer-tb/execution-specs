@@ -9,7 +9,6 @@ import itertools
 from typing import List, Mapping
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     AccessList,

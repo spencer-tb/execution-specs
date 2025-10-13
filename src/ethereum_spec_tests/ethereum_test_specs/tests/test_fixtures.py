@@ -4,10 +4,9 @@ import json
 import os
 from typing import Any, List, Mapping
 
+import cli.check_fixtures
 import pytest
 from click.testing import CliRunner
-
-import cli.check_fixtures
 from ethereum_clis import TransitionTool
 from ethereum_test_base_types import AccessList, Account, Address, Hash
 from ethereum_test_exceptions import TransactionException

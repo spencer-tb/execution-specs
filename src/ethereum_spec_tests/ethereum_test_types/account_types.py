@@ -6,10 +6,6 @@ from enum import Enum, auto
 from typing import Any, Dict, List, Literal, Optional, Self, Tuple
 
 from coincurve.keys import PrivateKey
-from ethereum_types.bytes import Bytes20
-from ethereum_types.numeric import U256, Bytes32, Uint
-from pydantic import PrivateAttr
-
 from ethereum_test_base_types import (
     Account,
     Address,
@@ -25,6 +21,9 @@ from ethereum_test_base_types.conversions import (
     NumberConvertible,
 )
 from ethereum_test_vm import EVMCodeType
+from ethereum_types.bytes import Bytes20
+from ethereum_types.numeric import U256, Bytes32, Uint
+from pydantic import PrivateAttr
 
 from .trie import EMPTY_TRIE_ROOT, FrontierAccount, Trie, root, trie_get, trie_set
 from .utils import keccak256

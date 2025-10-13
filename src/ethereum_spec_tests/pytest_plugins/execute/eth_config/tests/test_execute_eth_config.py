@@ -6,7 +6,6 @@ from pathlib import Path
 
 import pytest
 import yaml
-
 from ethereum_test_base_types import ForkHash
 from ethereum_test_rpc import EthConfigResponse
 

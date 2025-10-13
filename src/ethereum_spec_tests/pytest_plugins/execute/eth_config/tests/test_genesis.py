@@ -4,7 +4,6 @@ from os.path import realpath
 from pathlib import Path
 
 import pytest
-
 from ethereum_test_base_types import Hash
 from ethereum_test_forks import (
     BPO1,

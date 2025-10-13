@@ -4,7 +4,6 @@ abstract: Tests [EIP-1344: CHAINID opcode](https://eips.ethereum.org/EIPS/eip-13
 """
 
 import pytest
-
 from ethereum_test_tools import Account, Alloc, ChainConfig, StateTestFiller, Transaction
 from ethereum_test_tools.vm.opcode import Opcodes as Op
 

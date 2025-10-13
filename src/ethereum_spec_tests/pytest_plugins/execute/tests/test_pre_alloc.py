@@ -3,7 +3,6 @@
 from typing import Any
 
 import pytest
-
 from ethereum_test_base_types import Address
 
 from ..pre_alloc import AddressStubs

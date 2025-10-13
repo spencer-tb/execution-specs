@@ -4,12 +4,11 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Tuple
 
-from filelock import FileLock
-from pydantic import Field, PrivateAttr, computed_field
-
 from ethereum_test_base_types import CamelModel, EthereumTestRootModel
 from ethereum_test_forks import Fork
 from ethereum_test_types import Alloc, Environment
+from filelock import FileLock
+from pydantic import Field, PrivateAttr, computed_field
 
 from .blockchain import FixtureHeader
 

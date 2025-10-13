@@ -3,7 +3,6 @@
 from typing import Any, Mapping, Type
 
 import pytest
-
 from ethereum_clis import TransitionTool
 from ethereum_test_base_types import Account, Address, Storage, TestAddress, TestPrivateKey
 from ethereum_test_exceptions import TransactionException

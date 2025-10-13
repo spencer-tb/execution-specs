@@ -9,7 +9,6 @@ from itertools import cycle
 from typing import Dict, Generator, Iterator, List
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     EOA,

@@ -6,7 +6,6 @@ Tests that benchmark EVMs in the worst-case memory opcodes.
 """
 
 import pytest
-
 from ethereum_test_base_types.base_types import Bytes
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (

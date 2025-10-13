@@ -5,10 +5,9 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Optional, TextIO
 
-from pydantic import BaseModel, RootModel
-
 from ethereum_test_base_types import HexNumber
 from ethereum_test_forks import Fork
+from pydantic import BaseModel, RootModel
 
 from .base import BaseFixture, FixtureFormat
 from .file import Fixtures

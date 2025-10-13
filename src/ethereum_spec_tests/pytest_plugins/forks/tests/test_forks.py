@@ -1,7 +1,6 @@
 """Test the forks plugin."""
 
 import pytest
-
 from ethereum_test_fixtures import LabeledFixtureFormat
 from ethereum_test_forks import ArrowGlacier, forks_from_until, get_deployed_forks, get_forks
 from ethereum_test_tools import StateTest

@@ -6,7 +6,6 @@ https://eips.ethereum.org/EIPS/eip-1153.
 from typing import Optional
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Alloc,

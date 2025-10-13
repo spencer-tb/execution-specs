@@ -2,8 +2,6 @@
 
 from typing import ClassVar, List, Mapping, Sequence
 
-from pydantic import BaseModel, Field
-
 from ethereum_test_base_types import (
     AccessList,
     Address,
@@ -20,6 +18,7 @@ from ethereum_test_types.transaction_types import (
     Transaction,
     TransactionFixtureConverter,
 )
+from pydantic import BaseModel, Field
 
 from .base import BaseFixture
 from .common import FixtureAuthorizationTuple, FixtureBlobSchedule

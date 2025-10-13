@@ -2,7 +2,6 @@
 
 import pytest
 from click.testing import CliRunner
-
 from ethereum_test_base_types import Account
 from ethereum_test_tools import Environment, Storage, Transaction
 

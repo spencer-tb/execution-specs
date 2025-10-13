@@ -3,8 +3,6 @@
 from hashlib import sha256
 from typing import ClassVar, Dict, List
 
-from pytest import FixtureRequest
-
 from ethereum_test_base_types import Address, Hash
 from ethereum_test_base_types.base_types import Bytes
 from ethereum_test_forks import Fork
@@ -12,6 +10,7 @@ from ethereum_test_rpc import BlobAndProofV1, BlobAndProofV2, EngineRPC, EthRPC
 from ethereum_test_rpc.types import GetBlobsResponse
 from ethereum_test_types import NetworkWrappedTransaction, Transaction
 from ethereum_test_types.transaction_types import TransactionTestMetadata
+from pytest import FixtureRequest
 from pytest_plugins.logging import get_logger
 
 from .base import BaseExecute

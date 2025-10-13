@@ -13,16 +13,15 @@ from pathlib import Path
 from typing import Any, ClassVar, Dict, List, LiteralString, Mapping, Optional, Type
 from urllib.parse import urlencode
 
-from requests import Response
-from requests.exceptions import ConnectionError as RequestsConnectionError
-from requests.exceptions import ReadTimeout
-from requests_unixsocket import Session  # type: ignore
-
 from ethereum_test_base_types import BlobSchedule
 from ethereum_test_exceptions import ExceptionMapper
 from ethereum_test_forks import Fork
 from ethereum_test_forks.helpers import get_development_forks, get_forks
 from ethereum_test_types import Alloc, Environment, Transaction
+from requests import Response
+from requests.exceptions import ConnectionError as RequestsConnectionError
+from requests.exceptions import ReadTimeout
+from requests_unixsocket import Session  # type: ignore
 
 from .ethereum_cli import EthereumCLI
 from .file_utils import dump_files_to_directory, write_json_file

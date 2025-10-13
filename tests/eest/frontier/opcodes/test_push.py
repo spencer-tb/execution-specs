@@ -4,7 +4,6 @@ Ported from: https://github.com/ethereum/tests/blob/4f65a0a7cbecf4442415c226c65e
 """  # noqa: E501
 
 import pytest
-
 from ethereum_test_forks import Fork, Frontier, Homestead
 from ethereum_test_tools import Account, Alloc, Environment, StateTestFiller, Transaction
 from ethereum_test_tools import Opcodes as Op

@@ -7,7 +7,6 @@ note: Tests ported from:
 """
 
 import pytest
-
 from ethereum_test_tools import (
     EOA,
     Account,

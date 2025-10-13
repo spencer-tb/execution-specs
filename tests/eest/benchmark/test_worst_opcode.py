@@ -6,7 +6,6 @@ Tests running worst-case opcodes scenarios for benchmarking purposes.
 """
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     Alloc,

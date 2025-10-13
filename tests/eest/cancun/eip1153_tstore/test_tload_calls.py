@@ -4,7 +4,6 @@ https://eips.ethereum.org/EIPS/eip-1153.
 """
 
 import pytest
-
 from ethereum_test_tools import Account, Address, Alloc, Environment, StateTestFiller, Transaction
 from ethereum_test_tools.vm.opcode import Bytecode
 from ethereum_test_tools.vm.opcode import Opcodes as Op

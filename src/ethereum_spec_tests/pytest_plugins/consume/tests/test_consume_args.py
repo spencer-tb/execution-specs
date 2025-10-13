@@ -6,10 +6,9 @@ from pathlib import Path
 from typing import List
 
 import pytest
+from ethereum_clis import TransitionTool
 from filelock import FileLock
 from pytest import Pytester, TempPathFactory
-
-from ethereum_clis import TransitionTool
 
 MINIMAL_TEST_FILE_NAME = "test_example.py"
 MINIMAL_TEST_CONTENTS = """

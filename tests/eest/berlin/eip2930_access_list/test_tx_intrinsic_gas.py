@@ -6,7 +6,6 @@ Original test by Ori: https://github.com/ethereum/tests/blob/v15.0/src/GeneralSt
 from typing import List
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     AccessList,

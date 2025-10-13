@@ -7,11 +7,10 @@ from pathlib import Path
 from typing import Generator
 
 import click
-from rich.progress import BarColumn, Progress, TaskProgressColumn, TextColumn, TimeElapsedColumn
-
 from ethereum_test_base_types import to_json
 from ethereum_test_fixtures.file import Fixtures
 from ethereum_test_specs.base import HashMismatchExceptionError
+from rich.progress import BarColumn, Progress, TaskProgressColumn, TextColumn, TimeElapsedColumn
 
 
 def count_json_files_exclude_index(start_path: Path) -> int:

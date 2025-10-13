@@ -6,7 +6,6 @@ https://eips.ethereum.org/EIPS/eip-1153.
 from enum import Enum
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Address,

@@ -1,7 +1,6 @@
 """EOF JUMPF tests covering stack validation rules."""
 
 import pytest
-
 from ethereum_test_specs import EOFTestFiller
 from ethereum_test_tools import Account, EOFException, EOFStateTestFiller
 from ethereum_test_tools.vm.opcode import Opcodes as Op

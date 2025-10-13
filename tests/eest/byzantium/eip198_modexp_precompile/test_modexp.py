@@ -5,7 +5,6 @@ abstract: Test [EIP-198: MODEXP Precompile](https://eips.ethereum.org/EIPS/eip-1
 """
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Alloc,

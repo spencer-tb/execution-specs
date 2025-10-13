@@ -7,7 +7,6 @@ abstract: Tests `excessBlobGas` and `blobGasUsed` block fields for [EIP-4844: Sh
 from typing import List, Mapping
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     EOA,

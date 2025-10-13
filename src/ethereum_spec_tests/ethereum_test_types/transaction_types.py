@@ -7,18 +7,6 @@ from typing import Any, ClassVar, Dict, Generic, List, Literal, Sequence
 
 import ethereum_rlp as eth_rlp
 from coincurve.keys import PrivateKey, PublicKey
-from ethereum_types.numeric import Uint
-from pydantic import (
-    AliasChoices,
-    BaseModel,
-    ConfigDict,
-    Field,
-    computed_field,
-    model_serializer,
-    model_validator,
-)
-from trie import HexaryTrie
-
 from ethereum_test_base_types import (
     AccessList,
     Address,
@@ -33,7 +21,18 @@ from ethereum_test_base_types import (
     TestPrivateKey,
 )
 from ethereum_test_exceptions import TransactionException
+from ethereum_types.numeric import Uint
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field,
+    computed_field,
+    model_serializer,
+    model_validator,
+)
 from pytest_plugins.logging import get_logger
+from trie import HexaryTrie
 
 from .account_types import EOA
 from .blob_types import Blob

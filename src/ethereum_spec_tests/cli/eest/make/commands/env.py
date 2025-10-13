@@ -1,9 +1,8 @@
 """CLI commands for managing the environment file."""
 
 import click
-from jinja2 import Environment, PackageLoader
-
 from config.env import ENV_PATH, Config
+from jinja2 import Environment, PackageLoader
 
 from ...quotes import get_quote
 

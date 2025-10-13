@@ -2,12 +2,11 @@
 
 from typing import Any, ClassVar, Mapping
 
-from pydantic import Field
-
 from ethereum_test_base_types import Bytes, CamelModel, Number
 from ethereum_test_exceptions.exceptions import EOFExceptionInstanceOrList
 from ethereum_test_forks import Fork
 from ethereum_test_types.eof.v1 import ContainerKind
+from pydantic import Field
 
 from .base import BaseFixture
 

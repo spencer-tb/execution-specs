@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import pytest
-
 from ethereum_test_exceptions import BlockException, ExceptionMapper, TransactionException
 from ethereum_test_fixtures import BlockchainFixture, EOFFixture, FixtureFormat, StateFixture
 

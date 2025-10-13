@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Dict
 
 import pytest
-
 from ethereum_test_forks import Prague
 from ethereum_test_tools import (
     Account,

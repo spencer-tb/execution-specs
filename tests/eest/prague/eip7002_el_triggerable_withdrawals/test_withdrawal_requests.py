@@ -7,7 +7,6 @@ abstract: Tests [EIP-7002: Execution layer triggerable withdrawals](https://eips
 from typing import List
 
 import pytest
-
 from ethereum_test_forks import Fork
 from ethereum_test_tools import (
     Address,

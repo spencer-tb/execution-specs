@@ -4,14 +4,13 @@ from pathlib import Path
 from typing import Dict, Literal
 
 import pytest
-from hive.client import Client
-
 from ethereum_test_fixtures import (
     BaseFixture,
 )
 from ethereum_test_fixtures.consume import TestCaseIndexFile, TestCaseStream
 from ethereum_test_fixtures.file import Fixtures
 from ethereum_test_rpc import EthRPC
+from hive.client import Client
 
 from ..consume import FixturesSource
 

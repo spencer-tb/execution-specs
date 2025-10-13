@@ -5,7 +5,6 @@ from enum import Enum, auto, unique
 from typing import Tuple
 
 import pytest
-
 from ethereum_test_exceptions.exceptions import EOFException
 from ethereum_test_tools import Account, EOFStateTestFiller, EOFTestFiller
 from ethereum_test_tools.vm.opcode import Opcodes as Op

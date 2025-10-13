@@ -4,8 +4,6 @@ from pprint import pprint
 from typing import Any, Callable, ClassVar, Dict, Generator, List, Sequence, Tuple, Type
 
 import pytest
-from pydantic import ConfigDict, Field, field_validator
-
 from ethereum_clis import BlockExceptionWithMessage, Result, TransitionTool
 from ethereum_test_base_types import (
     Address,
@@ -53,6 +51,7 @@ from ethereum_test_fixtures.common import FixtureBlobSchedule
 from ethereum_test_forks import Fork
 from ethereum_test_types import Alloc, Environment, Removable, Requests, Transaction, Withdrawal
 from ethereum_test_types.block_access_list import BlockAccessList, BlockAccessListExpectation
+from pydantic import ConfigDict, Field, field_validator
 
 from .base import BaseTest, OpMode, verify_result
 from .debugging import print_traces

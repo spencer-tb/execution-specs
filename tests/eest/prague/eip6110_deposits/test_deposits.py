@@ -6,7 +6,6 @@ abstract: Tests [EIP-6110: Supply validator deposits on chain](https://eips.ethe
 from typing import List
 
 import pytest
-
 from ethereum_test_tools import (
     Alloc,
     Block,

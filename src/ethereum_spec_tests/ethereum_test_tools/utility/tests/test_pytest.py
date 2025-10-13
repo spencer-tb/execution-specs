@@ -1,7 +1,6 @@
 """Tests for ethereum_test_tools.utility.pytest."""
 
 import pytest
-
 from ethereum_test_tools import extend_with_defaults
 from ethereum_test_tools.utility.pytest import UnknownParameterInCasesError
 

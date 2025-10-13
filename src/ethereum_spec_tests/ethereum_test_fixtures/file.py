@@ -4,10 +4,9 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
+from ethereum_test_base_types import EthereumTestRootModel
 from filelock import FileLock
 from pydantic import SerializeAsAny
-
-from ethereum_test_base_types import EthereumTestRootModel
 
 from .base import BaseFixture
 

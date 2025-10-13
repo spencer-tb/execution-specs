@@ -6,7 +6,6 @@ abstract: Tests [EIP-7883: ModExp Gas Cost Increase](https://eips.ethereum.org/E
 from typing import Dict
 
 import pytest
-
 from ethereum_test_checklists import EIPChecklist
 from ethereum_test_tools import Alloc, StateTestFiller, Transaction
 from ethereum_test_tools.vm.opcode import Opcodes as Op

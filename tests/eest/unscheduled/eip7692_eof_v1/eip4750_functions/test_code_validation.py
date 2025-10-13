@@ -3,7 +3,6 @@
 from typing import List
 
 import pytest
-
 from ethereum_test_tools import EOFException, EOFTestFiller
 from ethereum_test_tools.vm.opcode import Opcodes as Op
 from ethereum_test_types.eof.constants import MAX_RUNTIME_STACK_HEIGHT

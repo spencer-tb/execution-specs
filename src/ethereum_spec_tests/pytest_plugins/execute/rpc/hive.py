@@ -8,11 +8,6 @@ from random import randint
 from typing import Generator, Mapping, Tuple, cast
 
 import pytest
-from filelock import FileLock
-from hive.client import Client, ClientType
-from hive.simulation import Simulation
-from hive.testing import HiveTest, HiveTestResult, HiveTestSuite
-
 from ethereum_test_base_types import EmptyOmmersRoot, EmptyTrieRoot, to_json
 from ethereum_test_fixtures.blockchain import FixtureHeader
 from ethereum_test_forks import Fork
@@ -26,6 +21,10 @@ from ethereum_test_tools import (
     Withdrawal,
 )
 from ethereum_test_types import ChainConfig, Requests
+from filelock import FileLock
+from hive.client import Client, ClientType
+from hive.simulation import Simulation
+from hive.testing import HiveTest, HiveTestResult, HiveTestSuite
 
 from ...consume.simulators.helpers.ruleset import ruleset
 from .chain_builder_eth_rpc import ChainBuilderEthRPC

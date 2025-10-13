@@ -6,7 +6,6 @@ abstract: Tests [EIP-2935: Serve historical block hashes from state](https://eip
 from typing import Dict, List
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Address,

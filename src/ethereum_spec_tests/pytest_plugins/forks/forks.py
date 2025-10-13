@@ -11,8 +11,6 @@ from typing import Any, Callable, ClassVar, Dict, Iterable, Iterator, List, Set,
 
 import pytest
 from _pytest.mark.structures import ParameterSet
-from pytest import Mark, Metafunc
-
 from ethereum_clis import TransitionTool
 from ethereum_test_forks import (
     ALL_FORKS,
@@ -25,6 +23,8 @@ from ethereum_test_forks import (
     get_transition_forks,
     transition_fork_to,
 )
+from pytest import Mark, Metafunc
+
 from pytest_plugins.logging import get_logger
 
 logger = get_logger(__name__)

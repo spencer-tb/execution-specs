@@ -1,7 +1,6 @@
 """Unit tests for the PhaseManager class."""
 
 import pytest
-
 from ethereum_test_fixtures import FixtureFillingPhase
 
 from ..filler import PhaseManager

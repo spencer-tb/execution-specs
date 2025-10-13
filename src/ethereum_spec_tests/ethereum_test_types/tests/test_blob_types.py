@@ -4,8 +4,6 @@ import copy
 import time
 
 import pytest
-from filelock import FileLock
-
 from ethereum_test_forks import (
     Cancun,
     Osaka,
@@ -16,6 +14,7 @@ from ethereum_test_forks.forks.transition import (
     PragueToOsakaAtTime15k,
     ShanghaiToCancunAtTime15k,
 )
+from filelock import FileLock
 
 from ..blob_types import CACHED_BLOBS_DIRECTORY, Blob, clear_blob_cache
 

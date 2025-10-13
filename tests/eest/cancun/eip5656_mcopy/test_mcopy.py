@@ -7,7 +7,6 @@ abstract: Tests [EIP-5656: MCOPY - Memory copying instruction](https://eips.ethe
 from typing import Mapping
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Address,

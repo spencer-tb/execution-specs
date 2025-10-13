@@ -7,6 +7,8 @@ from functools import cached_property
 from typing import Annotated, Any, ClassVar, Dict, List, Set, Type, Union
 
 import pytest
+from ethereum_test_base_types import CamelModel, ReferenceSpec
+from ethereum_test_forks import Fork
 from pydantic import (
     Discriminator,
     Field,
@@ -17,9 +19,6 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core.core_schema import ValidatorFunctionWrapHandler
-
-from ethereum_test_base_types import CamelModel, ReferenceSpec
-from ethereum_test_forks import Fork
 
 
 def fixture_format_discriminator(v: Any) -> str | None:

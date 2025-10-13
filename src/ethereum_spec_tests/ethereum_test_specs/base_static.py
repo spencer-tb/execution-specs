@@ -4,14 +4,13 @@ import re
 from abc import abstractmethod
 from typing import Any, Callable, ClassVar, Dict, List, Tuple, Type, Union
 
+from ethereum_test_base_types import Bytes
 from pydantic import (
     BaseModel,
     TypeAdapter,
     ValidatorFunctionWrapHandler,
     model_validator,
 )
-
-from ethereum_test_base_types import Bytes
 
 
 class BaseStaticTest(BaseModel):

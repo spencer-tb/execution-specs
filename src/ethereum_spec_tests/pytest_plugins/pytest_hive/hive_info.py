@@ -3,9 +3,8 @@
 from typing import Dict, List, Optional
 
 import yaml
-from pydantic import BaseModel, Field, RootModel
-
 from ethereum_test_base_types import CamelModel
+from pydantic import BaseModel, Field, RootModel
 
 
 class YAMLModel(BaseModel):

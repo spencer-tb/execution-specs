@@ -2,8 +2,6 @@
 
 from typing import List
 
-from pydantic import Field
-
 from ethereum_test_base_types import (
     Address,
     Bloom,
@@ -12,6 +10,7 @@ from ethereum_test_base_types import (
     Hash,
     HexNumber,
 )
+from pydantic import Field
 
 
 class TransactionLog(CamelModel):

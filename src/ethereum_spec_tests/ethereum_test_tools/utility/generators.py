@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Dict, Generator, List, Protocol
 
 import pytest
-
 from ethereum_test_base_types import Account, Address, Hash
 from ethereum_test_exceptions import BlockException
 from ethereum_test_forks import Fork

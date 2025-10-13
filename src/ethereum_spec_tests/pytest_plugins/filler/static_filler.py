@@ -15,7 +15,6 @@ import yaml
 from _pytest.fixtures import TopRequest
 from _pytest.mark import ParameterSet
 from _pytest.python import Module
-
 from ethereum_test_fixtures import BaseFixture, LabeledFixtureFormat
 from ethereum_test_forks import Fork, get_closest_fork
 from ethereum_test_specs import BaseStaticTest, BaseTest

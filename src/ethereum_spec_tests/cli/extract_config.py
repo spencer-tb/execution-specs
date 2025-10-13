@@ -14,15 +14,14 @@ from pathlib import Path
 from typing import Dict, Optional, Tuple, cast
 
 import click
-from hive.simulation import Simulation
-from hive.testing import HiveTestResult
-
 from ethereum_test_base_types import Alloc, to_json
 from ethereum_test_fixtures import BlockchainFixtureCommon
 from ethereum_test_fixtures.blockchain import FixtureHeader
 from ethereum_test_fixtures.file import Fixtures
 from ethereum_test_fixtures.pre_alloc_groups import PreAllocGroup
 from ethereum_test_forks import Fork
+from hive.simulation import Simulation
+from hive.testing import HiveTestResult
 from pytest_plugins.consume.simulators.helpers.ruleset import ruleset
 
 

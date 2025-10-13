@@ -3,12 +3,11 @@
 from typing import List
 
 import pytest
-from hive.client import ClientType
-
 from ethereum_test_exceptions import ExceptionMapper
 from ethereum_test_fixtures import (
     BlockchainFixtureCommon,
 )
+from hive.client import ClientType
 
 from .helpers.exceptions import EXCEPTION_MAPPERS
 

@@ -3,8 +3,6 @@
 from typing import Any, Dict
 
 import pytest
-from pydantic import TypeAdapter
-
 from ethereum_test_base_types import (
     AccessList,
     Address,
@@ -30,6 +28,7 @@ from ethereum_test_types import (
     Withdrawal,
     WithdrawalRequest,
 )
+from pydantic import TypeAdapter
 
 from ..blockchain import (
     EngineNewPayloadParameters,

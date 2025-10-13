@@ -2,10 +2,9 @@
 
 from typing import Any, Dict, List, Mapping, Set, Tuple
 
-from pydantic import BaseModel
-
 from ethereum_test_base_types import Bytes, EthereumTestRootModel, HexNumber, Storage
 from ethereum_test_types import Alloc
+from pydantic import BaseModel
 
 from .common import (
     AddressOrTagInFiller,

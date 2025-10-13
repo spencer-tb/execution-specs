@@ -8,10 +8,9 @@ from shutil import which
 from subprocess import CompletedProcess, run
 from typing import Optional, Type
 
-from semver import Version
-
 from ethereum_test_forks import Fork
 from ethereum_test_vm import Bytecode
+from semver import Version
 
 DEFAULT_SOLC_ARGS = ("--assemble", "-")
 VERSION_PATTERN = re.compile(r"Version: (.*)")

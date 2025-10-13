@@ -4,7 +4,6 @@ import os
 from typing import Dict, Generator
 
 import pytest
-
 from ethereum_clis import BesuTransitionTool, ExecutionSpecsTransitionTool, TransitionTool
 
 DEFAULT_TRANSITION_TOOL_FOR_UNIT_TESTS = ExecutionSpecsTransitionTool

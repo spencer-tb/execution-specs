@@ -3,7 +3,6 @@
 from typing import List
 
 import click
-
 from config.check_eip_versions import CheckEipVersionsConfig
 
 from .base import PytestCommand, common_pytest_options

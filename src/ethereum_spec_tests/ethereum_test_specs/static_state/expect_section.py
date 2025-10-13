@@ -4,15 +4,6 @@ import re
 from enum import StrEnum
 from typing import Annotated, Any, Dict, Iterator, List, Mapping, Set, Union
 
-from pydantic import (
-    BaseModel,
-    BeforeValidator,
-    Field,
-    ValidatorFunctionWrapHandler,
-    field_validator,
-    model_validator,
-)
-
 from ethereum_test_base_types import (
     Account,
     Address,
@@ -24,6 +15,14 @@ from ethereum_test_base_types import (
 from ethereum_test_exceptions import TransactionExceptionInstanceOrList
 from ethereum_test_forks import Fork, get_forks
 from ethereum_test_types import Alloc
+from pydantic import (
+    BaseModel,
+    BeforeValidator,
+    Field,
+    ValidatorFunctionWrapHandler,
+    field_validator,
+    model_validator,
+)
 
 from .common import (
     AddressOrCreateTagInFiller,

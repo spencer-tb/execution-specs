@@ -8,7 +8,6 @@ abstract: Tests [EIP-1153: Transient Storage Opcodes](https://eips.ethereum.org/
 from enum import unique
 
 import pytest
-
 from ethereum_test_tools import (
     Account,
     Alloc,

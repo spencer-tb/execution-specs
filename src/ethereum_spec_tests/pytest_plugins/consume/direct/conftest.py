@@ -11,13 +11,13 @@ import warnings
 from pathlib import Path
 
 import pytest
-
 from ethereum_clis.ethereum_cli import EthereumCLI
 from ethereum_clis.fixture_consumer_tool import FixtureConsumerTool
 from ethereum_test_base_types import to_json
 from ethereum_test_fixtures import BaseFixture, BlockchainFixture, EOFFixture, StateFixture
 from ethereum_test_fixtures.consume import TestCaseIndexFile, TestCaseStream
 from ethereum_test_fixtures.file import Fixtures
+
 from pytest_plugins.consume.consume import FixturesSource
 
 

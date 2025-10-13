@@ -13,7 +13,6 @@ This simulator:
 import time
 
 import pytest
-
 from ethereum_test_base_types import Hash
 from ethereum_test_exceptions import UndefinedException
 from ethereum_test_fixtures import BlockchainEngineSyncFixture

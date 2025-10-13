@@ -4,10 +4,9 @@ from typing import Callable, ClassVar, List, Self, Set, Union
 
 import pytest
 from _pytest.mark.structures import ParameterSet
-from pydantic import BaseModel, Field, model_validator
-
 from ethereum_test_forks import Fork
 from ethereum_test_types import Alloc
+from pydantic import BaseModel, Field, model_validator
 
 from ..base_static import BaseStaticTest
 from ..state import StateTestFiller

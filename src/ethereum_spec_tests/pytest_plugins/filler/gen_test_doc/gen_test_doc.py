@@ -50,15 +50,14 @@ from typing import Any, Dict, List, Set, Tuple, cast
 
 import mkdocs_gen_files  # type: ignore
 import pytest
-from jinja2 import Environment, FileSystemLoader, StrictUndefined
-from pytest import Item
-
 from ethereum_test_forks import get_forks
 from ethereum_test_specs import BaseTest
 from ethereum_test_tools.utility.versioning import (
     generate_github_url,
     get_current_commit_hash_or_tag,
 )
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
+from pytest import Item
 
 from .page_props import (
     DirectoryPageProps,

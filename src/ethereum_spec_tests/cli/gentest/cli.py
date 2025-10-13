@@ -10,7 +10,6 @@ from sys import stderr
 from typing import TextIO
 
 import click
-
 from ethereum_test_base_types import Hash
 
 from .source_code_generator import get_test_source

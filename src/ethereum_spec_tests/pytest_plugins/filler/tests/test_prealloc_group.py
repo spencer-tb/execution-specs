@@ -6,7 +6,6 @@ from typing import ClassVar, Dict, List
 from unittest.mock import Mock
 
 import pytest
-
 from ethereum_clis import TransitionTool
 from ethereum_test_fixtures import PreAllocGroups
 from ethereum_test_forks import Fork, Prague
