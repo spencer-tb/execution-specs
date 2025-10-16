@@ -1,5 +1,5 @@
 eels:
-  evm-bin: ethereum-spec-evm-resolver
+  evm-bin: null
   x-dist: auto
 geth:
   evm-bin: evm
