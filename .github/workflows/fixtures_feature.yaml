@@ -1,0 +1,84 @@
+name: Build and Package Fixtures for a Feature
+
+on:
+  push:
+    tags:
+      - "*@v*"
+  workflow_dispatch:
+
+jobs:
+  feature-names:
+    runs-on: ubuntu-latest
+    outputs:
+      names: ${{ steps.feature-name.outputs.names }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          submodules: false
+      
+      - name: Get feature names
+        id: feature-name
+        shell: bash
+        run: |
+          names=$(grep -Po "^${GITHUB_REF_NAME//@*/}[^:]*" .github/configs/feature.yaml | jq  --raw-input .  | jq -c --slurp .)
+          echo names=${names}
+          echo names=${names} >> "$GITHUB_OUTPUT"
+  
+  build:
+    needs: feature-names
+    runs-on: ubuntu-latest
+    timeout-minutes: 1440
+    strategy:
+      matrix:
+        feature: ${{ fromJSON(needs.feature-names.outputs.names) }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          submodules: true
+      
+      - name: Fetch lllc
+        uses: ./.github/actions/fetch-binary
+        with:
+          version: v1.0.0
+          repo_owner: felix314159
+          repo_name: lllc-custom
+          remote_name: lllc
+          binary_name: lllc
+          expected_sha256: 865a0d5379acb3b5471337b5dcf686a2dd71587c6b65b9da6c963de627e0b300
+      
+      - name: Fetch Solidity
+        uses: ./.github/actions/fetch-binary
+        with:
+          version: v0.8.24
+          repo_owner: ethereum
+          repo_name: solidity
+          remote_name: solc-static-linux
+          binary_name: solc
+          expected_sha256: fb03a29a517452b9f12bcf459ef37d0a543765bb3bbc911e70a87d6a37c30d5f
+      
+      - uses: ./.github/actions/build-fixtures
+        with:
+          release_name: ${{ matrix.feature }}
+          uv_version: ${{ vars.UV_VERSION }}
+          python_version: ${{ vars.DEFAULT_PYTHON_VERSION }}
+  
+  release:
+    runs-on: ubuntu-latest # TODO: change to selfhosted runner - [self-hosted-ghr, size-gigachungus-x64]
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
+        with:
+          path: .
+      
+      - name: Draft Pre-release to EEST Repository
+        uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda
+        with:
+          repository: spencer-tb/execution-spec-tests # TODO: NEW ADDITION - change to ethereum/eest
+          token: ${{ secrets.EEST_RELEASE_TOKEN }} # TODO: NEW ADDITION
+          files: "./**"
+          draft: true
+          prerelease: true
+          generate_release_notes: true
+          fail_on_unmatched_files: true
