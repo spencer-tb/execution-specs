@@ -16,7 +16,7 @@ pytestmark = pytest.mark.valid_from(EOF_FORK_NAME)
 
 def test_eof_example(eof_test: EOFTestFiller):
     """Example of python EOF classes."""
-    # Lets construct an EOF container code
+    # Let's construct an EOF container code
     eof_code = Container(
         name="valid_container_example",
         sections=[

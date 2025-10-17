@@ -433,6 +433,10 @@ ignore_names = ["pytest_*"]
 
 [tool.ruff]
 line-length = 79
+exclude = [
+    "src/ethereum_spec_tests",
+    "tests/eest",
+]
 
 [tool.ruff.lint]
 select = [
