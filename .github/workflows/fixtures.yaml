@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           submodules: true
-      - uses: ./.github/actions/build-fixtures
+      - uses: ./.github/actions/eest/build-fixtures
         with:
           release_name: ${{ matrix.name }}
           uv_version: ${{ vars.UV_VERSION }}
