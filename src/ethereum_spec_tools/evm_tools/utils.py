@@ -27,6 +27,9 @@ from ethereum_spec_tools.forks import Hardfork
 W = TypeVar("W", Uint, U64, U256)
 
 EXCEPTION_MAPS = {
+    "BPO1": {
+        "fork_blocks": [("osaka", 0)],
+    },
     "FrontierToHomesteadAt5": {
         "fork_blocks": [("frontier", 0), ("homestead", 5)],
     },
@@ -84,7 +87,7 @@ class FatalError(Exception):
 
 def find_fork(
     forks: Sequence[Hardfork], options: Any, stdin: Any
-) -> Tuple[Hardfork, int]:
+) -> Tuple[Hardfork, int | None]:
     """
     Get the module name and the fork block for the given state fork.
     """
@@ -97,7 +100,7 @@ def find_fork(
     except KeyError:
         pass
 
-    current_fork_block = 0
+    current_fork_block: None | int = None
     current_fork_module = re.sub(
         r"(?<!^)(?=[A-Z])",
         "_",
