@@ -395,9 +395,6 @@ def call(evm: Evm) -> None:
         evm.accessed_addresses.add(to)
         access_gas_cost = GAS_COLD_ACCOUNT_ACCESS
 
-    # Track address access for BAL
-    track_address_access(evm.message.block_env.state.change_tracker, to)
-
     code_address = to
     (
         disable_precompiles,
@@ -419,6 +416,10 @@ def call(evm: Evm) -> None:
         access_gas_cost + create_gas_cost + transfer_gas_cost,
     )
     charge_gas(evm, message_call_gas.cost + extend_memory.cost)
+
+    # Track address access for BAL
+    track_address_access(evm.message.block_env.state.change_tracker, to)
+
     if evm.message.is_static and value != U256(0):
         raise WriteInStaticContext
     evm.memory += b"\x00" * extend_memory.expand_by
@@ -487,10 +488,6 @@ def callcode(evm: Evm) -> None:
         evm.accessed_addresses.add(code_address)
         access_gas_cost = GAS_COLD_ACCOUNT_ACCESS
 
-    # Track address access for BAL
-    track_address_access(
-        evm.message.block_env.state.change_tracker, code_address
-    )
 
     (
         disable_precompiles,
@@ -509,6 +506,11 @@ def callcode(evm: Evm) -> None:
         access_gas_cost + transfer_gas_cost,
     )
     charge_gas(evm, message_call_gas.cost + extend_memory.cost)
+
+    # Track address access for BAL
+    track_address_access(
+        evm.message.block_env.state.change_tracker, code_address
+    )
 
     # OPERATION
     evm.memory += b"\x00" * extend_memory.expand_by
@@ -643,10 +645,6 @@ def delegatecall(evm: Evm) -> None:
         evm.accessed_addresses.add(code_address)
         access_gas_cost = GAS_COLD_ACCOUNT_ACCESS
 
-    # Track address access for BAL
-    track_address_access(
-        evm.message.block_env.state.change_tracker, code_address
-    )
 
     (
         disable_precompiles,
@@ -660,6 +658,11 @@ def delegatecall(evm: Evm) -> None:
         U256(0), gas, Uint(evm.gas_left), extend_memory.cost, access_gas_cost
     )
     charge_gas(evm, message_call_gas.cost + extend_memory.cost)
+
+    # Track address access for BAL
+    track_address_access(
+        evm.message.block_env.state.change_tracker, code_address
+    )
 
     # OPERATION
     evm.memory += b"\x00" * extend_memory.expand_by
@@ -717,9 +720,6 @@ def staticcall(evm: Evm) -> None:
         evm.accessed_addresses.add(to)
         access_gas_cost = GAS_COLD_ACCOUNT_ACCESS
 
-    # Track address access for BAL
-    track_address_access(evm.message.block_env.state.change_tracker, to)
-
     code_address = to
     (
         disable_precompiles,
@@ -737,6 +737,9 @@ def staticcall(evm: Evm) -> None:
         access_gas_cost,
     )
     charge_gas(evm, message_call_gas.cost + extend_memory.cost)
+
+    # Track address access for BAL
+    track_address_access(evm.message.block_env.state.change_tracker, to)
 
     # OPERATION
     evm.memory += b"\x00" * extend_memory.expand_by
