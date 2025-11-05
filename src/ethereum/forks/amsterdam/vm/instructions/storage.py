@@ -119,11 +119,8 @@ def sstore(evm: Evm) -> None:
     else:
         gas_cost += GAS_WARM_ACCESS
 
-    check_gas(evm, gas_cost)
-
-    if is_cold_access:
-        evm.accessed_storage_keys.add((evm.message.current_target, key))
-
+    # Track storage access BEFORE checking gas (EIP-7928)
+    # Even if we run out of gas, the access attempt should be tracked
     track_storage_read(
         evm.message.block_env,
         evm.message.current_target,
@@ -135,6 +132,11 @@ def sstore(evm: Evm) -> None:
         key,
         new_value,
     )
+
+    check_gas(evm, gas_cost)
+
+    if is_cold_access:
+        evm.accessed_storage_keys.add((evm.message.current_target, key))
 
     charge_gas(evm, gas_cost)
     if evm.message.is_static:
