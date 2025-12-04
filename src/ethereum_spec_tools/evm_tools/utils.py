@@ -30,6 +30,18 @@ EXCEPTION_MAPS = {
     "BPO1": {
         "fork_blocks": [("osaka", 0)],
     },
+    "BPO2": {
+        "fork_blocks": [("osaka", 0)],
+    },
+    "BPO3": {
+        "fork_blocks": [("osaka", 0)],
+    },
+    "BPO4": {
+        "fork_blocks": [("osaka", 0)],
+    },
+    "BPO5": {
+        "fork_blocks": [("osaka", 0)],
+    },
     "FrontierToHomesteadAt5": {
         "fork_blocks": [("frontier", 0), ("homestead", 5)],
     },
