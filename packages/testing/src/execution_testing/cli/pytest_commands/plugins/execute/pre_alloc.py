@@ -41,7 +41,6 @@ from execution_testing.test_types import (
     compute_deterministic_create2_address,
 )
 from execution_testing.test_types import Alloc as BaseAlloc
-from execution_testing.test_types.eof.v1 import Container
 from execution_testing.tools import Initcode
 from execution_testing.vm import Bytecode, EVMCodeType, Op
 
@@ -240,7 +239,7 @@ class Alloc(BaseAlloc):
     _sender: EOA = PrivateAttr()
     _eth_rpc: EthRPC = PrivateAttr()
     _pending_txs: List[PendingTransaction] = PrivateAttr(default_factory=list)
-    _deployed_contracts: List[Tuple[Address, Bytes | Bytecode | Container]] = (
+    _deployed_contracts: List[Tuple[Address, Bytes | Bytecode]] = (
         PrivateAttr(default_factory=list)
     )
     _funded_eoa: List[EOA] = PrivateAttr(default_factory=list)
@@ -285,18 +284,13 @@ class Alloc(BaseAlloc):
 
     def code_pre_processor(
         self,
-        code: Bytecode | Container,
+        code: Bytecode,
         *,
         evm_code_type: EVMCodeType | None,
-    ) -> Bytecode | Container:
+    ) -> Bytecode:
         """Pre-processes the code before setting it."""
         if evm_code_type is None:
             evm_code_type = self._evm_code_type
-        if evm_code_type == EVMCodeType.EOF_V1:
-            if not isinstance(code, Container):
-                if isinstance(code, Bytecode) and not code.terminating:
-                    return Container.Code(code + Op.STOP)
-                return Container.Code(code)
         return code
 
     def _add_pending_tx(
@@ -511,7 +505,7 @@ class Alloc(BaseAlloc):
             )
             deploy_gas_limit += len(storage.root) * 22_600
 
-        assert isinstance(code, Bytecode) or isinstance(code, Container), (
+        assert isinstance(code, Bytecode), (
             f"incompatible code type: {type(code)}"
         )
         code = self.code_pre_processor(code, evm_code_type=evm_code_type)
@@ -522,20 +516,12 @@ class Alloc(BaseAlloc):
 
         deploy_gas_limit += len(code) * gas_costs.G_CODE_DEPOSIT_BYTE
 
-        prepared_initcode: Bytecode | Container
-
-        if evm_code_type == EVMCodeType.EOF_V1:
-            assert isinstance(code, Container)
-            prepared_initcode = Container.Init(
-                deploy_container=code, initcode_prefix=initcode_prefix
-            )
-        else:
-            prepared_initcode = Initcode(
-                deploy_code=code, initcode_prefix=initcode_prefix
-            )
-            deploy_gas_limit += memory_expansion_gas_calculator(
-                new_bytes=len(bytes(prepared_initcode))
-            )
+        prepared_initcode = Initcode(
+            deploy_code=code, initcode_prefix=initcode_prefix
+        )
+        deploy_gas_limit += memory_expansion_gas_calculator(
+            new_bytes=len(bytes(prepared_initcode))
+        )
 
         max_initcode_size = self._fork.max_initcode_size()
         if len(prepared_initcode) > max_initcode_size:

@@ -27,7 +27,6 @@ from .checklists import EIPChecklist
 from .exceptions import (
     BlockException,
     EngineAPIError,
-    EOFException,
     TransactionException,
 )
 from .fixtures import BaseFixture, FixtureCollector
@@ -41,10 +40,6 @@ from .specs import (
     Block,
     BlockchainTest,
     BlockchainTestFiller,
-    EOFStateTest,
-    EOFStateTestFiller,
-    EOFTest,
-    EOFTestFiller,
     Header,
     StateTest,
     StateTestFiller,
@@ -85,7 +80,6 @@ from .test_types import (
     compute_create2_address,
     compute_create_address,
     compute_deterministic_create2_address,
-    compute_eofcreate_address,
     keccak256,
 )
 from .tools import (
@@ -161,11 +155,6 @@ __all__ = (
     "EngineAPIError",
     "Environment",
     "EOA",
-    "EOFException",
-    "EOFStateTest",
-    "EOFStateTestFiller",
-    "EOFTest",
-    "EOFTestFiller",
     "EVMCodeType",
     "FixtureCollector",
     "Fork",
@@ -214,7 +203,6 @@ __all__ = (
     "compute_create_address",
     "compute_create2_address",
     "compute_deterministic_create2_address",
-    "compute_eofcreate_address",
     "extend_with_defaults",
     "gas_test",
     "generate_system_contract_deploy_test",

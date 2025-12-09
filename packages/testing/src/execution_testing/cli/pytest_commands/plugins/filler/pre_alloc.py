@@ -37,9 +37,8 @@ from execution_testing.test_types import (
     compute_deterministic_create2_address,
 )
 from execution_testing.test_types import Alloc as BaseAlloc
-from execution_testing.test_types.eof.v1 import Container
 from execution_testing.tools import Initcode
-from execution_testing.vm import Bytecode, EVMCodeType, Opcodes
+from execution_testing.vm import Bytecode, EVMCodeType
 
 CONTRACT_START_ADDRESS_DEFAULT = 0x1000000000000000000000000000000000001000
 CONTRACT_ADDRESS_INCREMENTS_DEFAULT = 0x100
@@ -144,11 +143,6 @@ class Alloc(BaseAlloc):
         """Pre-processes the code before setting it."""
         if evm_code_type is None:
             evm_code_type = self._evm_code_type
-        if evm_code_type == EVMCodeType.EOF_V1:
-            if not isinstance(code, Container):
-                if isinstance(code, Bytecode) and not code.terminating:
-                    return Container.Code(code + Opcodes.STOP)
-                return Container.Code(code)
         return code
 
     def deterministic_deploy_contract(

@@ -2489,38 +2489,3 @@ class Amsterdam(BPO2):
         """From Amsterdam, new payload calls must use version 5."""
         del block_number, timestamp
         return 5
-
-
-class EOFv1(Prague, solc_name="cancun"):
-    """EOF fork."""
-
-    @classmethod
-    def evm_code_types(
-        cls, *, block_number: int = 0, timestamp: int = 0
-    ) -> List[EVMCodeType]:
-        """EOF V1 is supported starting from Osaka."""
-        return super(EOFv1, cls).evm_code_types(
-            block_number=block_number,
-            timestamp=timestamp,
-        ) + [EVMCodeType.EOF_V1]
-
-    @classmethod
-    def call_opcodes(
-        cls, *, block_number: int = 0, timestamp: int = 0
-    ) -> List[Tuple[Opcodes, EVMCodeType]]:
-        """EOF V1 introduces EXTCALL, EXTSTATICCALL, EXTDELEGATECALL."""
-        return [
-            (Opcodes.EXTCALL, EVMCodeType.EOF_V1),
-            (Opcodes.EXTSTATICCALL, EVMCodeType.EOF_V1),
-            (Opcodes.EXTDELEGATECALL, EVMCodeType.EOF_V1),
-        ] + super(EOFv1, cls).call_opcodes(
-            block_number=block_number, timestamp=timestamp
-        )
-
-    @classmethod
-    def is_deployed(cls) -> bool:
-        """
-        Flag that the fork has not been deployed to mainnet; it is under active
-        development.
-        """
-        return False

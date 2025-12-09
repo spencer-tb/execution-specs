@@ -9,7 +9,6 @@ class EVMCodeType(str, Enum):
     """
 
     LEGACY = "legacy"
-    EOF_V1 = "eof_v1"
 
     def __str__(self) -> str:
         """Return the name of the EVM code type."""

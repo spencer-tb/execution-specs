@@ -416,7 +416,7 @@ fork_covariant_decorators: List[Type[CovariantDecorator]] = [
     covariant_decorator(
         marker_name="with_all_evm_code_types",
         description="marks a test to be parametrized for all EVM code types at parameter named"
-        " `evm_code_type` of type `EVMCodeType`, such as `LEGACY` and `EOF_V1`",
+        " `evm_code_type` of type `EVMCodeType`, such as `LEGACY`",
         fork_attribute_name="evm_code_types",
         argnames=["evm_code_type"],
     ),

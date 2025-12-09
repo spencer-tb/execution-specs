@@ -153,9 +153,7 @@ def test_alloc_empty_account() -> None:
     # Note: empty_account() only returns address, doesn't add to pre
 
 
-@pytest.mark.parametrize(
-    "evm_code_type", [EVMCodeType.LEGACY, EVMCodeType.EOF_V1]
-)
+@pytest.mark.parametrize("evm_code_type", [EVMCodeType.LEGACY])
 def test_alloc_deploy_contract_code_types(evm_code_type: EVMCodeType) -> None:
     """Test `Alloc.deploy_contract` with different EVM code types."""
     pre = create_test_alloc(evm_code_type=evm_code_type)
@@ -167,12 +165,8 @@ def test_alloc_deploy_contract_code_types(evm_code_type: EVMCodeType) -> None:
     assert account is not None
     assert account.code is not None
 
-    if evm_code_type == EVMCodeType.LEGACY:
-        # Legacy bytecode should be raw opcodes
-        assert account.code == bytes.fromhex("600160005500")
-    elif evm_code_type == EVMCodeType.EOF_V1:
-        # EOF v1 should have the EOF container header
-        assert account.code.startswith(b"\xef\x00\x01")
+    # Legacy bytecode should be raw opcodes
+    assert account.code == bytes.fromhex("600160005500")
 
 
 @pytest.mark.parametrize(
