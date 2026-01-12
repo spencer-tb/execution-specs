@@ -5333,7 +5333,7 @@ class Macros(Macro, Enum):
 
 
 class UndefinedOpcodes(Opcode, Enum):
-    """Enum containing all unknown opcodes (86 at the moment)."""
+    """Enum containing all unknown opcodes (107 at the moment)."""
 
     OPCODE_0C = Opcode(0x0C)
     OPCODE_0D = Opcode(0x0D)
@@ -5403,6 +5403,10 @@ class UndefinedOpcodes(Opcode, Enum):
     OPCODE_CD = Opcode(0xCD)
     OPCODE_CE = Opcode(0xCE)
     OPCODE_CF = Opcode(0xCF)
+    OPCODE_D0 = Opcode(0xD0)
+    OPCODE_D1 = Opcode(0xD1)
+    OPCODE_D2 = Opcode(0xD2)
+    OPCODE_D3 = Opcode(0xD3)
     OPCODE_D4 = Opcode(0xD4)
     OPCODE_D5 = Opcode(0xD5)
     OPCODE_D6 = Opcode(0xD6)
@@ -5415,9 +5419,25 @@ class UndefinedOpcodes(Opcode, Enum):
     OPCODE_DD = Opcode(0xDD)
     OPCODE_DE = Opcode(0xDE)
     OPCODE_DF = Opcode(0xDF)
+    OPCODE_E0 = Opcode(0xE0)
+    OPCODE_E1 = Opcode(0xE1)
+    OPCODE_E2 = Opcode(0xE2)
+    OPCODE_E3 = Opcode(0xE3)
+    OPCODE_E4 = Opcode(0xE4)
+    OPCODE_E5 = Opcode(0xE5)
+    OPCODE_E6 = Opcode(0xE6)
+    OPCODE_E7 = Opcode(0xE7)
+    OPCODE_E8 = Opcode(0xE8)
     OPCODE_E9 = Opcode(0xE9)
     OPCODE_EA = Opcode(0xEA)
     OPCODE_EB = Opcode(0xEB)
+    OPCODE_EC = Opcode(0xEC)
+    OPCODE_ED = Opcode(0xED)
+    OPCODE_EE = Opcode(0xEE)
     OPCODE_EF = Opcode(0xEF)
     OPCODE_F6 = Opcode(0xF6)
+    OPCODE_F7 = Opcode(0xF7)
+    OPCODE_F8 = Opcode(0xF8)
+    OPCODE_F9 = Opcode(0xF9)
+    OPCODE_FB = Opcode(0xFB)
     OPCODE_FC = Opcode(0xFC)

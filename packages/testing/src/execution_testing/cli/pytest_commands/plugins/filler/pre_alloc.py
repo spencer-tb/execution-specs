@@ -38,7 +38,7 @@ from execution_testing.test_types import (
 )
 from execution_testing.test_types import Alloc as BaseAlloc
 from execution_testing.tools import Initcode
-from execution_testing.vm import Bytecode, EVMCodeType
+from execution_testing.vm import EVMCodeType
 
 CONTRACT_START_ADDRESS_DEFAULT = 0x1000000000000000000000000000000000001000
 CONTRACT_ADDRESS_INCREMENTS_DEFAULT = 0x100
