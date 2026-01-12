@@ -116,3 +116,4 @@ jobs:
         run: |
           uv sync --all-extras
           uv run consume ${{ matrix.consume_command }} --input ${{ env.FIXTURES_URL }} -k "Osaka and test_block_at_rlp_limit_with_logs"
+
