@@ -7,6 +7,8 @@ on:
   pull_request:
     paths:
       - ".github/workflows/hive-consume.yaml"
+      - ".github/actions/start-hive-dev/**"
+      - ".github/configs/hive/**"
       - "packages/testing/src/execution_testing/cli/pytest_commands/consume.py"
       - "packages/testing/src/execution_testing/cli/pytest_commands/pytest_ini_files/pytest-consume.ini"
       - "packages/testing/src/execution_testing/cli/pytest_commands/plugins/consume/**"
@@ -29,6 +31,7 @@ jobs:
     runs-on: [self-hosted-ghr, size-l-x64]
     strategy:
       fail-fast: true
+      max-parallel: 1
       matrix:
         include:
           - name: consume-engine
@@ -71,6 +74,12 @@ jobs:
           version: ${{ vars.UV_VERSION }}
           python-version: ${{ vars.DEFAULT_PYTHON_VERSION }}
 
+      - name: Login to Docker Hub to increase pull limits
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build hive
         run: |
           cd hive
@@ -86,6 +95,7 @@ jobs:
             --client-file ../execution-specs/.github/configs/hive/latest.yaml \
             --sim.buildarg fixtures=${{ env.FIXTURES_URL }} \
             --sim.limit=".*test_block_at_rlp_limit_with_logs.*Osaka.*" \
+            --docker.auth \
             --docker.output
 
       - name: Start Hive in dev mode
