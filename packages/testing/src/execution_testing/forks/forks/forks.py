@@ -4,7 +4,7 @@ from dataclasses import replace
 from hashlib import sha256
 from os.path import realpath
 from pathlib import Path
-from typing import List, Literal, Mapping, Optional, Sized, Tuple
+from typing import List, Literal, Mapping, Optional, Sized
 
 from execution_testing.base_types import (
     AccessList,
@@ -14,7 +14,7 @@ from execution_testing.base_types import (
     ForkBlobSchedule,
 )
 from execution_testing.base_types.conversions import BytesConvertible
-from execution_testing.vm import EVMCodeType, Opcodes
+from execution_testing.vm import Opcodes
 
 from ..base_fork import (
     BaseFeeChangeCalculator,
@@ -609,14 +609,6 @@ class Frontier(BaseFork, solc_name="homestead"):
         return None
 
     @classmethod
-    def evm_code_types(
-        cls, *, block_number: int = 0, timestamp: int = 0
-    ) -> List[EVMCodeType]:
-        """At Genesis, only legacy EVM code is supported."""
-        del block_number, timestamp
-        return [EVMCodeType.LEGACY]
-
-    @classmethod
     def max_code_size(
         cls, *, block_number: int = 0, timestamp: int = 0
     ) -> int:
@@ -652,13 +644,10 @@ class Frontier(BaseFork, solc_name="homestead"):
     @classmethod
     def call_opcodes(
         cls, *, block_number: int = 0, timestamp: int = 0
-    ) -> List[Tuple[Opcodes, EVMCodeType]]:
+    ) -> List[Opcodes]:
         """Return list of call opcodes supported by the fork."""
         del block_number, timestamp
-        return [
-            (Opcodes.CALL, EVMCodeType.LEGACY),
-            (Opcodes.CALLCODE, EVMCodeType.LEGACY),
-        ]
+        return [Opcodes.CALL, Opcodes.CALLCODE]
 
     @classmethod
     def valid_opcodes(
@@ -801,12 +790,10 @@ class Frontier(BaseFork, solc_name="homestead"):
     @classmethod
     def create_opcodes(
         cls, *, block_number: int = 0, timestamp: int = 0
-    ) -> List[Tuple[Opcodes, EVMCodeType]]:
+    ) -> List[Opcodes]:
         """At Genesis, only `CREATE` opcode is supported."""
         del block_number, timestamp
-        return [
-            (Opcodes.CREATE, EVMCodeType.LEGACY),
-        ]
+        return [Opcodes.CREATE]
 
     @classmethod
     def max_refund_quotient(
@@ -872,11 +859,11 @@ class Homestead(Frontier):
     @classmethod
     def call_opcodes(
         cls, *, block_number: int = 0, timestamp: int = 0
-    ) -> List[Tuple[Opcodes, EVMCodeType]]:
+    ) -> List[Opcodes]:
         """At Homestead, DELEGATECALL opcode was introduced."""
-        return [(Opcodes.DELEGATECALL, EVMCodeType.LEGACY)] + super(
-            Homestead, cls
-        ).call_opcodes(block_number=block_number, timestamp=timestamp)
+        return [Opcodes.DELEGATECALL] + super(Homestead, cls).call_opcodes(
+            block_number=block_number, timestamp=timestamp
+        )
 
     @classmethod
     def valid_opcodes(
@@ -988,11 +975,11 @@ class Byzantium(Homestead):
     @classmethod
     def call_opcodes(
         cls, *, block_number: int = 0, timestamp: int = 0
-    ) -> List[Tuple[Opcodes, EVMCodeType]]:
+    ) -> List[Opcodes]:
         """At Byzantium, STATICCALL opcode was introduced."""
-        return [(Opcodes.STATICCALL, EVMCodeType.LEGACY)] + super(
-            Byzantium, cls
-        ).call_opcodes(block_number=block_number, timestamp=timestamp)
+        return [Opcodes.STATICCALL] + super(Byzantium, cls).call_opcodes(
+            block_number=block_number, timestamp=timestamp
+        )
 
     @classmethod
     def valid_opcodes(
@@ -1040,11 +1027,11 @@ class Constantinople(Byzantium):
     @classmethod
     def create_opcodes(
         cls, *, block_number: int = 0, timestamp: int = 0
-    ) -> List[Tuple[Opcodes, EVMCodeType]]:
+    ) -> List[Opcodes]:
         """At Constantinople, `CREATE2` opcode is added."""
-        return [(Opcodes.CREATE2, EVMCodeType.LEGACY)] + super(
-            Constantinople, cls
-        ).create_opcodes(block_number=block_number, timestamp=timestamp)
+        return [Opcodes.CREATE2] + super(Constantinople, cls).create_opcodes(
+            block_number=block_number, timestamp=timestamp
+        )
 
     @classmethod
     def valid_opcodes(

@@ -371,7 +371,6 @@ def test_set_code_to_tstore_reentry(
     pre: Alloc,
     call_opcode: Op,
     return_opcode: Op,
-    evm_code_type: EVMCodeType,
 ) -> None:
     """
     Test the executing a simple TSTORE in a set-code transaction, which also
@@ -387,7 +386,6 @@ def test_set_code_to_tstore_reentry(
         + Op.RETURNDATACOPY(0, 0, 32)
         + Op.SSTORE(2, Op.MLOAD(0)),
         if_false=Op.MSTORE(0, Op.TLOAD(1)) + return_opcode(size=32),
-        evm_code_type=evm_code_type,
     )
     set_code_to_address = pre.deploy_contract(set_code)
 
@@ -717,7 +715,6 @@ def test_set_code_to_contract_creator(
     state_test: StateTestFiller,
     pre: Alloc,
     create_opcode: Op,
-    evm_code_type: EVMCodeType,
 ) -> None:
     """
     Test the executing a contract-creating opcode in a set-code transaction.
@@ -726,12 +723,7 @@ def test_set_code_to_contract_creator(
     auth_signer = pre.fund_eoa(auth_account_start_balance)
 
     deployed_code: Bytecode = Op.STOP
-    initcode: Bytecode
-
-    if evm_code_type == EVMCodeType.LEGACY:
-        initcode = Initcode(deploy_code=deployed_code)
-    else:
-        raise ValueError(f"Unsupported EVM code type: {evm_code_type}")
+    initcode: Bytecode = Initcode(deploy_code=deployed_code)
 
     deployed_contract_address = compute_create_address(
         address=auth_signer,
@@ -740,14 +732,12 @@ def test_set_code_to_contract_creator(
         opcode=create_opcode,
     )
 
-    creator_code: Bytecode
-    if evm_code_type == EVMCodeType.LEGACY:
-        creator_code = Op.CALLDATACOPY(0, 0, Op.CALLDATASIZE) + Op.SSTORE(
-            storage.store_next(deployed_contract_address),
-            create_opcode(value=0, offset=0, size=Op.CALLDATASIZE),
-        )
-    else:
-        raise ValueError(f"Unsupported EVM code type: {evm_code_type}")
+    creator_code: Bytecode = Op.CALLDATACOPY(
+        0, 0, Op.CALLDATASIZE
+    ) + Op.SSTORE(
+        storage.store_next(deployed_contract_address),
+        create_opcode(value=0, offset=0, size=Op.CALLDATASIZE),
+    )
 
     creator_code_address = pre.deploy_contract(creator_code)
 
@@ -755,7 +745,7 @@ def test_set_code_to_contract_creator(
         gas_limit=10_000_000,
         to=auth_signer,
         value=0,
-        data=initcode if evm_code_type == EVMCodeType.LEGACY else b"",
+        data=initcode,
         authorization_list=[
             AuthorizationTuple(
                 address=creator_code_address,
@@ -795,7 +785,6 @@ def test_set_code_to_self_caller(
     pre: Alloc,
     call_opcode: Op,
     value: int,
-    evm_code_type: EVMCodeType,
 ) -> None:
     """Test the executing a self-call in a set-code transaction."""
     if "value" not in call_opcode.kwargs and value != 0:
@@ -821,7 +810,6 @@ def test_set_code_to_self_caller(
         + Op.SSTORE(re_entry_call_return_code_slot, call_bytecode)
         + Op.STOP,
         if_false=Op.SSTORE(re_entry_success_slot, 1) + Op.STOP,
-        evm_code_type=evm_code_type,
     )
     set_code_to_address = pre.deploy_contract(set_code)
 
@@ -1412,7 +1400,6 @@ def test_ext_code_on_self_set_code(
     )
 
 
-@pytest.mark.with_all_evm_code_types()
 @pytest.mark.parametrize(
     "set_code_address_first",
     [
@@ -1823,7 +1810,6 @@ def test_set_code_to_account_deployed_in_same_tx(
     state_test: StateTestFiller,
     pre: Alloc,
     create_opcode: Op,
-    evm_code_type: EVMCodeType,
 ) -> None:
     """
     Test setting the code of an account to an address that is deployed in the
@@ -1835,12 +1821,7 @@ def test_set_code_to_account_deployed_in_same_tx(
     success_slot = 1
 
     deployed_code: Bytecode = Op.SSTORE(success_slot, 1) + Op.STOP
-    initcode: Bytecode
-
-    if evm_code_type == EVMCodeType.LEGACY:
-        initcode = Initcode(deploy_code=deployed_code)
-    else:
-        raise ValueError(f"Unsupported EVM code type: {evm_code_type}")
+    initcode: Bytecode = Initcode(deploy_code=deployed_code)
 
     deployed_contract_address_slot = 1
     signer_call_return_code_slot = 2
@@ -1878,7 +1859,7 @@ def test_set_code_to_account_deployed_in_same_tx(
         gas_limit=10_000_000,
         to=contract_creator_address,
         value=0,
-        data=initcode if evm_code_type == EVMCodeType.LEGACY else b"",
+        data=initcode,
         authorization_list=[
             AuthorizationTuple(
                 address=deployed_contract_address,
@@ -2803,7 +2784,6 @@ def test_nonce_overflow_after_first_authorization(
         Op.LOG4,
     ],
 )
-@pytest.mark.with_all_evm_code_types
 def test_set_code_to_log(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -3152,7 +3132,6 @@ def test_set_code_to_system_contract(
     )
 
 
-@pytest.mark.with_all_evm_code_types
 @pytest.mark.with_all_tx_types(
     selector=lambda tx_type: tx_type != 4,
     marks=lambda tx_type: pytest.mark.execute(
@@ -3181,7 +3160,6 @@ def test_eoa_tx_after_set_code(
     pre: Alloc,
     tx_type: int,
     fork: Fork,
-    evm_code_type: EVMCodeType,
     same_block: bool,
 ) -> None:
     """
