@@ -7,7 +7,7 @@ from typing_extensions import Self
 
 from execution_testing.base_types import Bytes
 from execution_testing.test_types import ceiling_division
-from execution_testing.vm import Bytecode, EVMCodeType, Op
+from execution_testing.vm import Bytecode, Op
 
 GAS_PER_DEPLOYED_CODE_BYTE = 0xC8
 
@@ -200,7 +200,6 @@ class Conditional(Bytecode):
         condition: Bytecode | Op,
         if_true: Bytecode | Op | None = None,
         if_false: Bytecode | Op | None = None,
-        evm_code_type: EVMCodeType = EVMCodeType.LEGACY,
     ) -> Self:
         """
         Assemble the conditional bytecode by generating the necessary jump and
@@ -240,7 +239,6 @@ class While(Bytecode):
         *,
         body: Bytecode | Op,
         condition: Bytecode | Op | None = None,
-        evm_code_type: EVMCodeType = EVMCodeType.LEGACY,
     ) -> Self:
         """
         Assemble the loop bytecode.
@@ -328,17 +326,11 @@ class Switch(Bytecode):
     evaluates to a non-zero value is the one that is executed.
     """
 
-    evm_code_type: EVMCodeType
-    """
-    The EVM code type to use for the switch-case bytecode.
-    """
-
     def __new__(
         cls,
         *,
         default_action: Bytecode | Op | None = None,
         cases: List[Case],
-        evm_code_type: EVMCodeType = EVMCodeType.LEGACY,
     ) -> Self:
         """
         Assemble the bytecode by looping over the list of cases and adding the

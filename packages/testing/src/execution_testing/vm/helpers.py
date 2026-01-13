@@ -93,9 +93,7 @@ class MemoryVariable(Bytecode):
         return Op.RETURN(offset=self.offset, size=32)
 
 
-def call_return_code(
-    opcode: Op, success: bool, *, revert: bool = False
-) -> int:
+def call_return_code(opcode: Op, success: bool) -> int:
     """Return return code for a CALL operation."""
     if opcode in [Op.CALL, Op.CALLCODE, Op.DELEGATECALL, Op.STATICCALL]:
         return int(success)
