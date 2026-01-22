@@ -205,4 +205,9 @@ def test_evm_t8n(
                 del expected.get("result")["rejected"][i]["error"]
                 del t8n_result["rejected"][i]["error"]
 
+            # Remove empty logs arrays from EELS output for comparison to GETH
+            for i, receipt in enumerate(t8n_result.get("receipts", [])):
+                if "logs" in receipt and receipt["logs"] == []:
+                    del t8n_result["receipts"][i]["logs"]
+
         assert t8n_result == expected.get("result")
