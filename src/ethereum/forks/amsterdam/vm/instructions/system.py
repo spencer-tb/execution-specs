@@ -45,7 +45,7 @@ from .. import (
     CALL_SUCCESS,
     Evm,
     Message,
-    emit_selfdestruct_log,
+    emit_burn_log,
     emit_transfer_log,
     incorporate_child_on_error,
     incorporate_child_on_success,
@@ -688,7 +688,7 @@ def selfdestruct(evm: Evm) -> None:
     # or transferred to a different account
     if originator in state.created_accounts and beneficiary == originator:
         # Self-destruct to self in same tx burns the balance
-        emit_selfdestruct_log(evm, originator, originator_balance)
+        emit_burn_log(evm, originator, originator_balance)
     elif beneficiary != originator:
         # Transfer to different beneficiary
         emit_transfer_log(evm, originator, beneficiary, originator_balance)
