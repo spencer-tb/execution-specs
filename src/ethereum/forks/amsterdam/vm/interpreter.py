@@ -259,9 +259,9 @@ def process_create_message(message: Message) -> Evm:
             rollback_transaction(state, transient_storage)
             merge_on_failure(message.state_changes)
             evm.regular_gas_used += evm.gas_left
-            evm.state_gas_used += evm.state_gas_left
             evm.gas_left = Uint(0)
-            evm.state_gas_left = Uint(0)
+            # State gas is preserved on exceptional halt so it can be
+            # returned to the parent frame via incorporate_child_on_error.
             evm.output = b""
             evm.error = error
         else:
@@ -393,9 +393,9 @@ def process_message(message: Message) -> Evm:
     except ExceptionalHalt as error:
         evm_trace(evm, OpException(error))
         evm.regular_gas_used += evm.gas_left
-        evm.state_gas_used += evm.state_gas_left
         evm.gas_left = Uint(0)
-        evm.state_gas_left = Uint(0)
+        # State gas is preserved on exceptional halt so it can be
+        # returned to the parent frame via incorporate_child_on_error.
         evm.output = b""
         evm.error = error
     except Revert as error:
