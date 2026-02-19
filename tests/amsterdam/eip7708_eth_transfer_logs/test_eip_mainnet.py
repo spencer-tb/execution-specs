@@ -1,6 +1,8 @@
 """
 Mainnet marked execute checklist tests for
 [EIP-7708: ETH transfers emit a log](https://eips.ethereum.org/EIPS/eip-7708).
+
+TODO: Framework should prevent filling of mainnet-only tests (execute-only).
 """
 
 import pytest

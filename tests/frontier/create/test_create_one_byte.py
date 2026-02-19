@@ -63,7 +63,7 @@ def test_create_one_byte(
             [
                 Op.MSTORE8(23, opcode)  # correct the deploy byte
                 + Op.CALL(
-                    gas=50_000,
+                    gas=200_000,
                     address=create_contract,
                     args_size=32,
                     ret_offset=32,
@@ -95,7 +95,7 @@ def test_create_one_byte(
     expect_post[256] = 1
 
     tx = Transaction(
-        gas_limit=14_000_000,
+        gas_limit=50_000_000,
         to=code,
         data=b"",
         nonce=0,

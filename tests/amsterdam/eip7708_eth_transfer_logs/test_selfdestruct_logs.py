@@ -602,7 +602,9 @@ def test_selfdestruct_finalization_after_priority_fee(
     )
     factory_gas = factory_code.gas_cost(fork)
     initcode_exec_gas = initcode.execution_gas
-    code_deposit_gas = len(runtime_code) * gas_costs.G_CODE_DEPOSIT_BYTE
+    code_deposit_gas = Op.RETURN(
+        code_deposit_size=len(runtime_code)
+    ).gas_cost(fork)
     inner_runtime_gas = Op.SELFDESTRUCT(
         Op.ADDRESS, address_warm=True, account_new=False
     ).gas_cost(fork)
