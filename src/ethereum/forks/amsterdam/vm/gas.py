@@ -16,7 +16,7 @@ from typing import List, Tuple
 
 from ethereum_types.numeric import U64, U256, Uint
 
-from ethereum.trace import GasAndRefund, evm_trace
+from ethereum.trace import GasAndRefund, StateGasAndRefund, evm_trace
 from ethereum.utils.numeric import ceil32, taylor_exponential
 
 from ..blocks import Header
@@ -205,6 +205,8 @@ def charge_state_gas(evm: Evm, amount: Uint) -> None:
         The amount of state gas the current operation requires.
 
     """
+    evm_trace(evm, StateGasAndRefund(int(amount)))
+
     if evm.state_gas_left >= amount:
         evm.state_gas_left -= amount
     elif evm.state_gas_left + evm.gas_left >= amount:
