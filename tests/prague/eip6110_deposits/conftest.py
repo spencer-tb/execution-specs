@@ -12,8 +12,9 @@ from execution_testing import (
     Requests,
     Transaction,
 )
+from execution_testing.forks import Amsterdam
 
-from .helpers import DepositInteractionBase, DepositRequest
+from .helpers import DepositContract, DepositInteractionBase, DepositRequest
 
 
 @pytest.fixture
@@ -28,10 +29,25 @@ def update_pre(pre: Alloc, requests: List[DepositInteractionBase]) -> None:
 
 @pytest.fixture
 def txs(
+    fork: Fork,
     requests: List[DepositInteractionBase],
     update_pre: None,  # Fixture is used for its side effects
 ) -> List[Transaction]:
     """List of transactions to include in the block."""
+    if fork >= Amsterdam:
+        gas_costs = fork.gas_costs()
+        for r in requests:
+            if isinstance(r, DepositContract):
+                valid_count = sum(1 for d in r.requests if d.valid)
+                if valid_count > 0:
+                    # Each deposit writes ~3 new storage slots in the beacon
+                    # deposit contract (branch array, deposit count).
+                    # At Amsterdam (EIP-8037), these SSTOREs incur state gas.
+                    # Bump tx_gas_limit to provide a state gas reservoir so
+                    # state gas does not consume regular execution gas.
+                    r.tx_gas_limit += (
+                        valid_count * 3 * gas_costs.G_STORAGE_SET
+                    )
     txs = []
     for r in requests:
         txs += r.transactions()

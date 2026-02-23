@@ -35,6 +35,8 @@ from execution_testing import (
     extend_with_defaults,
 )
 
+from execution_testing.forks import Amsterdam
+
 from .helpers import AddressType, ChainIDType
 from .spec import Spec, ref_spec_7702
 
@@ -883,15 +885,15 @@ def test_gas_cost(
             else:
                 seen_authority.add(authority)
 
-    discount_gas = (
-        Spec.PER_EMPTY_ACCOUNT_COST - Spec.PER_AUTH_BASE_COST
-    ) * discounted_authorizations
-
     # We calculate the exact gas required to execute the test code. We add
     # SSTORE opcodes in order to make sure that the refund is less than one
     # fifth (EIP-3529) of the total gas used, so we can see the full discount
     # being reflected in most of the tests.
     gas_costs = fork.gas_costs()
+
+    discount_gas = (
+        gas_costs.R_AUTHORIZATION_EXISTING_AUTHORITY * discounted_authorizations
+    )
     gas_opcode_cost = gas_costs.G_BASE
     sstore_opcode_count = 10
     push_opcode_count = (2 * (sstore_opcode_count)) - 1
@@ -923,15 +925,17 @@ def test_gas_cost(
 
     tx_gas_limit = intrinsic_gas + execution_gas
 
-    # EIP-3529
-    max_discount = tx_gas_limit // 5
-
-    if discount_gas > max_discount:
-        # Only one test hits this condition, but it's ok to also test this
-        # case.
-        discount_gas = max_discount
-
-    gas_used = tx_gas_limit - discount_gas
+    if fork >= Amsterdam:
+        # EIP-8037: the existing-authority refund is a state gas return to
+        # the reservoir and is NOT subject to the EIP-3529 1/5 cap.
+        gas_used = tx_gas_limit - discount_gas
+    else:
+        # EIP-3529: the existing-authority refund is a regular refund
+        # subject to the 1/5 cap.
+        max_discount = tx_gas_limit // 5
+        if discount_gas > max_discount:
+            discount_gas = max_discount
+        gas_used = tx_gas_limit - discount_gas
 
     sender_account = pre[sender]
     assert sender_account is not None

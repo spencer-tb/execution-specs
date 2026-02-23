@@ -21,6 +21,7 @@ from execution_testing import (
     Storage,
     Transaction,
 )
+from execution_testing.forks import Amsterdam
 
 from .spec import (
     GAS_CALCULATION_FUNCTION_MAP,
@@ -172,7 +173,20 @@ def tx_gas_limit_calculator(
         fork.transaction_intrinsic_cost_calculator()
     )
     memory_expansion_gas_calculator = fork.memory_expansion_gas_calculator()
-    extra_gas = 22_500 * len(precompile_gas_list)
+    extra_gas_per_call = 22_500
+    if fork >= Amsterdam:
+        # EIP-8037: each SSTORE 0→nonzero incurs additional state gas
+        # (32 * cost_per_state_byte) and the regular portion changes from
+        # G_STORAGE_SET to (G_STORAGE_UPDATE − G_COLD_SLOAD).
+        # Add the per-slot delta so the gas limit remains exact.
+        cpsb = Amsterdam.cost_per_state_byte()
+        gas_costs = fork.gas_costs()
+        sstore_pre_amsterdam = 20_000  # G_STORAGE_SET before Amsterdam
+        sstore_amsterdam = (
+            gas_costs.G_STORAGE_UPDATE - gas_costs.G_COLD_SLOAD + 32 * cpsb
+        )
+        extra_gas_per_call += sstore_amsterdam - sstore_pre_amsterdam
+    extra_gas = extra_gas_per_call * len(precompile_gas_list)
     return (
         extra_gas
         + intrinsic_gas_cost_calculator()
