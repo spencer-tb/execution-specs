@@ -39,6 +39,7 @@ from .request_types import (
 )
 from .transaction_types import (
     AuthorizationTuple,
+    AutoGasConfig,
     NetworkWrappedTransaction,
     Transaction,
     TransactionDefaults,
@@ -52,6 +53,7 @@ __all__ = (
     "DETERMINISTIC_FACTORY_ADDRESS",
     "Alloc",
     "AuthorizationTuple",
+    "AutoGasConfig",
     "BalAccountChange",
     "BalAccountExpectation",
     "BalBalanceChange",

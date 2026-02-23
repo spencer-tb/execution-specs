@@ -7,12 +7,11 @@ from execution_testing import (
     Block,
     BlockchainTestFiller,
     Environment,
-    Fork,
     Initcode,
     Op,
     Transaction,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.test_types import AutoGasConfig
 
 from .spec import ref_spec_1153
 
@@ -23,7 +22,6 @@ REFERENCE_SPEC_VERSION = ref_spec_1153.version
 @pytest.mark.valid_from("Cancun")
 def test_tstore_clear_after_deployment_tx(
     blockchain_test: BlockchainTestFiller,
-    fork: Fork,
     pre: Alloc,
 ) -> None:
     """
@@ -42,7 +40,7 @@ def test_tstore_clear_after_deployment_tx(
     sender = pre.fund_eoa()
 
     deployment_tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100000,
+        auto_gas=AutoGasConfig(),
         data=code,
         to=None,
         sender=sender,
@@ -51,7 +49,7 @@ def test_tstore_clear_after_deployment_tx(
     address = deployment_tx.created_contract
 
     invoke_contract_tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100000,
+        auto_gas=AutoGasConfig(),
         to=address,
         sender=sender,
     )

@@ -21,7 +21,7 @@ from execution_testing import (
     compute_create_address,
 )
 
-from execution_testing.forks import Amsterdam
+from execution_testing.test_types import AutoGasConfig
 
 from ...prague.eip7702_set_code_tx.spec import Spec as Spec7702
 from .spec import Spec, ref_spec_7939
@@ -244,7 +244,7 @@ def test_clz_stack_not_overflow(
     tx = Transaction(
         to=code_address,
         sender=pre.fund_eoa(),
-        gas_limit=20_000_000 if fork >= Amsterdam else 6_000_000,
+        auto_gas=AutoGasConfig(),
     )
 
     state_test(pre=pre, post=post, tx=tx)
@@ -272,7 +272,7 @@ def test_clz_push_operation_same_value(
     tx = Transaction(
         to=code_address,
         sender=pre.fund_eoa(),
-        gas_limit=30_000_000 if fork >= Amsterdam else 12_000_000,
+        auto_gas=AutoGasConfig(),
     )
 
     post = {
@@ -443,7 +443,7 @@ def test_clz_from_set_code(
     set_code_to_address = pre.deploy_contract(set_code)
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 200_000,
+        auto_gas=AutoGasConfig(),
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -653,7 +653,7 @@ def test_clz_initcode_create(
 
     tx = Transaction(
         to=factory_contract_address,
-        gas_limit=500_000 if fork >= Amsterdam else 200_000,
+        auto_gas=AutoGasConfig(),
         data=ext_code,
         sender=sender_address,
     )
@@ -744,7 +744,7 @@ def test_clz_call_operation(
     tx = Transaction(
         to=caller_address,
         sender=pre.fund_eoa(),
-        gas_limit=17_200_000 if fork >= Amsterdam else 200_000,
+        auto_gas=AutoGasConfig(),
     )
 
     post = {}

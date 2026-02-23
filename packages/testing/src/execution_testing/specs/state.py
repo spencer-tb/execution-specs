@@ -50,6 +50,7 @@ from execution_testing.forks import Fork
 from execution_testing.logging import (
     get_logger,
 )
+from execution_testing.specs.auto_gas import resolve_auto_gas
 from execution_testing.test_types import (
     Alloc,
     BlockAccessListExpectation,
@@ -349,6 +350,8 @@ class StateTest(BaseTest):
         )
 
         env = self.env.set_fork_requirements(fork)
+        if self.tx.auto_gas is not None:
+            resolve_auto_gas(fork, env, [self.tx])
         tx = self.tx.with_signature_and_sender(keep_secret_key=True)
         pre_alloc = Alloc.merge(
             Alloc.model_validate(fork.pre_allocation()),

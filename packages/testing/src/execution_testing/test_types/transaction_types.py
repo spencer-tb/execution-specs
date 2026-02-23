@@ -275,6 +275,12 @@ class TransactionTransitionToolConverter(TransactionValidateToAsEmptyString):
         return default
 
 
+class AutoGasConfig(BaseModel):
+    """Configuration for automatic gas limit assignment."""
+
+    min_reservoir: int = Field(0, ge=0)
+
+
 class TransactionTestMetadata(CamelModel):
     """Represents the metadata for a transaction."""
 
@@ -332,6 +338,8 @@ class Transaction(
     expected_receipt: TransactionReceipt | None = Field(None, exclude=True)
 
     zero: ClassVar[Literal[0]] = 0
+
+    auto_gas: AutoGasConfig | None = Field(None, exclude=True)
 
     metadata: TransactionTestMetadata | None = Field(None, exclude=True)
     test_phase: TestPhase | None = Field(

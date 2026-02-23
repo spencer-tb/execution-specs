@@ -382,7 +382,11 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
     @classmethod
     @abstractmethod
     def gas_costs(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls,
+        *,
+        block_number: int = 0,
+        timestamp: int = 0,
+        block_gas_limit: int | None = None,
     ) -> GasCosts:
         """Return dataclass with the gas costs constants for the fork."""
         pass
@@ -390,7 +394,11 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
     @classmethod
     @abstractmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls,
+        *,
+        block_number: int = 0,
+        timestamp: int = 0,
+        block_gas_limit: int | None = None,
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """
         Return a mapping of opcodes to either int or callable.
@@ -483,11 +491,32 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
     @classmethod
     @abstractmethod
     def transaction_intrinsic_cost_calculator(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls,
+        *,
+        block_number: int = 0,
+        timestamp: int = 0,
+        block_gas_limit: int | None = None,
     ) -> TransactionIntrinsicCostCalculator:
         """
         Return callable that calculates the intrinsic gas cost of a transaction
         for the fork.
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def transaction_intrinsic_state_gas(
+        cls,
+        *,
+        contract_creation: bool = False,
+        authorization_count: int = 0,
+        block_gas_limit: int | None = None,
+    ) -> int:
+        """
+        Return the intrinsic state gas for a transaction.
+
+        Pre-Amsterdam forks return 0. Amsterdam+ computes state gas from
+        cost_per_state_byte (EIP-8037).
         """
         pass
 
@@ -638,6 +667,22 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
         Return list of the transaction types supported by the fork that can
         create contracts.
         """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def tx_gas_cap_mode(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> str:
+        """Return 'none' | 'hard_total' | 'regular_only'."""
+        pass
+
+    @classmethod
+    @abstractmethod
+    def tx_gas_cap_value(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> int | None:
+        """Return the tx gas cap value, or None."""
         pass
 
     @classmethod

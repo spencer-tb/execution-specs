@@ -269,10 +269,13 @@ class Bytecode:
         *,
         block_number: int = 0,
         timestamp: int = 0,
+        block_gas_limit: int | None = None,
     ) -> int:
         """Use a fork object to calculate the gas used by this bytecode."""
         opcode_gas_calculator = fork.opcode_gas_calculator(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number,
+            timestamp=timestamp,
+            block_gas_limit=block_gas_limit,
         )
         total_gas = 0
         for opcode in self.opcode_list:
@@ -285,10 +288,13 @@ class Bytecode:
         *,
         block_number: int = 0,
         timestamp: int = 0,
+        block_gas_limit: int | None = None,
     ) -> int:
         """Use a fork object to calculate the gas refund from this bytecode."""
         opcode_refund_calculator = fork.opcode_refund_calculator(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number,
+            timestamp=timestamp,
+            block_gas_limit=block_gas_limit,
         )
         total_refund = 0
         for opcode in self.opcode_list:

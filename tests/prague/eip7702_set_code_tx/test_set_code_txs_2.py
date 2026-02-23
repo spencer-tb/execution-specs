@@ -31,6 +31,7 @@ from execution_testing import (
 )
 
 from execution_testing.forks import Amsterdam
+from execution_testing.test_types import AutoGasConfig
 
 from .spec import Spec, ref_spec_7702
 
@@ -1862,7 +1863,7 @@ def test_double_auth(
 
     tx = Transaction(
         to=contract_main,
-        gas_limit=500_000 if fork >= Amsterdam else 200_000,
+        auto_gas=AutoGasConfig(),
         data=b"",
         value=0,
         sender=sender,
@@ -1944,10 +1945,9 @@ def test_pointer_resets_an_empty_code_account_with_storage(
         + Op.SSTORE(pointer_storage.store_next(2, "slot2"), 2)
     )
 
-    gas_limit = 500_000 if fork >= Amsterdam else 200_000
     tx_set_pointer_storage = Transaction(
         to=pointer,
-        gas_limit=gas_limit,
+        auto_gas=AutoGasConfig(),
         data=b"",
         value=0,
         sender=sender,
@@ -1961,7 +1961,7 @@ def test_pointer_resets_an_empty_code_account_with_storage(
     )
     tx_set_sender_storage = Transaction(
         to=sender,
-        gas_limit=gas_limit,
+        auto_gas=AutoGasConfig(),
         data=b"",
         value=0,
         sender=sender,
@@ -1976,7 +1976,7 @@ def test_pointer_resets_an_empty_code_account_with_storage(
 
     tx_reset_code = Transaction(
         to=pointer,
-        gas_limit=gas_limit,
+        auto_gas=AutoGasConfig(),
         data=b"",
         value=0,
         nonce=3,

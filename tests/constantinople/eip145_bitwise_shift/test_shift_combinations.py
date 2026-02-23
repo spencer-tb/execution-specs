@@ -13,7 +13,7 @@ from execution_testing import (
     Storage,
     Transaction,
 )
-from execution_testing.forks import Osaka
+from execution_testing.test_types import AutoGasConfig
 
 from .spec import Spec, ref_spec_145
 
@@ -81,13 +81,10 @@ def test_combinations(
         + Op.STOP,
     )
 
-    # Osaka (EIP-7825) caps transaction gas limit at 16,777,216.
-    gas_limit = 16_000_000 if fork >= Osaka else 25_000_000
-
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=address_to,
-        gas_limit=gas_limit,
+        auto_gas=AutoGasConfig(),
     )
 
     state_test(pre=pre, post={address_to: Account(storage=result)}, tx=tx)

@@ -128,12 +128,12 @@ class Frontier(BaseFork, solc_name="homestead"):
 
     @classmethod
     def gas_costs(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> GasCosts:
         """
         Return dataclass with the defined gas costs constants for genesis.
         """
-        del block_number, timestamp
+        del block_number, timestamp, block_gas_limit
         return GasCosts(
             G_JUMPDEST=1,
             G_BASE=2,
@@ -289,7 +289,7 @@ class Frontier(BaseFork, solc_name="homestead"):
 
     @classmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """
         Return a mapping of opcodes to their gas costs.
@@ -300,7 +300,7 @@ class Frontier(BaseFork, solc_name="homestead"):
                      return gas cost
         """
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         memory_expansion_calculator = cls.memory_expansion_gas_calculator(
             block_number=block_number, timestamp=timestamp
@@ -471,13 +471,13 @@ class Frontier(BaseFork, solc_name="homestead"):
 
     @classmethod
     def opcode_gas_calculator(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> OpcodeGasCalculator:
         """
         Return callable that calculates the gas cost of a single opcode.
         """
         opcode_gas_map = cls.opcode_gas_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
 
         def fn(opcode: OpcodeBase) -> int:
@@ -499,7 +499,7 @@ class Frontier(BaseFork, solc_name="homestead"):
 
     @classmethod
     def opcode_refund_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """
         Return a mapping of opcodes to their gas refunds.
@@ -510,7 +510,7 @@ class Frontier(BaseFork, solc_name="homestead"):
                      return gas refund
         """
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
 
         # Only SSTORE provides refunds
@@ -522,13 +522,13 @@ class Frontier(BaseFork, solc_name="homestead"):
 
     @classmethod
     def opcode_refund_calculator(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> OpcodeGasCalculator:
         """
         Return callable that calculates the gas refund of a single opcode.
         """
         opcode_refund_map = cls.opcode_refund_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
 
         def fn(opcode: OpcodeBase) -> int:
@@ -774,14 +774,14 @@ class Frontier(BaseFork, solc_name="homestead"):
 
     @classmethod
     def transaction_intrinsic_cost_calculator(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> TransactionIntrinsicCostCalculator:
         """
         Return callable that calculates the intrinsic gas cost of a transaction
         for the fork.
         """
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         calldata_gas_calculator = cls.calldata_gas_calculator(
             block_number=block_number, timestamp=timestamp
@@ -814,6 +814,22 @@ class Frontier(BaseFork, solc_name="homestead"):
             return intrinsic_cost + calldata_gas_calculator(data=calldata)
 
         return fn
+
+    @classmethod
+    def transaction_intrinsic_state_gas(
+        cls,
+        *,
+        contract_creation: bool = False,
+        authorization_count: int = 0,
+        block_gas_limit: int | None = None,
+    ) -> int:
+        """
+        Return the intrinsic state gas for a transaction.
+
+        Pre-Amsterdam forks have no state gas, so this returns 0.
+        """
+        del contract_creation, authorization_count, block_gas_limit
+        return 0
 
     @classmethod
     def blob_gas_price_calculator(
@@ -1122,6 +1138,28 @@ class Frontier(BaseFork, solc_name="homestead"):
         cls, *, block_number: int = 0, timestamp: int = 0
     ) -> int | None:
         """At Genesis, no transaction gas limit cap is imposed."""
+        mode = cls.tx_gas_cap_mode(
+            block_number=block_number, timestamp=timestamp
+        )
+        if mode in ("hard_total", "regular_only"):
+            return cls.tx_gas_cap_value(
+                block_number=block_number, timestamp=timestamp
+            )
+        return None
+
+    @classmethod
+    def tx_gas_cap_mode(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> str:
+        """Return 'none' | 'hard_total' | 'regular_only'."""
+        del block_number, timestamp
+        return "none"
+
+    @classmethod
+    def tx_gas_cap_value(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> int | None:
+        """Return the tx gas cap value, or None."""
         del block_number, timestamp
         return None
 
@@ -1476,17 +1514,17 @@ class Homestead(Frontier):
 
     @classmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """Add DELEGATECALL opcode gas cost for Homestead."""
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         memory_expansion_calculator = cls.memory_expansion_gas_calculator(
             block_number=block_number, timestamp=timestamp
         )
         base_map = super(Homestead, cls).opcode_gas_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         return {
             **base_map,
@@ -1506,17 +1544,17 @@ class Homestead(Frontier):
 
     @classmethod
     def transaction_intrinsic_cost_calculator(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> TransactionIntrinsicCostCalculator:
         """
         At Homestead, the transaction intrinsic cost needs to take contract
         creation into account.
         """
         super_fn = super(Homestead, cls).transaction_intrinsic_cost_calculator(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
 
         def fn(
@@ -1643,17 +1681,17 @@ class Byzantium(SpuriousDragon):
 
     @classmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """Add Byzantium opcodes gas costs."""
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         memory_expansion_calculator = cls.memory_expansion_gas_calculator(
             block_number=block_number, timestamp=timestamp
         )
         base_map = super(Byzantium, cls).opcode_gas_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         return {
             **base_map,
@@ -1686,14 +1724,14 @@ class Byzantium(SpuriousDragon):
 
     @classmethod
     def gas_costs(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> GasCosts:
         """
         On Byzantium, precompiled contract gas costs are introduced.
         """
         return replace(
             super(Byzantium, cls).gas_costs(
-                block_number=block_number, timestamp=timestamp
+                block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
             ),
             G_PRECOMPILE_ECADD=500,
             G_PRECOMPILE_ECMUL=40_000,
@@ -1739,17 +1777,17 @@ class Constantinople(Byzantium):
 
     @classmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """Add Constantinople opcodes gas costs."""
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         memory_expansion_calculator = cls.memory_expansion_gas_calculator(
             block_number=block_number, timestamp=timestamp
         )
         base_map = super(Constantinople, cls).opcode_gas_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         return {
             **base_map,
@@ -1800,14 +1838,14 @@ class Istanbul(ConstantinopleFix):
 
     @classmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """Add Istanbul opcodes gas costs."""
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         base_map = super(Istanbul, cls).opcode_gas_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         return {
             **base_map,
@@ -1827,7 +1865,7 @@ class Istanbul(ConstantinopleFix):
 
     @classmethod
     def gas_costs(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> GasCosts:
         """
         On Istanbul, the non-zero transaction data byte cost is reduced to 16
@@ -1835,7 +1873,7 @@ class Istanbul(ConstantinopleFix):
         """
         return replace(
             super(Istanbul, cls).gas_costs(
-                block_number=block_number, timestamp=timestamp
+                block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
             ),
             G_TX_DATA_NON_ZERO=16,  # https://eips.ethereum.org/EIPS/eip-2028
             # https://eips.ethereum.org/EIPS/eip-1108
@@ -1876,17 +1914,17 @@ class Berlin(Istanbul):
 
     @classmethod
     def transaction_intrinsic_cost_calculator(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> TransactionIntrinsicCostCalculator:
         """
         At Berlin, the transaction intrinsic cost needs to take the access list
         into account.
         """
         super_fn = super(Berlin, cls).transaction_intrinsic_cost_calculator(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
 
         def fn(
@@ -1945,14 +1983,14 @@ class London(Berlin):
 
     @classmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """Add London opcodes gas costs."""
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         base_map = super(London, cls).opcode_gas_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         return {
             **base_map,
@@ -2256,14 +2294,14 @@ class Shanghai(Paris):
 
     @classmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """Add Shanghai opcodes gas costs."""
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         base_map = super(Shanghai, cls).opcode_gas_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         return {
             **base_map,
@@ -2610,7 +2648,7 @@ class Cancun(Shanghai):
 
     @classmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """
         Return a mapping of opcodes to their gas costs for Cancun.
@@ -2619,7 +2657,7 @@ class Cancun(Shanghai):
         MCOPY.
         """
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         memory_expansion_calculator = cls.memory_expansion_gas_calculator(
             block_number=block_number, timestamp=timestamp
@@ -2627,7 +2665,7 @@ class Cancun(Shanghai):
 
         # Get parent fork's opcode gas map
         base_map = super(Cancun, cls).opcode_gas_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
 
         # Add Cancun-specific opcodes
@@ -2713,7 +2751,7 @@ class Prague(Cancun):
 
     @classmethod
     def gas_costs(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> GasCosts:
         """
         On Prague, the standard token cost and the floor token costs are
@@ -2721,7 +2759,7 @@ class Prague(Cancun):
         """
         return replace(
             super(Prague, cls).gas_costs(
-                block_number=block_number, timestamp=timestamp
+                block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
             ),
             G_TX_DATA_STANDARD_TOKEN_COST=4,  # https://eips.ethereum.org/EIPS/eip-7623
             G_TX_DATA_FLOOR_TOKEN_COST=10,
@@ -2852,17 +2890,17 @@ class Prague(Cancun):
 
     @classmethod
     def transaction_intrinsic_cost_calculator(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> TransactionIntrinsicCostCalculator:
         """
         At Prague, the transaction intrinsic cost needs to take the
         authorizations into account.
         """
         super_fn = super(Prague, cls).transaction_intrinsic_cost_calculator(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         transaction_data_floor_cost_calculator = (
             cls.transaction_data_floor_cost_calculator(
@@ -3079,10 +3117,18 @@ class Osaka(Prague, solc_name="cancun"):
         return 1
 
     @classmethod
-    def transaction_gas_limit_cap(
+    def tx_gas_cap_mode(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> str:
+        """At Osaka, transaction gas limit is hard capped."""
+        del block_number, timestamp
+        return "hard_total"
+
+    @classmethod
+    def tx_gas_cap_value(
         cls, *, block_number: int = 0, timestamp: int = 0
     ) -> int | None:
-        """At Osaka, transaction gas limit is capped at 16 million (2**24)."""
+        """At Osaka, transaction gas cap is 16 million (2**24)."""
         del block_number, timestamp
         return 16_777_216
 
@@ -3099,14 +3145,14 @@ class Osaka(Prague, solc_name="cancun"):
 
     @classmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """Add Osaka opcodes gas costs."""
         gas_costs = cls.gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         base_map = super(Osaka, cls).opcode_gas_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         return {
             **base_map,
@@ -3404,21 +3450,65 @@ class Amsterdam(BPO2):
 
     @classmethod
     def opcode_gas_map(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls,
+        *,
+        block_number: int = 0,
+        timestamp: int = 0,
+        block_gas_limit: int | None = None,
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
         """Add Amsterdam opcodes gas costs."""
         gas_costs = cls.gas_costs(
+            block_number=block_number,
+            timestamp=timestamp,
+            block_gas_limit=block_gas_limit,
+        )
+        cpsb = cls.cost_per_state_byte(
+            gas_limit=block_gas_limit if block_gas_limit is not None else cls._DEFAULT_BLOCK_GAS_LIMIT
+        )
+        memory_expansion_calculator = cls.memory_expansion_gas_calculator(
             block_number=block_number, timestamp=timestamp
         )
         base_map = super(Amsterdam, cls).opcode_gas_map(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number,
+            timestamp=timestamp,
+            block_gas_limit=block_gas_limit,
         )
         return {
             **base_map,
+            Opcodes.SSTORE: lambda op: cls._calculate_sstore_gas(
+                op, gas_costs, cpsb
+            ),
+            Opcodes.RETURN: cls._with_memory_expansion(
+                lambda op: cls._calculate_return_gas(op, gas_costs, cpsb),
+                memory_expansion_calculator,
+            ),
             Opcodes.SWAPN: gas_costs.G_VERY_LOW,
             Opcodes.DUPN: gas_costs.G_VERY_LOW,
             Opcodes.EXCHANGE: gas_costs.G_VERY_LOW,
             Opcodes.SLOTNUM: gas_costs.G_BASE,
+        }
+
+    @classmethod
+    def opcode_refund_map(
+        cls,
+        *,
+        block_number: int = 0,
+        timestamp: int = 0,
+        block_gas_limit: int | None = None,
+    ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
+        """Override refund map to pass cpsb to SSTORE refund calculator."""
+        gas_costs = cls.gas_costs(
+            block_number=block_number,
+            timestamp=timestamp,
+            block_gas_limit=block_gas_limit,
+        )
+        cpsb = cls.cost_per_state_byte(
+            gas_limit=block_gas_limit if block_gas_limit is not None else cls._DEFAULT_BLOCK_GAS_LIMIT
+        )
+        return {
+            Opcodes.SSTORE: lambda op: cls._calculate_sstore_refund(
+                op, gas_costs, cpsb
+            ),
         }
 
     @classmethod
@@ -3464,6 +3554,22 @@ class Amsterdam(BPO2):
         del block_number, timestamp
         return True
 
+    @classmethod
+    def tx_gas_cap_mode(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> str:
+        """At Amsterdam, tx gas cap applies to regular gas only."""
+        del block_number, timestamp
+        return "regular_only"
+
+    @classmethod
+    def tx_gas_cap_value(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> int | None:
+        """At Amsterdam, transaction gas cap is 16 million (2**24)."""
+        del block_number, timestamp
+        return 16_777_216
+
     # Matches DEFAULT_BLOCK_GAS_LIMIT from test_types.block_types
     # (cannot import directly due to circular dependency).
     _DEFAULT_BLOCK_GAS_LIMIT = 120_000_000
@@ -3490,15 +3596,17 @@ class Amsterdam(BPO2):
 
     @classmethod
     def gas_costs(
-        cls, *, block_number: int = 0, timestamp: int = 0
+        cls, *, block_number: int = 0, timestamp: int = 0, block_gas_limit: int | None = None
     ) -> GasCosts:
         """
         On Amsterdam, gas costs are updated for EIP-8037 two-dimensional
         gas metering. State gas is folded into totals.
         """
-        cpsb = cls.cost_per_state_byte()
+        cpsb = cls.cost_per_state_byte(
+            gas_limit=block_gas_limit if block_gas_limit is not None else cls._DEFAULT_BLOCK_GAS_LIMIT
+        )
         parent = super(Amsterdam, cls).gas_costs(
-            block_number=block_number, timestamp=timestamp
+            block_number=block_number, timestamp=timestamp, block_gas_limit=block_gas_limit
         )
         # EIP-8037 state byte sizes (from EELS amsterdam/vm/gas.py)
         STATE_BYTES_PER_STORAGE_SET = 32
@@ -3529,6 +3637,7 @@ class Amsterdam(BPO2):
         *,
         contract_creation: bool = False,
         authorization_count: int = 0,
+        block_gas_limit: int | None = None,
     ) -> int:
         """
         Return the intrinsic state gas for a transaction (EIP-8037).
@@ -3537,7 +3646,9 @@ class Amsterdam(BPO2):
         - Contract creation: STATE_BYTES_PER_NEW_ACCOUNT * cpsb
         - Authorizations: (STATE_BYTES_PER_NEW_ACCOUNT + STATE_BYTES_PER_AUTH_BASE) * cpsb
         """
-        cpsb = cls.cost_per_state_byte()
+        cpsb = cls.cost_per_state_byte(
+            gas_limit=block_gas_limit if block_gas_limit is not None else cls._DEFAULT_BLOCK_GAS_LIMIT
+        )
         STATE_BYTES_PER_NEW_ACCOUNT = 112
         STATE_BYTES_PER_AUTH_BASE = 23
         state_gas = 0
@@ -3552,7 +3663,7 @@ class Amsterdam(BPO2):
 
     @classmethod
     def _calculate_sstore_gas(
-        cls, opcode: OpcodeBase, gas_costs: GasCosts
+        cls, opcode: OpcodeBase, gas_costs: GasCosts, cpsb: int
     ) -> int:
         """
         Calculate SSTORE gas cost for Amsterdam (EIP-8037).
@@ -3562,7 +3673,6 @@ class Amsterdam(BPO2):
         Otherwise: WARM_SLOAD.
         """
         metadata = opcode.metadata
-        cpsb = cls.cost_per_state_byte()
 
         original_value = metadata["original_value"]
         current_value = metadata["current_value"]
@@ -3589,7 +3699,7 @@ class Amsterdam(BPO2):
 
     @classmethod
     def _calculate_sstore_refund(
-        cls, opcode: OpcodeBase, gas_costs: GasCosts
+        cls, opcode: OpcodeBase, gas_costs: GasCosts, cpsb: int
     ) -> int:
         """
         Calculate SSTORE gas refund for Amsterdam (EIP-8037).
@@ -3598,7 +3708,6 @@ class Amsterdam(BPO2):
         includes the state gas for storage set.
         """
         metadata = opcode.metadata
-        cpsb = cls.cost_per_state_byte()
         state_gas_storage_set = 32 * cpsb
 
         original_value = metadata["original_value"]
@@ -3640,7 +3749,7 @@ class Amsterdam(BPO2):
 
     @classmethod
     def _calculate_return_gas(
-        cls, opcode: OpcodeBase, gas_costs: GasCosts
+        cls, opcode: OpcodeBase, gas_costs: GasCosts, cpsb: int
     ) -> int:
         """
         Calculate RETURN gas cost for Amsterdam (EIP-8037).
@@ -3651,7 +3760,6 @@ class Amsterdam(BPO2):
         metadata = opcode.metadata
         code_deposit_size = metadata["code_deposit_size"]
         if code_deposit_size > 0:
-            cpsb = cls.cost_per_state_byte()
             # Code deposit state gas replaces G_CODE_DEPOSIT_BYTE (EIP-8037)
             state_gas = code_deposit_size * cpsb
             # Code hash gas (keccak256 of deployed bytecode)

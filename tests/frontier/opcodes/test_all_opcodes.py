@@ -20,7 +20,7 @@ from execution_testing import (
     Transaction,
     gas_test,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.test_types import AutoGasConfig
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -118,13 +118,9 @@ def test_all_opcodes(
         ),
     }
 
-    # Amsterdam (EIP-8037) needs gas_limit > TX_MAX_GAS_LIMIT (16,777,216) to
-    # provide a state_gas_reservoir for SSTORE/CREATE state gas costs.
-    gas_limit = 50_000_000 if fork >= Amsterdam else 9_000_000
-
     tx = Transaction(
         sender=pre.fund_eoa(),
-        gas_limit=gas_limit,
+        auto_gas=AutoGasConfig(min_reservoir=5_000_000),
         to=contract_address,
         protected=fork.supports_protected_txs(),
     )

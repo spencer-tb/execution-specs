@@ -82,6 +82,7 @@ from execution_testing.test_types.block_access_list import (
     BlockAccessListExpectation,
 )
 
+from .auto_gas import resolve_auto_gas
 from .base import BaseTest, OpMode, verify_result
 from .debugging import print_traces
 from .helpers import verify_block, verify_transactions
@@ -605,6 +606,7 @@ class BlockchainTest(BaseTest):
         """
         env = block.set_environment(previous_env)
         env = env.set_fork_requirements(self.fork)
+        resolve_auto_gas(self.fork, env, block.txs)
         txs = [tx.with_signature_and_sender() for tx in block.txs]
 
         if failing_tx_count := len([tx for tx in txs if tx.error]) > 0:

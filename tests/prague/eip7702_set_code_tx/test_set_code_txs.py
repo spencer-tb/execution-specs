@@ -43,6 +43,7 @@ from execution_testing import (
 from execution_testing import Macros as Om
 from execution_testing.base_types import HexNumber
 from execution_testing.forks import Amsterdam
+from execution_testing.test_types import AutoGasConfig
 
 from ...cancun.eip4844_blobs.spec import Spec as Spec4844
 from ..eip6110_deposits.helpers import DepositRequest
@@ -298,9 +299,8 @@ def test_set_code_to_sstore_then_sload(
     )
     set_code_2_address = pre.deploy_contract(set_code_2)
 
-    gas_limit = 500_000 if fork >= Amsterdam else 100_000
     tx_1 = Transaction(
-        gas_limit=gas_limit,
+        auto_gas=AutoGasConfig(),
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -326,7 +326,7 @@ def test_set_code_to_sstore_then_sload(
         else []
     )
     tx_2 = Transaction(
-        gas_limit=gas_limit,
+        auto_gas=AutoGasConfig(),
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -393,7 +393,7 @@ def test_set_code_to_tstore_reentry(
     set_code_to_address = pre.deploy_contract(set_code)
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100_000,
+        auto_gas=AutoGasConfig(),
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -465,7 +465,7 @@ def test_set_code_to_tstore_available_at_correct_address(
     target_call_chain_address = pre.deploy_contract(chain_code)
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100_000,
+        auto_gas=AutoGasConfig(),
         to=target_call_chain_address,
         value=0,
         authorization_list=[
@@ -2275,7 +2275,7 @@ def test_set_code_using_chain_specific_id(
     set_code_to_address = pre.deploy_contract(set_code)
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100_000,
+        auto_gas=AutoGasConfig(),
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -2355,7 +2355,7 @@ def test_set_code_using_valid_synthetic_signatures(
     auth_signer = authorization_tuple.signer
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100_000,
+        auto_gas=AutoGasConfig(),
         to=auth_signer,
         value=0,
         authorization_list=[authorization_tuple],
@@ -2442,7 +2442,7 @@ def test_valid_tx_invalid_auth_signature(
     )
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100_000,
+        auto_gas=AutoGasConfig(),
         to=callee_address,
         value=0,
         authorization_list=[authorization_tuple],
@@ -2494,7 +2494,7 @@ def test_signature_s_out_of_range(
     entry_address = pre.deploy_contract(entry_code)
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100_000,
+        auto_gas=AutoGasConfig(),
         to=entry_address,
         value=0,
         authorization_list=[authorization_tuple],
@@ -2583,7 +2583,7 @@ def test_valid_tx_invalid_chain_id(
     entry_address = pre.deploy_contract(entry_code)
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100_000,
+        auto_gas=AutoGasConfig(),
         to=entry_address,
         value=0,
         authorization_list=[authorization],
@@ -2679,7 +2679,7 @@ def test_nonce_validity(
     entry_address = pre.deploy_contract(entry_code)
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100_000,
+        auto_gas=AutoGasConfig(),
         to=entry_address,
         value=0,
         authorization_list=[authorization],
@@ -2753,7 +2753,7 @@ def test_nonce_overflow_after_first_authorization(
     entry_address = pre.deploy_contract(entry_code)
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 200_000,
+        auto_gas=AutoGasConfig(),
         to=entry_address,
         value=0,
         authorization_list=authorization_list,
@@ -3497,7 +3497,7 @@ def test_delegation_clearing(
     )
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 200_000,
+        auto_gas=AutoGasConfig(),
         to=entry_address,
         value=0,
         authorization_list=[authorization],
@@ -3634,7 +3634,7 @@ def test_delegation_clearing_and_set(
     sender = pre.fund_eoa()
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 200_000,
+        auto_gas=AutoGasConfig(),
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -3700,7 +3700,7 @@ def test_delegation_clearing_failing_tx(
     )
 
     tx = Transaction(
-        gas_limit=500_000 if fork >= Amsterdam else 100_000,
+        auto_gas=AutoGasConfig(),
         to=entry_address,
         value=0,
         authorization_list=[authorization],
@@ -3754,7 +3754,7 @@ def test_deploying_delegation_designation_contract(
     tx = Transaction(
         sender=sender,
         to=None,
-        gas_limit=500_000 if fork >= Amsterdam else 100_000,
+        auto_gas=AutoGasConfig(),
         data=initcode,
     )
 

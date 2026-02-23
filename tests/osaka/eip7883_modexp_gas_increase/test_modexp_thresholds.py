@@ -20,7 +20,8 @@ from execution_testing import (
     compute_create_address,
     keccak256,
 )
-from execution_testing.forks import Amsterdam, Osaka
+from execution_testing.forks import Osaka
+from execution_testing.test_types import AutoGasConfig
 
 from ...byzantium.eip198_modexp_precompile.helpers import ModExpInput
 from .helpers import vectors_from_file
@@ -471,7 +472,7 @@ def test_contract_initcode(
 
     tx = Transaction(
         sender=sender,
-        gas_limit=1_000_000 if fork >= Amsterdam else 200_000,
+        auto_gas=AutoGasConfig(),
         to=factory_contract_address,
         value=0,
         data=call_modexp_bytecode + bytes(modexp_input),
