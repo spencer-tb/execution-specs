@@ -7,11 +7,13 @@ import pytest
 from execution_testing import (
     Account,
     Alloc,
+    Fork,
     Op,
     StateTestFiller,
     Storage,
     Transaction,
 )
+from execution_testing.forks import Amsterdam, Osaka
 
 from .spec import Spec, ref_spec_145
 
@@ -60,7 +62,7 @@ combinations = list(itertools.product(list_of_args, repeat=2))
     pr=["https://github.com/ethereum/execution-spec-tests/pull/1683"],
 )
 def test_combinations(
-    state_test: StateTestFiller, pre: Alloc, opcode: Op, operation: Callable
+    state_test: StateTestFiller, pre: Alloc, fork: Fork, opcode: Op, operation: Callable
 ) -> None:
     """Test bitwise shift combinations."""
     result = Storage()
@@ -79,10 +81,12 @@ def test_combinations(
         + Op.STOP,
     )
 
+    hard_gas_cap = fork >= Osaka and not fork >= Amsterdam
+    tx_gas_cap = fork.transaction_gas_limit_cap()
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=address_to,
-        gas_limit=25_000_000,
+        gas_limit=min(25_000_000, tx_gas_cap) if hard_gas_cap else 25_000_000,
     )
 
     state_test(pre=pre, post={address_to: Account(storage=result)}, tx=tx)

@@ -3466,7 +3466,7 @@ class Amsterdam(BPO2):
 
     # Matches DEFAULT_BLOCK_GAS_LIMIT from test_types.block_types
     # (cannot import directly due to circular dependency).
-    _DEFAULT_BLOCK_GAS_LIMIT = 120_000_000
+    _DEFAULT_BLOCK_GAS_LIMIT = 100_000_000
 
     @classmethod
     def cost_per_state_byte(

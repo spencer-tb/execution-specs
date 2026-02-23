@@ -12,6 +12,7 @@ from execution_testing import (
     Storage,
     Transaction,
 )
+from execution_testing.forks import Amsterdam, Osaka
 
 UPPER_BOUND = 0x101
 RETURNDATASIZE_OFFSET = 0x10000000000000000  # Must be greater than UPPER_BOUND
@@ -60,9 +61,12 @@ def test_precompile_absence(
         call_code, storage=storage.canary()
     )
 
+    # Osaka–BPO2 have a hard 16M total tx gas cap; Amsterdam's cap is regular-only.
+    hard_gas_cap = fork >= Osaka and not fork >= Amsterdam
+    tx_gas_cap = fork.transaction_gas_limit_cap()
     tx = Transaction(
         to=entry_point_address,
-        gas_limit=30_000_000,
+        gas_limit=min(30_000_000, tx_gas_cap) if hard_gas_cap else 30_000_000,
         sender=pre.fund_eoa(),
         protected=True,
     )

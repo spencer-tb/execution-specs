@@ -78,7 +78,7 @@ def test_pointer_contract_pointer_loop(
     )
 
     storage_loop: Storage = Storage()
-    expected_loop_count = 116 if fork >= Amsterdam else 112
+    expected_loop_count = 117 if fork >= Amsterdam else 112
     contract_worked = storage_loop.store_next(expected_loop_count, "contract_loop_worked")
     contract_loop = pre.deploy_contract(
         code=Op.SSTORE(contract_worked, Op.ADD(1, Op.SLOAD(0)))
