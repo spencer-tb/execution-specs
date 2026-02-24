@@ -1,0 +1,88 @@
+"""
+Revert undoes the transient storage writes after a successful call.
+
+Ported from:
+tests/static/state_tests/Cancun/stEIP1153_transientStorage/10_revertUndoesStoreAfterReturnFiller.yml
+"""
+
+import pytest
+from execution_testing import (
+    AccessList,
+    Account,
+    Address,
+    Alloc,
+    Environment,
+    Hash,
+    StateTestFiller,
+    Transaction,
+)
+from execution_testing.vm import Op
+
+REFERENCE_SPEC_GIT_PATH = "N/A"
+REFERENCE_SPEC_VERSION = "N/A"
+
+
+@pytest.mark.ported_from(
+    ["tests/static/state_tests/Cancun/stEIP1153_transientStorage/10_revertUndoesStoreAfterReturnFiller.yml"],
+)
+@pytest.mark.valid_from("Cancun")
+def test_10_revert_undoes_store_after_return(
+    state_test: StateTestFiller,
+    pre: Alloc,
+) -> None:
+    """Revert undoes the transient storage writes after a successful call.."""
+    coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
+    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    contract = Address("0x1000000000000000000000000000000000001000")
+
+    env = Environment(
+        fee_recipient=coinbase,
+        number=1,
+        timestamp=1000,
+        prev_randao=0x20000,
+        base_fee_per_gas=10,
+        gas_limit=4503599627370496,
+    )
+
+    pre[contract] = Account(
+        balance=0xde0b6b3a7640000,
+        nonce=0,
+        code=(
+        Op.PUSH0 + Op.CALLDATALOAD + Op.PUSH1[0xe0] + Op.SHR + Op.DUP1
+        + Op.PUSH4[0x70ac643e] + Op.EQ + Op.PUSH1[0x2f] + Op.JUMPI + Op.DUP1
+        + Op.PUSH4[0x76b85d23] + Op.EQ + Op.PUSH1[0x2b] + Op.JUMPI
+        + Op.PUSH4[0x4ccca553] + Op.EQ + Op.PUSH1[0x23] + Op.JUMPI + Op.STOP
+        + Op.JUMPDEST + Op.PUSH1[0x29] + Op.PUSH1[0x76] + Op.JUMP + Op.JUMPDEST
+        + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x5c] + Op.JUMP + Op.JUMPDEST + Op.POP
+        + Op.PUSH1[0x29] + Op.PUSH1[0x5] + Op.PUSH0 + Op.TSTORE + Op.PUSH0 + Op.TLOAD
+        + Op.PUSH0 + Op.SSTORE + Op.PUSH4[0x76b85d23] + Op.PUSH1[0xe0] + Op.SHL
+        + Op.PUSH0 + Op.MSTORE + Op.PUSH1[0x20] + Op.PUSH0 + Op.DUP2 + Op.DUP2
+        + Op.DUP1 + Op.ADDRESS + Op.GAS + Op.CALL + Op.PUSH1[0x1] + Op.SSTORE
+        + Op.PUSH0 + Op.MLOAD + Op.PUSH1[0x2] + Op.SSTORE + Op.PUSH0 + Op.TLOAD
+        + Op.PUSH1[0x3] + Op.SSTORE + Op.JUMP + Op.JUMPDEST + Op.PUSH4[0x4ccca553]
+        + Op.PUSH1[0xe0] + Op.SHL + Op.PUSH0 + Op.MSTORE + Op.PUSH0 + Op.DUP1
+        + Op.PUSH1[0x20] + Op.DUP2 + Op.DUP1 + Op.ADDRESS + Op.GAS + Op.CALL
+        + Op.PUSH0 + Op.MSTORE + Op.PUSH1[0x20] + Op.PUSH0 + Op.REVERT + Op.JUMPDEST
+        + Op.PUSH1[0x6] + Op.PUSH0 + Op.TSTORE + Op.JUMP
+    ),
+        storage={0x1: 0xffff},
+    )
+    pre[sender] = Account(balance=0x3635c9adc5dea00000, nonce=0)
+
+    tx = Transaction(
+        secret_key=Hash(
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+        ),
+        to=contract,
+        data=bytes.fromhex("70ac643e"),
+        gas_limit=400000,
+        max_fee_per_gas=2000,
+        max_priority_fee_per_gas=0,
+        nonce=0,
+        value=0,
+        access_list=[],
+    )
+
+    post = {}
+
+    state_test(env=env, pre=pre, post=post, tx=tx)
