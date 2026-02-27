@@ -47,6 +47,7 @@ from execution_testing import (
     add_kzg_version,
 )
 
+
 from .spec import Spec, SpecHelpers, ref_spec_4844
 
 REFERENCE_SPEC_GIT_PATH = ref_spec_4844.git_path
@@ -106,8 +107,8 @@ def tx_blob_data_cost(
 
 
 @pytest.fixture
-def tx_gas_limit() -> int:  # noqa: D103
-    return 45000
+def tx_gas_limit(fork: Fork) -> int:  # noqa: D103
+    return 500_000  # TODO: auto gas limit will remove this
 
 
 @pytest.fixture

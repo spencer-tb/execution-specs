@@ -20,6 +20,7 @@ from execution_testing import (
     Transaction,
     gas_test,
 )
+from execution_testing.forks import Amsterdam
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -93,7 +94,15 @@ def test_all_opcodes(
                 Op.PUSH1(opcode.int()),
                 # Limit gas to limit the gas consumed by the exceptional aborts
                 # in each subcall that uses an undefined opcode.
-                Op.CALL(35_000, opcode_address, 0, 0, 0, 0, 0),
+                Op.CALL(
+                    35_000,
+                    opcode_address,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                ),
             )
             for opcode, opcode_address in code_contract.items()
         )
@@ -113,9 +122,13 @@ def test_all_opcodes(
         ),
     }
 
+    # Amsterdam (EIP-8037) needs gas_limit > TX_MAX_GAS_LIMIT (16,777,216) to
+    # provide a state_gas_reservoir for SSTORE/CREATE state gas costs.
+    gas_limit = 50_000_000 if fork >= Amsterdam else 9_000_000  # TODO: auto gas limit will remove this
+
     tx = Transaction(
         sender=pre.fund_eoa(),
-        gas_limit=9_000_000,
+        gas_limit=gas_limit,
         to=contract_address,
         protected=fork.supports_protected_txs(),
     )
@@ -169,16 +182,18 @@ def test_stack_overflow(
     value_code_failed = 0xDEADBEEF
     value_code_worked = 1
 
+    push_opcode = Op.PUSH0 if Op.PUSH0 in fork.valid_opcodes() else Op.PUSH1(0)
+
     contract = pre.deploy_contract(
         code=Op.SSTORE(slot_code_worked, value_code_worked)
-        + Op.PUSH1(0) * pre_stack_items
+        + push_opcode * pre_stack_items
         + opcode
         + Op.STOP,
         storage={slot_code_worked: value_code_failed},
     )
 
     tx = Transaction(
-        gas_limit=100_000,
+        gas_limit=500_000,
         to=contract,
         sender=pre.fund_eoa(),
         protected=fork.supports_protected_txs(),
@@ -186,6 +201,70 @@ def test_stack_overflow(
     expected_storage = {
         slot_code_worked: value_code_failed if fails else value_code_worked
     }
+
+    state_test(
+        env=env,
+        pre=pre,
+        tx=tx,
+        post={contract: Account(storage=expected_storage)},
+    )
+
+
+def fork_opcodes_with_non_increasing_stack(
+    fork: Fork,
+) -> Iterator[Op]:
+    """
+    Yields opcodes which are valid for `fork` and decrease or leave static the
+    operand stack.
+    """
+    for opcode in fork.valid_opcodes():
+        if opcode.pushed_stack_items <= opcode.popped_stack_items:
+            if opcode not in [
+                # Incompatible with this test:
+                Op.REVERT,  # Reverts the storage required
+                Op.JUMP,  # Tries to jump to non-jumpdest
+                Op.BLOCKHASH,  # Incompatible with state_test
+                Op.SELFDESTRUCT,  # selfdestructs the contract in old forks
+            ]:
+                yield opcode
+
+
+@pytest.mark.parametrize_by_fork(
+    "opcode", fork_opcodes_with_non_increasing_stack
+)
+def test_max_stack(
+    state_test: StateTestFiller,
+    pre: Alloc,
+    fork: Fork,
+    opcode: Op,
+    env: Environment,
+) -> None:
+    """
+    Test that opcodes that don't push more items than they pop from the
+    stack can operate when the stack is full.
+    """
+    pre_stack_items = fork.max_stack_height()
+    slot_code_worked = 1
+    value_code_failed = 0xDEADBEEF
+    value_code_worked = 1
+
+    push_opcode = Op.PUSH0 if Op.PUSH0 in fork.valid_opcodes() else Op.PUSH1(0)
+
+    contract = pre.deploy_contract(
+        code=Op.SSTORE(slot_code_worked, value_code_worked)
+        + push_opcode * pre_stack_items
+        + opcode
+        + Op.STOP,
+        storage={slot_code_worked: value_code_failed},
+    )
+
+    tx = Transaction(
+        gas_limit=500_000,
+        to=contract,
+        sender=pre.fund_eoa(),
+        protected=fork.supports_protected_txs(),
+    )
+    expected_storage = {slot_code_worked: value_code_worked}
 
     state_test(
         env=env,
@@ -236,6 +315,11 @@ def test_constant_gas(
     """Test that constant gas opcodes work as expected."""
     # Using Op.GAS as salt to guarantee no address collision on CREATE2.
     create2_salt = Op.GAS if opcode == Op.CREATE2 else Bytecode()
+    if opcode.has_data_portion():
+        if opcode in [Op.SWAPN, Op.DUPN]:
+            opcode = opcode[17]
+        else:
+            opcode = opcode[0]
     setup_code = (
         Op.MLOAD(0)
         + Op.POP

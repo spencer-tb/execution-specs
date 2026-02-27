@@ -16,6 +16,7 @@ from execution_testing import (
 )
 
 
+
 @pytest.fixture
 def vector_gas_value() -> int | None:
     """
@@ -157,7 +158,7 @@ def tx_gas_limit(fork: Fork, input_data: bytes, precompile_gas: int) -> int:
         fork.transaction_intrinsic_cost_calculator()
     )
     memory_expansion_gas_calculator = fork.memory_expansion_gas_calculator()
-    extra_gas = 100_000
+    extra_gas = 500_000  # TODO: auto gas limit will remove this
     return (
         extra_gas
         + intrinsic_gas_cost_calculator(calldata=input_data)
