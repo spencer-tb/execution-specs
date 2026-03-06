@@ -107,6 +107,13 @@ def test_touch_to_empty_account_revert_paris(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<eoa:0x1000000000000000000000000000000000000000>"): Account(
+            storage={},
+            nonce=0,
+            balance=10,
+            code=b"",
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

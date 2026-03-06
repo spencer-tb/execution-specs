@@ -649,7 +649,10 @@ def test_sstore_combinations_initial01_2_paris(
         value=1,
     )
 
-    post = {}
+    post = {
+        callee_1: Account(storage={1: 1}),
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
 

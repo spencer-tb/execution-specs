@@ -109,6 +109,10 @@ def test_sstore_gas(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+            storage={4096: 5000, 4097: 100, 4098: 100, 4099: 100, 4100: 100, 4101: 5000, 4102: 22100, 4103: 2200, 4104: 20000},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

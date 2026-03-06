@@ -94,6 +94,10 @@ def test_returndatacopy_after_failing_delegatecall(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0x1000000000000000000000000000000000000001>"): Account(
+            storage={0: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

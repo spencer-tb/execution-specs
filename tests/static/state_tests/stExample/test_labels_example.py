@@ -33,12 +33,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_storage",
     [
-        "01",
-        "02",
-        "03",
-        "03",
+        ("01", {0: 0x100000000000000000000000000000000000000000000000000000000000000}),
+        ("02", {0: 0x100000000000000000000000000000000000000000000000000000000000000}),
+        ("03", {0: 0x100000000000000000000000000000000000000000000000000000000000000}),
+        ("03", {0: 0x100000000000000000000000000000000000000000000000000000000000000}),
     ],
     ids=['case0', 'case1', 'case2', 'case3'],
 )
@@ -47,6 +47,7 @@ def test_labels_example(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_storage: dict,
 ) -> None:
     """An example how to use labels in expect section."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -83,6 +84,8 @@ def test_labels_example(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(storage=expected_storage),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

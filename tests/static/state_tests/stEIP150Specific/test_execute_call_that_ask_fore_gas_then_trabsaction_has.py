@@ -90,6 +90,10 @@ def test_execute_call_that_ask_fore_gas_then_trabsaction_has(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0x1000000000000000000000000000000000000001>"): Account(
+            storage={1: 12},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

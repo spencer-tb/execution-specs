@@ -113,6 +113,8 @@ def test_static_call_create3(
         value=100000,
     )
 
-    post = {}
+    post = {
+        callee: Account(storage={0: 0x13136008b64ff592819b2fa6d43f2835c452020e, 1: 1, 2: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

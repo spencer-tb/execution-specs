@@ -79,6 +79,13 @@ def test_suicide_non_const(
         value=tx_value,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={},
+            nonce=0,
+            balance=0,
+            code=Op.PUSH20[0x95e7baea6a6c7c4c2dfeb977efac326af552d87] + Op.BALANCE + Op.SELFDESTRUCT + Op.STOP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

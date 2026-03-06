@@ -139,7 +139,17 @@ def test_ext_code_hash_subcall_suicide(
         value=1,
     )
 
-    post = {}
+    post = {
+        callee: Account(
+            storage={},
+            nonce=0,
+            balance=0,
+            code=Op.PUSH1[0x20] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH20[0xc000000000000000000000000000000000000000] + Op.PUSH3[0x55730] + Op.CALLCODE + Op.STOP,
+        ),
+        contract: Account(
+            storage={1: 0x367d3c0e810bbdebc72c25e80dcb9a337c7c87e3a36e6fae87d1d51b3c745d24, 2: 37, 3: 0x6020600060006000600073c00000000000000000000000000000000000000062, 4: 0x367d3c0e810bbdebc72c25e80dcb9a337c7c87e3a36e6fae87d1d51b3c745d24, 5: 37, 6: 0x6020600060006000600073c00000000000000000000000000000000000000062, 7: 1},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
 

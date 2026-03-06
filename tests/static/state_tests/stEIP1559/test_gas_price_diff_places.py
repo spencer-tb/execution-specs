@@ -581,6 +581,10 @@ def test_gas_price_diff_places(
         value=0,
     )
 
-    post = {}
+    post = {
+        callee_4: Account(storage={0: 24743}),
+        Address("0x24582"): Account(storage={0: 24743}),
+        contract: Account(storage={0: 2000}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

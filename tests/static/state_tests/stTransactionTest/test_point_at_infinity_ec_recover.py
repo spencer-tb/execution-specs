@@ -65,6 +65,12 @@ def test_point_at_infinity_ec_recover(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x000000000000000000000000000000000000ff0a"): Account(
+            storage={0: 1, 1: 0x6b8d2c81b11b2d699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9},
+            nonce=0,
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

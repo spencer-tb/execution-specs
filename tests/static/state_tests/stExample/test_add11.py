@@ -72,6 +72,13 @@ def test_add11(
         value=100000,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 2},
+            code=Op.PUSH1[0x1] + Op.PUSH1[0x1] + Op.ADD + Op.PUSH1[0x0] + Op.SSTORE + Op.STOP,
+        ),
+        sender: Account(storage={}, nonce=1, code=b""),
+        Address("0xe94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account.NONEXISTENT,
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

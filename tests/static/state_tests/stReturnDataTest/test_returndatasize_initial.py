@@ -68,6 +68,8 @@ def test_returndatasize_initial(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(storage={0: 0}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

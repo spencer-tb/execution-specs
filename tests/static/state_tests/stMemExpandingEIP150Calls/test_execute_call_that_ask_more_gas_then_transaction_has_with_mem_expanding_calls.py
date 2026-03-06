@@ -84,6 +84,13 @@ def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0x1000000000000000000000000000000000000001>"): Account(
+            storage={1: 12},
+            balance=0x186a0,
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1),
+        Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={1: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

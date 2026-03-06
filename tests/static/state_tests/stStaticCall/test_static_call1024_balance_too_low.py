@@ -80,10 +80,10 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_storage",
     [
-        "000000000000000000000000d395a2cb1cb7ef1b90e2edb71fc0a390ecc84fe8",
-        "000000000000000000000000e8f28ee50521b0388cf0a623b1a89e43d022c039",
+        ("000000000000000000000000d395a2cb1cb7ef1b90e2edb71fc0a390ecc84fe8", {0: 1, 1: 0}),
+        ("000000000000000000000000e8f28ee50521b0388cf0a623b1a89e43d022c039", {0: 0, 1: 0}),
     ],
     ids=['case0', 'case1'],
 )
@@ -92,6 +92,7 @@ def test_static_call1024_balance_too_low(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_storage: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -158,6 +159,8 @@ def test_static_call1024_balance_too_low(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0xcbbf5374fce5edbc8e2a8697c15331677e6ebf0b>"): Account(storage=expected_storage),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

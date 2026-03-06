@@ -122,6 +122,21 @@ def test_random_statetest22(
         value=1814313700,
     )
 
-    post = {}
+    post = {
+        Address("0x000000000000417fffffffffffffffffffffffff"): Account(
+            storage={},
+            nonce=0,
+            code=b"",
+        ),
+        Address("0x<contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5>"): Account(
+            storage={},
+            nonce=0,
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=1,
+            code=b"",
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

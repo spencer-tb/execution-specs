@@ -131,6 +131,11 @@ def test_ab_acalls_suicide1(
         value=100000,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={}),
+        Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account.NONEXISTENT,
+        callee: Account(storage={}, balance=23),
+        sender: Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

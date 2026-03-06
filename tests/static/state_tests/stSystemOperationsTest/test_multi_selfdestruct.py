@@ -73,21 +73,41 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "01",
+        {Address("0x000000000000000000000000000000000000dead"): Account(nonce=1, balance=2), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 1, 1: 3, 2: 0, 16: 1, 17: 3, 18: 2})},
+        id="case0",
+    ),
+    pytest.param(
         "02",
+        {Address("0x000000000000000000000000000000000000dead"): Account(nonce=1, balance=0), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 1, 1: 3, 2: 0, 16: 1, 17: 5, 18: 0})},
+        id="case1",
+    ),
+    pytest.param(
         "03",
+        {Address("0x000000000000000000000000000000000000dead"): Account(nonce=1, balance=0), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 1, 1: 3, 2: 0, 16: 1, 17: 3, 18: 0, 19: 2})},
+        id="case2",
+    ),
+    pytest.param(
         "04",
+        {Address("0x000000000000000000000000000000000000dead"): Account(nonce=1, balance=0), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 1, 1: 3, 2: 0, 16: 0, 17: 3, 18: 0, 19: 0})},
+        id="case3",
+    ),
+    pytest.param(
         "05",
+        {Address("0x000000000000000000000000000000000000dead"): Account(nonce=1, balance=1), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 1, 1: 3, 2: 0, 16: 1, 17: 3, 18: 1, 19: 1})},
+        id="case4",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_multi_selfdestruct(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """Implements: SUC000, SUC001, SUC002, SUC003, SUC004, SUC005
 ."""
@@ -169,6 +189,6 @@ def test_multi_selfdestruct(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

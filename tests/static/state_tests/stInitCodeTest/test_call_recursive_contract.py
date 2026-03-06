@@ -79,6 +79,14 @@ def test_call_recursive_contract(
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={2: 0x95e7baea6a6c7c4c2dfeb977efac326af552d87},
+            nonce=41,
+            balance=1,
+        ),
+        Address("0x1a4c83e1a9834cdc7e4a905ff7f0cf44aed73180"): Account.NONEXISTENT,
+        Address("0x8e3411c91d5dd4081b4846fa2f93808f5ad19686"): Account.NONEXISTENT,
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

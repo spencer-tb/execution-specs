@@ -55,6 +55,9 @@ def test_zero_value_transaction_call(
         value=0,
     )
 
-    post = {}
+    post = {
+        sender: Account(nonce=1),
+        contract: Account.NONEXISTENT,
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

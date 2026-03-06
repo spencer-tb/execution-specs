@@ -96,6 +96,10 @@ def test_static_call_ecrecover_check_length_wrong_v(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0x1122334455667788990011223344556677889900112233445566778899001122, 1: 160, 2: 1},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

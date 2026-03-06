@@ -102,6 +102,12 @@ def test_create_empty_contract_with_storage(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 0x8d5b6, 1: 0xf1ecf98489fa9ed60a664fc4998db699cfa39d40, 100: 0x6f4f0},
+        ),
+        callee: Account(storage={1: 12}),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

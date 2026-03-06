@@ -121,6 +121,8 @@ def test_multi_owned_construction_not_enough_gas(
         value=0,
     )
 
-    post = {}
+    post = {
+        sender: Account(storage={}, nonce=1, code=b""),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

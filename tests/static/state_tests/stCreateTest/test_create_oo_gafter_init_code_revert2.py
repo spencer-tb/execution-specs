@@ -84,18 +84,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "000000000000000000000000c94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+        {Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={1: 0x6460016001556000526005601bf3}), Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account.NONEXISTENT},
+        id="case0",
+    ),
+    pytest.param(
         "000000000000000000000000d94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+        {Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={1: 0}), Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account.NONEXISTENT},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_oo_gafter_init_code_revert2(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """Calls a contract that runs CREATE which deploy a code. then after deployment and exiting from CREATE a REVERT is called. check the REVERT data in this case equal to RETURN value of CREATE. CREATE fails due to the deployment cost.."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -169,6 +177,6 @@ def test_create_oo_gafter_init_code_revert2(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

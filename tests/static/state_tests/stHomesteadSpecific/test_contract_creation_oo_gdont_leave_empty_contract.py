@@ -79,6 +79,8 @@ def test_contract_creation_oo_gdont_leave_empty_contract(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x5dddfce53ee040d9eb21afbc0ae1bb4dbb0ba643"): Account.NONEXISTENT,
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

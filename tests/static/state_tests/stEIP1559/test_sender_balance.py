@@ -79,6 +79,10 @@ the transaction validity check).
         access_list=[],
     )
 
-    post = {}
+    post = {
+        Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+            storage={0: 0xde0b6b3a6fe6060},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

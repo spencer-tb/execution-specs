@@ -183,22 +183,46 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "0000000000000000000000002000000000000000000000000000000000000000",
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 0x9ff1f274b33e3b56edd7734520cbcdf2699fc1dc78b51644cdc56ca65bebeeae, 2: 5, 3: 0x6020602055000000000000000000000000000000000000000000000000000000, 4: 1})},
+        id="case0",
+    ),
+    pytest.param(
         "0000000000000000000000002100000000000000000000000000000000000000",
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 0x9ff1f274b33e3b56edd7734520cbcdf2699fc1dc78b51644cdc56ca65bebeeae, 2: 5, 3: 0x6020602055000000000000000000000000000000000000000000000000000000, 4: 1})},
+        id="case1",
+    ),
+    pytest.param(
         "0000000000000000000000002200000000000000000000000000000000000000",
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 0x9ff1f274b33e3b56edd7734520cbcdf2699fc1dc78b51644cdc56ca65bebeeae, 2: 5, 3: 0x6020602055000000000000000000000000000000000000000000000000000000, 4: 1})},
+        id="case2",
+    ),
+    pytest.param(
         "0000000000000000000000003000000000000000000000000000000000000000",
+        {Address("0x62ae0b997c8230e321b19d06b7004f25e1ac0637"): Account.NONEXISTENT, Address("0xc566c94b132ce77d6e67add86c5a74e808578876"): Account.NONEXISTENT},
+        id="case3",
+    ),
+    pytest.param(
         "0000000000000000000000003100000000000000000000000000000000000000",
+        {Address("0x62ae0b997c8230e321b19d06b7004f25e1ac0637"): Account.NONEXISTENT, Address("0xc566c94b132ce77d6e67add86c5a74e808578876"): Account.NONEXISTENT},
+        id="case4",
+    ),
+    pytest.param(
         "0000000000000000000000003200000000000000000000000000000000000000",
+        {Address("0x62ae0b997c8230e321b19d06b7004f25e1ac0637"): Account.NONEXISTENT, Address("0xc566c94b132ce77d6e67add86c5a74e808578876"): Account.NONEXISTENT},
+        id="case5",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_ext_code_hash_subcall_oog(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """create contract A in a subcall. go OOG in a subcall (revert happens) check EXTCODEHASH of A (in upper call)."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -344,6 +368,6 @@ def test_ext_code_hash_subcall_oog(
         value=1,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

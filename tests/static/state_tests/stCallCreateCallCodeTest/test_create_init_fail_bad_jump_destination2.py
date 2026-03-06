@@ -77,6 +77,8 @@ def test_create_init_fail_bad_jump_destination2(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x0000000000000000000000000000000000000000"): Account(balance=0xde0b6b3a76586a0),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

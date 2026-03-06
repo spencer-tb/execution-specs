@@ -55,6 +55,9 @@ def test_transaction_sending_to_zero(
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(balance=1),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

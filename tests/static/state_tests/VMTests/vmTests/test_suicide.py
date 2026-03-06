@@ -53,19 +53,31 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "693c61390000000000000000000000000000000000000000000000000000000000001000",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(balance=0x5af31075d9de), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(balance=0xff100000000000)},
+        id="case0",
+    ),
+    pytest.param(
         "693c61390000000000000000000000000000000000000000000000000000000000001002",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(balance=0x5af31075d9de), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(balance=0xff100000000000)},
+        id="case1",
+    ),
+    pytest.param(
         "693c61390000000000000000000000000000000000000000000000000000000000001001",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(balance=0x5af31075d9de), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(balance=0xff100000000000)},
+        id="case2",
+    ),
     ],
-    ids=['case0', 'case1', 'case2'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_suicide(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -123,6 +135,6 @@ def test_suicide(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -115,6 +115,13 @@ def test_static_internal_call_store_clears_oog(
         value=10,
     )
 
-    post = {}
+    post = {
+        callee: Account(
+            storage={0: 12, 1: 12, 2: 12, 3: 12, 4: 12, 5: 12, 6: 12, 7: 12, 8: 12, 9: 12},
+            balance=0,
+        ),
+        sender: Account(nonce=1),
+        contract: Account(storage={1: 0}, balance=20),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

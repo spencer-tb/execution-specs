@@ -102,6 +102,9 @@ def test_call_zero_v_call_suicide(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b>"): Account(balance=0),
+        Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={100: 7637}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

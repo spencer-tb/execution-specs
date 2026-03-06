@@ -202,7 +202,19 @@ at the end of transaction during state finalization stage.
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 0xaa174f6647c45e8a984f39062ca89ccc3588c787d91106cfd57df387bd504efc, 1: 23, 2: 0x73deadbeef00000000000000000000000000000000ff00000000000000000000, 3: 0xaa174f6647c45e8a984f39062ca89ccc3588c787d91106cfd57df387bd504efc, 4: 23, 5: 0x73deadbeef00000000000000000000000000000000ff00000000000000000000},
+            balance=0xde0b6b3a7640001,
+        ),
+        callee: Account(
+            storage={},
+            nonce=0,
+            balance=0,
+            code=Op.PUSH20[0xdeadbeef00000000000000000000000000000000] + Op.SELFDESTRUCT + Op.STOP,
+        ),
+        callee_1: Account(balance=0x1bc16d674ec80000),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
 

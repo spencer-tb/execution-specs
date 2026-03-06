@@ -99,6 +99,12 @@ def test_call_output3partial_fail(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0x5e20a0453cecd065ea59c37ac63e079ee08998b6045136a8ce6635c7912ec0b6},
+        ),
+        Address("0x<contract:0xaaae7baea6a6c7c4c2dfeb977efac326af552d87>"): Account(storage={}),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

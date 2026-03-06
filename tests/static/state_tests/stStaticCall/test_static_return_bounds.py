@@ -346,6 +346,11 @@ def test_static_return_bounds(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(
+            storage={1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1, 11: 1, 12: 1, 13: 1, 14: 1, 15: 1, 16: 1},
+            balance=1,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

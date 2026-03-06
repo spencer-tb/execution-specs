@@ -159,6 +159,12 @@ def test_create_collision_results(
         value=0,
     )
 
-    post = {}
+    post = {
+        callee: Account(storage={0: 29}, code=bytes.fromhex("105679280952576")),
+        callee_1: Account(storage={0: 29}, code=bytes.fromhex("105679280952576")),
+        contract: Account(
+            storage={32: 89, 33: 143, 34: 200, 48: 6, 49: 0x601d600055000000000000000000000000000000000000000000000000000000, 50: 6, 51: 0x601d600055000000000000000000000000000000000000000000000000000000},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

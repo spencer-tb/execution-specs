@@ -93,6 +93,8 @@ def test_static_call_lose_gas_oog(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={0: 1, 2: 1001}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

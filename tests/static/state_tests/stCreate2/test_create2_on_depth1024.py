@@ -128,6 +128,12 @@ def test_create2_on_depth1024(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x436b8f99e8d953cdaf8f9472116add83ccd82a65"): Account(nonce=1),
+        Address("0xb250d8cdad4a7a81323be508f4ac44584dd27597"): Account(
+            storage={1: 0x436b8f99e8d953cdaf8f9472116add83ccd82a65},
+        ),
+        contract: Account(storage={1: 0xb250d8cdad4a7a81323be508f4ac44584dd27597}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

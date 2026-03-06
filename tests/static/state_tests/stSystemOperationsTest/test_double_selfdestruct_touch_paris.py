@@ -63,19 +63,31 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_value",
+    "tx_value, expected_post",
     [
+    pytest.param(
         0,
+        {Address("0x000000000000000000000000000000000000c0de"): Account(storage={}, nonce=0, balance=0), Address("0x0000000000000000000000000000000000e49701"): Account(balance=10), Address("0x0000000000000000000000000000000000e49702"): Account(balance=10), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case0",
+    ),
+    pytest.param(
         1,
+        {Address("0x000000000000000000000000000000000000c0de"): Account(storage={}, nonce=0, balance=0), Address("0x0000000000000000000000000000000000e49701"): Account(balance=10), Address("0x0000000000000000000000000000000000e49702"): Account(nonce=0, balance=11), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case1",
+    ),
+    pytest.param(
         2,
+        {Address("0x000000000000000000000000000000000000c0de"): Account(storage={}, nonce=0, balance=0), Address("0x0000000000000000000000000000000000e49701"): Account(nonce=0, balance=11), Address("0x0000000000000000000000000000000000e49702"): Account(nonce=0, balance=11), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case2",
+    ),
     ],
-    ids=['case0', 'case1', 'case2'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_double_selfdestruct_touch_paris(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_value: int,
+    expected_post: dict,
 ) -> None:
     """A single contract can execute SELFDESTRUCT multiple times using by being called
 multiple times. The second and later SELFDESTRUCTs have little effect but can
@@ -134,6 +146,6 @@ touch some new beneficiary addresses.
         value=tx_value,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -93,6 +93,8 @@ def test_contract_store_clears_success(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(storage={}, balance=10),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

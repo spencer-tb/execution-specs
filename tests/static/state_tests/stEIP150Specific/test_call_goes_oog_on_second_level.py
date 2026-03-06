@@ -139,6 +139,12 @@ def test_call_goes_oog_on_second_level(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0x1000000000000000000000000000000000000110>"): Account(
+            storage={8: 0x927be, 12: 1, 12: 1},
+        ),
+        Address("0x<contract:0x1000000000000000000000000000000000000111>"): Account(storage={}),
+        Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={8: 0x213fb6, 9: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

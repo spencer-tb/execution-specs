@@ -104,6 +104,10 @@ def test_zero_value_suicide_oog_revert(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b>"): Account(storage={}),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1),
+        Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

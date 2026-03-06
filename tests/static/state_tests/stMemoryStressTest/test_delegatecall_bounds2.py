@@ -105,6 +105,8 @@ def test_delegatecall_bounds2(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(storage={}, balance=0),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -92,6 +92,8 @@ def test_delegatecall_in_initcode_to_existing_contract_oog(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(balance=5),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

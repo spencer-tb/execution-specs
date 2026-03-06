@@ -6,6 +6,7 @@ tests/static/state_tests/stCreate2/create2collisionBalanceFiller.json
 """
 
 import pytest
+from execution_testing.vm import Op
 from execution_testing import (
     Account,
     Address,
@@ -25,20 +26,36 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "6000600060006000f500",
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(nonce=2, balance=1), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(nonce=1, balance=1)},
+        id="case0",
+    ),
+    pytest.param(
         "64600160015560005260006005601b6000f500",
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(nonce=2, balance=1), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(storage={1: 1}, nonce=1, balance=1, code=b"")},
+        id="case1",
+    ),
+    pytest.param(
         "6d6460016001556000526005601bf36000526000600e60126000f500",
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(nonce=2, balance=1), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(storage={}, nonce=1, balance=1, code=Op.PUSH1[0x1] + Op.PUSH1[0x1] + Op.SSTORE)},
+        id="case2",
+    ),
+    pytest.param(
         "6000600060006001f500",
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(nonce=2, balance=0), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(nonce=1, balance=2)},
+        id="case3",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2collision_balance(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """create2 generates an account that already exists and has balance != 0."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -75,6 +92,6 @@ def test_create2collision_balance(
         value=1,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

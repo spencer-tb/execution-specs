@@ -82,6 +82,8 @@ def test_mload32bit_bound_return2(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(storage={}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

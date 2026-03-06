@@ -130,20 +130,36 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "0000000000000000000000001000000000000000000000000000000000000000",
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 1, 10: 0x13136008b64ff592819b2fa6d43f2835c452020e, 11: 1, 20: 0x1000000000000000000000000000000000000000, 21: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 22: 0x1000000000000000000000000000000000000000})},
+        id="case0",
+    ),
+    pytest.param(
         "0000000000000000000000002000000000000000000000000000000000000000",
+        {Address("0x2000000000000000000000000000000000000000"): Account(storage={0: 1, 10: 0x2d39fad743351d4cf3f4717907d3dda5e0a689a7, 11: 1, 20: 0x2000000000000000000000000000000000000000, 21: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 22: 0x2000000000000000000000000000000000000000})},
+        id="case1",
+    ),
+    pytest.param(
         "0000000000000000000000003000000000000000000000000000000000000000",
+        {Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(storage={0: 1, 10: 0xbf1676be6038ab86d66e00824c2e3577858040f6, 11: 1, 20: 0x4b86c4ed99b87f0f396bc0c76885453c343916ed, 21: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 22: 0x4b86c4ed99b87f0f396bc0c76885453c343916ed}, nonce=2, balance=0, code=b"")},
+        id="case2",
+    ),
+    pytest.param(
         "0000000000000000000000004000000000000000000000000000000000000000",
+        {Address("0xa51c188504a60578914fcae68f7a1f0dcbb856a9"): Account(storage={0: 1, 10: 0xf2d6bf688fae45da62ab2dd4f36945bc924cc61, 11: 1, 20: 0xa51c188504a60578914fcae68f7a1f0dcbb856a9, 21: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 22: 0xa51c188504a60578914fcae68f7a1f0dcbb856a9}, nonce=2, balance=0, code=b"")},
+        id="case3",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_callcode_dynamic_code(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """callcode to a contract that is being created in the same transaction."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -252,6 +268,6 @@ def test_callcode_dynamic_code(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

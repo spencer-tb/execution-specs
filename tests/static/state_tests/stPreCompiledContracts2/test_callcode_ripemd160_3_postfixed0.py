@@ -86,6 +86,10 @@ def test_callcode_ripemd160_3_postfixed0(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0x7730b4642169b0f16752696da8da830a4b429c9d, 2: 1},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

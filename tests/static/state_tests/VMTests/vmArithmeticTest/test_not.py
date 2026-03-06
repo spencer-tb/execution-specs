@@ -94,6 +94,10 @@ def test_not(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x512"): Account(
+            storage={0: 0xfffffffffffffffffffffffffffffffffffffffffffffffffedcba9876543210},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

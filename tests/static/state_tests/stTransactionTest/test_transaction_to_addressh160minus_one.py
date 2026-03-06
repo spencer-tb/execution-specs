@@ -55,6 +55,8 @@ def test_transaction_to_addressh160minus_one(
         value=100,
     )
 
-    post = {}
+    post = {
+        contract: Account(balance=100),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

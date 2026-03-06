@@ -142,6 +142,8 @@ def test_callcode_bounds(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 0}, balance=0),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

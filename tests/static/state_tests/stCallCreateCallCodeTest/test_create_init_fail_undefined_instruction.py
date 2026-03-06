@@ -135,6 +135,8 @@ def test_create_init_fail_undefined_instruction(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(storage={2: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

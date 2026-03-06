@@ -93,6 +93,8 @@ def test_arith(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 0x1b9c636491}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

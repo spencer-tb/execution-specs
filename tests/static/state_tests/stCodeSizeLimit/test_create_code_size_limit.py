@@ -40,18 +40,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "6160016000f3",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={0: 0, 1: 1}), Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(storage={}, nonce=1, balance=0)},
+        id="case0",
+    ),
+    pytest.param(
         "6160006000f3",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={0: 0, 1: 1}), Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(storage={}, nonce=1, balance=0)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_code_size_limit(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -92,6 +100,6 @@ def test_create_code_size_limit(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

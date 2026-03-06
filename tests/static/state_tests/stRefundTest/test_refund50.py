@@ -86,7 +86,11 @@ def test_refund50_1(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(storage={}),
+        Address("0x<eoa:0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba>"): Account(balance=0),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1, balance=0x92f810),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
 

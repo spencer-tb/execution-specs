@@ -105,6 +105,10 @@ def test_returndatacopy_after_successful_delegatecall(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
+            storage={0: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

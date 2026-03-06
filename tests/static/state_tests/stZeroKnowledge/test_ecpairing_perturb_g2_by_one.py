@@ -162,6 +162,32 @@ def test_ecpairing_perturb_g2_by_one(
         value=0,
     )
 
-    post = {}
+    post = {
+        callee: Account(storage={}, nonce=0, balance=1, code=b""),
+        callee_1: Account(storage={}, nonce=0, balance=1, code=b""),
+        callee_2: Account(storage={}, nonce=0, balance=1, code=b""),
+        callee_3: Account(storage={}, nonce=0, balance=1, code=b""),
+        callee_4: Account(storage={}, nonce=0, balance=1, code=b""),
+        callee_5: Account(storage={}, nonce=0, balance=1, code=b""),
+        callee_6: Account(storage={}, nonce=0, balance=1, code=b""),
+        callee_7: Account(storage={}, nonce=0, balance=1, code=b""),
+        callee_8: Account(storage={}, nonce=0, balance=0xde0b6b3a7640000, code=b""),
+        callee_9: Account(storage={}, nonce=0, balance=0xde0b6b3a7640000, code=b""),
+        callee_10: Account(storage={}, nonce=0, balance=0xde0b6b3a7640000, code=b""),
+        coinbase: Account(storage={}, nonce=0, code=b""),
+        callee_11: Account(storage={}, nonce=0, balance=0xde0b6b3a7640000, code=b""),
+        callee_12: Account(storage={}, nonce=0, balance=0xde0b6b3a7640000, code=b""),
+        callee_13: Account(storage={}, nonce=0, balance=0xde0b6b3a7640000, code=b""),
+        sender: Account(storage={}, nonce=25, code=b""),
+        callee_14: Account(storage={}, nonce=0, balance=0xde0b6b3a7640000, code=b""),
+        contract: Account(
+            storage={0: 0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563},
+            nonce=1,
+            balance=0,
+            code=Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.PUSH1[0x1c] + Op.MSTORE + Op.PUSH21[0x10000000000000000000000000000000000000000] + Op.PUSH1[0x20] + Op.MSTORE + Op.PUSH16[0xffffffffffffffffffffffffffffffff] + Op.PUSH1[0x40] + Op.MSTORE + Op.PUSH32[0xffffffffffffffffffffffffffffffff00000000000000000000000000000001] + Op.PUSH1[0x60] + Op.MSTORE + Op.PUSH21[0x2540be3fffffffffffffffffffffffffdabf41c00] + Op.PUSH1[0x80] + Op.MSTORE + Op.PUSH32[0xfffffffffffffffffffffffdabf41c00000000000000000000000002540be400] + Op.PUSH1[0xa0] + Op.MSTORE + Op.PUSH4[0x30c8d1da] + Op.PUSH1[0x0] + Op.MLOAD + Op.EQ + Op.ISZERO + Op.PUSH2[0x12c] + Op.JUMPI + Op.PUSH2[0x780] + Op.PUSH1[0x4] + Op.CALLDATALOAD + Op.PUSH1[0x4] + Op.ADD + Op.CALLDATALOAD + Op.GT + Op.ISZERO + Op.ISZERO + Op.PC + Op.JUMPI + Op.PUSH1[0x4] + Op.CALLDATALOAD + Op.PUSH1[0x4] + Op.ADD + Op.CALLDATALOAD + Op.PUSH1[0x20] + Op.ADD + Op.PUSH1[0x4] + Op.CALLDATALOAD + Op.PUSH1[0x4] + Op.ADD + Op.PUSH2[0x140] + Op.CALLDATACOPY + Op.PUSH1[0x20] + Op.PUSH2[0x920] + Op.PUSH2[0x140] + Op.MLOAD + Op.PUSH2[0x160] + Op.PUSH1[0x0] + Op.PUSH1[0x8] + Op.PUSH4[0x5f5e0ff] + Op.CALL + Op.ISZERO + Op.PC + Op.JUMPI + Op.PUSH1[0x20] + Op.PUSH2[0x900] + Op.MSTORE + Op.PUSH2[0x900] + Op.PUSH1[0x40] + Op.DUP1 + Op.PUSH2[0x960] + Op.DUP3 + Op.DUP5 + Op.PUSH1[0x0] + Op.PUSH1[0x4] + Op.PUSH1[0x18] + Op.CALL + Op.POP + Op.POP + Op.POP + Op.PUSH2[0x960] + Op.DUP1 + Op.MLOAD + Op.PUSH1[0x20] + Op.DUP3 + Op.ADD + Op.SHA3 + Op.SWAP1 + Op.POP + Op.PUSH1[0x0] + Op.SSTORE + Op.PUSH2[0x960] + Op.PUSH1[0x20] + Op.PUSH1[0x20] + Op.DUP3 + Op.SUB + Op.MSTORE + Op.PUSH1[0x40] + Op.DUP2 + Op.MLOAD + Op.ADD + Op.PUSH1[0x20] + Op.PUSH1[0x1] + Op.DUP3 + Op.SUB + Op.MOD + Op.PUSH1[0x1f] + Op.DUP3 + Op.ADD + Op.SUB + Op.SWAP1 + Op.POP + Op.PUSH1[0x20] + Op.DUP3 + Op.SUB + Op.RETURN + Op.POP + Op.STOP + Op.JUMPDEST,
+        ),
+        callee_15: Account(storage={}, nonce=0, balance=0xde0b6b3a7640000, code=b""),
+        callee_16: Account(storage={}, nonce=0, balance=0xde0b6b3a7640000, code=b""),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

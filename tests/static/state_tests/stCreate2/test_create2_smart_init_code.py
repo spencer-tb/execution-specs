@@ -78,18 +78,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "0000000000000000000000000f572e5295c57f15886f9b263e2f6d2d6c7b5ec6",
+        {Address("0x0000000000000000000000000000000000000001"): Account(balance=1), Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(nonce=2)},
+        id="case0",
+    ),
+    pytest.param(
         "0000000000000000000000001f572e5295c57f15886f9b263e2f6d2d6c7b5ec6",
+        {Address("0x1f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(storage={1: 0xd27e800c69122409ac5609fe4df903745f3988a0, 2: 0}), Address("0xd27e800c69122409ac5609fe4df903745f3988a0"): Account(storage={1: 1}, nonce=1, code=Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2_smart_init_code(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """create2SmartInitCode. create2 works different each time you call it."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -153,6 +161,6 @@ def test_create2_smart_init_code(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

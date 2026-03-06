@@ -74,6 +74,9 @@ def test_create_message_success(
         value=100,
     )
 
-    post = {}
+    post = {
+        contract: Account(nonce=1, balance=100),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(storage={0: 12}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

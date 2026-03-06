@@ -106,6 +106,12 @@ def test_static_create_empty_contract_with_storage_and_call_it_0wei(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 0x8d5b6, 1: 0xf1ecf98489fa9ed60a664fc4998db699cfa39d40, 2: 0x6f4f0, 3: 1, 100: 0x64766},
+        ),
+        callee: Account(storage={1: 12}),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

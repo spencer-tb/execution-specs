@@ -81,6 +81,11 @@ def test_merge_test(
         access_list=[AccessList(address=Address("0x49a0fe79e28d1d65e16cdf53acafeae7baccac0e"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
     )
 
-    post = {}
+    post = {
+        Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+            storage={0: 1010, 1: 1000, 2: 0x1500000000000000000000000000000000000000000000000000000000000000},
+            nonce=1,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -96,6 +96,10 @@ def test_call_ecrecover_s_prefixed0(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0xb4950a7fad428434b11c357fa6d4b4bcd3096a5d, 1: 0, 2: 1},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

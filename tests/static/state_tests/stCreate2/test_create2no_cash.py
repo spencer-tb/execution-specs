@@ -34,19 +34,31 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "6000600060006000600073e2b35478fdd26477cc576dd906e6277761246a3c620249f0f100",
+        {Address("0x12aaefbc0350a026228076e5369e6ce148ce67be"): Account.NONEXISTENT, Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(balance=100)},
+        id="case0",
+    ),
+    pytest.param(
         "6000600060006000600173e2b35478fdd26477cc576dd906e6277761246a3c620249f0f100",
+        {Address("0x12aaefbc0350a026228076e5369e6ce148ce67be"): Account(balance=101), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(balance=0)},
+        id="case1",
+    ),
+    pytest.param(
         "600060006000600073e2b35478fdd26477cc576dd906e6277761246a3c620249f0fa00",
+        {Address("0x12aaefbc0350a026228076e5369e6ce148ce67be"): Account.NONEXISTENT, Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(balance=100)},
+        id="case2",
+    ),
     ],
-    ids=['case0', 'case1', 'case2'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2no_cash(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """create2 fails with not enough cash (endowment of a new account) + inside staticcall."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -86,6 +98,6 @@ def test_create2no_cash(
         value=1,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

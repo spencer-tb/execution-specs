@@ -102,6 +102,10 @@ def test_19_oog_undoes_transient_store(
         access_list=[],
     )
 
-    post = {}
+    post = {
+        Address("0xa00000000000000000000000000000000000000a"): Account(
+            storage={0: 78, 1: 78, 2: 0},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

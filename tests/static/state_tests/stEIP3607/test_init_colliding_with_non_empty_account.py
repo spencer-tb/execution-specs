@@ -85,6 +85,17 @@ def test_init_colliding_with_non_empty_account(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x05cd8493115c3299094a269e839e2f5f25691785"): Account.NONEXISTENT,
+        contract: Account(
+            storage={},
+            nonce=0,
+            balance=0xde0b6b3a7640000,
+            code=Op.PUSH1[0x0] + Op.PUSH1[0x1] + Op.SSTORE,
+        ),
+        Address("0xa42676447b7cedfa5fde894d1d3df24aab362701"): Account.NONEXISTENT,
+        sender: Account(nonce=1),
+        callee_1: Account(balance=0),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

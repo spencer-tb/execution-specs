@@ -66,6 +66,20 @@ def test_vitalik_transaction_test_paris(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1bc78ae0e5ec5cb439f1d5355d6f90d38343e109"): Account(
+            storage={},
+            nonce=3,
+            code=b"",
+        ),
+        Address("0x51f9d7f98e997bdd6bebde4c2dd27be8c99303aa"): Account(
+            storage={},
+            nonce=1,
+            balance=0,
+            code=Op.PUSH1[0x0] + Op.PUSH1[0x3f] + Op.MSTORE8 + Op.MSIZE + Op.PUSH2[0x43] + Op.DUP1 + Op.PUSH2[0x13] + Op.MSIZE + Op.CODECOPY + Op.PUSH2[0x56] + Op.JUMP + Op.PUSH13[0x1000000000000000000000000] + Op.PUSH32[0xee098e6c2a43d9e2c04f08f0c3a87b0ba59079d4d53532071d6cd0cb86facd56] + Op.SDIV + Op.SELFDESTRUCT + Op.PUSH2[0x0] + Op.DUP1 + Op.PUSH2[0x3f] + Op.PUSH1[0x0] + Op.CODECOPY + Op.PUSH2[0x3f] + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.RETURN + Op.JUMPDEST + Op.DUP2 + Op.PUSH1[0x0] + Op.CREATE + Op.SWAP1 + Op.POP + Op.POP + Op.INVALID,
+        ),
+        sender: Account(storage={}, nonce=336, code=b""),
+        contract: Account(storage={}, nonce=0, balance=10, code=b""),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

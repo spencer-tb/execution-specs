@@ -83,6 +83,8 @@ def test_17_tstore_gas(
         access_list=[],
     )
 
-    post = {}
+    post = {
+        Address("0xa00000000000000000000000000000000000000a"): Account(storage={1: 100}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

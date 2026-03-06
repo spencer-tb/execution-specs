@@ -81,6 +81,13 @@ def test_create_high_nonce_minus1(
         value=0,
     )
 
-    post = {}
+    post = {
+        sender: Account(nonce=1),
+        contract: Account(
+            storage={0: 0xd061b08a84ebc70fe797f9bd62f4269ef8274a13, 1: 1},
+            nonce=18446744073709551615,
+        ),
+        Address("0xd061b08a84ebc70fe797f9bd62f4269ef8274a13"): Account(code=bytes.fromhex("00")),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

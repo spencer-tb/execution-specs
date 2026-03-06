@@ -111,6 +111,12 @@ def test_create2_contract_suicide_during_init_then_store_then_return(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x0000000000000000000000000000000000000001"): Account(balance=1),
+        contract: Account(
+            storage={1: 0x6000526005601bf36000526001ff000000000000000000000000000000000000},
+        ),
+        callee: Account(storage={0: 11}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

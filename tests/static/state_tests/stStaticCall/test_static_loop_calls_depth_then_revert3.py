@@ -94,6 +94,9 @@ def test_static_loop_calls_depth_then_revert3(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x7db299e0885c85039f56fa504a13dd8ce8a56aa7"): Account.NONEXISTENT,
+        Address("0xcd6807039caffddbd1c28a749ec91bef15f448e5"): Account.NONEXISTENT,
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

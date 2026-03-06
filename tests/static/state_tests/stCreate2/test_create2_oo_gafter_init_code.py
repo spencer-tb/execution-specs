@@ -35,18 +35,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_gas_limit",
+    "tx_gas_limit, expected_post",
     [
+    pytest.param(
         54000,
+        {Address("0x6878b140f875209c82ab4d5f083b55947299ef6b"): Account.NONEXISTENT, Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={1: 0})},
+        id="case0",
+    ),
+    pytest.param(
         55000,
+        {Address("0x6878b140f875209c82ab4d5f083b55947299ef6b"): Account(code=Op.PUSH1[0x1] + Op.PUSH1[0x1] + Op.SSTORE), Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={1: 0})},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2_oo_gafter_init_code(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -85,6 +93,6 @@ def test_create2_oo_gafter_init_code(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

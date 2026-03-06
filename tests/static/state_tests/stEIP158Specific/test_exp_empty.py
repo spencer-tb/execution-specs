@@ -109,6 +109,10 @@ def test_exp_empty(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={2: 2280, 3: 1, 4: 22127, 6: 2627, 8: 3027, 10: 3827, 11: 1, 12: 22127, 13: 1, 14: 22127, 15: 1, 100: 22127},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

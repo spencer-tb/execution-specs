@@ -85,6 +85,15 @@ def test_suicides_stop_after_suicide(
         value=10,
     )
 
-    post = {}
+    post = {
+        callee: Account(storage={}),
+        sender: Account(nonce=1),
+        contract: Account(
+            storage={},
+            nonce=0,
+            balance=0,
+            code=Op.PUSH1[0x0] + Op.SELFDESTRUCT + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH2[0x7530] + Op.CALL + Op.STOP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -99,6 +99,14 @@ def test_call_and_callcode_consume_more_gas_then_transaction_has_with_mem_expand
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0x1000000000000000000000000000000000000103>"): Account(
+            storage={0: 18},
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1),
+        Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={0: 18, 8: 0x8d5b6, 9: 1, 10: 1},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

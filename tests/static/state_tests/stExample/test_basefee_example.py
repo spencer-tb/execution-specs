@@ -74,6 +74,8 @@ def test_basefee_example(
         access_list=[AccessList(address=Address("0xad21eb96c7a254c810474f7b1e1e66ca449a3426"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(storage={0: 2}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

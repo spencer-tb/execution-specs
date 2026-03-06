@@ -81,6 +81,9 @@ def test_create_oo_gafter_init_code_returndata_size(
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(balance=1),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account.NONEXISTENT,
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

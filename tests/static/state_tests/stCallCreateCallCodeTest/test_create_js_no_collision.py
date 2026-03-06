@@ -86,6 +86,10 @@ def test_create_js_no_collision(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+            storage={0: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 1: 66, 2: 35, 3: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 5: 1000},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

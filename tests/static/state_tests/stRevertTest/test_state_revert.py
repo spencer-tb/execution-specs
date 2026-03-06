@@ -301,6 +301,10 @@ def test_state_revert(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+            storage={0: 24743, 1: 0, 2: 0},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

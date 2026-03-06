@@ -72,6 +72,11 @@ def test_indexes_omit_example(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 2},
+            code=Op.PUSH1[0x1] + Op.PUSH1[0x1] + Op.ADD + Op.PUSH1[0x0] + Op.SSTORE + Op.STOP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

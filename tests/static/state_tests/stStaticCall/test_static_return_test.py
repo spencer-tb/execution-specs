@@ -102,6 +102,8 @@ def test_static_return_test(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 21}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

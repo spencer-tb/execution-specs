@@ -121,19 +121,31 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "000000000000000000000000e6f1fdaa1c99007971c641e10af3a8fac0b641c8",
+        {},
+        id="case0",
+    ),
+    pytest.param(
         "000000000000000000000000ea22ec955ac71d8e4380541212bd20818d704567",
+        {},
+        id="case1",
+    ),
+    pytest.param(
         "0000000000000000000000002c004389edaae817e664b6d660f46735756b56d3",
+        {},
+        id="case2",
+    ),
     ],
-    ids=['case0', 'case1', 'case2'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_static_call_change_revert(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -241,6 +253,6 @@ def test_static_call_change_revert(
         value=100000,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

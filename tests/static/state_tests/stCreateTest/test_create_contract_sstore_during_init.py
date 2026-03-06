@@ -54,6 +54,8 @@ def test_create_contract_sstore_during_init(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={0: 255}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -78,6 +78,8 @@ def test_revert_prefound_empty_paris(
         value=0,
     )
 
-    post = {}
+    post = {
+        callee: Account(storage={}, nonce=1, balance=10, code=b""),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

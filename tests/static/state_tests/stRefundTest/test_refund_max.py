@@ -95,6 +95,8 @@ def test_refund_max(
         access_list=[],
     )
 
-    post = {}
+    post = {
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(balance=0xe8d55f7e90),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

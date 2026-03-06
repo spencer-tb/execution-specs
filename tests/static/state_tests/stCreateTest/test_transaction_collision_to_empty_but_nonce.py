@@ -68,6 +68,9 @@ def test_transaction_collision_to_empty_but_nonce(
         value=tx_value,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={1: 0}, nonce=1),
+        sender: Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

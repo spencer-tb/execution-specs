@@ -157,6 +157,13 @@ def test_callcodecallcodecallcode_111(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(
+            storage={0: 1, 1: 1, 2: 1, 3: 1, 4: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 330: 0x1000000000000000000000000000000000000000, 332: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 336: 64, 338: 39, 340: 10},
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={1: 0, 2: 0, 3: 0, 4: 0},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

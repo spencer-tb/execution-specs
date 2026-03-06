@@ -148,6 +148,11 @@ def test_callcodecallcodecallcode_111_ooge(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 1, 1: 1, 11: 1}),
+        Address("0x<contract:0x1000000000000000000000000000000000000001>"): Account(storage={}),
+        Address("0x<contract:0x1000000000000000000000000000000000000002>"): Account(storage={}),
+        Address("0x<contract:0x1000000000000000000000000000000000000003>"): Account(storage={}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

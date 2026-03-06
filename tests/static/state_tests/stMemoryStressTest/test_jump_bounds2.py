@@ -85,6 +85,11 @@ def test_jump_bounds2(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(
+            balance=0,
+            code=Op.PUSH4[0xffffffff] + Op.JUMP + Op.PUSH8[0xffffffffffffffff] + Op.JUMP + Op.PUSH16[0xffffffffffffffffffffffffffffffff] + Op.JUMP + Op.PUSH32[0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff] + Op.JUMP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

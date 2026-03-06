@@ -189,6 +189,16 @@ Call to Account B stores Account a hash to 2
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 0xc5691dc90d9fd2a2e9a5fa5bd28bf77ffd60aa78},
+            balance=0xde0b6b3a7640001,
+        ),
+        callee: Account(
+            storage={1: 0xbc0e1b58b60bffd44555bf2c703da0fc6e1e3971797e9c5554512d69f45e7a52, 2: 23, 3: 0x73bbbbbbbb00000000000000000000000000000000ff00000000000000000000, 4: 0xbc0e1b58b60bffd44555bf2c703da0fc6e1e3971797e9c5554512d69f45e7a52, 5: 23, 6: 0x73bbbbbbbb00000000000000000000000000000000ff00000000000000000000},
+            balance=0xde0b6b3a7640000,
+        ),
+        Address("0xe713449c212d891357cc2966816b1d528cfb59e0"): Account.NONEXISTENT,
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -48,18 +48,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
-    "tx_gas_limit",
+    "tx_gas_limit, expected_post",
     [
+    pytest.param(
         150000,
+        {Address("0x0000000000000000000000000000000000000002"): Account.NONEXISTENT, Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={}, nonce=1, code=b""), Address("0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={}, nonce=0, code=Op.JUMPDEST + Op.PUSH2[0xc350] + Op.PUSH1[0x80] + Op.MLOAD + Op.LT + Op.ISZERO + Op.PUSH1[0x2d] + Op.JUMPI + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH2[0xc350] + Op.PUSH1[0x0] + Op.PUSH1[0x1] + Op.PUSH1[0x2] + Op.PUSH3[0x13178] + Op.CALL + Op.PUSH1[0x0] + Op.SSTORE + Op.PUSH1[0x1] + Op.PUSH1[0x80] + Op.MLOAD + Op.ADD + Op.PUSH1[0x80] + Op.MSTORE + Op.PUSH1[0x0] + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x80] + Op.MLOAD + Op.PUSH1[0x1] + Op.SSTORE + Op.STOP)},
+        id="case0",
+    ),
+    pytest.param(
         250000000,
+        {Address("0x0000000000000000000000000000000000000002"): Account.NONEXISTENT, Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={}, nonce=1, code=b""), Address("0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={0: 0, 1: 0}, nonce=0, code=Op.JUMPDEST + Op.PUSH2[0xc350] + Op.PUSH1[0x80] + Op.MLOAD + Op.LT + Op.ISZERO + Op.PUSH1[0x2d] + Op.JUMPI + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH2[0xc350] + Op.PUSH1[0x0] + Op.PUSH1[0x1] + Op.PUSH1[0x2] + Op.PUSH3[0x13178] + Op.CALL + Op.PUSH1[0x0] + Op.SSTORE + Op.PUSH1[0x1] + Op.PUSH1[0x80] + Op.MLOAD + Op.ADD + Op.PUSH1[0x80] + Op.MSTORE + Op.PUSH1[0x0] + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x80] + Op.MLOAD + Op.PUSH1[0x1] + Op.SSTORE + Op.STOP)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_call50000_sha256(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
@@ -102,6 +110,6 @@ def test_call50000_sha256(
         value=10,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

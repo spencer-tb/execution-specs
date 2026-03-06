@@ -74,22 +74,69 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex, tx_gas_limit, tx_value",
+    "tx_data_hex, tx_gas_limit, tx_value, expected_post",
     [
-        ("0000000000000000000000001000000000000000000000000000000000000000", 600000, 0),
-        ("0000000000000000000000001000000000000000000000000000000000000000", 600000, 1),
-        ("0000000000000000000000001000000000000000000000000000000000000000", 54000, 0),
-        ("0000000000000000000000001000000000000000000000000000000000000000", 54000, 1),
-        ("0000000000000000000000002000000000000000000000000000000000000000", 600000, 0),
-        ("0000000000000000000000002000000000000000000000000000000000000000", 600000, 1),
-        ("0000000000000000000000002000000000000000000000000000000000000000", 54000, 0),
-        ("0000000000000000000000002000000000000000000000000000000000000000", 54000, 1),
-        ("0000000000000000000000003000000000000000000000000000000000000000", 600000, 0),
-        ("0000000000000000000000003000000000000000000000000000000000000000", 600000, 1),
-        ("0000000000000000000000003000000000000000000000000000000000000000", 54000, 0),
-        ("0000000000000000000000003000000000000000000000000000000000000000", 54000, 1),
+    pytest.param(
+        "0000000000000000000000001000000000000000000000000000000000000000", 600000, 0,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 0x13136008b64ff592819b2fa6d43f2835c452020e}, nonce=1), Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(storage={1: 1}, nonce=1, balance=10, code=b""), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case0",
+    ),
+    pytest.param(
+        "0000000000000000000000001000000000000000000000000000000000000000", 600000, 1,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 0x13136008b64ff592819b2fa6d43f2835c452020e}, nonce=1), Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(storage={1: 1}, nonce=1, balance=10, code=b""), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case1",
+    ),
+    pytest.param(
+        "0000000000000000000000001000000000000000000000000000000000000000", 54000, 0,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={}, nonce=0), Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(storage={}, nonce=0, balance=10, code=b""), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case2",
+    ),
+    pytest.param(
+        "0000000000000000000000001000000000000000000000000000000000000000", 54000, 1,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={}, nonce=0), Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(storage={}, nonce=0, balance=10, code=b""), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case3",
+    ),
+    pytest.param(
+        "0000000000000000000000002000000000000000000000000000000000000000", 600000, 0,
+        {Address("0x0bf4c804e0579073baf54ec4ec37cd04f3455c65"): Account(storage={}, nonce=2, code=b""), Address("0x2000000000000000000000000000000000000000"): Account(storage={1: 0}, nonce=0), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case4",
+    ),
+    pytest.param(
+        "0000000000000000000000002000000000000000000000000000000000000000", 600000, 1,
+        {Address("0x0bf4c804e0579073baf54ec4ec37cd04f3455c65"): Account(storage={}, nonce=2, code=b""), Address("0x2000000000000000000000000000000000000000"): Account(storage={1: 0}, nonce=0), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case5",
+    ),
+    pytest.param(
+        "0000000000000000000000002000000000000000000000000000000000000000", 54000, 0,
+        {Address("0x0bf4c804e0579073baf54ec4ec37cd04f3455c65"): Account(storage={}, nonce=2, code=b""), Address("0x2000000000000000000000000000000000000000"): Account(storage={1: 0}, nonce=0), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case6",
+    ),
+    pytest.param(
+        "0000000000000000000000002000000000000000000000000000000000000000", 54000, 1,
+        {Address("0x0bf4c804e0579073baf54ec4ec37cd04f3455c65"): Account(storage={}, nonce=2, code=b""), Address("0x2000000000000000000000000000000000000000"): Account(storage={1: 0}, nonce=0), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case7",
+    ),
+    pytest.param(
+        "0000000000000000000000003000000000000000000000000000000000000000", 600000, 0,
+        {Address("0x3000000000000000000000000000000000000000"): Account(storage={1: 0}, nonce=0), Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(storage={}, nonce=0, code=bytes.fromhex("1122334455")), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case8",
+    ),
+    pytest.param(
+        "0000000000000000000000003000000000000000000000000000000000000000", 600000, 1,
+        {Address("0x3000000000000000000000000000000000000000"): Account(storage={1: 0}, nonce=0), Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(storage={}, nonce=0, code=bytes.fromhex("1122334455")), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case9",
+    ),
+    pytest.param(
+        "0000000000000000000000003000000000000000000000000000000000000000", 54000, 0,
+        {Address("0x0bf4c804e0579073baf54ec4ec37cd04f3455c65"): Account(storage={}, nonce=2, code=b""), Address("0x2000000000000000000000000000000000000000"): Account(storage={1: 0}, nonce=0), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case10",
+    ),
+    pytest.param(
+        "0000000000000000000000003000000000000000000000000000000000000000", 54000, 1,
+        {Address("0x0bf4c804e0579073baf54ec4ec37cd04f3455c65"): Account(storage={}, nonce=2, code=b""), Address("0x2000000000000000000000000000000000000000"): Account(storage={1: 0}, nonce=0), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case11",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7', 'case8', 'case9', 'case10', 'case11'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_collision_to_empty2(
@@ -98,6 +145,7 @@ def test_create_collision_to_empty2(
     tx_data_hex: str,
     tx_gas_limit: int,
     tx_value: int,
+    expected_post: dict,
 ) -> None:
     """data0 - create collision to empty, data1 - to empty but nonce, data2 - to contract with code."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -174,6 +222,6 @@ def test_create_collision_to_empty2(
         value=tx_value,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

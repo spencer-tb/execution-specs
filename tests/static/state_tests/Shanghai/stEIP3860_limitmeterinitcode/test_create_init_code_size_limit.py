@@ -67,18 +67,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "000000000000000000000000000000000000000000000000000000000000c001",
+        {Address("0x000000000000000000000000000000000000c0de"): Account(storage={0: 0x5f6baaeb5b7c97725f84d1569c4abc85135f4716, 10: 46323}), Address("0x5f6baaeb5b7c97725f84d1569c4abc85135f4716"): Account(storage={}, nonce=1, balance=0, code=Op.PUSH1[0xa] + Op.DUP1 + Op.PUSH1[0x0] + Op.DUP1 + Op.CODECOPY + Op.PUSH1[0x0] + Op.RETURN), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=2), Address("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"): Account(storage={0: 1, 1: 1})},
+        id="case0",
+    ),
+    pytest.param(
         "000000000000000000000000000000000000000000000000000000000000c000",
+        {Address("0x000000000000000000000000000000000000c0de"): Account(storage={0: 0x5f6baaeb5b7c97725f84d1569c4abc85135f4716, 10: 46323}), Address("0x5f6baaeb5b7c97725f84d1569c4abc85135f4716"): Account(storage={}, nonce=1, balance=0, code=Op.PUSH1[0xa] + Op.DUP1 + Op.PUSH1[0x0] + Op.DUP1 + Op.CODECOPY + Op.PUSH1[0x0] + Op.RETURN), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=2), Address("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"): Account(storage={0: 1, 1: 1})},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_init_code_size_limit(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -131,6 +139,6 @@ def test_create_init_code_size_limit(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

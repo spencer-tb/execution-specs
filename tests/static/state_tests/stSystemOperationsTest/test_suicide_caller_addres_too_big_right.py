@@ -73,6 +73,8 @@ def test_suicide_caller_addres_too_big_right(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x4f5374fce5edbc8e2a8697c15331677e6ebf0baa"): Account(balance=0xde0b6b3a76586a0),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

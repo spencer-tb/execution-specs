@@ -266,20 +266,59 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex, tx_value",
+    "tx_data_hex, tx_value, expected_post",
     [
-        ("0000000000000000000000004c9df443f25e673eac42a897aa8a234b84fb9bdd", 0),
-        ("0000000000000000000000004c9df443f25e673eac42a897aa8a234b84fb9bdd", 100),
-        ("00000000000000000000000017217475f7d93fbfac2586ae993da598daead310", 0),
-        ("00000000000000000000000017217475f7d93fbfac2586ae993da598daead310", 100),
-        ("0000000000000000000000007493ed4fd2e14f56f1f1e3022b7c3873789b2254", 0),
-        ("0000000000000000000000007493ed4fd2e14f56f1f1e3022b7c3873789b2254", 100),
-        ("000000000000000000000000419fea0f3da444f3e6ae0c045f83dfe2b25f161b", 0),
-        ("000000000000000000000000419fea0f3da444f3e6ae0c045f83dfe2b25f161b", 100),
-        ("000000000000000000000000991c2daacf958845c0a5e957b3e187238a093149", 0),
-        ("000000000000000000000000991c2daacf958845c0a5e957b3e187238a093149", 100),
+    pytest.param(
+        "0000000000000000000000004c9df443f25e673eac42a897aa8a234b84fb9bdd", 0,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 1}), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case0",
+    ),
+    pytest.param(
+        "0000000000000000000000004c9df443f25e673eac42a897aa8a234b84fb9bdd", 100,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 1}), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case1",
+    ),
+    pytest.param(
+        "00000000000000000000000017217475f7d93fbfac2586ae993da598daead310", 0,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 0}), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case2",
+    ),
+    pytest.param(
+        "00000000000000000000000017217475f7d93fbfac2586ae993da598daead310", 100,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 0}), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case3",
+    ),
+    pytest.param(
+        "0000000000000000000000007493ed4fd2e14f56f1f1e3022b7c3873789b2254", 0,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 1}), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case4",
+    ),
+    pytest.param(
+        "0000000000000000000000007493ed4fd2e14f56f1f1e3022b7c3873789b2254", 100,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 1}), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case5",
+    ),
+    pytest.param(
+        "000000000000000000000000419fea0f3da444f3e6ae0c045f83dfe2b25f161b", 0,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 1}), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case6",
+    ),
+    pytest.param(
+        "000000000000000000000000419fea0f3da444f3e6ae0c045f83dfe2b25f161b", 100,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 1}), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case7",
+    ),
+    pytest.param(
+        "000000000000000000000000991c2daacf958845c0a5e957b3e187238a093149", 0,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 1}), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case8",
+    ),
+    pytest.param(
+        "000000000000000000000000991c2daacf958845c0a5e957b3e187238a093149", 100,
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 1}), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case9",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7', 'case8', 'case9'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_static_check_opcodes2(
@@ -287,6 +326,7 @@ def test_static_check_opcodes2(
     pre: Alloc,
     tx_data_hex: str,
     tx_value: int,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -501,6 +541,6 @@ def test_static_check_opcodes2(
         value=tx_value,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

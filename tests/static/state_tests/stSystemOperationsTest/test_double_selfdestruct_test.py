@@ -54,24 +54,56 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "f210011002",
+        {Address("0x0000000000000000000000000000000000000513"): Account.NONEXISTENT, Address("0x0000000000000000000000000000000000000514"): Account(balance=0xf4241)},
+        id="case0",
+    ),
+    pytest.param(
         "f410011002",
+        {Address("0x0000000000000000000000000000000000000513"): Account.NONEXISTENT, Address("0x0000000000000000000000000000000000000514"): Account(balance=0xf4241)},
+        id="case1",
+    ),
+    pytest.param(
         "f110011002",
+        {Address("0x0000000000000000000000000000000000000513"): Account.NONEXISTENT, Address("0x0000000000000000000000000000000000000514"): Account(balance=0xf4241)},
+        id="case2",
+    ),
+    pytest.param(
         "fa1001c0de",
+        {Address("0x0000000000000000000000000000000000000513"): Account.NONEXISTENT, Address("0x0000000000000000000000000000000000000514"): Account(balance=0xf4241)},
+        id="case3",
+    ),
+    pytest.param(
         "fa10011002",
+        {Address("0x0000000000000000000000000000000000000513"): Account.NONEXISTENT, Address("0x0000000000000000000000000000000000000514"): Account(balance=0xf4241)},
+        id="case4",
+    ),
+    pytest.param(
         "f21001c0de",
+        {Address("0x0000000000000000000000000000000000000513"): Account.NONEXISTENT, Address("0x0000000000000000000000000000000000000514"): Account(balance=0xf4241)},
+        id="case5",
+    ),
+    pytest.param(
         "f41001c0de",
+        {Address("0x0000000000000000000000000000000000000513"): Account.NONEXISTENT, Address("0x0000000000000000000000000000000000000514"): Account(balance=0xf4241)},
+        id="case6",
+    ),
+    pytest.param(
         "f11001c0de",
+        {Address("0x0000000000000000000000000000000000000513"): Account.NONEXISTENT, Address("0x0000000000000000000000000000000000000514"): Account(balance=0xf4241)},
+        id="case7",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_double_selfdestruct_test(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """The first test case required here 
 https://github.com/ethereum/tests/issues/431#issue-306081539
@@ -136,6 +168,6 @@ Implements: SUC007.0, SUC007.1, SUC007.2, SUC007.3,
         value=1,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

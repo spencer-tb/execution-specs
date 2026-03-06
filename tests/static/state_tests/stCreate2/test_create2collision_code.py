@@ -90,6 +90,16 @@ def test_create2collision_code(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+            nonce=2,
+            balance=1,
+            code=b"",
+        ),
+        sender: Account(nonce=1),
+        contract: Account(storage={}, nonce=0, balance=0, code=Op.ADD + Op.MUL + Op.SUB),
+        callee_1: Account(storage={}, nonce=0, balance=0, code=Op.ADD + Op.MUL + Op.SUB),
+        callee_2: Account(storage={}, nonce=0, balance=0, code=Op.ADD + Op.MUL + Op.SUB),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

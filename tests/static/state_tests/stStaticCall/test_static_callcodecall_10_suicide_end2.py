@@ -59,18 +59,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_value",
+    "tx_value, expected_post",
     [
+    pytest.param(
         0,
+        {Address("0x1000000000000000000000000000000000000000"): Account(balance=0xde0b6b3a7640000)},
+        id="case0",
+    ),
+    pytest.param(
         1,
+        {Address("0x1000000000000000000000000000000000000000"): Account(balance=0xde0b6b3a7640001)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_static_callcodecall_10_suicide_end2(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_value: int,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -128,6 +136,6 @@ def test_static_callcodecall_10_suicide_end2(
         value=tx_value,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

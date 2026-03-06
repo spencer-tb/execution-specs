@@ -23,19 +23,31 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_gas_limit",
+    "tx_gas_limit, expected_post",
     [
+    pytest.param(
         154000,
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(balance=1), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case0",
+    ),
+    pytest.param(
         65000,
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(balance=1), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case1",
+    ),
+    pytest.param(
         95000,
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(balance=2), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case2",
+    ),
     ],
-    ids=['case0', 'case1', 'case2'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_out_of_gas_prefunded_contract_creation(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -66,6 +78,6 @@ def test_out_of_gas_prefunded_contract_creation(
         value=1,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

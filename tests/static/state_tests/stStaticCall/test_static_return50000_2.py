@@ -140,6 +140,16 @@ def test_static_return50000_2(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x10bf5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={0: 1, 1: 1},
+            nonce=0,
+        ),
+        Address("0x<contract:0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b>"): Account(
+            storage={0: 1, 1: 50000},
+            nonce=0,
+            balance=0xfffffffffffff,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

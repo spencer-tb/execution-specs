@@ -77,6 +77,8 @@ def test_create_name_registrator_zero_mem(
         value=100000,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 0xd2571607e241ecf590ed94b12d87c94babe36db6}, nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

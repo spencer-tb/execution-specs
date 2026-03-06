@@ -147,6 +147,9 @@ def test_static_create_contract_suicide_during_init(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account.NONEXISTENT,
+        callee_1: Account(storage={1: 0}, balance=0),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

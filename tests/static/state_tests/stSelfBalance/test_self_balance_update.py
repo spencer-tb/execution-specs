@@ -90,6 +90,10 @@ def test_self_balance_update(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(
+            storage={1: 500, 2: 499, 3: 1},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

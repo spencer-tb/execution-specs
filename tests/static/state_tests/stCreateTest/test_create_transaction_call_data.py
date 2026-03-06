@@ -27,19 +27,31 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "6001600080376000516000556020600160003760005160015500",
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={}, nonce=1, code=b"")},
+        id="case0",
+    ),
+    pytest.param(
         "60003560005560213560015500",
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={}, nonce=1, code=b"")},
+        id="case1",
+    ),
+    pytest.param(
         "3860008039386000f3",
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={}, nonce=1, code=b"")},
+        id="case2",
+    ),
     ],
-    ids=['case0', 'case1', 'case2'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_transaction_call_data(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """Tests if CALLDATALOAD, CALLDATACOPY, CODECOPY and CODESIZE work correctly in initcode context:
 call data is always empty in initcode context and "code" is initcode.
@@ -72,6 +84,6 @@ call data is always empty in initcode context and "code" is initcode.
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

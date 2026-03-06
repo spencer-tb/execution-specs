@@ -96,6 +96,10 @@ def test_callcode_ecrecover3(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0xe4319f4b631c6d0fcfc84045dbcb676865fe5e13, 2: 1},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

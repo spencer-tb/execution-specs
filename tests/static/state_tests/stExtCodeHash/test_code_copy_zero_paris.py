@@ -164,6 +164,13 @@ def test_code_copy_zero_paris(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x64bc50092fd622c9cc47d658b99c1af75aaa3d68"): Account(
+            storage={80: 0x60206000600039600051605055303b605155303f605255600060006000600060, 81: 0, 82: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, 83: 0, 84: 0},
+        ),
+        contract: Account(
+            storage={19: 1, 34: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, 35: 1, 50: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, 51: 1, 64: 0x64bc50092fd622c9cc47d658b99c1af75aaa3d68},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

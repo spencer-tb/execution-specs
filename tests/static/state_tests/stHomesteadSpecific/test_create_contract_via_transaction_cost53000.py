@@ -56,6 +56,8 @@ def test_create_contract_via_transaction_cost53000(
         value=0,
     )
 
-    post = {}
+    post = {
+        sender: Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

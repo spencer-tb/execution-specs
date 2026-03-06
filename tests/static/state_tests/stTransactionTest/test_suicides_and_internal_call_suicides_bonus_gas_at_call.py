@@ -86,6 +86,14 @@ def test_suicides_and_internal_call_suicides_bonus_gas_at_call(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x0000000000000000000000000000000000000001"): Account.NONEXISTENT,
+        contract: Account(
+            storage={},
+            nonce=0,
+            balance=0,
+            code=Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x1] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CALL + Op.POP + Op.PUSH1[0x0] + Op.SELFDESTRUCT + Op.STOP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

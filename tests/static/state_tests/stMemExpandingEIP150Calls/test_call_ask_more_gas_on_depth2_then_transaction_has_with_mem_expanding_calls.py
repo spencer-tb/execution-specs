@@ -114,6 +114,15 @@ def test_call_ask_more_gas_on_depth2_then_transaction_has_with_mem_expanding_cal
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0x1000000000000000000000000000000000000107>"): Account(
+            storage={8: 0x30d3e, 9: 1},
+        ),
+        Address("0x<contract:0x1000000000000000000000000000000000000108>"): Account(
+            storage={8: 0x2a1c7},
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1),
+        Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={8: 0x8d5b6, 9: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -61,32 +61,96 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "6000600060006000600073bea0000000000000000000000000000000000000620186a0f100",
+        {Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 1, 1: 1}, nonce=0)},
+        id="case0",
+    ),
+    pytest.param(
         "6000602380601860003960006000f55060006000fd0000fe600060006000600073bea0000000000000000000000000000000000000620186a0f400",
+        {Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 1, 1: 1}, nonce=0)},
+        id="case1",
+    ),
+    pytest.param(
         "6000602380603860003960006000f5506000600060006000600073dea000000000000000000000000000000000000062030d40f1500000fe600060006000600073bea0000000000000000000000000000000000000620186a0f400",
+        {Address("0x6602cfc925be62bf18470598a98f72812a1ebef2"): Account.NONEXISTENT, Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case2",
+    ),
+    pytest.param(
         "600060006000600073bea0000000000000000000000000000000000000620186a0fa00",
+        {Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 1, 1: 1}, nonce=0)},
+        id="case3",
+    ),
+    pytest.param(
         "6000602380601360003960006000f5500000fe600060006000600073bea0000000000000000000000000000000000000620186a0fa00",
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={0: 1, 1: 1}, nonce=1), Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case4",
+    ),
+    pytest.param(
         "6000602380601860003960006000f55060006000fd0000fe600060006000600073bea0000000000000000000000000000000000000620186a0fa00",
+        {Address("0x0f446e1bd7a5da68b5e3a305c7030e3aa8efc293"): Account(storage={0: 1, 1: 1}, nonce=1), Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case5",
+    ),
+    pytest.param(
         "6000602380603860003960006000f5506000600060006000600073dea000000000000000000000000000000000000062030d40f1500000fe600060006000600073bea0000000000000000000000000000000000000620186a0fa00",
+        {Address("0x6602cfc925be62bf18470598a98f72812a1ebef2"): Account.NONEXISTENT, Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case6",
+    ),
+    pytest.param(
         "6000602580601360003960006000f5500000fe6000600060006000600073bea0000000000000000000000000000000000000620186a0f100",
+        {Address("0x0f446e1bd7a5da68b5e3a305c7030e3aa8efc293"): Account(storage={0: 1, 1: 1}, nonce=1), Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case7",
+    ),
+    pytest.param(
         "6000602580601860003960006000f55060006000fd0000fe6000600060006000600073bea0000000000000000000000000000000000000620186a0f100",
+        {Address("0x6602cfc925be62bf18470598a98f72812a1ebef2"): Account.NONEXISTENT, Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case8",
+    ),
+    pytest.param(
         "6000602580603860003960006000f5506000600060006000600073dea000000000000000000000000000000000000062030d40f1500000fe6000600060006000600073bea0000000000000000000000000000000000000620186a0f100",
+        {Address("0x6602cfc925be62bf18470598a98f72812a1ebef2"): Account.NONEXISTENT, Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case9",
+    ),
+    pytest.param(
         "6000600060006000600073bea0000000000000000000000000000000000000620186a0f200",
+        {Address("0x6602cfc925be62bf18470598a98f72812a1ebef2"): Account.NONEXISTENT, Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case10",
+    ),
+    pytest.param(
         "6000602580601360003960006000f5500000fe6000600060006000600073bea0000000000000000000000000000000000000620186a0f200",
+        {Address("0x6602cfc925be62bf18470598a98f72812a1ebef2"): Account.NONEXISTENT, Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case11",
+    ),
+    pytest.param(
         "6000602580601860003960006000f55060006000fd0000fe6000600060006000600073bea0000000000000000000000000000000000000620186a0f200",
+        {Address("0x6602cfc925be62bf18470598a98f72812a1ebef2"): Account.NONEXISTENT, Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case12",
+    ),
+    pytest.param(
         "6000602580603860003960006000f5506000600060006000600073dea000000000000000000000000000000000000062030d40f1500000fe6000600060006000600073bea0000000000000000000000000000000000000620186a0f200",
+        {Address("0x6602cfc925be62bf18470598a98f72812a1ebef2"): Account.NONEXISTENT, Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case13",
+    ),
+    pytest.param(
         "600060006000600073bea0000000000000000000000000000000000000620186a0f400",
+        {Address("0x6602cfc925be62bf18470598a98f72812a1ebef2"): Account.NONEXISTENT, Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case14",
+    ),
+    pytest.param(
         "6000602380601360003960006000f5500000fe600060006000600073bea0000000000000000000000000000000000000620186a0f400",
+        {Address("0x6602cfc925be62bf18470598a98f72812a1ebef2"): Account.NONEXISTENT, Address("0xbea0000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}, nonce=0)},
+        id="case15",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7', 'case8', 'case9', 'case10', 'case11', 'case12', 'case13', 'case14', 'case15'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_sstore_change_from_external_call_in_init_code(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """account already has storage X. create -> in init code change that account's storage -> 0 -> change it to X again ."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -154,6 +218,6 @@ def test_sstore_change_from_external_call_in_init_code(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -57,6 +57,11 @@ def test_stack_depth_limit_sec(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+            balance=10,
+            code=Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.ADDRESS + Op.PUSH1[0x40] + Op.GAS + Op.SUB + Op.CALL,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

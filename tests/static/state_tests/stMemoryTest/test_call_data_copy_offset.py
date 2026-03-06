@@ -105,6 +105,8 @@ def test_call_data_copy_offset(
         value=100000,
     )
 
-    post = {}
+    post = {
+        callee: Account(storage={0: 0xffffffffffffffffffffffffffffffff}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

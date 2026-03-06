@@ -37,18 +37,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_gas_limit",
+    "tx_gas_limit, expected_post",
     [
+    pytest.param(
         80000,
+        {Address("0x244fe9a7867edcc140245e775071fbfe6ebedbae"): Account.NONEXISTENT, Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case0",
+    ),
+    pytest.param(
         150000,
+        {Address("0x244fe9a7867edcc140245e775071fbfe6ebedbae"): Account(storage={0: 12, 1: 13}, nonce=1, balance=0), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_message_reverted(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
+    expected_post: dict,
 ) -> None:
     """CreateMessageReverted for CREATE2."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -87,6 +95,6 @@ def test_create_message_reverted(
         value=100,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

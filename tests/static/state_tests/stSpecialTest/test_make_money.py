@@ -99,6 +99,12 @@ def test_make_money(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(balance=0xde0b6b3a763fff3),
+        Address("0x<contract:0xaaaaaaaaace5edbc8e2a8697c15331677e6ebf0b>"): Account(
+            balance=0xde0b6b3a7640017,
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(balance=0x3b8f6a16),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

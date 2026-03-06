@@ -86,6 +86,8 @@ def test_suicides_and_internal_call_suicides_bonus_gas_at_call_failed(
         value=10,
     )
 
-    post = {}
+    post = {
+        callee: Account(balance=20, code=Op.PUSH1[0x1] + Op.SELFDESTRUCT + Op.STOP),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -94,6 +94,15 @@ def test_ext_code_hash_new_account(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x75e23f851ce92ee62896c1fb1127d4be2c53f59d"): Account(
+            storage={},
+            nonce=1,
+            code=Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.SLT + Op.CALLVALUE,
+        ),
+        contract: Account(
+            storage={0: 0xe321d900f3fd366734e2d071e30949ded20c27fd638f1a059390091c643b62c5, 1: 32},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

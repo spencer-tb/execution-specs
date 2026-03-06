@@ -87,7 +87,18 @@ def test_random_statetest_default_tue_07_58_41_15153_575192(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(
+            storage={},
+            nonce=28,
+            code=Op.PUSH2[0xdead] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH2[0xdead] + Op.GAS + Op.CALL + Op.PUSH3[0xabcdef] + Op.EXTCODEHASH + Op.PUSH1[0x1] + Op.SSTORE,
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=29,
+            code=b"",
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
 

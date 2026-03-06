@@ -160,7 +160,9 @@ def test_static_callcodecallcallcode_101_oogm_after(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 0, 1: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
 

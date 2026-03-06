@@ -98,6 +98,10 @@ def test_call_ecrecover_unrecoverable_key(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0x1122334455667788991011121314151617181920212223242526272829303132},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

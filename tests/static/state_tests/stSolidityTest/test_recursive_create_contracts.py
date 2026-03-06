@@ -149,6 +149,14 @@ def test_recursive_create_contracts(
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 0x95e7baea6a6c7c4c2dfeb977efac326af552d87, 1: 772},
+            nonce=1,
+            balance=0x314dc6448d9338c15b0a00000001,
+        ),
+        sender: Account(nonce=1),
+        Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(storage={0: 771}, nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

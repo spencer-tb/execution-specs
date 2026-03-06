@@ -145,6 +145,8 @@ def test_test_cryptographic_functions(
         value=100,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

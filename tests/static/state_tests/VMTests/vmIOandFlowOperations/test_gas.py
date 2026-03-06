@@ -58,10 +58,10 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_storage",
     [
-        "693c61390000000000000000000000000000000000000000000000000000000000000000",
-        "693c61390000000000000000000000000000000000000000000000000000000000000001",
+        ("693c61390000000000000000000000000000000000000000000000000000000000000000", {0: 0x4b1457b}),
+        ("693c61390000000000000000000000000000000000000000000000000000000000000001", {0: 0x4b1457b}),
     ],
     ids=['case0', 'case1'],
 )
@@ -70,6 +70,7 @@ def test_gas(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_storage: dict,
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -126,6 +127,8 @@ def test_gas(
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage=expected_storage),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

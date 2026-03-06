@@ -100,19 +100,31 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "0000000000000000000000001000000000000000000000000000000000000000",
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 0x13136008b64ff592819b2fa6d43f2835c452020e, 1: 1})},
+        id="case0",
+    ),
+    pytest.param(
         "0000000000000000000000001000000000000000000000000000000000000001",
+        {Address("0x1000000000000000000000000000000000000001"): Account(storage={0: 0x5dddfce53ee040d9eb21afbc0ae1bb4dbb0ba643, 1: 0}), Address("0x5dddfce53ee040d9eb21afbc0ae1bb4dbb0ba643"): Account(storage={}, code=Op.PUSH1[0x1] + Op.PUSH1[0x1] + Op.SSTORE)},
+        id="case1",
+    ),
+    pytest.param(
         "0000000000000000000000001000000000000000000000000000000000000002",
+        {Address("0x1000000000000000000000000000000000000001"): Account(storage={0: 0, 1: 0})},
+        id="case2",
+    ),
     ],
-    ids=['case0', 'case1', 'case2'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_static_call_create2(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -192,6 +204,6 @@ def test_static_call_create2(
         value=100000,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

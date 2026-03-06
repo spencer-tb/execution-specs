@@ -91,6 +91,8 @@ def test_revert_opcode_in_create_returns(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(storage={0: 32}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

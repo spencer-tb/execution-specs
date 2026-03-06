@@ -108,6 +108,11 @@ def test_loop_calls_then_revert(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0xb000000000000000000000000000000000000000>"): Account(
+            storage={0: 850},
+        ),
+        Address("0xa000000000000000000000000000000000000000"): Account(storage={0: 0}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

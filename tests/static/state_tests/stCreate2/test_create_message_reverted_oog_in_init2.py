@@ -25,18 +25,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_gas_limit",
+    "tx_gas_limit, expected_post",
     [
+    pytest.param(
         110000,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xf3059e18a327c662766f6ba11808c400635847ef"): Account.NONEXISTENT},
+        id="case0",
+    ),
+    pytest.param(
         150000,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xf3059e18a327c662766f6ba11808c400635847ef"): Account(storage={0: 12, 1: 13}, nonce=1, balance=0)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_message_reverted_oog_in_init2(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
+    expected_post: dict,
 ) -> None:
     """create2 oog during the init code, + when create2 is from transaction init code. but oog still in create2 init code."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -67,6 +75,6 @@ def test_create_message_reverted_oog_in_init2(
         value=100,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -97,6 +97,10 @@ def test_mem_copy_self(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+            storage={0: 0x112233445566778899aabbccddeeff0000000000000000000000000000000000, 1: 0x1122112233445566778899aaddeeff0000000000000000000000000000000000, 2: 0x112233445566778899aa00000000000000000000000000000000000000000000},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

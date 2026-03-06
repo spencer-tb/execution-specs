@@ -48,18 +48,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
-    "tx_gas_limit",
+    "tx_gas_limit, expected_post",
     [
+    pytest.param(
         150000,
+        {Address("0x010d8b0816e30ff51ba07678c64b272cdeddb807"): Account.NONEXISTENT, Address("0x014830fe159f418212e5c39b4b2e2ddc7b295395"): Account.NONEXISTENT, Address("0x0c6a8f1bf692cb9e4f9d9c5a2785d58edfd42457"): Account.NONEXISTENT, Address("0x198d23bedd1a9fdbd4adb5760930f6877f5d142f"): Account.NONEXISTENT, Address("0x266c09580d28c1c576e5c6b9adc926be1fecffb1"): Account.NONEXISTENT, Address("0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={0: 0, 1: 0}, nonce=0), Address("0xe5dc2e5b40069a91f688e56ea8d12149c5480b42"): Account.NONEXISTENT, Address("0xfdbd2625737df76e194c99994be160c5f8248dad"): Account.NONEXISTENT, Address("0xfff043abcbf2b0972c1dca19b2ba3cd682f10e90"): Account.NONEXISTENT},
+        id="case0",
+    ),
+    pytest.param(
         250000000,
+        {Address("0x010d8b0816e30ff51ba07678c64b272cdeddb807"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0x014830fe159f418212e5c39b4b2e2ddc7b295395"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0x0443d33cbefcfb9dedd1885b4c58b06cb1bb0c09"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0x0c6a8f1bf692cb9e4f9d9c5a2785d58edfd42457"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0x198d23bedd1a9fdbd4adb5760930f6877f5d142f"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0x266c09580d28c1c576e5c6b9adc926be1fecffb1"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0x38382e1ec7bf834f328feb3170293b1ae558aed0"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0x49198360b42d89332f8cc121182e071493045c40"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0x69eada7f1d77ff9bf9c789d44990f9141e39d71f"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0x901cc1c13f30eb2fc6de17ba1867dcc8c1561d46"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={0: 0x7981fa24b134deb51d71d250d7b0d9e33c8c5457, 1: 1000}, nonce=1000, balance=0xffffffffffc21), Address("0xcb78de6453fe67ac38868ac60825f0288e509167"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0xde8ae395bafe56c8968a2cec0567ec2562598189"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0xe5dc2e5b40069a91f688e56ea8d12149c5480b42"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0xfdbd2625737df76e194c99994be160c5f8248dad"): Account(storage={}, nonce=1, balance=1, code=b""), Address("0xfff043abcbf2b0972c1dca19b2ba3cd682f10e90"): Account(storage={}, nonce=1, balance=1, code=b"")},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create1000_shnghai(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
@@ -101,6 +109,6 @@ def test_create1000_shnghai(
         value=10,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

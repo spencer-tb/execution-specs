@@ -59,6 +59,8 @@ def test_high_gas_price_paris(
         error=[TransactionException.INSUFFICIENT_ACCOUNT_FUNDS, TransactionException.GASLIMIT_PRICE_PRODUCT_OVERFLOW],
     )
 
-    post = {}
+    post = {
+        Address("0x<eoa:0xd0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0>"): Account(balance=10),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

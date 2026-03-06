@@ -84,6 +84,8 @@ def test_exp_non_const(
         value=tx_value,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(storage={0: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

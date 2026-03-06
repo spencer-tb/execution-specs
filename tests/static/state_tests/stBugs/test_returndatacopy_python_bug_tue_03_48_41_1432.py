@@ -239,6 +239,9 @@ def test_returndatacopy_python_bug_tue_03_48_41_1432(
         value=tx_value,
     )
 
-    post = {}
+    post = {
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1),
+        Address("0xffffffffffffffffffffffffffffffffffffffff"): Account(storage={1: 0}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

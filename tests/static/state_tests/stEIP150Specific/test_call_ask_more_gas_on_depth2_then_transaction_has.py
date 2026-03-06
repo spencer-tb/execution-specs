@@ -117,6 +117,13 @@ def test_call_ask_more_gas_on_depth2_then_transaction_has(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0x1000000000000000000000000000000000000107>"): Account(
+            storage={8: 0x30d3e, 9: 1},
+        ),
+        Address("0x<contract:0x1000000000000000000000000000000000000108>"): Account(
+            storage={8: 0x2a1f6},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

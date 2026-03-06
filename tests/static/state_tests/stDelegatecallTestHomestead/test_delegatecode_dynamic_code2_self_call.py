@@ -80,6 +80,11 @@ def test_delegatecode_dynamic_code2_self_call(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(
+            storage={11: 1, 12: 0x1000000000000000000000000000000000000000},
+            balance=1,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

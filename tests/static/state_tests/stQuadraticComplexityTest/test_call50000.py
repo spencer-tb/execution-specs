@@ -105,6 +105,22 @@ def test_call50000(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x<eoa:0xaaaf5374fce5edbc8e2a8697c15331677e6ebf0b>"): Account(
+            storage={},
+            nonce=0,
+            code=b"",
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=1,
+            code=b"",
+        ),
+        Address("0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=0,
+            code=bytes.fromhex("5b61c3506080511015603f576000600061c3506000600173<eoa:0xaaaf5374fce5edbc8e2a8697c15331677e6ebf0b>610640f16000556001608051016080526000565b60805160015500"),
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

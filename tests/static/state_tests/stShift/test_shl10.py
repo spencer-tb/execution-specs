@@ -69,6 +69,17 @@ def test_shl10(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 1},
+            balance=0xde0b6b3a76586a0,
+            code=Op.PUSH1[0x1] + Op.PUSH1[0x0] + Op.SHL + Op.PUSH1[0x0] + Op.SSTORE,
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=1,
+            code=b"",
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

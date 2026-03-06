@@ -1190,6 +1190,11 @@ def test_tx_e1c174e2(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x0dc02922f33e45537411b9f92a1dcc9750ba9932"): Account(
+            storage={0x160000000000000000000000000000000000000000: 1},
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=25),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

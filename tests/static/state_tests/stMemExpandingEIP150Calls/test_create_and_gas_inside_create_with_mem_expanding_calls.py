@@ -82,6 +82,13 @@ def test_create_and_gas_inside_create_with_mem_expanding_calls(
         value=0,
     )
 
-    post = {}
+    post = {
+        sender: Account(nonce=1),
+        contract: Account(
+            storage={9: 0x75596, 10: 0x8d5b6, 11: 0xf1ecf98489fa9ed60a664fc4998db699cfa39d40},
+            nonce=1,
+        ),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(storage={253: 0x7e23d}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

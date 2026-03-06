@@ -109,20 +109,36 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "000000000000000000000000868ca9cd44e16d9c5e2bddd34f6414eaed74cd7e",
+        {Address("0x0000000000000000000000000000000000000025"): Account(balance=0x14b230ce3), Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 1, 1: 0x2f715723d7cde71586406b2995d4fc62acc9ce1adb8df087cc8d4502d047d3ca}, balance=1)},
+        id="case0",
+    ),
+    pytest.param(
         "00000000000000000000000044e55707ba8597da17fc9ced43d27c4866ddb46a",
+        {Address("0x0000000000000000000000000000000000000025"): Account(balance=1), Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 1, 1: 0x2f715723d7cde71586406b2995d4fc62acc9ce1adb8df087cc8d4502d047d3ca}, nonce=0, balance=0, code=Op.PUSH1[0x40] + Op.PUSH1[0x0] + Op.PUSH1[0x40] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.GAS + Op.CALLCODE + Op.STOP)},
+        id="case1",
+    ),
+    pytest.param(
         "0000000000000000000000008c019d97297ee7264aac1d8210c9480feedc2ee1",
+        {Address("0x0000000000000000000000000000000000000025"): Account(balance=1), Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 1, 1: 0x2f715723d7cde71586406b2995d4fc62acc9ce1adb8df087cc8d4502d047d3ca}, nonce=0, balance=0, code=Op.PUSH1[0x40] + Op.PUSH1[0x0] + Op.PUSH1[0x40] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.GAS + Op.CALLCODE + Op.STOP)},
+        id="case2",
+    ),
+    pytest.param(
         "000000000000000000000000a479e3e4f560d6dcfb2cbb3b1ca024a228888515",
+        {Address("0x0000000000000000000000000000000000000025"): Account.NONEXISTENT, Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 0, 1: 0x2f715723d7cde71586406b2995d4fc62acc9ce1adb8df087cc8d4502d047d3ca}, balance=1)},
+        id="case3",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_call_to_suicide_then_extcodehash(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """https://github.com/ethereum/tests/issues/652."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -218,6 +234,6 @@ def test_call_to_suicide_then_extcodehash(
         value=1,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

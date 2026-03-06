@@ -112,6 +112,8 @@ def test_return_test2(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 21, 1: 63}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

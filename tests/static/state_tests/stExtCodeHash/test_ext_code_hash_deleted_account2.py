@@ -161,7 +161,19 @@ Call to Account B stores Account A code hash to 4, code size to 5, code to 6
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={}, balance=0xde0b6b3a7640001),
+        Address("0x<contract:0xaaaaaaaa00000000000000000000000000000000>"): Account(
+            storage={},
+            nonce=0,
+            balance=0,
+            code=Op.PUSH20[0xdeadbeef00000000000000000000000000000000] + Op.BALANCE + Op.SELFDESTRUCT + Op.STOP,
+        ),
+        Address("0x<contract:0xbbbbbbbb00000000000000000000000000000000>"): Account(
+            storage={1: 0x94e08c34847a4e52a3e523b70a5d9b2151155bd0bc10f7b7c550bda63229c756, 2: 24, 3: 0x73deadbeef0000000000000000000000000000000031ff000000000000000000, 4: 0x94e08c34847a4e52a3e523b70a5d9b2151155bd0bc10f7b7c550bda63229c756, 5: 24, 6: 0x73deadbeef0000000000000000000000000000000031ff000000000000000000},
+            balance=0xde0b6b3a7640000,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
 

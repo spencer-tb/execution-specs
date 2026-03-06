@@ -351,6 +351,10 @@ def test_invalid_addr(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+            storage={0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 256: 0},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

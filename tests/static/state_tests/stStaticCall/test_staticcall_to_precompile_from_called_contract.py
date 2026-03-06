@@ -215,6 +215,11 @@ It should execute successfully for each precompiled contract.
         value=100,
     )
 
-    post = {}
+    post = {
+        callee: Account(
+            storage={0: 1, 1: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 2: 1, 3: 1, 4: 0xccccccccccccccccccccccccccccccccccccccccccccccccccc000000, 5: 0x73f5062fb68ed2a1ec82ff8c73f9251bb9cf53a623bc93527e16bc5ae29dad74, 6: 1, 7: 0xccccccccccccccccccccccccccccccccccccccccccccccccccc000000, 8: 0x14ef238cfa4075e9ede92f18b1566c1dd0b99aaa, 9: 1, 16: 0xccccccccccccccccccccccccccccccccccccccccccccccccccc000000, 17: 1, 18: 1, 19: 1, 20: 0x1f4d1d80177b1377743d1901f70d7389be7f7a35a35bfd234a8aaee615b88c49, 21: 0x18683193ae021a2f8920fed186cde5d9b1365116865281ccf884c1f28b1df8f, 22: 1, 23: 0x1f4d1d80177b1377743d1901f70d7389be7f7a35a35bfd234a8aaee615b88c49, 24: 0x18683193ae021a2f8920fed186cde5d9b1365116865281ccf884c1f28b1df8f, 25: 1, 32: 1},
+        ),
+        contract: Account(storage={0: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

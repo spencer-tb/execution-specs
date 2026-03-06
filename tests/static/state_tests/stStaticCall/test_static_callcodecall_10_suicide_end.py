@@ -146,6 +146,11 @@ def test_static_callcodecall_10_suicide_end(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(
+            nonce=0,
+            balance=0xde0b6b3a7640000,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

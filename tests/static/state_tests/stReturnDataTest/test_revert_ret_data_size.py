@@ -306,6 +306,8 @@ def test_revert_ret_data_size(
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 64, 1: 0, 2: 24743}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

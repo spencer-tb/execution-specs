@@ -136,6 +136,10 @@ def test_test_structures_and_variabless(
         value=100,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 1, 1: 255, 2: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 3: 255, 4: 0x676c6f62616c2064617461203332206c656e67746820737472696e6700000000, 0x5b8ccbb9d4d8fb16ea74ce3c29a41f1b461fbdaff4714a0d9a8eb05499746bc: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

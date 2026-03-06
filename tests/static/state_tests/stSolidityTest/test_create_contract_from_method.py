@@ -109,6 +109,14 @@ def test_create_contract_from_method(
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(nonce=1),
+        Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(
+            storage={},
+            nonce=1,
+            balance=0,
+            code=Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.PUSH1[0xe0] + Op.PUSH1[0x2] + Op.EXP + Op.SWAP1 + Op.DIV + Op.DUP1 + Op.PUSH3[0xf55d9d] + Op.EQ + Op.PUSH1[0x1e] + Op.JUMPI + Op.DUP1 + Op.PUSH4[0xb9c3d0a5] + Op.EQ + Op.PUSH1[0x2d] + Op.JUMPI + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x27] + Op.PUSH1[0x4] + Op.CALLDATALOAD + Op.PUSH1[0x46] + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.RETURN + Op.JUMPDEST + Op.PUSH1[0x33] + Op.PUSH1[0x3d] + Op.JUMP + Op.JUMPDEST + Op.DUP1 + Op.PUSH1[0x0] + Op.MSTORE + Op.PUSH1[0x20] + Op.PUSH1[0x0] + Op.RETURN + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0xe1] + Op.SWAP1 + Op.POP + Op.SWAP1 + Op.JUMP + Op.JUMPDEST + Op.DUP1 + Op.PUSH1[0x1] + Op.PUSH1[0xa0] + Op.PUSH1[0x2] + Op.EXP + Op.SUB + Op.AND + Op.SELFDESTRUCT + Op.POP + Op.JUMP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

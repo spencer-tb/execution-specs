@@ -98,6 +98,10 @@ def test_ext_code_hash_created_and_deleted_account(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0xdeadbeef00000000000000000000000000000000"): Account(
+            storage={0: 0x73c5f15b1290fd9e66722596c2fa1e1c9341f7acb185530dce0bf0e0fec7dfc6, 1: 4, 2: 0x73c5f15b1290fd9e66722596c2fa1e1c9341f7acb185530dce0bf0e0fec7dfc6, 3: 4},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

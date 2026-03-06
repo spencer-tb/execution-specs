@@ -78,6 +78,8 @@ def test_eip1559(
         access_list=[AccessList(address=Address("0x38dc047054d46298a5bb7ed3a0bad84bf69090d4"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
     )
 
-    post = {}
+    post = {
+        Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 1010, 1: 1000}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

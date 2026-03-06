@@ -117,6 +117,13 @@ def test_random_statetest263(
         value=767067244,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 0x14f8b588e368f08461f9f95eb620faca1c09044bcfafae26de901d3a614f5},
+            nonce=0,
+        ),
+        coinbase: Account(storage={}, nonce=0),
+        sender: Account(storage={}, nonce=1, code=b""),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

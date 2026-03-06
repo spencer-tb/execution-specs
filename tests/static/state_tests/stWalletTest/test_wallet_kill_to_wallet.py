@@ -173,6 +173,13 @@ def test_wallet_kill_to_wallet(
         value=100,
     )
 
-    post = {}
+    post = {
+        sender: Account(storage={}, nonce=2),
+        contract: Account(
+            storage={0: 1, 1: 1, 3: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 260: 1, 262: 0xc22e4, 0x6e369836487c234b9e553ef3f787c2d8865520739d340c67b3d251a33986e58d: 1},
+            nonce=0,
+            balance=200,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -119,6 +119,15 @@ def test_ext_code_hash_changed_account(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0xdeadbeef00000000000000000000000000000001>"): Account(
+            storage={0: 4660},
+            nonce=1,
+            balance=0xde0b6b3a76403e8,
+        ),
+        Address("0xdeadbeef00000000000000000000000000000000"): Account(
+            storage={0: 0xe632e0df9dba0723da1642ec61b48d5d69f8bb794bb1e0875fc2171f7627c47b, 1: 15, 2: 0xe632e0df9dba0723da1642ec61b48d5d69f8bb794bb1e0875fc2171f7627c47b, 3: 15},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

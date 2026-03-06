@@ -96,6 +96,10 @@ def test_returndatacopy_following_revert_in_create(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 0x111122223333444455556666777788889999aaaabbbbccccddddeeeeffff},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

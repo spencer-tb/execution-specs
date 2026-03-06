@@ -97,6 +97,8 @@ def test_callcode_ecrecover0_no_gas(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(storage={}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

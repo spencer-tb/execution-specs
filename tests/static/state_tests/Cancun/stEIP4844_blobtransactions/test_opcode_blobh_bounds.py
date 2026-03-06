@@ -100,6 +100,10 @@ def test_opcode_blobh_bounds(
         access_list=[AccessList(address=Address("0xc8126e943c569c35df09619f8e1e67460acff695"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0x1a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

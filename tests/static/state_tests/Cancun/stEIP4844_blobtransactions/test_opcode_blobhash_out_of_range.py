@@ -83,6 +83,10 @@ def test_opcode_blobhash_out_of_range(
         access_list=[AccessList(address=Address("0x0c4d6f62d3c85069cea2411284bd520ac87fb7eb"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0x1a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

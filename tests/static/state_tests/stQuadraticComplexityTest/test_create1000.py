@@ -103,7 +103,17 @@ def test_create1000(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x010d8b0816e30ff51ba07678c64b272cdeddb807"): Account.NONEXISTENT,
+        Address("0x014830fe159f418212e5c39b4b2e2ddc7b295395"): Account.NONEXISTENT,
+        Address("0x0c6a8f1bf692cb9e4f9d9c5a2785d58edfd42457"): Account.NONEXISTENT,
+        Address("0x198d23bedd1a9fdbd4adb5760930f6877f5d142f"): Account.NONEXISTENT,
+        Address("0x266c09580d28c1c576e5c6b9adc926be1fecffb1"): Account.NONEXISTENT,
+        contract: Account(storage={0: 0, 1: 0}, nonce=0),
+        Address("0xe5dc2e5b40069a91f688e56ea8d12149c5480b42"): Account.NONEXISTENT,
+        Address("0xfdbd2625737df76e194c99994be160c5f8248dad"): Account.NONEXISTENT,
+        Address("0xfff043abcbf2b0972c1dca19b2ba3cd682f10e90"): Account.NONEXISTENT,
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
 

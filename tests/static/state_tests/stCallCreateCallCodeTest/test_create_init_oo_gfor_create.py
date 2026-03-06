@@ -37,18 +37,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_gas_limit",
+    "tx_gas_limit, expected_post",
     [
+    pytest.param(
         53020,
+        {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(nonce=0)},
+        id="case0",
+    ),
+    pytest.param(
         1000000,
+        {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(nonce=1, balance=0), Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(nonce=1)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_init_oo_gfor_create(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
+    expected_post: dict,
 ) -> None:
     """Suicide to a dynamic created contract, oog on create."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -86,6 +94,6 @@ def test_create_init_oo_gfor_create(
         value=100000,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

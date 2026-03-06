@@ -37,18 +37,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_value",
+    "tx_value, expected_post",
     [
+    pytest.param(
         23,
+        {Address("0x0000000000000000000000000000000000000000"): Account(storage={}), Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account.NONEXISTENT},
+        id="case0",
+    ),
+    pytest.param(
         24,
+        {Address("0x0000000000000000000000000000000000000000"): Account.NONEXISTENT, Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(storage={2: 1})},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_fail_balance_too_low(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_value: int,
+    expected_post: dict,
 ) -> None:
     """create fails because we try to send more wei to it that we have."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -87,6 +95,6 @@ def test_create_fail_balance_too_low(
         value=tx_value,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

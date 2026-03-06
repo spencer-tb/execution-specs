@@ -176,6 +176,16 @@ Call to Account B do the following:
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 0x554e36262c0e0ab156397c32444e4a018fe93b18},
+            balance=0xde0b6b3a7640001,
+        ),
+        Address("0x95ab1c33798981918da6d27056f70376674878d2"): Account.NONEXISTENT,
+        callee: Account(
+            storage={1: 0xbc0e1b58b60bffd44555bf2c703da0fc6e1e3971797e9c5554512d69f45e7a52, 2: 23, 3: 0x73bbbbbbbb00000000000000000000000000000000ff00000000000000000000, 4: 0xbc0e1b58b60bffd44555bf2c703da0fc6e1e3971797e9c5554512d69f45e7a52, 5: 23, 6: 0x73bbbbbbbb00000000000000000000000000000000ff00000000000000000000},
+            balance=0xde0b6b3a7640000,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

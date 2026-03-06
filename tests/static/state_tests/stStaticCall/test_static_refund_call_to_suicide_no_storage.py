@@ -108,6 +108,11 @@ def test_static_refund_call_to_suicide_no_storage(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0, 1: 1, 2: 1},
+            balance=0xde0b6b3a764000a,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

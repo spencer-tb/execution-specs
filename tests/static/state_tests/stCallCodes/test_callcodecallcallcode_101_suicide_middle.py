@@ -141,6 +141,10 @@ def test_callcodecallcallcode_101_suicide_middle(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 1, 1: 1}, balance=0xde0b6b5fb6fe400),
+        callee: Account(storage={2: 0, 3: 0}, balance=0x2540be400),
+        callee_2: Account(storage={2: 0, 3: 0}, balance=0x2540be400),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

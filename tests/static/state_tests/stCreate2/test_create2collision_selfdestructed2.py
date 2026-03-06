@@ -35,18 +35,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "6000600060006000600073fce41d047b4a1d4450382dcc29ec7e5fedc5f9a361c350f1506b620102036000526003601df36000526000600c60146000f500",
+        {Address("0x0000000000000000000000000000000000000010"): Account(balance=1), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"): Account(storage={}, nonce=0, balance=0, code=Op.PUSH1[0x10] + Op.SELFDESTRUCT + Op.STOP)},
+        id="case0",
+    ),
+    pytest.param(
         "6000600060006000600073cff64f4c5df8f436c4f2c1af4b2e3f9e3004c77961c350f1506b626010ff6000526003601df36000526000600c60146000f500",
+        {Address("0x0000000000000000000000000000000000000010"): Account(balance=1), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779"): Account(nonce=1, balance=0)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2collision_selfdestructed2(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """A contract which performs SUICIDE, and is then attempted to be recreated (different code, same init-code) during the same transaction. This ought to fail, since the code is not cleaned out until after the transaction is ended.."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -81,6 +89,6 @@ def test_create2collision_selfdestructed2(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

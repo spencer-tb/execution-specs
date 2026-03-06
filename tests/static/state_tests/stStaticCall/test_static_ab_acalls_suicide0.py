@@ -193,6 +193,11 @@ def test_static_ab_acalls_suicide0(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 1, 1: 1}),
+        Address("0x<contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5>"): Account(
+            storage={38: 0},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

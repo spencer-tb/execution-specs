@@ -50,10 +50,10 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_value",
+    "tx_value, expected_storage",
     [
-        0,
-        1,
+        (0, {}),
+        (1, {0: 1}),
     ],
     ids=['case0', 'case1'],
 )
@@ -62,6 +62,7 @@ def test_call_with_high_value_and_oo_gat_tx_level(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_value: int,
+    expected_storage: dict,
 ) -> None:
     """call with value. call takes more gas then tx has, and more value than account has."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -110,6 +111,8 @@ def test_call_with_high_value_and_oo_gat_tx_level(
         value=tx_value,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(storage=expected_storage),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

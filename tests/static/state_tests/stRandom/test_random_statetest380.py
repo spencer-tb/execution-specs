@@ -117,6 +117,22 @@ def test_random_statetest380(
         value=628563350,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0x967737653485593c63408b3994397555},
+            nonce=0,
+            balance=0x25771d96,
+        ),
+        Address("0x<contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5>"): Account(
+            storage={},
+            nonce=0,
+            code=Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.SLOAD + Op.ISZERO + Op.PUSH1[0x9] + Op.JUMPI + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x20] + Op.CALLDATALOAD + Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.SSTORE,
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=1,
+            code=b"",
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -106,6 +106,8 @@ def test_coinbase_t2(
         access_list=tx_access_list,
     )
 
-    post = {}
+    post = {
+        Address("0x000000000000000000000000000000000000c0de"): Account(storage={0: 6800}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

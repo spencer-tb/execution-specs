@@ -128,6 +128,8 @@ def test_transaction64_rule_integer_boundaries(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 1, 1: 1, 2: 1, 3: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

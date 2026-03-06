@@ -103,6 +103,17 @@ def test_call50000_identity2(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=1,
+            code=b"",
+        ),
+        Address("0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=0,
+            code=Op.PUSH1[0x2a] + Op.PUSH1[0x1] + Op.MSTORE + Op.JUMPDEST + Op.PUSH2[0xc350] + Op.PUSH1[0x80] + Op.MLOAD + Op.LT + Op.ISZERO + Op.PUSH1[0x32] + Op.JUMPI + Op.PUSH2[0xc350] + Op.PUSH1[0x1] + Op.PUSH2[0xc350] + Op.PUSH1[0x0] + Op.PUSH1[0x1] + Op.PUSH1[0x4] + Op.PUSH2[0x61c] + Op.CALL + Op.PUSH1[0x0] + Op.SSTORE + Op.PUSH1[0x1] + Op.PUSH1[0x80] + Op.MLOAD + Op.ADD + Op.PUSH1[0x80] + Op.MSTORE + Op.PUSH1[0x5] + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x80] + Op.MLOAD + Op.PUSH1[0x1] + Op.SSTORE + Op.PUSH1[0x1] + Op.MLOAD + Op.PUSH1[0x2] + Op.SSTORE + Op.STOP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

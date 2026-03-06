@@ -26,9 +26,14 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_access_list",
+    "tx_access_list, expected_post",
     [
+    pytest.param(
         [],
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(balance=0x5f5e100)},
+        id="case0",
+    ),
+    pytest.param(
         [
             AccessList(address=Address("0x0000000000000000000000000000000000000100"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000010"), Hash("0x0000000000000000000000000000000000000000000000000fffffffffffffff")]),
             AccessList(address=Address("0x0000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000010")]),
@@ -41,33 +46,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             AccessList(address=Address("0x0000000000000000000000000000000000000108"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000010"), Hash("0x0000000000000000000000000000000000000000000000000fffffffffffffff")]),
             AccessList(address=Address("0x0000000000000000000000000000000000000109"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000010")]),
         ],
+        {},
+        id="case1",
+    ),
+    pytest.param(
         [AccessList(address=Address("0x0000000000000000000000000000000000000102"), storage_keys=[])],
+        {},
+        id="case2",
+    ),
+    pytest.param(
         [AccessList(address=Address("0xff00000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])],
+        {},
+        id="case3",
+    ),
+    pytest.param(
         [AccessList(address=Address("0xff00000000000000000000000000000000000101"), storage_keys=[Hash("0x000000000000000000000000000000000000000fffffffffffffffffffffffff")])],
+        {},
+        id="case4",
+    ),
+    pytest.param(
         [AccessList(address=Address("0x0000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])],
+        {},
+        id="case5",
+    ),
+    pytest.param(
         [AccessList(address=Address("0x0000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])],
+        {},
+        id="case6",
+    ),
+    pytest.param(
         [AccessList(address=Address("0x0000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
+        {},
+        id="case7",
+    ),
+    pytest.param(
         [
             AccessList(address=Address("0x0000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")]),
             AccessList(address=Address("0x0000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000001")]),
         ],
+        {},
+        id="case8",
+    ),
+    pytest.param(
         [
             AccessList(address=Address("0x0000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")]),
             AccessList(address=Address("0x0000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")]),
         ],
+        {},
+        id="case9",
+    ),
+    pytest.param(
         [
             AccessList(address=Address("0x0000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")]),
             AccessList(address=Address("0x0000000000000000000000000000000000000102"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000001")]),
         ],
-        None,
+        {},
+        id="case10",
+    ),
+    pytest.param(None, {}, id="case11"),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7', 'case8', 'case9', 'case10', 'case11'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_transaction_costs(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_access_list,
+    expected_post: dict,
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -99,6 +143,6 @@ def test_transaction_costs(
         access_list=tx_access_list,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

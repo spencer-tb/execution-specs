@@ -74,18 +74,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "000000000000000000000000a000000000000000000000000000000000000000",
+        {Address("0x7db299e0885c85039f56fa504a13dd8ce8a56aa7"): Account(storage={11: 1, 12: 0xa000000000000000000000000000000000000000}, balance=1)},
+        id="case0",
+    ),
+    pytest.param(
         "0000000000000000000000001000000000000000000000000000000000000000",
+        {Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 1, 10: 0x13136008b64ff592819b2fa6d43f2835c452020e, 11: 1, 20: 0x1000000000000000000000000000000000000000, 21: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 22: 0x1000000000000000000000000000000000000000}, nonce=1), Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(storage={122: 1}, nonce=1)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_callcode_dynamic_code2_self_call(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """callcode happen to a contract that is dynamically created from within the contract (to itself)."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -157,6 +165,6 @@ def test_callcode_dynamic_code2_self_call(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

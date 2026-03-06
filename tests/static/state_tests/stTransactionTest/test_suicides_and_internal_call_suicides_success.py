@@ -44,18 +44,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "00000000000000000000000000000000000000000000000000000000000055f0",
+        {Address("0x0000000000000000000000000000000000000001"): Account.NONEXISTENT},
+        id="case0",
+    ),
+    pytest.param(
         "000000000000000000000000000000000000000000000000000000000000aaf0",
+        {Address("0x0000000000000000000000000000000000000001"): Account(storage={}, balance=1)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_suicides_and_internal_call_suicides_success(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
@@ -98,6 +106,6 @@ def test_suicides_and_internal_call_suicides_success(
         value=10,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

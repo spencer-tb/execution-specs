@@ -107,6 +107,10 @@ def test_10_revert_undoes_store_after_return(
         access_list=[],
     )
 
-    post = {}
+    post = {
+        Address("0xa00000000000000000000000000000000000000a"): Account(
+            storage={0: 5, 1: 0, 2: 1, 3: 5},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

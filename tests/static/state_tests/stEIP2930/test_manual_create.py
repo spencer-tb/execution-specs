@@ -68,6 +68,8 @@ def test_manual_create(
         access_list=tx_access_list,
     )
 
-    post = {}
+    post = {
+        Address("0xec0e71ad0a90ffe1909d27dac207f7680abba42d"): Account(storage={0: 20008, 1: 106}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

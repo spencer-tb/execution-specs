@@ -69,6 +69,8 @@ def test_suicide_not_existing_account(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0xaa1722f3947def4cf144679da39c4c32bdc35681"): Account(balance=0xde0b6b3a76586a0),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

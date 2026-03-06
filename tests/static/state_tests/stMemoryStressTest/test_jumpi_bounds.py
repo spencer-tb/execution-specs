@@ -91,6 +91,11 @@ def test_jumpi_bounds(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(
+            balance=0,
+            code=Op.PUSH1[0x1] + Op.PUSH4[0xffffffff] + Op.JUMPI + Op.PUSH1[0x1] + Op.PUSH8[0xffffffffffffffff] + Op.JUMPI + Op.PUSH1[0x1] + Op.PUSH16[0xffffffffffffffffffffffffffffffff] + Op.JUMPI + Op.PUSH1[0x1] + Op.PUSH32[0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff] + Op.JUMPI + Op.STOP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

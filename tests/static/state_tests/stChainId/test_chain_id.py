@@ -67,6 +67,8 @@ def test_chain_id(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -43,21 +43,41 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "0000000000000000000000000000000000000000000000000000000000000001",
+        {Address("0xdeadbeef00000000000000000000000000000000"): Account(storage={0: 0, 1: 0}, balance=0xde0b6b3a7640001)},
+        id="case0",
+    ),
+    pytest.param(
         "00000000000000000000000076fae819612a29489a1a43208613d8f8557b8898",
+        {Address("0xdeadbeef00000000000000000000000000000000"): Account(storage={0: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, 1: 0}, balance=0xde0b6b3a7640001)},
+        id="case1",
+    ),
+    pytest.param(
         "00000000000000000000000054b3b055779972844a92b30244148fc92092c216",
+        {Address("0xdeadbeef00000000000000000000000000000000"): Account(storage={0: 0x56570de287d73cd1cb6092bb8fdee6173974955fdef345ae579ee9f475ea7432, 1: 2}, balance=0xde0b6b3a7640001)},
+        id="case2",
+    ),
+    pytest.param(
         "0000000000000000000000005d8645d9535c54ae9d2d01dba614bc0c249b0dee",
+        {Address("0xdeadbeef00000000000000000000000000000000"): Account(storage={0: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, 1: 0}, balance=0xde0b6b3a7640001)},
+        id="case3",
+    ),
+    pytest.param(
         "000000000000000000000000deadbeef00000000000000000000000000000005",
+        {Address("0xdeadbeef00000000000000000000000000000000"): Account(storage={0: 0, 1: 0}, balance=0xde0b6b3a7640001)},
+        id="case4",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_ext_code_hash_dynamic_argument(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """EXTCODEHASH/EXTCODESIZE with address from a dynamic argument."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -105,6 +125,6 @@ def test_ext_code_hash_dynamic_argument(
         value=1,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

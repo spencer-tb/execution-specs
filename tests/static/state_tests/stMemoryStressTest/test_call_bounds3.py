@@ -146,6 +146,9 @@ def test_call_bounds3(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(balance=0),
+        Address("0x<contract:0x1000000000000000000000000000000000000001>"): Account(storage={0: 0}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

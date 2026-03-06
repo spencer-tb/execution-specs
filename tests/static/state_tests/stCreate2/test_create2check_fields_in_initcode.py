@@ -225,24 +225,56 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_post",
     [
+    pytest.param(
         "0000000000000000000000001000000000000000000000000000000000000000",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xdaf9f53e732f21fe517e624b6dfe92dc8d0e51e0"): Account(storage={0: 0xdaf9f53e732f21fe517e624b6dfe92dc8d0e51e0, 1: 0, 2: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 3: 0xf000000000000000000000000000000000000000, 4: 0, 5: 0, 6: 35, 7: 10}, nonce=1, balance=0)},
+        id="case0",
+    ),
+    pytest.param(
         "0000000000000000000000002000000000000000000000000000000000000000",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xdfad1c567f12d848fabb8d9d8872c42e7aa81e95"): Account(storage={0: 0xdfad1c567f12d848fabb8d9d8872c42e7aa81e95, 1: 0, 2: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 3: 0x2000000000000000000000000000000000000000, 4: 0, 5: 0, 6: 35, 7: 10}, nonce=1, balance=0)},
+        id="case1",
+    ),
+    pytest.param(
         "0000000000000000000000003000000000000000000000000000000000000000",
+        {Address("0x3ff16480055c6ccc070257c61fa902448f4ae111"): Account(storage={0: 0x3ff16480055c6ccc070257c61fa902448f4ae111, 1: 0, 2: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 3: 0x3000000000000000000000000000000000000000, 4: 0, 5: 0, 6: 35, 7: 10}, nonce=1, balance=0), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case2",
+    ),
+    pytest.param(
         "0000000000000000000000004000000000000000000000000000000000000000",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case3",
+    ),
+    pytest.param(
         "0000000000000000000000001100000000000000000000000000000000000000",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xdaf9f53e732f21fe517e624b6dfe92dc8d0e51e0"): Account(storage={0: 0xdaf9f53e732f21fe517e624b6dfe92dc8d0e51e0, 1: 0, 2: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 3: 0xf000000000000000000000000000000000000000, 4: 0, 5: 0, 6: 35, 7: 10}, nonce=1, balance=0)},
+        id="case4",
+    ),
+    pytest.param(
         "0000000000000000000000002200000000000000000000000000000000000000",
+        {Address("0x7ce21e3c16d63738cbbb697c919555c910504278"): Account(storage={0: 0x7ce21e3c16d63738cbbb697c919555c910504278, 1: 0, 2: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 3: 0x9d25fbabdeb081b9ecd0645b9b6aba8c7eb3821d, 4: 0, 5: 0, 6: 35, 7: 10}, nonce=1, balance=0), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case5",
+    ),
+    pytest.param(
         "0000000000000000000000003300000000000000000000000000000000000000",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1), Address("0xbb1b88ea45d33397f45583ca612adea3eb267318"): Account(storage={0: 0xbb1b88ea45d33397f45583ca612adea3eb267318, 1: 0, 2: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 3: 0x45dde7fbf9f1cf09e18c4e584ba93c82e83c8898, 4: 0, 5: 0, 6: 35, 7: 10}, nonce=1, balance=0)},
+        id="case6",
+    ),
+    pytest.param(
         "0000000000000000000000004400000000000000000000000000000000000000",
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case7",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2check_fields_in_initcode(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_post: dict,
 ) -> None:
     """Check opcode values in create2 init code. Create2 called with different call types. CREATE2 inside CRETE2 inside CALL, CALLCODE, DELEGATECALL, STATICCALL << test values of  SENDER,address and so on.."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -404,6 +436,6 @@ def test_create2check_fields_in_initcode(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

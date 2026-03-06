@@ -166,6 +166,8 @@ def test_static_callcodecallcallcode_101_oogm_after2(
         value=tx_value,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 0, 1: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

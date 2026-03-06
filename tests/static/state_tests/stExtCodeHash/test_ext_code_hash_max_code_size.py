@@ -824,6 +824,11 @@ def test_ext_code_hash_max_code_size(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0xb157aebf65d6a7e95d50740ed1029e7e599233e72550fe17741a5f893117836d, 1: 24575},
+            balance=0xde0b6b3a7640001,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

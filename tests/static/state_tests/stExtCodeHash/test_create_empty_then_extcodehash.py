@@ -98,6 +98,11 @@ def test_create_empty_then_extcodehash(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x0826562ac9373818f7a055166f7b0cc87485f05d"): Account(nonce=1, code=b""),
+        contract: Account(
+            storage={0: 0x826562ac9373818f7a055166f7b0cc87485f05d, 1: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, 2: 0x7c5a2c91b22d7a9226523d4ba717db6afb741ebd, 3: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

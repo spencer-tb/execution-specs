@@ -62,6 +62,11 @@ def test_revert_on_empty_stack(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            nonce=1,
+            balance=0x5af30f491300,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

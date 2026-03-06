@@ -70,6 +70,12 @@ def test_create_e_contract_create_ne_contract_in_init_tr(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(nonce=2),
+        Address("0x64e2ebd6405af8cb348aec519084d3fff42ebba6"): Account(
+            code=Op.PUSH1[0xc] + Op.PUSH1[0x0] + Op.SSTORE,
+        ),
+        contract: Account(storage={1: 12}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -115,6 +115,14 @@ def test_suicide_send_ether_post_death(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={},
+            nonce=0,
+            balance=0,
+            code=Op.PUSH1[0x60] + Op.PUSH1[0x40] + Op.MSTORE + Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.PUSH29[0x100000000000000000000000000000000000000000000000000000000] + Op.SWAP1 + Op.DIV + Op.DUP1 + Op.PUSH4[0x35f46994] + Op.EQ + Op.PUSH2[0x44] + Op.JUMPI + Op.DUP1 + Op.PUSH4[0x4d536fe3] + Op.EQ + Op.PUSH2[0x51] + Op.JUMPI + Op.PUSH2[0x42] + Op.JUMP + Op.JUMPDEST + Op.STOP + Op.JUMPDEST + Op.PUSH2[0x4f] + Op.PUSH1[0x4] + Op.POP + Op.PUSH2[0x72] + Op.JUMP + Op.JUMPDEST + Op.STOP + Op.JUMPDEST + Op.PUSH2[0x5c] + Op.PUSH1[0x4] + Op.POP + Op.PUSH2[0x8d] + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x40] + Op.MLOAD + Op.DUP1 + Op.DUP3 + Op.DUP2 + Op.MSTORE + Op.PUSH1[0x20] + Op.ADD + Op.SWAP2 + Op.POP + Op.POP + Op.PUSH1[0x40] + Op.MLOAD + Op.DUP1 + Op.SWAP2 + Op.SUB + Op.SWAP1 + Op.RETURN + Op.JUMPDEST + Op.ADDRESS + Op.PUSH20[0xffffffffffffffffffffffffffffffffffffffff] + Op.AND + Op.SELFDESTRUCT + Op.JUMPDEST + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.ADDRESS + Op.PUSH20[0xffffffffffffffffffffffffffffffffffffffff] + Op.AND + Op.PUSH4[0x35f46994] + Op.PUSH1[0x40] + Op.MLOAD + Op.DUP2 + Op.PUSH29[0x100000000000000000000000000000000000000000000000000000000] + Op.MUL + Op.DUP2 + Op.MSTORE + Op.PUSH1[0x4] + Op.ADD + Op.DUP1 + Op.SWAP1 + Op.POP + Op.PUSH1[0x0] + Op.PUSH1[0x40] + Op.MLOAD + Op.DUP1 + Op.DUP4 + Op.SUB + Op.DUP2 + Op.PUSH1[0x0] + Op.DUP8 + Op.PUSH2[0x61da] + Op.GAS + Op.SUB + Op.CALL + Op.ISZERO + Op.PUSH2[0x2] + Op.JUMPI + Op.POP + Op.POP + Op.POP + Op.ADDRESS + Op.PUSH20[0xffffffffffffffffffffffffffffffffffffffff] + Op.AND + Op.BALANCE + Op.SWAP1 + Op.POP + Op.CALLER + Op.PUSH20[0xffffffffffffffffffffffffffffffffffffffff] + Op.AND + Op.PUSH1[0x0] + Op.DUP3 + Op.PUSH1[0x40] + Op.MLOAD + Op.DUP1 + Op.SWAP1 + Op.POP + Op.PUSH1[0x0] + Op.PUSH1[0x40] + Op.MLOAD + Op.DUP1 + Op.DUP4 + Op.SUB + Op.DUP2 + Op.DUP6 + Op.DUP9 + Op.DUP9 + Op.CALL + Op.SWAP4 + Op.POP + Op.POP + Op.POP + Op.POP + Op.POP + Op.DUP1 + Op.SWAP2 + Op.POP + Op.PUSH2[0x147] + Op.JUMP + Op.JUMPDEST + Op.POP + Op.SWAP1 + Op.JUMP,
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

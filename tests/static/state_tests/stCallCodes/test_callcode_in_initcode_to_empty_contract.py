@@ -84,10 +84,10 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_storage",
     [
-        "0000000000000000000000001000000000000000000000000000000000000000",
-        "0000000000000000000000002000000000000000000000000000000000000000",
+        ("0000000000000000000000001000000000000000000000000000000000000000", {2: 1}),
+        ("0000000000000000000000002000000000000000000000000000000000000000", {2: 1}),
     ],
     ids=['case0', 'case1'],
 )
@@ -96,6 +96,7 @@ def test_callcode_in_initcode_to_empty_contract(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_storage: dict,
 ) -> None:
     """callcode inside create contract init to non-existent contract."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -162,6 +163,8 @@ def test_callcode_in_initcode_to_empty_contract(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x9f9f2f99f78bfedcd1f32d936203bd1c0cb00853"): Account(storage=expected_storage),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

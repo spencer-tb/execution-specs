@@ -125,6 +125,17 @@ def test_quadratic_complexity_solidity_call_data_copy(
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={},
+            nonce=0,
+            code=Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.PUSH1[0xe0] + Op.PUSH1[0x2] + Op.EXP + Op.SWAP1 + Op.DIV + Op.DUP1 + Op.PUSH4[0x61a47706] + Op.EQ + Op.PUSH1[0x15] + Op.JUMPI + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x1e] + Op.PUSH1[0x4] + Op.CALLDATALOAD + Op.PUSH1[0x24] + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.RETURN + Op.JUMPDEST + Op.PUSH1[0x0] + Op.DUP2 + Op.PUSH1[0x0] + Op.DUP2 + Op.SWAP1 + Op.SSTORE + Op.POP + Op.PUSH20[0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b] + Op.SWAP1 + Op.POP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.DUP3 + Op.SGT + Op.ISZERO + Op.PUSH1[0xbf] + Op.JUMPI + Op.DUP1 + Op.PUSH1[0x1] + Op.PUSH1[0xa0] + Op.PUSH1[0x2] + Op.EXP + Op.SUB + Op.AND + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.PUSH32[0x6a75737400000000000000000000000000000000000000000000000000000000] + Op.DUP2 + Op.MSTORE + Op.PUSH1[0x4] + Op.ADD + Op.PUSH32[0x63616c6c00000000000000000000000000000000000000000000000000000000] + Op.DUP2 + Op.MSTORE + Op.PUSH1[0x20] + Op.ADD + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.DUP6 + Op.PUSH1[0x15] + Op.GAS + Op.SUB + Op.CALL + Op.POP + Op.POP + Op.PUSH1[0x1] + Op.DUP3 + Op.SUB + Op.SWAP2 + Op.POP + Op.PUSH1[0x45] + Op.JUMP + Op.JUMPDEST + Op.POP + Op.POP + Op.JUMP,
+        ),
+        callee: Account(
+            storage={},
+            nonce=0,
+            code=Op.PUSH2[0xc350] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CALLDATACOPY + Op.STOP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

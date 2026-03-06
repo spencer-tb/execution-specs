@@ -103,6 +103,12 @@ def test_call_with_high_value_oo_gin_call(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 1},
+            balance=0xde0b6b3a7640001,
+        ),
+        Address("0x<contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5>"): Account(balance=23),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

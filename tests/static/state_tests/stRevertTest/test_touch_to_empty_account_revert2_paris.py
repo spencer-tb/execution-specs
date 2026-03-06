@@ -120,6 +120,8 @@ def test_touch_to_empty_account_revert2_paris(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<eoa:0x1000000000000000000000000000000000000000>"): Account(balance=10),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

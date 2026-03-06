@@ -80,6 +80,8 @@ def test_delegatecall_in_initcode_to_empty_contract(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(storage={0: 1}, balance=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -123,6 +123,23 @@ def test_fill_stack(
         value=264050067,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={},
+            nonce=0,
+            balance=0,
+            code=Op.JUMPDEST + Op.PUSH32[0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff] + Op.PUSH32[0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe] + Op.GASLIMIT + Op.PUSH32[0x10000000000000000000000000000000000000000] + Op.PUSH32[0x1] + Op.PUSH32[0xc350] + Op.NUMBER + Op.JUMPI + Op.ISZERO + Op.MSTORE8 + Op.SHA3 + Op.DUP1 + Op.GASPRICE + Op.SWAP8 + Op.SSTORE + Op.PUSH1[0x0] + Op.MLOAD + Op.SSTORE,
+        ),
+        Address("0x<contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5>"): Account(
+            storage={},
+            nonce=0,
+            code=Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.SLOAD + Op.ISZERO + Op.PUSH1[0x9] + Op.JUMPI + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x20] + Op.CALLDATALOAD + Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.SSTORE,
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=1,
+            code=b"",
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -83,7 +83,11 @@ def test_callcode_sha256_0(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0xec4916dd28fc4c10d78e287ca5d9cc51ee1ae73cbfde08c6b37324cbfaac8bc5},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
 

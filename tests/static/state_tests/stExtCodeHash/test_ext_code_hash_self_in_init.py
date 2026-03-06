@@ -93,6 +93,12 @@ def test_ext_code_hash_self_in_init(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x8d540e2aaf9828712749afedf7c53ed034a6fd0e"): Account(
+            storage={0: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, 1: 0},
+            balance=0,
+        ),
+        contract: Account(storage={0: 0xdeadbeef}, balance=0xde0b6b3a7640001),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

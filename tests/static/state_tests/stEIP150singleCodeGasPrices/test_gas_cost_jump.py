@@ -175,6 +175,8 @@ def test_gas_cost_jump(
         value=1,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 0}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

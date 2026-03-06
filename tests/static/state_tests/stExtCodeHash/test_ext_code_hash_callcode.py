@@ -145,6 +145,11 @@ def test_ext_code_hash_callcode(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0x56570de287d73cd1cb6092bb8fdee6173974955fdef345ae579ee9f475ea7432, 1: 2},
+            balance=0xde0b6b3a7640001,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

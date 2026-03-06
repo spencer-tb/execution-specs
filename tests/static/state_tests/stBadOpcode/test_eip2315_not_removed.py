@@ -74,6 +74,8 @@ def test_eip2315_not_removed(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(storage={}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

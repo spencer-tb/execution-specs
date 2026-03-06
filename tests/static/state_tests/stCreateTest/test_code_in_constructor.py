@@ -63,10 +63,10 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_storage",
     [
-        "83c7d7580000000000000000000000000000000000000000000000000000000000000001",
-        "83c7d7580000000000000000000000000000000000000000000000000000000000000002",
+        ("83c7d7580000000000000000000000000000000000000000000000000000000000000001", {0: 8, 1: 10, 2: 0x8af6a7af30d840ba137e8f3f34d54cfb8beba6e2, 3: 262, 4: 0, 5: 0x610100610100610100395861026052600060006020610260600061da7a62ffff, 6: 0, 7: 184}),
+        ("83c7d7580000000000000000000000000000000000000000000000000000000000000002", {0: 8, 1: 10, 2: 0x33c409678a4289f0184c95c627ba09da2daeaa46, 3: 262, 4: 0, 5: 0x610100610100610100395861026052600060006020610260600061da7a62ffff, 6: 0, 7: 184}),
     ],
     ids=['case0', 'case1'],
 )
@@ -75,6 +75,7 @@ def test_code_in_constructor(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_storage: dict,
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0xba5e0000ba5e0000ba5e0000ba5e0000ba5e0000")
@@ -155,6 +156,8 @@ def test_code_in_constructor(
         value=0,
     )
 
-    post = {}
+    post = {
+        callee: Account(storage=expected_storage),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

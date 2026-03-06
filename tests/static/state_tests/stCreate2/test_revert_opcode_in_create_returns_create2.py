@@ -93,6 +93,8 @@ def test_revert_opcode_in_create_returns_create2(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 32}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -75,6 +75,8 @@ def test_recursive_create(
         value=100000,
     )
 
-    post = {}
+    post = {
+        Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(nonce=2),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

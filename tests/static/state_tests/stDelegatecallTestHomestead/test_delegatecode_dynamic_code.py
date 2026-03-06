@@ -85,6 +85,12 @@ def test_delegatecode_dynamic_code(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(
+            storage={0: 0, 10: 0x568a95f77b047bece6aa68843d2019332c46a585, 11: 1, 20: 0},
+            balance=0,
+        ),
+        Address("0xffe4ebd2a68c02d9dcb0a17283d13346beb2d8b6"): Account.NONEXISTENT,
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

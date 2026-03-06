@@ -38,19 +38,31 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
-    "tx_gas_limit",
+    "tx_gas_limit, expected_post",
     [
+    pytest.param(
         9151314442816847871,
+        {Address("0x4b17a07e119e86a0ff1fd21cdc9b4aba196ed3f8"): Account(nonce=1)},
+        id="case0",
+    ),
+    pytest.param(
         20070000000000,
+        {Address("0x4b17a07e119e86a0ff1fd21cdc9b4aba196ed3f8"): Account.NONEXISTENT},
+        id="case1",
+    ),
+    pytest.param(
         20080000000000,
+        {Address("0x471a0e624a2ac11c82cf1ff843127f1c6aa98351"): Account(nonce=1)},
+        id="case2",
+    ),
     ],
-    ids=['case0', 'case1', 'case2'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2_recursive(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
+    expected_post: dict,
 ) -> None:
     """Create2 inside Create2 inside Create2....."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -92,6 +104,6 @@ def test_create2_recursive(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

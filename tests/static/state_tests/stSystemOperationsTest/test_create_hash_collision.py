@@ -89,6 +89,13 @@ def test_create_hash_collision(
         value=100000,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 0}),
+        callee: Account(
+            storage={},
+            balance=42,
+            code=Op.PUSH1[0x1] + Op.PUSH1[0x1] + Op.ADD + Op.PUSH1[0x55],
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

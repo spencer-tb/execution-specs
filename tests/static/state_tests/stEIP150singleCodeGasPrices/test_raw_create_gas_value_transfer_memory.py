@@ -82,6 +82,9 @@ def test_raw_create_gas_value_transfer_memory(
         value=10,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={1: 33391}),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(balance=10),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

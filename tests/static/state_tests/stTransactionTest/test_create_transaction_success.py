@@ -57,6 +57,13 @@ def test_create_transaction_success(
         value=100,
     )
 
-    post = {}
+    post = {
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+            storage={},
+            nonce=1,
+            balance=100,
+            code=Op.PUSH1[0xe0] + Op.PUSH1[0x2] + Op.EXP + Op.PUSH1[0x0] + Op.CALLDATALOAD + Op.DIV + Op.DUP1 + Op.PUSH4[0xf8a8fd6d] + Op.EQ + Op.PUSH1[0x14] + Op.JUMPI + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x1a] + Op.PUSH1[0x20] + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.RETURN + Op.JUMPDEST + Op.JUMP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

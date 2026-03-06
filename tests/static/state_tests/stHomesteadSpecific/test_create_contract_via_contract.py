@@ -68,6 +68,8 @@ def test_create_contract_via_contract(
         value=0,
     )
 
-    post = {}
+    post = {
+        sender: Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

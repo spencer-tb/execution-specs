@@ -87,6 +87,9 @@ def test_create_and_gas_inside_create(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={9: 0x129db, 11: 0xf1ecf98489fa9ed60a664fc4998db699cfa39d40}),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(storage={253: 0x83729}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

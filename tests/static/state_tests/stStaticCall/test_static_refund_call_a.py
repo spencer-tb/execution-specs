@@ -95,6 +95,12 @@ def test_static_refund_call_a(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 0, 1: 1},
+            balance=0xde0b6b3a764000a,
+        ),
+        Address("0x<contract:0xaaae7baea6a6c7c4c2dfeb977efac326af552aaa>"): Account(storage={1: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

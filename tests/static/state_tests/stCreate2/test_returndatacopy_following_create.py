@@ -84,10 +84,10 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex",
+    "tx_data_hex, expected_storage",
     [
-        "0000000000000000000000000f572e5295c57f15886f9b263e2f6d2d6c7b5ec6",
-        "0000000000000000000000001f572e5295c57f15886f9b263e2f6d2d6c7b5ec6",
+        ("0000000000000000000000000f572e5295c57f15886f9b263e2f6d2d6c7b5ec6", {0: 1}),
+        ("0000000000000000000000001f572e5295c57f15886f9b263e2f6d2d6c7b5ec6", {0: 1}),
     ],
     ids=['case0', 'case1'],
 )
@@ -96,6 +96,7 @@ def test_returndatacopy_following_create(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
+    expected_storage: dict,
 ) -> None:
     """Check that create2 does not fill returndata buffer with its return opcode.."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -163,6 +164,8 @@ def test_returndatacopy_following_create(
         value=0,
     )
 
-    post = {}
+    post = {
+        callee_1: Account(storage=expected_storage),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

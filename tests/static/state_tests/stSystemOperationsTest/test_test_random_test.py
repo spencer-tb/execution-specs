@@ -81,6 +81,8 @@ def test_test_random_test(
         value=100000,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0xebcce5f60530275ee9318ce1eff9e4bfee810172: 1000}, nonce=2),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

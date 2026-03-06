@@ -86,7 +86,18 @@ def test_stack_limit_push31_1023(
         value=10,
     )
 
-    post = {}
+    post = {
+        Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
+            storage={},
+            nonce=0,
+            code=Op.PUSH2[0x3fd] + Op.PUSH1[0x0] + Op.MSTORE + Op.JUMPDEST + Op.PUSH31[0x102030405060708090a0102030405060708090a0102030405060708090a01] + Op.PUSH1[0x1] + Op.PUSH1[0x0] + Op.MLOAD + Op.SUB + Op.PUSH1[0x0] + Op.MSTORE + Op.PUSH1[0x0] + Op.MLOAD + Op.PUSH1[0x6] + Op.JUMPI + Op.STOP + Op.STOP,
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=1,
+            code=b"",
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
 

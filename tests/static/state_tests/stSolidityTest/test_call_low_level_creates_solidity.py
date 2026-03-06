@@ -121,6 +121,11 @@ def test_call_low_level_creates_solidity(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+            storage={0: 225, 1: 0x95e7baea6a6c7c4c2dfeb977efac326af552d87},
+            nonce=1,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

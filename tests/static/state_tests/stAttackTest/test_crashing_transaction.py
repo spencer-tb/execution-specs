@@ -61,6 +61,13 @@ def test_crashing_transaction(
         value=1,
     )
 
-    post = {}
+    post = {
+        sender: Account(nonce=3271),
+        Address("0xecbf9aa676d9e0bbba7e517d1350c1b64f8c6779"): Account(
+            nonce=124,
+            balance=1,
+            code=Op.PUSH1[0x60] + Op.PUSH1[0x40] + Op.MSTORE + Op.PUSH1[0x8] + Op.JUMP + Op.JUMPDEST + Op.STOP,
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

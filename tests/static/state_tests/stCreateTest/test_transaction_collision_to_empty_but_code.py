@@ -23,14 +23,29 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_gas_limit, tx_value",
+    "tx_gas_limit, tx_value, expected_post",
     [
-        (600000, 0),
-        (600000, 1),
-        (54000, 0),
-        (54000, 1),
+    pytest.param(
+        600000, 0,
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={1: 0}, nonce=0, code=bytes.fromhex("1122334455")), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case0",
+    ),
+    pytest.param(
+        600000, 1,
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={1: 0}, nonce=0, code=bytes.fromhex("1122334455")), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case1",
+    ),
+    pytest.param(
+        54000, 0,
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={}, nonce=0, code=bytes.fromhex("1122334455")), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case2",
+    ),
+    pytest.param(
+        54000, 1,
+        {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={}, nonce=0, code=bytes.fromhex("1122334455")), Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case3",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_transaction_collision_to_empty_but_code(
@@ -38,6 +53,7 @@ def test_transaction_collision_to_empty_but_code(
     pre: Alloc,
     tx_gas_limit: int,
     tx_value: int,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -68,6 +84,6 @@ def test_transaction_collision_to_empty_but_code(
         value=tx_value,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

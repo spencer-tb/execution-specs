@@ -97,6 +97,8 @@ def test_call_ecrecover_check_length(
         value=100000,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={0: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 1: 160, 2: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

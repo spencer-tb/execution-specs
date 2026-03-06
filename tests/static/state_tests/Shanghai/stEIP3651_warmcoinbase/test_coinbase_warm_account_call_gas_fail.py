@@ -191,6 +191,8 @@ def test_coinbase_warm_account_call_gas_fail(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 1}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

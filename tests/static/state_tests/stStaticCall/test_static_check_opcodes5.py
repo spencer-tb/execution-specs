@@ -212,30 +212,109 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex, tx_gas_limit, tx_value",
+    "tx_data_hex, tx_gas_limit, tx_value, expected_post",
     [
-        ("0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b", 50000, 0),
-        ("0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b", 50000, 100),
-        ("0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b", 335000, 0),
-        ("0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b", 335000, 100),
-        ("0000000000000000000000007761311ee56479da378519606cc4da58e17251ab", 50000, 0),
-        ("0000000000000000000000007761311ee56479da378519606cc4da58e17251ab", 50000, 100),
-        ("0000000000000000000000007761311ee56479da378519606cc4da58e17251ab", 335000, 0),
-        ("0000000000000000000000007761311ee56479da378519606cc4da58e17251ab", 335000, 100),
-        ("0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3", 50000, 0),
-        ("0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3", 50000, 100),
-        ("0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3", 335000, 0),
-        ("0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3", 335000, 100),
-        ("0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb", 50000, 0),
-        ("0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb", 50000, 100),
-        ("0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb", 335000, 0),
-        ("0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb", 335000, 100),
-        ("00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5", 50000, 0),
-        ("00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5", 50000, 100),
-        ("00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5", 335000, 0),
-        ("00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5", 335000, 100),
+    pytest.param(
+        "0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b", 50000, 0,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case0",
+    ),
+    pytest.param(
+        "0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b", 50000, 100,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case1",
+    ),
+    pytest.param(
+        "0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b", 335000, 0,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case2",
+    ),
+    pytest.param(
+        "0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b", 335000, 100,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case3",
+    ),
+    pytest.param(
+        "0000000000000000000000007761311ee56479da378519606cc4da58e17251ab", 50000, 0,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case4",
+    ),
+    pytest.param(
+        "0000000000000000000000007761311ee56479da378519606cc4da58e17251ab", 50000, 100,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case5",
+    ),
+    pytest.param(
+        "0000000000000000000000007761311ee56479da378519606cc4da58e17251ab", 335000, 0,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case6",
+    ),
+    pytest.param(
+        "0000000000000000000000007761311ee56479da378519606cc4da58e17251ab", 335000, 100,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case7",
+    ),
+    pytest.param(
+        "0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3", 50000, 0,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case8",
+    ),
+    pytest.param(
+        "0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3", 50000, 100,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case9",
+    ),
+    pytest.param(
+        "0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3", 335000, 0,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case10",
+    ),
+    pytest.param(
+        "0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3", 335000, 100,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case11",
+    ),
+    pytest.param(
+        "0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb", 50000, 0,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case12",
+    ),
+    pytest.param(
+        "0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb", 50000, 100,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case13",
+    ),
+    pytest.param(
+        "0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb", 335000, 0,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case14",
+    ),
+    pytest.param(
+        "0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb", 335000, 100,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case15",
+    ),
+    pytest.param(
+        "00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5", 50000, 0,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case16",
+    ),
+    pytest.param(
+        "00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5", 50000, 100,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case17",
+    ),
+    pytest.param(
+        "00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5", 335000, 0,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case18",
+    ),
+    pytest.param(
+        "00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5", 335000, 100,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(nonce=1)},
+        id="case19",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7', 'case8', 'case9', 'case10', 'case11', 'case12', 'case13', 'case14', 'case15', 'case16', 'case17', 'case18', 'case19'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_static_check_opcodes5(
@@ -244,6 +323,7 @@ def test_static_check_opcodes5(
     tx_data_hex: str,
     tx_gas_limit: int,
     tx_value: int,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -437,6 +517,6 @@ def test_static_check_opcodes5(
         value=tx_value,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

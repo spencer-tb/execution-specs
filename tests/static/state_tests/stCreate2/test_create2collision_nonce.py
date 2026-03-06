@@ -74,6 +74,12 @@ def test_create2collision_nonce(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(nonce=2, balance=1),
+        sender: Account(nonce=1),
+        contract: Account(storage={}, nonce=1, balance=0, code=b""),
+        callee_1: Account(storage={}, nonce=1, balance=0, code=b""),
+        callee_2: Account(storage={}, nonce=1, balance=0, code=b""),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

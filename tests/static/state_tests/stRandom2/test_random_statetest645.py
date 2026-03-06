@@ -109,6 +109,25 @@ def test_random_statetest645(
         value=tx_value,
     )
 
-    post = {}
+    post = {
+        Address("0x<contract:0x1000000000000000000000000000000000000000>"): Account(
+            storage={},
+            nonce=29,
+        ),
+        Address("0x<contract:0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b>"): Account(
+            storage={},
+            nonce=175,
+        ),
+        Address("0x<eoa:0xffffffffffffffffffffffffffffffffffffffff>"): Account(
+            storage={},
+            nonce=28,
+            code=b"",
+        ),
+        Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={},
+            nonce=1,
+            code=b"",
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

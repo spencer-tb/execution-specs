@@ -91,6 +91,11 @@ def test_create_empty_contract_and_call_it_1wei(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 0x8d5b6, 1: 0xf1ecf98489fa9ed60a664fc4998db699cfa39d40, 2: 0x7abf8, 3: 1, 100: 0x6e43f},
+        ),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(nonce=1, balance=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

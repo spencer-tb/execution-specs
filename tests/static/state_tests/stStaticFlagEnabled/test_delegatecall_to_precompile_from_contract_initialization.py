@@ -240,6 +240,14 @@ It should execute successfully for each precompiled contract.
         value=100,
     )
 
-    post = {}
+    post = {
+        contract: Account(
+            storage={0: 0xfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed, 1: 0xfd7776b1a634b0dc19301b174ccf30d4d24070a8, 2: 0xfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed},
+            balance=1100,
+        ),
+        Address("0xfd7776b1a634b0dc19301b174ccf30d4d24070a8"): Account(
+            storage={0: 0xfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed, 1: 0xfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed, 2560: 1, 2561: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 2562: 1, 2563: 1, 2564: 0xccccccccccccccccccccccccccccccccccccccccccccccccccc000000, 2565: 0x73f5062fb68ed2a1ec82ff8c73f9251bb9cf53a623bc93527e16bc5ae29dad74, 2566: 1, 2567: 0xccccccccccccccccccccccccccccccccccccccccccccccccccc000000, 2568: 0x14ef238cfa4075e9ede92f18b1566c1dd0b99aaa, 2569: 1, 2576: 0xccccccccccccccccccccccccccccccccccccccccccccccccccc000000, 2577: 1, 2578: 1, 2579: 1, 2580: 0x1f4d1d80177b1377743d1901f70d7389be7f7a35a35bfd234a8aaee615b88c49, 2581: 0x18683193ae021a2f8920fed186cde5d9b1365116865281ccf884c1f28b1df8f, 2582: 1, 2583: 0x1f4d1d80177b1377743d1901f70d7389be7f7a35a35bfd234a8aaee615b88c49, 2584: 0x18683193ae021a2f8920fed186cde5d9b1365116865281ccf884c1f28b1df8f, 2585: 1, 2592: 1},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

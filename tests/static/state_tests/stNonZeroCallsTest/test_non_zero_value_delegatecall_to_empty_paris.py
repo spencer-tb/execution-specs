@@ -90,6 +90,14 @@ def test_non_zero_value_delegatecall_to_empty_paris(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x<eoa:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b>"): Account(
+            storage={},
+            nonce=0,
+            balance=10,
+            code=b"",
+        ),
+        Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={1: 1, 100: 24732}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -109,6 +109,8 @@ def test_revert_in_delegate_call(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(storage={1: 32, 2: 10}),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

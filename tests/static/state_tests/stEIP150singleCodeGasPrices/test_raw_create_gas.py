@@ -82,6 +82,9 @@ def test_raw_create_gas(
         value=0,
     )
 
-    post = {}
+    post = {
+        contract: Account(storage={1: 32022}),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(balance=0),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

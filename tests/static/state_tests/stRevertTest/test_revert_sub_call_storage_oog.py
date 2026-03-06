@@ -23,14 +23,29 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_gas_limit, tx_value",
+    "tx_gas_limit, tx_value, expected_post",
     [
-        (81000, 0),
-        (81000, 1),
-        (181000, 0),
-        (181000, 1),
+    pytest.param(
+        81000, 0,
+        {Address("0xa000000000000000000000000000000000000000"): Account(storage={}, nonce=0, balance=1)},
+        id="case0",
+    ),
+    pytest.param(
+        81000, 1,
+        {Address("0xa000000000000000000000000000000000000000"): Account(storage={}, nonce=0, balance=1)},
+        id="case1",
+    ),
+    pytest.param(
+        181000, 0,
+        {Address("0xa000000000000000000000000000000000000000"): Account(storage={0: 12, 1: 13, 2: 14}, nonce=0, balance=1)},
+        id="case2",
+    ),
+    pytest.param(
+        181000, 1,
+        {Address("0xa000000000000000000000000000000000000000"): Account(storage={}, nonce=0, balance=1)},
+        id="case3",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_revert_sub_call_storage_oog(
@@ -38,6 +53,7 @@ def test_revert_sub_call_storage_oog(
     pre: Alloc,
     tx_gas_limit: int,
     tx_value: int,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -79,6 +95,6 @@ def test_revert_sub_call_storage_oog(
         value=tx_value,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

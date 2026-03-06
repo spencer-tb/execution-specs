@@ -200,6 +200,8 @@ def test_static_contract_creation_make_call_that_ask_more_gas_then_transaction_p
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(nonce=1),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

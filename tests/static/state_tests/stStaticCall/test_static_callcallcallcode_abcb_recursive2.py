@@ -140,6 +140,14 @@ def test_static_callcallcallcode_abcb_recursive2(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 0, 1: 0}),
+        Address("0x<contract:0x1000000000000000000000000000000000000001>"): Account(
+            storage={1: 0, 2: 0},
+        ),
+        Address("0x<contract:0x1000000000000000000000000000000000000002>"): Account(
+            storage={1: 0, 2: 0},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

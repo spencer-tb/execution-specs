@@ -48,18 +48,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
-    "tx_gas_limit",
+    "tx_gas_limit, expected_post",
     [
+    pytest.param(
         150000,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={}, nonce=1, code=b""), Address("0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={}, nonce=0)},
+        id="case0",
+    ),
+    pytest.param(
         250000000,
+        {Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={}, nonce=1, code=b""), Address("0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={0: 69, 1: 1}, nonce=0)},
+        id="case1",
+    ),
     ],
-    ids=['case0', 'case1'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_call1_mb1024_calldepth(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
+    expected_post: dict,
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
@@ -105,6 +113,6 @@ def test_call1_mb1024_calldepth(
         value=10,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

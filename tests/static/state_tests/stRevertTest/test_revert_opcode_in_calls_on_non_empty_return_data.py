@@ -185,18 +185,49 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
-    "tx_data_hex, tx_gas_limit",
+    "tx_data_hex, tx_gas_limit, expected_post",
     [
-        ("000000000000000000000000e73611b5b479b30c93ac377aeb3bfb199764f3c3", 860000),
-        ("000000000000000000000000e73611b5b479b30c93ac377aeb3bfb199764f3c3", 28000),
-        ("000000000000000000000000c9da6cd8413f64323f12cd44c99671f280f15e1c", 860000),
-        ("000000000000000000000000c9da6cd8413f64323f12cd44c99671f280f15e1c", 28000),
-        ("000000000000000000000000f20ccaf271beaa36e7cf4c9ced2867fac9558f14", 860000),
-        ("000000000000000000000000f20ccaf271beaa36e7cf4c9ced2867fac9558f14", 28000),
-        ("0000000000000000000000006bacdfa8216dbb2a09819f8739e57ae3574c9fff", 860000),
-        ("0000000000000000000000006bacdfa8216dbb2a09819f8739e57ae3574c9fff", 28000),
+    pytest.param(
+        "000000000000000000000000e73611b5b479b30c93ac377aeb3bfb199764f3c3", 860000,
+        {Address("0x094f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={10: 1})},
+        id="case0",
+    ),
+    pytest.param(
+        "000000000000000000000000e73611b5b479b30c93ac377aeb3bfb199764f3c3", 28000,
+        {},
+        id="case1",
+    ),
+    pytest.param(
+        "000000000000000000000000c9da6cd8413f64323f12cd44c99671f280f15e1c", 860000,
+        {Address("0x094f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={10: 1})},
+        id="case2",
+    ),
+    pytest.param(
+        "000000000000000000000000c9da6cd8413f64323f12cd44c99671f280f15e1c", 28000,
+        {},
+        id="case3",
+    ),
+    pytest.param(
+        "000000000000000000000000f20ccaf271beaa36e7cf4c9ced2867fac9558f14", 860000,
+        {Address("0x094f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={10: 1})},
+        id="case4",
+    ),
+    pytest.param(
+        "000000000000000000000000f20ccaf271beaa36e7cf4c9ced2867fac9558f14", 28000,
+        {},
+        id="case5",
+    ),
+    pytest.param(
+        "0000000000000000000000006bacdfa8216dbb2a09819f8739e57ae3574c9fff", 860000,
+        {Address("0x094f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={10: 1})},
+        id="case6",
+    ),
+    pytest.param(
+        "0000000000000000000000006bacdfa8216dbb2a09819f8739e57ae3574c9fff", 28000,
+        {Address("0x094f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={10: 255})},
+        id="case7",
+    ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7'],
 )
 @pytest.mark.pre_alloc_mutable
 def test_revert_opcode_in_calls_on_non_empty_return_data(
@@ -204,6 +235,7 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
     pre: Alloc,
     tx_data_hex: str,
     tx_gas_limit: int,
+    expected_post: dict,
 ) -> None:
     """This test checks that the returndata buffer is changed when a subcall REVERTs.  In each test case, a non-empty returndata buffer is set up, and then calls into a contract that REVERTs.."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
@@ -336,6 +368,6 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
         value=0,
     )
 
-    post = {}
+    post = expected_post
 
     state_test(env=env, pre=pre, post=post, tx=tx)

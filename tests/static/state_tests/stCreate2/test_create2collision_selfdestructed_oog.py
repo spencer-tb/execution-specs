@@ -90,6 +90,13 @@ def test_create2collision_selfdestructed_oog(
         value=1,
     )
 
-    post = {}
+    post = {
+        Address("0x0000000000000000000000000000000000000010"): Account.NONEXISTENT,
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account.NONEXISTENT,
+        sender: Account(nonce=1),
+        contract: Account(balance=1, code=Op.PUSH1[0x10] + Op.SELFDESTRUCT + Op.STOP),
+        callee_1: Account(balance=1, code=Op.PUSH1[0x10] + Op.SELFDESTRUCT + Op.STOP),
+        callee_2: Account(balance=1, code=Op.PUSH1[0x10] + Op.SELFDESTRUCT + Op.STOP),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

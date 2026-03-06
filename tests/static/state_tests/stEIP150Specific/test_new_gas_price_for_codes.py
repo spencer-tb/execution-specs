@@ -125,6 +125,10 @@ def test_new_gas_price_for_codes(
         value=0,
     )
 
-    post = {}
+    post = {
+        Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+            storage={0: 18, 1: 32, 2: 0x1122334455667788991011121314151617181920000000000000000000000000, 3: 0xe8d4498280, 4: 18, 7: 1, 8: 1, 10: 0x2cb0a, 100: 17},
+        ),
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
