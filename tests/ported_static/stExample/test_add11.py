@@ -1,5 +1,5 @@
 """
-A test for (add 1 1) opcode result
+A test for (add 1 1) opcode result.
 
 Ported from:
 tests/static/state_tests/stExample/add11Filler.json
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,16 +44,16 @@ def test_add11(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)) + Op.STOP,
+        code=bytes.fromhex("600160010160005500"),
     )
     pre[coinbase] = Account(balance=0, nonce=1)
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +66,7 @@ def test_add11(
     post = {
         contract: Account(
             storage={0: 2},
-            code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)) + Op.STOP,
+            code=bytes.fromhex("600160010160005500"),
         ),
     }
 

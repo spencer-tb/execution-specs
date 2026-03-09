@@ -1,5 +1,5 @@
 """
-RevertOpcodeCreate for CREATE2
+RevertOpcodeCreate for CREATE2.
 
 Ported from:
 tests/static/state_tests/stCreate2/RevertOpcodeCreateFiller.json
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -28,10 +27,29 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (460000, {Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={0: 12}, code=Op.MSTORE(offset=0x0, value=0x600160005560016000fd6011600155) + Op.SSTORE(key=0x1, value=Op.CREATE2(value=0x1, offset=0x11, size=0xf, salt=0x0)) + Op.SSTORE(key=0x0, value=0xc) + Op.STOP)}),
-        (70000, {Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.MSTORE(offset=0x0, value=0x600160005560016000fd6011600155) + Op.SSTORE(key=0x1, value=Op.CREATE2(value=0x1, offset=0x11, size=0xf, salt=0x0)) + Op.SSTORE(key=0x0, value=0xc) + Op.STOP)}),
+        (
+            460000,
+            {
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    storage={0: 12},
+                    code=bytes.fromhex(
+                        "6e600160005560016000fd60116001556000526000600f60116001f5600155600c60005500"  # noqa: E501
+                    ),
+                )
+            },
+        ),
+        (
+            70000,
+            {
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "6e600160005560016000fd60116001556000526000600f60116001f5600155600c60005500"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_revert_opcode_create(
@@ -54,20 +72,19 @@ def test_revert_opcode_create(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
         balance=1,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x600160005560016000fd6011600155)
-        + Op.SSTORE(key=0x1, value=Op.CREATE2(value=0x1, offset=0x11, size=0xf, salt=0x0))
-        + Op.SSTORE(key=0x0, value=0xc) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6e600160005560016000fd60116001556000526000600f60116001f5600155600c600055"  # noqa: E501
+            "00"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("600160005560016000fe6011600155"),

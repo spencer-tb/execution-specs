@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRefundTest/refund50_1Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,13 +44,11 @@ def test_refund50_1(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=0x0) + Op.SSTORE(key=0x2, value=0x0)
-        + Op.SSTORE(key=0x3, value=0x0) + Op.SSTORE(key=0x4, value=0x0)
-        + Op.SSTORE(key=0x5, value=0x0) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600155600060025560006003556000600455600060055500"
+        ),
         storage={0x1: 0x1, 0x2: 0x1, 0x3: 0x1, 0x4: 0x1, 0x5: 0x1},
     )
     pre[sender] = Account(balance=0x989680, nonce=0)
@@ -57,7 +56,7 @@ def test_refund50_1(
 
     tx = Transaction(
         secret_key=Hash(
-            "0xdc4efa209aecdd4c2d5201a419ea27506151b4ec687f14a613229e310932491b"
+            "0xdc4efa209aecdd4c2d5201a419ea27506151b4ec687f14a613229e310932491b"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -69,7 +68,9 @@ def test_refund50_1(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x1, value=0x0) + Op.SSTORE(key=0x2, value=0x0) + Op.SSTORE(key=0x3, value=0x0) + Op.SSTORE(key=0x4, value=0x0) + Op.SSTORE(key=0x5, value=0x0) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600155600060025560006003556000600455600060055500"
+            ),
         ),
     }
 

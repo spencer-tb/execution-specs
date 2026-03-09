@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stTransactionTest/EmptyTransaction3Filler.json
 """
@@ -19,7 +21,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/EmptyTransaction3Filler.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/EmptyTransaction3Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -40,11 +44,11 @@ def test_empty_transaction3(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x5f5e100, nonce=0)
+    pre[sender] = Account(balance=0x5F5E100, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=b"",
@@ -54,6 +58,6 @@ def test_empty_transaction3(
         value=0,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

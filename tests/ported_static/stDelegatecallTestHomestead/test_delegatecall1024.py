@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stDelegatecallTestHomestead/Delegatecall1024Filler.json
+tests/static/state_tests/stDelegatecallTestHomestead
+Delegatecall1024Filler.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stDelegatecallTestHomestead/Delegatecall1024Filler.json"],
+    [
+        "tests/static/state_tests/stDelegatecallTestHomestead/Delegatecall1024Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.valid_until("Prague")
@@ -44,21 +48,20 @@ def test_delegatecall1024(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xffffffffffffffffffffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
     pre[callee] = Account(balance=7000, nonce=0)
     pre[contract] = Account(
         balance=1024,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-        + Op.SSTORE(key=0x1, value=Op.DELEGATECALL(gas=0xfffffffffff, address=0xe7addf870a481e1a0829e5a67debd5b963861979, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600160005401600055600060006000600073e7addf870a481e1a0829e5a67debd5b96386"  # noqa: E501
+            "1979650ffffffffffff460015500"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe7c72b378297589acee4e0ba3272841bcfc5e220f86de253f890274cfee9e474"
+            "0xe7c72b378297589acee4e0ba3272841bcfc5e220f86de253f890274cfee9e474"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -71,7 +74,9 @@ def test_delegatecall1024(
     post = {
         contract: Account(
             storage={0: 1025, 1: 1},
-            code=Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)) + Op.SSTORE(key=0x1, value=Op.DELEGATECALL(gas=0xfffffffffff, address=0xe7addf870a481e1a0829e5a67debd5b963861979, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "600160005401600055600060006000600073e7addf870a481e1a0829e5a67debd5b963861979650ffffffffffff460015500"  # noqa: E501
+            ),
         ),
     }
 

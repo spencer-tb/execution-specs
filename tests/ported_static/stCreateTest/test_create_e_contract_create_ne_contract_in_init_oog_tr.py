@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCreateTest/CREATE_EContractCreateNEContractInInitOOG_TrFiller.json
+tests/static/state_tests/stCreateTest
+CREATE_EContractCreateNEContractInInitOOG_TrFiller.json
 """
 
 import pytest
@@ -13,23 +16,41 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreateTest/CREATE_EContractCreateNEContractInInitOOG_TrFiller.json"],
+    [
+        "tests/static/state_tests/stCreateTest/CREATE_EContractCreateNEContractInInitOOG_TrFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (160000, {Address("0x64e2ebd6405af8cb348aec519084d3fff42ebba6"): Account(code=Op.SSTORE(key=0x0, value=0xc)), Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={1: 12}, code=Op.SSTORE(key=0x1, value=0xc) + Op.STOP)}),
-        (60000, {Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.SSTORE(key=0x1, value=0xc) + Op.STOP)}),
+        (
+            160000,
+            {
+                Address("0x64e2ebd6405af8cb348aec519084d3fff42ebba6"): Account(
+                    code=bytes.fromhex("600c600055")
+                ),
+                Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    storage={1: 12}, code=bytes.fromhex("600c60015500")
+                ),
+            },
+        ),
+        (
+            60000,
+            {
+                Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex("600c60015500")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_e_contract_create_ne_contract_in_init_oog_tr(
@@ -52,19 +73,22 @@ def test_create_e_contract_create_ne_contract_in_init_oog_tr(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
-        balance=0xe8d4a51000,
+        balance=0xE8D4A51000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=0xc) + Op.STOP,
+        code=bytes.fromhex("600c60015500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
-        data=bytes.fromhex("6000600060006000600073c94f5374fce5edbc8e2a8697c15331677e6ebf0b61ea60f1506d64600c6000556000526005601bf3600052600e60126000f0"),
+        data=bytes.fromhex(
+            "6000600060006000600073c94f5374fce5edbc8e2a8697c15331677e6ebf0b61ea60f150"  # noqa: E501
+            "6d64600c6000556000526005601bf3600052600e60126000f0"
+        ),
         gas_limit=tx_gas_limit,
         gas_price=10,
         nonce=0,

@@ -1,5 +1,5 @@
 """
-create2 generates an account that already exists and has not empty code
+create2 generates an account that already exists and has not empty code.
 
 Ported from:
 tests/static/state_tests/stCreate2/create2collisionCodeFiller.json
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -28,11 +27,50 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        ("6000600060006000f500", {Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(code=Op.SUB(Op.MUL, Op.ADD)), Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(code=Op.SUB(Op.MUL, Op.ADD)), Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(code=Op.SUB(Op.MUL, Op.ADD))}),
-        ("64600160015560005260006005601b6000f500", {Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(code=Op.SUB(Op.MUL, Op.ADD)), Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(code=Op.SUB(Op.MUL, Op.ADD)), Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(code=Op.SUB(Op.MUL, Op.ADD))}),
-        ("6d6460016001556000526005601bf36000526000600e60126000f500", {Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(code=Op.SUB(Op.MUL, Op.ADD)), Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(code=Op.SUB(Op.MUL, Op.ADD)), Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(code=Op.SUB(Op.MUL, Op.ADD))}),
+        (
+            "6000600060006000f500",
+            {
+                Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(
+                    code=bytes.fromhex("010203")
+                ),
+                Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
+                    code=bytes.fromhex("010203")
+                ),
+                Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
+                    code=bytes.fromhex("010203")
+                ),
+            },
+        ),
+        (
+            "64600160015560005260006005601b6000f500",
+            {
+                Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(
+                    code=bytes.fromhex("010203")
+                ),
+                Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
+                    code=bytes.fromhex("010203")
+                ),
+                Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
+                    code=bytes.fromhex("010203")
+                ),
+            },
+        ),
+        (
+            "6d6460016001556000526005601bf36000526000600e60126000f500",
+            {
+                Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(
+                    code=bytes.fromhex("010203")
+                ),
+                Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
+                    code=bytes.fromhex("010203")
+                ),
+                Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
+                    code=bytes.fromhex("010203")
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2'],
+    ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2collision_code(
@@ -41,7 +79,7 @@ def test_create2collision_code(
     tx_data_hex: str,
     expected_post: dict,
 ) -> None:
-    """create2 generates an account that already exists and has not empty code."""
+    """Create2 generates an account that already exists and has not..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01")
@@ -57,16 +95,16 @@ def test_create2collision_code(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
-    pre[contract] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
-    pre[callee_1] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
-    pre[callee_2] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[contract] = Account(balance=0, nonce=0, code=bytes.fromhex("010203"))
+    pre[callee_1] = Account(balance=0, nonce=0, code=bytes.fromhex("010203"))
+    pre[callee_2] = Account(balance=0, nonce=0, code=bytes.fromhex("010203"))
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,

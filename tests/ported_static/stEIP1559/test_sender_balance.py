@@ -1,8 +1,9 @@
 """
-The execution records the EIP-1559 transaction origin balance to make sure its value is 
-properly computed based on the effective gas price (not the maximum gas price as in 
-the transaction validity check).
+The execution records the EIP-1559 transaction origin balance to make sure...
 
+properly computed based on the effective gas price (not the maximum gas price
+as in
+the transaction validity check).
 
 Ported from:
 tests/static/state_tests/stEIP1559/senderBalanceFiller.yml
@@ -10,7 +11,6 @@ tests/static/state_tests/stEIP1559/senderBalanceFiller.yml
 
 import pytest
 from execution_testing import (
-    AccessList,
     Account,
     Address,
     Alloc,
@@ -19,7 +19,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,10 +33,7 @@ def test_sender_balance(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """The execution records the EIP-1559 transaction origin balance to make sure its value is 
-properly computed based on the effective gas price (not the maximum gas price as in 
-the transaction validity check).
-."""
+    """The execution records the EIP-1559 transaction origin balance to..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
     contract = Address("0x420132f96200ba8e5c98298a85633c35c4f052ef")
@@ -54,13 +50,13 @@ the transaction validity check).
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.BALANCE(address=Op.CALLER)) + Op.STOP,
+        code=bytes.fromhex("333160005500"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -74,8 +70,8 @@ the transaction validity check).
 
     post = {
         contract: Account(
-            storage={0: 0xde0b6b3a6fe6060},
-            code=Op.SSTORE(key=0x0, value=Op.BALANCE(address=Op.CALLER)) + Op.STOP,
+            storage={0: 0xDE0B6B3A6FE6060},
+            code=bytes.fromhex("333160005500"),
         ),
     }
 

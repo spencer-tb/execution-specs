@@ -1,8 +1,9 @@
 """
-calldepth and balance
+calldepth and balance.
 
 Ported from:
-tests/static/state_tests/stCallCreateCallCodeTest/Callcode1024BalanceTooLowFiller.json
+tests/static/state_tests/stCallCreateCallCodeTest
+Callcode1024BalanceTooLowFiller.json
 """
 
 import pytest
@@ -15,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/Callcode1024BalanceTooLowFiller.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/Callcode1024BalanceTooLowFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.valid_until("Prague")
@@ -31,7 +33,7 @@ def test_callcode1024_balance_too_low(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """calldepth and balance."""
+    """Calldepth and balance."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     sender = Address("0x4768b5e50b0ebe91ae38d84a47e3179e615f9c40")
     contract = Address("0x63e310ada77469a7a18b4cbf231fccefb6f18267")
@@ -46,21 +48,20 @@ def test_callcode1024_balance_too_low(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xffffffffffffffffffffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
     pre[contract] = Account(
         balance=1024,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-        + Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=0xfffffffffff, address=0x63e310ada77469a7a18b4cbf231fccefb6f18267, value=Op.SLOAD(key=0x0), args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60016000540160005560006000600060006000547363e310ada77469a7a18b4cbf231fcc"  # noqa: E501
+            "efb6f18267650ffffffffffff260015500"
+        ),
     )
     pre[callee] = Account(balance=7000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe7c72b378297589acee4e0ba3272841bcfc5e220f86de253f890274cfee9e474"
+            "0xe7c72b378297589acee4e0ba3272841bcfc5e220f86de253f890274cfee9e474"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -73,7 +74,9 @@ def test_callcode1024_balance_too_low(
     post = {
         contract: Account(
             storage={0: 1025, 1: 1},
-            code=Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)) + Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=0xfffffffffff, address=0x63e310ada77469a7a18b4cbf231fccefb6f18267, value=Op.SLOAD(key=0x0), args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "60016000540160005560006000600060006000547363e310ada77469a7a18b4cbf231fccefb6f18267650ffffffffffff260015500"  # noqa: E501
+            ),
         ),
     }
 

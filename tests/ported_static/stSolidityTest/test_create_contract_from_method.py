@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSolidityTest/CreateContractFromMethodFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSolidityTest/CreateContractFromMethodFiller.json"],
+    [
+        "tests/static/state_tests/stSolidityTest/CreateContractFromMethodFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,40 +46,22 @@ def test_create_contract_from_method(
     )
 
     pre[contract] = Account(
-        balance=0x186a0,
+        balance=0x186A0,
         nonce=0,
-        code=(
-        Op.CALLDATALOAD(offset=0x0) + Op.EXP(0x2, 0xe0) + Op.SWAP1 + Op.DIV
-        + Op.JUMPI(pc=0x1f, condition=Op.EQ(0x7ee17e12, Op.DUP1))
-        + Op.JUMPI(pc=0x2b, condition=Op.EQ(0xc0406226, Op.DUP1)) + Op.STOP
-        + Op.JUMPDEST + Op.PUSH1[0x25] + Op.JUMP(pc=0x47) + Op.JUMPDEST
-        + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x31]
-        + Op.JUMP(pc=0x3b) + Op.JUMPDEST + Op.MSTORE(offset=0x0, value=Op.DUP1)
-        + Op.RETURN(offset=0x0, size=0x20) + Op.JUMPDEST + Op.PUSH1[0x0]
-        + Op.PUSH1[0x43] + Op.JUMP(pc=0x47) + Op.JUMPDEST + Op.POP + Op.SWAP1
-        + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0]
-        + Op.CODECOPY(dest_offset=0x0, offset=0x5d, size=0x60)
-        + Op.CREATE(value=0x0, offset=0x0, size=0x60) + Op.SWAP1 + Op.POP + Op.SWAP1
-        + Op.JUMP + Op.STOP + Op.PUSH1[0x54]
-        + Op.CODECOPY(dest_offset=0x0, offset=0xc, size=Op.DUP1) + Op.PUSH1[0x0]
-        + Op.RETURN + Op.STOP + Op.CALLDATALOAD(offset=0x0) + Op.EXP(0x2, 0xe0)
-        + Op.SWAP1 + Op.DIV + Op.JUMPI(pc=0x1e, condition=Op.EQ(0xf55d9d, Op.DUP1))
-        + Op.JUMPI(pc=0x2d, condition=Op.EQ(0xb9c3d0a5, Op.DUP1)) + Op.STOP
-        + Op.JUMPDEST + Op.PUSH1[0x27] + Op.CALLDATALOAD(offset=0x4)
-        + Op.JUMP(pc=0x46) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0)
-        + Op.JUMPDEST + Op.PUSH1[0x33] + Op.JUMP(pc=0x3d) + Op.JUMPDEST
-        + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20)
-        + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0xe1] + Op.SWAP1 + Op.POP + Op.SWAP1
-        + Op.JUMP + Op.JUMPDEST
-        + Op.SELFDESTRUCT(address=Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP1))
-        + Op.POP + Op.JUMP
-    ),
+        code=bytes.fromhex(
+            "60003560e060020a900480637ee17e1214601f578063c040622614602b57005b60256047"  # noqa: E501
+            "565b60006000f35b6031603b565b8060005260206000f35b600060436047565b5090565b"  # noqa: E501
+            "60006060605d600039606060006000f09050905600605480600c6000396000f300600035"  # noqa: E501
+            "60e060020a90048062f55d9d14601e578063b9c3d0a514602d57005b6027600435604656"  # noqa: E501
+            "5b60006000f35b6033603d565b8060005260206000f35b600060e1905090565b80600160"  # noqa: E501
+            "a060020a0316ff5056"
+        ),
     )
-    pre[sender] = Account(balance=0x5f5e100, nonce=0)
+    pre[sender] = Account(balance=0x5F5E100, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("c0406226"),
@@ -88,10 +73,14 @@ def test_create_contract_from_method(
 
     post = {
         contract: Account(
-            code=Op.CALLDATALOAD(offset=0x0) + Op.EXP(0x2, 0xe0) + Op.SWAP1 + Op.DIV + Op.JUMPI(pc=0x1f, condition=Op.EQ(0x7ee17e12, Op.DUP1)) + Op.JUMPI(pc=0x2b, condition=Op.EQ(0xc0406226, Op.DUP1)) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x25] + Op.JUMP(pc=0x47) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x31] + Op.JUMP(pc=0x3b) + Op.JUMPDEST + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x43] + Op.JUMP(pc=0x47) + Op.JUMPDEST + Op.POP + Op.SWAP1 + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.CODECOPY(dest_offset=0x0, offset=0x5d, size=0x60) + Op.CREATE(value=0x0, offset=0x0, size=0x60) + Op.SWAP1 + Op.POP + Op.SWAP1 + Op.JUMP + Op.STOP + Op.PUSH1[0x54] + Op.CODECOPY(dest_offset=0x0, offset=0xc, size=Op.DUP1) + Op.PUSH1[0x0] + Op.RETURN + Op.STOP + Op.CALLDATALOAD(offset=0x0) + Op.EXP(0x2, 0xe0) + Op.SWAP1 + Op.DIV + Op.JUMPI(pc=0x1e, condition=Op.EQ(0xf55d9d, Op.DUP1)) + Op.JUMPI(pc=0x2d, condition=Op.EQ(0xb9c3d0a5, Op.DUP1)) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x27] + Op.CALLDATALOAD(offset=0x4) + Op.JUMP(pc=0x46) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x33] + Op.JUMP(pc=0x3d) + Op.JUMPDEST + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0xe1] + Op.SWAP1 + Op.POP + Op.SWAP1 + Op.JUMP + Op.JUMPDEST + Op.SELFDESTRUCT(address=Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP1)) + Op.POP + Op.JUMP,
+            code=bytes.fromhex(
+                "60003560e060020a900480637ee17e1214601f578063c040622614602b57005b60256047565b60006000f35b6031603b565b8060005260206000f35b600060436047565b5090565b60006060605d600039606060006000f09050905600605480600c6000396000f30060003560e060020a90048062f55d9d14601e578063b9c3d0a514602d57005b60276004356046565b60006000f35b6033603d565b8060005260206000f35b600060e1905090565b80600160a060020a0316ff5056"  # noqa: E501
+            ),
         ),
         Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(
-            code=Op.CALLDATALOAD(offset=0x0) + Op.EXP(0x2, 0xe0) + Op.SWAP1 + Op.DIV + Op.JUMPI(pc=0x1e, condition=Op.EQ(0xf55d9d, Op.DUP1)) + Op.JUMPI(pc=0x2d, condition=Op.EQ(0xb9c3d0a5, Op.DUP1)) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x27] + Op.CALLDATALOAD(offset=0x4) + Op.JUMP(pc=0x46) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x33] + Op.JUMP(pc=0x3d) + Op.JUMPDEST + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0xe1] + Op.SWAP1 + Op.POP + Op.SWAP1 + Op.JUMP + Op.JUMPDEST + Op.SELFDESTRUCT(address=Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP1)) + Op.POP + Op.JUMP,
+            code=bytes.fromhex(
+                "60003560e060020a90048062f55d9d14601e578063b9c3d0a514602d57005b60276004356046565b60006000f35b6033603d565b8060005260206000f35b600060e1905090565b80600160a060020a0316ff5056"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,5 +1,5 @@
 """
-Ori Pomerantz qbzzt1@gmail.com
+Ori Pomerantz qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/stEIP2930/manualCreateFiller.yml
@@ -28,17 +28,71 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_access_list, expected_post",
     [
-        ([AccessList(address=Address("0xec0e71ad0a90ffe1909d27dac207f7680abba42d"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])], {Address("0xec0e71ad0a90ffe1909d27dac207f7680abba42d"): Account(storage={0: 22108, 1: 106})}),
-        ([AccessList(address=Address("0x0000000000000000000000000000000000000100"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0xec0e71ad0a90ffe1909d27dac207f7680abba42d"): Account(storage={0: 22108, 1: 106})}),
-        ([AccessList(address=Address("0xec0e71ad0a90ffe1909d27dac207f7680abba42d"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0xec0e71ad0a90ffe1909d27dac207f7680abba42d"): Account(storage={0: 20008, 1: 106})}),
+        (
+            [
+                AccessList(
+                    address=Address(
+                        "0xec0e71ad0a90ffe1909d27dac207f7680abba42d"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000001"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0xec0e71ad0a90ffe1909d27dac207f7680abba42d"): Account(
+                    storage={0: 22108, 1: 106}
+                )
+            },
+        ),
+        (
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000000100"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0xec0e71ad0a90ffe1909d27dac207f7680abba42d"): Account(
+                    storage={0: 22108, 1: 106}
+                )
+            },
+        ),
+        (
+            [
+                AccessList(
+                    address=Address(
+                        "0xec0e71ad0a90ffe1909d27dac207f7680abba42d"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0xec0e71ad0a90ffe1909d27dac207f7680abba42d"): Account(
+                    storage={0: 20008, 1: 106}
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2'],
+    ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_manual_create(
     state_test: StateTestFiller,
     pre: Alloc,
-    tx_access_list,
+    tx_access_list: list | None,
     expected_post: dict,
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
@@ -58,7 +112,7 @@ def test_manual_create(
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("5a3031505a90036001555a60ff6000555a900360005500"),

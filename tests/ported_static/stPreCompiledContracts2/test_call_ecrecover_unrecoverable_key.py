@@ -1,8 +1,9 @@
 """
-CALL to ECREC precompile with input that has a valid signature structure but that does not recover a valid key. Specifies a 32 byte output range in memory. ECREC should return an empty response and the 32 byte output range should be left unchanged.
+CALL to ECREC precompile with input that has a valid signature structure...
 
 Ported from:
-tests/static/state_tests/stPreCompiledContracts2/CallEcrecoverUnrecoverableKeyFiller.json
+tests/static/state_tests/stPreCompiledContracts2
+CallEcrecoverUnrecoverableKeyFiller.json
 """
 
 import pytest
@@ -15,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stPreCompiledContracts2/CallEcrecoverUnrecoverableKeyFiller.json"],
+    [
+        "tests/static/state_tests/stPreCompiledContracts2/CallEcrecoverUnrecoverableKeyFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -30,7 +32,7 @@ def test_call_ecrecover_unrecoverable_key(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """CALL to ECREC precompile with input that has a valid signature structure but that does not recover a valid key. Specifies a 32 byte output range in memory. ECREC should return an empty response and the 32 byte output range should be left unchanged.."""
+    """CALL to ECREC precompile with input that has a valid signature..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
     contract = Address("0x85c44d846ed50ac9e384c1b575fd96f3edf5751f")
@@ -45,23 +47,21 @@ def test_call_ecrecover_unrecoverable_key(
     )
 
     pre[contract] = Account(
-        balance=0x1312d00,
+        balance=0x1312D00,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0xa8b53bdf3306a35a7103ab5504a0c9b492295564b6202b1942a84ef300107281)
-        + Op.MSTORE(offset=0x20, value=0x1b)
-        + Op.MSTORE(offset=0x40, value=0x3078356531653033663533636531386237373263636230303933666637316633)
-        + Op.MSTORE(offset=0x60, value=0x6635336635633735623734646362333161383561613862383839326234653862)
-        + Op.MSTORE(offset=0x80, value=0x1122334455667788991011121314151617181920212223242526272829303132)
-        + Op.POP(Op.CALL(gas=0x493e0, address=0x1, value=0x0, args_offset=0x0, args_size=0x80, ret_offset=0x80, ret_size=0x20))
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x80)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7fa8b53bdf3306a35a7103ab5504a0c9b492295564b6202b1942a84ef300107281600052"  # noqa: E501
+            "601b6020527f307835653165303366353363653138623737326363623030393366663731"  # noqa: E501
+            "66336040527f663533663563373562373464636233316138356161386238383932623465"  # noqa: E501
+            "38626060527f112233445566778899101112131415161718192021222324252627282930"  # noqa: E501
+            "3132608052602060806080600060006001620493e0f15060805160005500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -73,8 +73,12 @@ def test_call_ecrecover_unrecoverable_key(
 
     post = {
         contract: Account(
-            storage={0: 0x1122334455667788991011121314151617181920212223242526272829303132},
-            code=Op.MSTORE(offset=0x0, value=0xa8b53bdf3306a35a7103ab5504a0c9b492295564b6202b1942a84ef300107281) + Op.MSTORE(offset=0x20, value=0x1b) + Op.MSTORE(offset=0x40, value=0x3078356531653033663533636531386237373263636230303933666637316633) + Op.MSTORE(offset=0x60, value=0x6635336635633735623734646362333161383561613862383839326234653862) + Op.MSTORE(offset=0x80, value=0x1122334455667788991011121314151617181920212223242526272829303132) + Op.POP(Op.CALL(gas=0x493e0, address=0x1, value=0x0, args_offset=0x0, args_size=0x80, ret_offset=0x80, ret_size=0x20)) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x80)) + Op.STOP,
+            storage={
+                0: 0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "7fa8b53bdf3306a35a7103ab5504a0c9b492295564b6202b1942a84ef300107281600052601b6020527f30783565316530336635336365313862373732636362303039336666373166336040527f66353366356337356237346463623331613835616138623838393262346538626060527f1122334455667788991011121314151617181920212223242526272829303132608052602060806080600060006001620493e0f15060805160005500"  # noqa: E501
+            ),
         ),
     }
 

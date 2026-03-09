@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stReturnDataTest/returndatacopy_overrunFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stReturnDataTest/returndatacopy_overrunFiller.json"],
+    [
+        "tests/static/state_tests/stReturnDataTest/returndatacopy_overrunFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,26 +49,26 @@ def test_returndatacopy_overrun(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=0x900000000, address=0x9898dd5e5c526b55ec49b1047e298705c13279f1, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.RETURNDATACOPY(dest_offset=0x0, offset=0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc, size=0x64)
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60006000600060006000739898dd5e5c526b55ec49b1047e298705c13279f16409000000"  # noqa: E501
+            "00f15060647fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "fffc60003e60005160005500"
+        ),
         storage={0x0: 0x1},
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x111122223333444455556666777788889999aaaabbbbccccddddeeeeffff)
-        + Op.RETURN(offset=0x0, size=0x20) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7d111122223333444455556666777788889999aaaabbbbccccddddeeeeffff6000526020"  # noqa: E501
+            "6000f300"
+        ),
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -78,10 +81,14 @@ def test_returndatacopy_overrun(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.POP(Op.CALL(gas=0x900000000, address=0x9898dd5e5c526b55ec49b1047e298705c13279f1, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.RETURNDATACOPY(dest_offset=0x0, offset=0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc, size=0x64) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "60006000600060006000739898dd5e5c526b55ec49b1047e298705c13279f1640900000000f15060647ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc60003e60005160005500"  # noqa: E501
+            ),
         ),
         callee: Account(
-            code=Op.MSTORE(offset=0x0, value=0x111122223333444455556666777788889999aaaabbbbccccddddeeeeffff) + Op.RETURN(offset=0x0, size=0x20) + Op.STOP,
+            code=bytes.fromhex(
+                "7d111122223333444455556666777788889999aaaabbbbccccddddeeeeffff60005260206000f300"  # noqa: E501
+            ),
         ),
     }
 

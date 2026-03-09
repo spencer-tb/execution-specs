@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stStackTests/shallowStackFiller.json
 """
@@ -107,7 +109,89 @@ REFERENCE_SPEC_VERSION = "N/A"
         "6002600109600055",
         "60010a600055",
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7', 'case8', 'case9', 'case10', 'case11', 'case12', 'case13', 'case14', 'case15', 'case16', 'case17', 'case18', 'case19', 'case20', 'case21', 'case22', 'case23', 'case24', 'case25', 'case26', 'case27', 'case28', 'case29', 'case30', 'case31', 'case32', 'case33', 'case34', 'case35', 'case36', 'case37', 'case38', 'case39', 'case40', 'case41', 'case42', 'case43', 'case44', 'case45', 'case46', 'case47', 'case48', 'case49', 'case50', 'case51', 'case52', 'case53', 'case54', 'case55', 'case56', 'case57', 'case58', 'case59', 'case60', 'case61', 'case62', 'case63', 'case64', 'case65', 'case66', 'case67', 'case68', 'case69', 'case70', 'case71', 'case72', 'case73', 'case74', 'case75', 'case76', 'case77', 'case78', 'case79', 'case80'],
+    ids=[
+        "case0",
+        "case1",
+        "case2",
+        "case3",
+        "case4",
+        "case5",
+        "case6",
+        "case7",
+        "case8",
+        "case9",
+        "case10",
+        "case11",
+        "case12",
+        "case13",
+        "case14",
+        "case15",
+        "case16",
+        "case17",
+        "case18",
+        "case19",
+        "case20",
+        "case21",
+        "case22",
+        "case23",
+        "case24",
+        "case25",
+        "case26",
+        "case27",
+        "case28",
+        "case29",
+        "case30",
+        "case31",
+        "case32",
+        "case33",
+        "case34",
+        "case35",
+        "case36",
+        "case37",
+        "case38",
+        "case39",
+        "case40",
+        "case41",
+        "case42",
+        "case43",
+        "case44",
+        "case45",
+        "case46",
+        "case47",
+        "case48",
+        "case49",
+        "case50",
+        "case51",
+        "case52",
+        "case53",
+        "case54",
+        "case55",
+        "case56",
+        "case57",
+        "case58",
+        "case59",
+        "case60",
+        "case61",
+        "case62",
+        "case63",
+        "case64",
+        "case65",
+        "case66",
+        "case67",
+        "case68",
+        "case69",
+        "case70",
+        "case71",
+        "case72",
+        "case73",
+        "case74",
+        "case75",
+        "case76",
+        "case77",
+        "case78",
+        "case79",
+        "case80",
+    ],
 )
 @pytest.mark.pre_alloc_mutable
 def test_shallow_stack(
@@ -134,7 +218,7 @@ def test_shallow_stack(
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,
@@ -144,6 +228,6 @@ def test_shallow_stack(
         value=0,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

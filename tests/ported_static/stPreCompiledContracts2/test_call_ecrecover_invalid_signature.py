@@ -1,8 +1,9 @@
 """
-CALL to ECREC precompile with input which is a completely invalid signature and a 32 byte output range in memory. ECREC should return an empty response and the 32 byte output range should be left unchanged.
+CALL to ECREC precompile with input which is a completely invalid signature...
 
 Ported from:
-tests/static/state_tests/stPreCompiledContracts2/CallEcrecoverInvalidSignatureFiller.json
+tests/static/state_tests/stPreCompiledContracts2
+CallEcrecoverInvalidSignatureFiller.json
 """
 
 import pytest
@@ -15,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stPreCompiledContracts2/CallEcrecoverInvalidSignatureFiller.json"],
+    [
+        "tests/static/state_tests/stPreCompiledContracts2/CallEcrecoverInvalidSignatureFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -30,7 +32,7 @@ def test_call_ecrecover_invalid_signature(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """CALL to ECREC precompile with input which is a completely invalid signature and a 32 byte output range in memory. ECREC should return an empty response and the 32 byte output range should be left unchanged.."""
+    """CALL to ECREC precompile with input which is a completely invalid..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
     contract = Address("0x2b8fd4adb0602fe9ee5823b0576f619daefbd369")
@@ -45,19 +47,18 @@ def test_call_ecrecover_invalid_signature(
     )
 
     pre[contract] = Account(
-        balance=0x1312d00,
+        balance=0x1312D00,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x80, value=0x1122334455667788991011121314151617181920212223242526272829303132)
-        + Op.POP(Op.CALL(gas=0x493e0, address=0x1, value=0x0, args_offset=0x0, args_size=0x80, ret_offset=0x80, ret_size=0x20))
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x80)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7f1122334455667788991011121314151617181920212223242526272829303132608052"  # noqa: E501
+            "602060806080600060006001620493e0f15060805160005500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -69,8 +70,12 @@ def test_call_ecrecover_invalid_signature(
 
     post = {
         contract: Account(
-            storage={0: 0x1122334455667788991011121314151617181920212223242526272829303132},
-            code=Op.MSTORE(offset=0x80, value=0x1122334455667788991011121314151617181920212223242526272829303132) + Op.POP(Op.CALL(gas=0x493e0, address=0x1, value=0x0, args_offset=0x0, args_size=0x80, ret_offset=0x80, ret_size=0x20)) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x80)) + Op.STOP,
+            storage={
+                0: 0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "7f1122334455667788991011121314151617181920212223242526272829303132608052602060806080600060006001620493e0f15060805160005500"  # noqa: E501
+            ),
         ),
     }
 

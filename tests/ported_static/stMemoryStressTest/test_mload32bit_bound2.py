@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/mload32bitBound2Filler.json
 """
@@ -13,23 +15,38 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stMemoryStressTest/mload32bitBound2Filler.json"],
+    [
+        "tests/static/state_tests/stMemoryStressTest/mload32bitBound2Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0xc287e277d2163771e55d630bdd96c6405a6fe251"): Account(code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x177359400)) + Op.STOP)}),
-        (16777216, {Address("0xc287e277d2163771e55d630bdd96c6405a6fe251"): Account(code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x177359400)) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0xc287e277d2163771e55d630bdd96c6405a6fe251"): Account(
+                    code=bytes.fromhex("6401773594005160015500")
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0xc287e277d2163771e55d630bdd96c6405a6fe251"): Account(
+                    code=bytes.fromhex("6401773594005160015500")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_mload32bit_bound2(
@@ -52,16 +69,16 @@ def test_mload32bit_bound2(
         gas_limit=37791080412587,
     )
 
-    pre[sender] = Account(balance=0x157b5373e07ca, nonce=0)
+    pre[sender] = Account(balance=0x157B5373E07CA, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x177359400)) + Op.STOP,
+        code=bytes.fromhex("6401773594005160015500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xd566533f0ccab46749ac8725e15da8ce513758257002a8b481f6f5f96484c5ed"
+            "0xd566533f0ccab46749ac8725e15da8ce513758257002a8b481f6f5f96484c5ed"  # noqa: E501
         ),
         to=contract,
         data=b"",

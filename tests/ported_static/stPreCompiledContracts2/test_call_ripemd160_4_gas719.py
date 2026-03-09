@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stPreCompiledContracts2/CallRipemd160_4_gas719Filler.json
+tests/static/state_tests/stPreCompiledContracts2
+CallRipemd160_4_gas719Filler.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stPreCompiledContracts2/CallRipemd160_4_gas719Filler.json"],
+    [
+        "tests/static/state_tests/stPreCompiledContracts2/CallRipemd160_4_gas719Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,19 +47,18 @@ def test_call_ripemd160_4_gas719(
     )
 
     pre[contract] = Account(
-        balance=0x1312d00,
+        balance=0x1312D00,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
-        + Op.SSTORE(key=0x2, value=Op.CALL(gas=0x2cf, address=0x3, value=0x0, args_offset=0x0, args_size=0x20, ret_offset=0x0, ret_size=0x20))
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600052"  # noqa: E501
+            "6020600060206000600060036102cff160025560005160005500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,8 +70,12 @@ def test_call_ripemd160_4_gas719(
 
     post = {
         contract: Account(
-            storage={0: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff},
-            code=Op.MSTORE(offset=0x0, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) + Op.SSTORE(key=0x2, value=Op.CALL(gas=0x2cf, address=0x3, value=0x0, args_offset=0x0, args_size=0x20, ret_offset=0x0, ret_size=0x20)) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            storage={
+                0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6000526020600060206000600060036102cff160025560005160005500"  # noqa: E501
+            ),
         ),
     }
 

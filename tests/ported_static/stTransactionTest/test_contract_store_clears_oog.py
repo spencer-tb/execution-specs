@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stTransactionTest/ContractStoreClearsOOGFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/ContractStoreClearsOOGFiller.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/ContractStoreClearsOOGFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,20 +48,28 @@ def test_contract_store_clears_oog(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=0x0) + Op.SSTORE(key=0x1, value=0x0)
-        + Op.SSTORE(key=0x2, value=0x0) + Op.SSTORE(key=0x3, value=0x0)
-        + Op.SSTORE(key=0x4, value=0x0) + Op.SSTORE(key=0x5, value=0x0)
-        + Op.SSTORE(key=0x6, value=0x0) + Op.SSTORE(key=0x7, value=0x0)
-        + Op.SSTORE(key=0x8, value=0x0) + Op.SSTORE(key=0x9, value=0xc) + Op.STOP
-    ),
-        storage={0x0: 0xc, 0x1: 0xc, 0x2: 0xc, 0x3: 0xc, 0x4: 0xc, 0x5: 0xc, 0x6: 0xc, 0x7: 0xc, 0x8: 0xc, 0x9: 0xc},
+        code=bytes.fromhex(
+            "600060005560006001556000600255600060035560006004556000600555600060065560"  # noqa: E501
+            "006007556000600855600c60095500"
+        ),
+        storage={
+            0x0: 0xC,
+            0x1: 0xC,
+            0x2: 0xC,
+            0x3: 0xC,
+            0x4: 0xC,
+            0x5: 0xC,
+            0x6: 0xC,
+            0x7: 0xC,
+            0x8: 0xC,
+            0x9: 0xC,
+        },
     )
-    pre[sender] = Account(balance=0x1c9c380, nonce=0)
+    pre[sender] = Account(balance=0x1C9C380, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x2b75d0c814eb07c075fccbdd9a036faf651d9c46d7477d6c4f30772cfca90d38"
+            "0x2b75d0c814eb07c075fccbdd9a036faf651d9c46d7477d6c4f30772cfca90d38"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -70,8 +81,21 @@ def test_contract_store_clears_oog(
 
     post = {
         contract: Account(
-            storage={0: 12, 1: 12, 2: 12, 3: 12, 4: 12, 5: 12, 6: 12, 7: 12, 8: 12, 9: 12},
-            code=Op.SSTORE(key=0x0, value=0x0) + Op.SSTORE(key=0x1, value=0x0) + Op.SSTORE(key=0x2, value=0x0) + Op.SSTORE(key=0x3, value=0x0) + Op.SSTORE(key=0x4, value=0x0) + Op.SSTORE(key=0x5, value=0x0) + Op.SSTORE(key=0x6, value=0x0) + Op.SSTORE(key=0x7, value=0x0) + Op.SSTORE(key=0x8, value=0x0) + Op.SSTORE(key=0x9, value=0xc) + Op.STOP,
+            storage={
+                0: 12,
+                1: 12,
+                2: 12,
+                3: 12,
+                4: 12,
+                5: 12,
+                6: 12,
+                7: 12,
+                8: 12,
+                9: 12,
+            },
+            code=bytes.fromhex(
+                "600060005560006001556000600255600060035560006004556000600555600060065560006007556000600855600c60095500"  # noqa: E501
+            ),
         ),
     }
 

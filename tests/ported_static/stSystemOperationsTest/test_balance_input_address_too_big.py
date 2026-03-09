@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stSystemOperationsTest/balanceInputAddressTooBigFiller.json
+tests/static/state_tests/stSystemOperationsTest
+balanceInputAddressTooBigFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/balanceInputAddressTooBigFiller.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/balanceInputAddressTooBigFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,18 +47,17 @@ def test_balance_input_address_too_big(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.BALANCE(address=0xebaf50debf10e08302fe4280c32df010463ca297aa))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "74ebaf50debf10e08302fe4280c32df010463ca297aa3160005500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,7 +69,9 @@ def test_balance_input_address_too_big(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x0, value=Op.BALANCE(address=0xebaf50debf10e08302fe4280c32df010463ca297aa)) + Op.STOP,
+            code=bytes.fromhex(
+                "74ebaf50debf10e08302fe4280c32df010463ca297aa3160005500"
+            ),
         ),
     }
 

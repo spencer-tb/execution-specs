@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stInitCodeTest/TransactionCreateStopInInitcodeFiller.json
+tests/static/state_tests/stInitCodeTest
+TransactionCreateStopInInitcodeFiller.json
 """
 
 import pytest
@@ -19,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stInitCodeTest/TransactionCreateStopInInitcodeFiller.json"],
+    [
+        "tests/static/state_tests/stInitCodeTest/TransactionCreateStopInInitcodeFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -40,11 +45,11 @@ def test_transaction_create_stop_in_initcode(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xf4240, nonce=0)
+    pre[sender] = Account(balance=0xF4240, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("600a80600c600039600000f20000600160008035811a81"),
@@ -54,6 +59,6 @@ def test_transaction_create_stop_in_initcode(
         value=1,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

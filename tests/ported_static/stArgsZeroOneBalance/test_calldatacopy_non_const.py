@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stArgsZeroOneBalance/calldatacopyNonConstFiller.yml
 """
@@ -13,25 +15,66 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stArgsZeroOneBalance/calldatacopyNonConstFiller.yml"],
+    [
+        "tests/static/state_tests/stArgsZeroOneBalance/calldatacopyNonConstFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex, tx_value, expected_post",
     [
-        ("", 0, {Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(code=Op.CALLDATACOPY(dest_offset=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0), offset=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0), size=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0)) + Op.STOP)}),
-        ("", 1, {Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(code=Op.CALLDATACOPY(dest_offset=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0), offset=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0), size=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0)) + Op.STOP)}),
-        ("11223344", 0, {Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(code=Op.CALLDATACOPY(dest_offset=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0), offset=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0), size=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0)) + Op.STOP)}),
-        ("11223344", 1, {Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(code=Op.CALLDATACOPY(dest_offset=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0), offset=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0), size=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0)) + Op.STOP)}),
+        (
+            "",
+            0,
+            {
+                Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(
+                    code=bytes.fromhex(
+                        "73444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a0313700"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            "",
+            1,
+            {
+                Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(
+                    code=bytes.fromhex(
+                        "73444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a0313700"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            "11223344",
+            0,
+            {
+                Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(
+                    code=bytes.fromhex(
+                        "73444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a0313700"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            "11223344",
+            1,
+            {
+                Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(
+                    code=bytes.fromhex(
+                        "73444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a0313700"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_calldatacopy_non_const(
@@ -55,21 +98,21 @@ def test_calldatacopy_non_const(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.CALLDATACOPY(dest_offset=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0), offset=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0), size=Op.BALANCE(address=0x444c2681920e1105c9104fb32249ddbb41cba4a0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "73444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb322"  # noqa: E501
+            "49ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a0313700"
+        ),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

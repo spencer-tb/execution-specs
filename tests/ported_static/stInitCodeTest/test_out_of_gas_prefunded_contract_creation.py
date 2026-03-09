@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stInitCodeTest/OutOfGasPrefundedContractCreationFiller.json
+tests/static/state_tests/stInitCodeTest
+OutOfGasPrefundedContractCreationFiller.json
 """
 
 import pytest
@@ -19,17 +22,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stInitCodeTest/OutOfGasPrefundedContractCreationFiller.json"],
+    [
+        "tests/static/state_tests/stInitCodeTest/OutOfGasPrefundedContractCreationFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (154000, {Address("0x64e2ebd6405af8cb348aec519084d3fff42ebba6"): Account(storage={0: 0x112233})}),
+        (
+            154000,
+            {
+                Address("0x64e2ebd6405af8cb348aec519084d3fff42ebba6"): Account(
+                    storage={0: 0x112233}
+                )
+            },
+        ),
         (65000, {}),
         (95000, {}),
     ],
-    ids=['case0', 'case1', 'case2'],
+    ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_out_of_gas_prefunded_contract_creation(
@@ -53,14 +65,16 @@ def test_out_of_gas_prefunded_contract_creation(
     )
 
     pre[contract] = Account(balance=1, nonce=0)
-    pre[sender] = Account(balance=0xf424000, nonce=0)
+    pre[sender] = Account(balance=0xF424000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
-        data=bytes.fromhex("600980601160003960006001f0500000fe621122336000550000"),
+        data=bytes.fromhex(
+            "600980601160003960006001f0500000fe621122336000550000"
+        ),
         gas_limit=tx_gas_limit,
         gas_price=10,
         nonce=0,

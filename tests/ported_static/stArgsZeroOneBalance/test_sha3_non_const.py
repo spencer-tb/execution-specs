@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stArgsZeroOneBalance/sha3NonConstFiller.yml
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,34 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (0, {Address("0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4"): Account(storage={0: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470}, code=Op.SSTORE(key=0x0, value=Op.SHA3(offset=Op.BALANCE(address=0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4), size=Op.BALANCE(address=0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4))) + Op.STOP)}),
-        (1, {Address("0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4"): Account(storage={0: 0xbc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a}, code=Op.SSTORE(key=0x0, value=Op.SHA3(offset=Op.BALANCE(address=0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4), size=Op.BALANCE(address=0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4))) + Op.STOP)}),
+        (
+            0,
+            {
+                Address("0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4"): Account(
+                    storage={
+                        0: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470  # noqa: E501
+                    },
+                    code=bytes.fromhex(
+                        "738f7eceea4b37c6f7faf5d64d64fbffbcd14b79a431738f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4312060005500"  # noqa: E501
+                    ),
+                )
+            },
+        ),
+        (
+            1,
+            {
+                Address("0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4"): Account(
+                    storage={
+                        0: 0xBC36789E7A1E281436464229828F817D6612F7B477D66591FF96A9E064BCC98A  # noqa: E501
+                    },
+                    code=bytes.fromhex(
+                        "738f7eceea4b37c6f7faf5d64d64fbffbcd14b79a431738f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4312060005500"  # noqa: E501
+                    ),
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_sha3_non_const(
@@ -52,19 +77,19 @@ def test_sha3_non_const(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.SHA3(offset=Op.BALANCE(address=0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4), size=Op.BALANCE(address=0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4)))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "738f7eceea4b37c6f7faf5d64d64fbffbcd14b79a431738f7eceea4b37c6f7faf5d64d64"  # noqa: E501
+            "fbffbcd14b79a4312060005500"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",

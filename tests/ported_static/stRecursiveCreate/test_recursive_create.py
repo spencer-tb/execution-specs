@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRecursiveCreate/recursiveCreateFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,18 +44,15 @@ def test_recursive_create(
     )
 
     pre[contract] = Account(
-        balance=0x1312d00,
+        balance=0x1312D00,
         nonce=0,
-        code=(
-        Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20)
-        + Op.CREATE(value=0x0, offset=0x0, size=0x20) + Op.STOP
-    ),
+        code=bytes.fromhex("60206000600039602060006000f000"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,7 +64,7 @@ def test_recursive_create(
 
     post = {
         contract: Account(
-            code=Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20) + Op.CREATE(value=0x0, offset=0x0, size=0x20) + Op.STOP,
+            code=bytes.fromhex("60206000600039602060006000f000"),
         ),
     }
 

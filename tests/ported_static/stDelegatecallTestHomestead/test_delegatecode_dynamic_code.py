@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stDelegatecallTestHomestead/delegatecodeDynamicCodeFiller.json
+tests/static/state_tests/stDelegatecallTestHomestead
+delegatecodeDynamicCodeFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stDelegatecallTestHomestead/delegatecodeDynamicCodeFiller.json"],
+    [
+        "tests/static/state_tests/stDelegatecallTestHomestead/delegatecodeDynamicCodeFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,18 +49,18 @@ def test_delegatecode_dynamic_code(
     pre[contract] = Account(
         balance=0x2710,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x716860016000553360145560005260096017f36000526012600e6001f0600a55)
-        + Op.MSTORE(offset=0x20, value=0x604060006040600073ffe4ebd2a68c02d9dcb0a17283d13346beb2d8b6620186)
-        + Op.MSTORE(offset=0x40, value=0xa0f4600b55000000000000000000000000000000000000000000000000000000)
-        + Op.CREATE(value=0x1, offset=0x0, size=0x60) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7f716860016000553360145560005260096017f36000526012600e6001f0600a55600052"  # noqa: E501
+            "7f604060006040600073ffe4ebd2a68c02d9dcb0a17283d13346beb2d8b6620186602052"  # noqa: E501
+            "7fa0f4600b55000000000000000000000000000000000000000000000000000000604052"  # noqa: E501
+            "606060006001f000"
+        ),
     )
-    pre[sender] = Account(balance=0x2386f26fc10000, nonce=0)
+    pre[sender] = Account(balance=0x2386F26FC10000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,13 +72,18 @@ def test_delegatecode_dynamic_code(
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x716860016000553360145560005260096017f36000526012600e6001f0600a55) + Op.MSTORE(offset=0x20, value=0x604060006040600073ffe4ebd2a68c02d9dcb0a17283d13346beb2d8b6620186) + Op.MSTORE(offset=0x40, value=0xa0f4600b55000000000000000000000000000000000000000000000000000000) + Op.CREATE(value=0x1, offset=0x0, size=0x60) + Op.STOP,
+            code=bytes.fromhex(
+                "7f716860016000553360145560005260096017f36000526012600e6001f0600a556000527f604060006040600073ffe4ebd2a68c02d9dcb0a17283d13346beb2d8b66201866020527fa0f4600b55000000000000000000000000000000000000000000000000000000604052606060006001f000"  # noqa: E501
+            ),
         ),
         Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(
-            storage={10: 0x568a95f77b047bece6aa68843d2019332c46a585, 11: 1},
+            storage={
+                10: 0x568A95F77B047BECE6AA68843D2019332C46A585,
+                11: 1,
+            },
         ),
         Address("0x568a95f77b047bece6aa68843d2019332c46a585"): Account(
-            code=Op.SSTORE(key=0x0, value=0x1) + Op.SSTORE(key=0x14, value=Op.CALLER),
+            code=bytes.fromhex("600160005533601455"),
         ),
     }
 

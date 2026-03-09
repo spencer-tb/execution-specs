@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stBugs/staticcall_createfailsFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -29,7 +30,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "000000000000000000000000c94f5374fce5edbc8e2a8697c15331677e6ebf0b",
         "000000000000000000000000d94f5374fce5edbc8e2a8697c15331677e6ebf0b",
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_staticcall_createfails(
@@ -53,32 +54,29 @@ def test_staticcall_createfails(
         gas_limit=23826461031063688,
     )
 
-    pre[sender] = Account(balance=0x38beec8feeca2598, nonce=0)
+    pre[sender] = Account(balance=0x38BEEC8FEECA2598, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=63,
-        code=(
-        Op.SSTORE(key=0x1, value=Op.STATICCALL(gas=0x11170, address=Op.CALLDATALOAD(offset=0x0), args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex("600060006000600060003562011170fa60015500"),
         storage={0x1: 0x1},
     )
     pre[callee] = Account(
         balance=0,
         nonce=63,
-        code=(
-        Op.MSTORE(offset=0x1, value=0x1)
-        + Op.SSTORE(key=0x2, value=Op.CREATE(value=0x1, offset=0x1, size=0x1))
-        + Op.STOP
-    ),
+        code=bytes.fromhex("6001600152600160016001f060025500"),
     )
-    pre[callee_1] = Account(balance=0, nonce=63, code=Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CREATE)
+    pre[callee_1] = Account(
+        balance=0,
+        nonce=63,
+        code=bytes.fromhex("60006000f0"),
+    )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=tx_data,
@@ -90,12 +88,12 @@ def test_staticcall_createfails(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x1, value=Op.STATICCALL(gas=0x11170, address=Op.CALLDATALOAD(offset=0x0), args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex("600060006000600060003562011170fa60015500"),
         ),
         callee: Account(
-            code=Op.MSTORE(offset=0x1, value=0x1) + Op.SSTORE(key=0x2, value=Op.CREATE(value=0x1, offset=0x1, size=0x1)) + Op.STOP,
+            code=bytes.fromhex("6001600152600160016001f060025500"),
         ),
-        callee_1: Account(code=Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CREATE),
+        callee_1: Account(code=bytes.fromhex("60006000f0")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

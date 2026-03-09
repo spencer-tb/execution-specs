@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stLogTests/log2_nonEmptyMem_logMemSize1_logMemStart31Filler.json
+tests/static/state_tests/stLogTests
+log2_nonEmptyMem_logMemSize1_logMemStart31Filler.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stLogTests/log2_nonEmptyMem_logMemSize1_logMemStart31Filler.json"],
+    [
+        "tests/static/state_tests/stLogTests/log2_nonEmptyMem_logMemSize1_logMemStart31Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -44,26 +48,26 @@ def test_log2_non_empty_mem_log_mem_size1_log_mem_start31(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x3e8, address=0x54972c7257a6c4cdc7c3c144e8ccb3d8eb7afe19, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600060006000600060177354972c7257a6c4cdc7c3c144e8ccb3d8eb7afe196103e8f160"  # noqa: E501
+            "005500"
+        ),
     )
     pre[callee] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0xaabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd)
-        + Op.LOG2(offset=0x1f, size=0x1, topic_1=0x0, topic_2=0x0) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7faabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd600052"  # noqa: E501
+            "600060006001601fa200"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -76,10 +80,14 @@ def test_log2_non_empty_mem_log_mem_size1_log_mem_start31(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x3e8, address=0x54972c7257a6c4cdc7c3c144e8ccb3d8eb7afe19, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "600060006000600060177354972c7257a6c4cdc7c3c144e8ccb3d8eb7afe196103e8f160005500"  # noqa: E501
+            ),
         ),
         callee: Account(
-            code=Op.MSTORE(offset=0x0, value=0xaabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd) + Op.LOG2(offset=0x1f, size=0x1, topic_1=0x0, topic_2=0x0) + Op.STOP,
+            code=bytes.fromhex(
+                "7faabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd600052600060006001601fa200"  # noqa: E501
+            ),
         ),
     }
 

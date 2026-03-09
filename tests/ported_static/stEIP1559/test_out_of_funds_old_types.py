@@ -1,5 +1,5 @@
 """
-Ori Pomerantz qbzzt1@gmail.com
+Ori Pomerantz qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/stEIP1559/outOfFundsOldTypesFiller.yml
@@ -7,7 +7,6 @@ tests/static/state_tests/stEIP1559/outOfFundsOldTypesFiller.yml
 
 import pytest
 from execution_testing import (
-    AccessList,
     Account,
     Address,
     Alloc,
@@ -17,7 +16,6 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -28,16 +26,118 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
-    "tx_data_hex, tx_gas_limit, tx_value, tx_access_list, tx_error, expected_post",
+    "tx_data_hex, tx_gas_limit, tx_value, tx_access_list, tx_error, expected_post",  # noqa: E501
     [
-        pytest.param("00", 16777216, 0, None, TransactionException.INSUFFICIENT_ACCOUNT_FUNDS, {Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case0", marks=pytest.mark.exception_test),
-        pytest.param("00", 16777216, 1000000000000000000, None, TransactionException.INSUFFICIENT_ACCOUNT_FUNDS, {Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case1", marks=pytest.mark.exception_test),
-        pytest.param("00", 40000, 0, None, None, {Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case2"),
-        pytest.param("00", 40000, 1000000000000000000, None, TransactionException.INSUFFICIENT_ACCOUNT_FUNDS, {Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case3", marks=pytest.mark.exception_test),
-        pytest.param("01", 16777216, 0, [], TransactionException.INSUFFICIENT_ACCOUNT_FUNDS, {Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case4", marks=pytest.mark.exception_test),
-        pytest.param("01", 16777216, 1000000000000000000, [], TransactionException.INSUFFICIENT_ACCOUNT_FUNDS, {Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case5", marks=pytest.mark.exception_test),
-        pytest.param("01", 40000, 0, [], None, {Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case6"),
-        pytest.param("01", 40000, 1000000000000000000, [], TransactionException.INSUFFICIENT_ACCOUNT_FUNDS, {Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case7", marks=pytest.mark.exception_test),
+        pytest.param(
+            "00",
+            16777216,
+            0,
+            None,
+            TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
+            {
+                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
+                    code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case0",
+            marks=pytest.mark.exception_test,
+        ),
+        pytest.param(
+            "00",
+            16777216,
+            1000000000000000000,
+            None,
+            TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
+            {
+                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
+                    code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case1",
+            marks=pytest.mark.exception_test,
+        ),
+        pytest.param(
+            "00",
+            40000,
+            0,
+            None,
+            None,
+            {
+                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
+                    code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case2",
+        ),
+        pytest.param(
+            "00",
+            40000,
+            1000000000000000000,
+            None,
+            TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
+            {
+                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
+                    code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case3",
+            marks=pytest.mark.exception_test,
+        ),
+        pytest.param(
+            "01",
+            16777216,
+            0,
+            [],
+            TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
+            {
+                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
+                    code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case4",
+            marks=pytest.mark.exception_test,
+        ),
+        pytest.param(
+            "01",
+            16777216,
+            1000000000000000000,
+            [],
+            TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
+            {
+                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
+                    code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case5",
+            marks=pytest.mark.exception_test,
+        ),
+        pytest.param(
+            "01",
+            40000,
+            0,
+            [],
+            None,
+            {
+                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
+                    code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case6",
+        ),
+        pytest.param(
+            "01",
+            40000,
+            1000000000000000000,
+            [],
+            TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
+            {
+                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
+                    code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case7",
+            marks=pytest.mark.exception_test,
+        ),
     ],
 )
 @pytest.mark.pre_alloc_mutable
@@ -47,8 +147,8 @@ def test_out_of_funds_old_types(
     tx_data_hex: str,
     tx_gas_limit: int,
     tx_value: int,
-    tx_access_list,
-    tx_error,
+    tx_access_list: list | None,
+    tx_error: object,
     expected_post: dict,
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
@@ -65,18 +165,18 @@ def test_out_of_funds_old_types(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=1)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
+        code=bytes.fromhex("600260005500"),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"
+            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

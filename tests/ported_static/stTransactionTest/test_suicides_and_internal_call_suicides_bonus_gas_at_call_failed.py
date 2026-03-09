@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stTransactionTest/SuicidesAndInternalCallSuicidesBonusGasAtCallFailedFiller.json
+tests/static/state_tests/stTransactionTest
+SuicidesAndInternalCallSuicidesBonusGasAtCallFailedFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/SuicidesAndInternalCallSuicidesBonusGasAtCallFailedFiller.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/SuicidesAndInternalCallSuicidesBonusGasAtCallFailedFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,20 +47,17 @@ def test_suicides_and_internal_call_suicides_bonus_gas_at_call_failed(
         gas_limit=1000000,
     )
 
-    pre[callee] = Account(balance=0, nonce=0, code=Op.SELFDESTRUCT(address=0x1) + Op.STOP)
-    pre[sender] = Account(balance=0x5f5e100, nonce=0)
+    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("6001ff00"))
+    pre[sender] = Account(balance=0x5F5E100, nonce=0)
     pre[contract] = Account(
         balance=10,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=0x0, address=0x0, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SELFDESTRUCT(address=0x0) + Op.STOP
-    ),
+        code=bytes.fromhex("6000600060006000600060006000f1506000ff00"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,9 +68,9 @@ def test_suicides_and_internal_call_suicides_bonus_gas_at_call_failed(
     )
 
     post = {
-        callee: Account(code=Op.SELFDESTRUCT(address=0x1) + Op.STOP),
+        callee: Account(code=bytes.fromhex("6001ff00")),
         contract: Account(
-            code=Op.POP(Op.CALL(gas=0x0, address=0x0, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SELFDESTRUCT(address=0x0) + Op.STOP,
+            code=bytes.fromhex("6000600060006000600060006000f1506000ff00"),
         ),
     }
 

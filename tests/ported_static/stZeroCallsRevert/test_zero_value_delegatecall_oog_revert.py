@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stZeroCallsRevert/ZeroValue_DELEGATECALL_OOGRevertFiller.json
+tests/static/state_tests/stZeroCallsRevert
+ZeroValue_DELEGATECALL_OOGRevertFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stZeroCallsRevert/ZeroValue_DELEGATECALL_OOGRevertFiller.json"],
+    [
+        "tests/static/state_tests/stZeroCallsRevert/ZeroValue_DELEGATECALL_OOGRevertFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -42,21 +46,19 @@ def test_zero_value_delegatecall_oog_revert(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0x1, value=Op.DELEGATECALL(gas=0xea60, address=0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x2, value=0xc) + Op.SSTORE(key=0x3, value=0xc)
-        + Op.SSTORE(key=0x4, value=0xc) + Op.SSTORE(key=0x64, value=Op.GAS) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a600055600060006000600073c94f5374fce5edbc8e2a8697c15331677e6ebf0b61ea60"  # noqa: E501
+            "f4600155600c600255600c600355600c6004555a60645500"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,7 +70,9 @@ def test_zero_value_delegatecall_oog_revert(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x0, value=Op.GAS) + Op.SSTORE(key=0x1, value=Op.DELEGATECALL(gas=0xea60, address=0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=0xc) + Op.SSTORE(key=0x3, value=0xc) + Op.SSTORE(key=0x4, value=0xc) + Op.SSTORE(key=0x64, value=Op.GAS) + Op.STOP,
+            code=bytes.fromhex(
+                "5a600055600060006000600073c94f5374fce5edbc8e2a8697c15331677e6ebf0b61ea60f4600155600c600255600c600355600c6004555a60645500"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCreate2/CREATE2_HighNonceMinus1Filler.yml
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,20 +43,18 @@ def test_create2_high_nonce_minus1(
         gas_limit=89128960,
     )
 
-    pre[sender] = Account(balance=0x3b9aca00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=18446744073709551614,
-        code=(
-        Op.SHL(0xd8, 0x60016000f3) + Op.PUSH1[0x0] + Op.SWAP1 + Op.DUP2 + Op.MSTORE
-        + Op.PUSH1[0x5] + Op.DUP2 + Op.DUP1 + Op.SSTORE(key=0x0, value=Op.CREATE2)
-        + Op.SSTORE(key=Op.DUP1, value=0x1) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6460016000f360d81b600090815260058180f56000556001805500"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,10 +65,17 @@ def test_create2_high_nonce_minus1(
     )
 
     post = {
-        Address("0x77dd5d2a2b742ca01ee2cfff306445e3741ef744"): Account(code=bytes.fromhex("00")),
+        Address("0x77dd5d2a2b742ca01ee2cfff306445e3741ef744"): Account(
+            code=bytes.fromhex("00"),
+        ),
         contract: Account(
-            storage={0: 0x77dd5d2a2b742ca01ee2cfff306445e3741ef744, 1: 1},
-            code=Op.SHL(0xd8, 0x60016000f3) + Op.PUSH1[0x0] + Op.SWAP1 + Op.DUP2 + Op.MSTORE + Op.PUSH1[0x5] + Op.DUP2 + Op.DUP1 + Op.SSTORE(key=0x0, value=Op.CREATE2) + Op.SSTORE(key=Op.DUP1, value=0x1) + Op.STOP,
+            storage={
+                0: 0x77DD5D2A2B742CA01EE2CFFF306445E3741EF744,
+                1: 1,
+            },
+            code=bytes.fromhex(
+                "6460016000f360d81b600090815260058180f56000556001805500"
+            ),
         ),
     }
 

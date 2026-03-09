@@ -1,5 +1,5 @@
 """
-TODO revertOpcodeInInit followed by OOG
+TODO revertOpcodeInInit followed by OOG.
 
 Ported from:
 tests/static/state_tests/stRevertTest/RevertOpcodeInInitFiller.json
@@ -30,7 +30,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         0,
         10,
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_revert_opcode_in_init(
@@ -51,11 +51,11 @@ def test_revert_opcode_in_init(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("600160005560016000fd6011600155"),
@@ -65,6 +65,6 @@ def test_revert_opcode_in_init(
         value=tx_value,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

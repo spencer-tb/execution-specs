@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stTransactionTest/SuicidesAndInternalCallSuicidesSuccessFiller.json
+tests/static/state_tests/stTransactionTest
+SuicidesAndInternalCallSuicidesSuccessFiller.json
 """
 
 import pytest
@@ -13,23 +16,48 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/SuicidesAndInternalCallSuicidesSuccessFiller.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/SuicidesAndInternalCallSuicidesSuccessFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        ("00000000000000000000000000000000000000000000000000000000000055f0", {Address("0x0000000000000000000000000000000000000000"): Account(code=Op.SELFDESTRUCT(address=0x1) + Op.STOP), Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.POP(Op.CALL(gas=Op.CALLDATALOAD(offset=0x0), address=0x0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SELFDESTRUCT(address=0x0) + Op.STOP)}),
-        ("000000000000000000000000000000000000000000000000000000000000aaf0", {Address("0x0000000000000000000000000000000000000000"): Account(code=Op.SELFDESTRUCT(address=0x1) + Op.STOP), Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.POP(Op.CALL(gas=Op.CALLDATALOAD(offset=0x0), address=0x0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SELFDESTRUCT(address=0x0) + Op.STOP)}),
+        (
+            "00000000000000000000000000000000000000000000000000000000000055f0",
+            {
+                Address("0x0000000000000000000000000000000000000000"): Account(
+                    code=bytes.fromhex("6001ff00")
+                ),
+                Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "600060006000600060016000600035f1506000ff00"
+                    )
+                ),
+            },
+        ),
+        (
+            "000000000000000000000000000000000000000000000000000000000000aaf0",
+            {
+                Address("0x0000000000000000000000000000000000000000"): Account(
+                    code=bytes.fromhex("6001ff00")
+                ),
+                Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "600060006000600060016000600035f1506000ff00"
+                    )
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_suicides_and_internal_call_suicides_success(
@@ -53,22 +81,19 @@ def test_suicides_and_internal_call_suicides_success(
         gas_limit=10000000,
     )
 
-    pre[callee] = Account(balance=0, nonce=0, code=Op.SELFDESTRUCT(address=0x1) + Op.STOP)
-    pre[sender] = Account(balance=0xaba9500, nonce=0)
+    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("6001ff00"))
+    pre[sender] = Account(balance=0xABA9500, nonce=0)
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=Op.CALLDATALOAD(offset=0x0), address=0x0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SELFDESTRUCT(address=0x0) + Op.STOP
-    ),
+        code=bytes.fromhex("600060006000600060016000600035f1506000ff00"),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

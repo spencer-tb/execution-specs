@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stTransactionTest/TransactionDataCosts652Filler.json
 """
@@ -19,7 +21,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/TransactionDataCosts652Filler.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/TransactionDataCosts652Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -28,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         22000,
         72000,
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_transaction_data_costs652(
@@ -54,7 +58,7 @@ def test_transaction_data_costs652(
 
     tx = Transaction(
         secret_key=Hash(
-            "0xdc4efa209aecdd4c2d5201a419ea27506151b4ec687f14a613229e310932491b"
+            "0xdc4efa209aecdd4c2d5201a419ea27506151b4ec687f14a613229e310932491b"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00000000000000000000112233445566778f32"),
@@ -64,6 +68,6 @@ def test_transaction_data_costs652(
         value=0,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

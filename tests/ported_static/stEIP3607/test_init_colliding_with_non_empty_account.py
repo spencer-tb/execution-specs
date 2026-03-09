@@ -1,5 +1,5 @@
 """
-Account attempts to send tx to create a contract on a non-empty address
+Account attempts to send tx to create a contract on a non-empty address.
 
 Ported from:
 tests/static/state_tests/stEIP3607/initCollidingWithNonEmptyAccountFiller.yml
@@ -15,26 +15,27 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP3607/initCollidingWithNonEmptyAccountFiller.yml"],
+    [
+        "tests/static/state_tests/stEIP3607/initCollidingWithNonEmptyAccountFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex",
     [
         "60206000f3",
-        "6001600055600080808061271073d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d05af100",
+        "6001600055600080808061271073d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d05af100",  # noqa: E501
         "60016000556000602081612710f500",
         "600160005560206000612710f000",
         "6001600055600080808073d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d05af400",
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4'],
+    ids=["case0", "case1", "case2", "case3", "case4"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_init_colliding_with_non_empty_account(
@@ -42,7 +43,7 @@ def test_init_colliding_with_non_empty_account(
     pre: Alloc,
     tx_data_hex: str,
 ) -> None:
-    """Account attempts to send tx to create a contract on a non-empty address."""
+    """Account attempts to send tx to create a contract on a non-empty..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f")
@@ -58,15 +59,19 @@ def test_init_colliding_with_non_empty_account(
     )
 
     pre[coinbase] = Account(balance=0, nonce=1)
-    pre[contract] = Account(balance=0xde0b6b3a7640000, nonce=0, code=Op.SSTORE(key=0x1, value=0x0))
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[contract] = Account(
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        code=bytes.fromhex("6000600155"),
+    )
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[callee_1] = Account(balance=0, nonce=0, code=bytes.fromhex("00"))
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,
@@ -77,7 +82,7 @@ def test_init_colliding_with_non_empty_account(
     )
 
     post = {
-        contract: Account(code=Op.SSTORE(key=0x1, value=0x0)),
+        contract: Account(code=bytes.fromhex("6000600155")),
         callee_1: Account(code=bytes.fromhex("00")),
     }
 

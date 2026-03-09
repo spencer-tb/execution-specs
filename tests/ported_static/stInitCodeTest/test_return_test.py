@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stInitCodeTest/ReturnTestFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,22 +47,21 @@ def test_return_test(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=0x7d0, address=0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x1e, args_size=0x1, ret_offset=0x1f, ret_size=0x1))
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-        + Op.RETURN(offset=0x1e, size=0x2) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6001601f6001601e600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b6107d0f150"  # noqa: E501
+            "6000516000556002601ef300"
+        ),
     )
     pre[sender] = Account(balance=0x989680, nonce=0)
     pre[callee] = Account(
-        balance=0x186a0,
+        balance=0x186A0,
         nonce=0,
-        code=Op.MSTORE(offset=0x0, value=0x15) + Op.RETURN(offset=0x1f, size=0x1) + Op.STOP,
+        code=bytes.fromhex("60156000526001601ff300"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -74,11 +74,11 @@ def test_return_test(
     post = {
         contract: Account(
             storage={0: 21},
-            code=Op.POP(Op.CALL(gas=0x7d0, address=0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x1e, args_size=0x1, ret_offset=0x1f, ret_size=0x1)) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.RETURN(offset=0x1e, size=0x2) + Op.STOP,
+            code=bytes.fromhex(
+                "6001601f6001601e600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b6107d0f1506000516000556002601ef300"  # noqa: E501
+            ),
         ),
-        callee: Account(
-            code=Op.MSTORE(offset=0x0, value=0x15) + Op.RETURN(offset=0x1f, size=0x1) + Op.STOP,
-        ),
+        callee: Account(code=bytes.fromhex("60156000526001601ff300")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

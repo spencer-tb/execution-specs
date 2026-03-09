@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSystemOperationsTest/testRandomTestFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/testRandomTestFiller.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/testRandomTestFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,18 +46,15 @@ def test_test_random_test(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.TIMESTAMP + Op.PREVRANDAO + Op.NUMBER + Op.PREVRANDAO
-        + Op.SSTORE(key=Op.CREATE(value=Op.GAS, offset=Op.ISZERO(Op.CREATE(value=Op.DUP4, offset=Op.NUMBER, size=Op.NUMBER)), size=Op.NUMBER), value=Op.TIMESTAMP)
-    ),
+        code=bytes.fromhex("424443444243434383f0155af055"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,8 +66,8 @@ def test_test_random_test(
 
     post = {
         contract: Account(
-            storage={0xebcce5f60530275ee9318ce1eff9e4bfee810172: 1000},
-            code=Op.TIMESTAMP + Op.PREVRANDAO + Op.NUMBER + Op.PREVRANDAO + Op.SSTORE(key=Op.CREATE(value=Op.GAS, offset=Op.ISZERO(Op.CREATE(value=Op.DUP4, offset=Op.NUMBER, size=Op.NUMBER)), size=Op.NUMBER), value=Op.TIMESTAMP),
+            storage={0xEBCCE5F60530275EE9318CE1EFF9E4BFEE810172: 1000},
+            code=bytes.fromhex("424443444243434383f0155af055"),
         ),
     }
 

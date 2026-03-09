@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stSystemOperationsTest/suicideCallerAddresTooBigRightFiller.json
+tests/static/state_tests/stSystemOperationsTest
+suicideCallerAddresTooBigRightFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/suicideCallerAddresTooBigRightFiller.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/suicideCallerAddresTooBigRightFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,19 +47,17 @@ def test_suicide_caller_addres_too_big_right(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALLER)
-        + Op.SELFDESTRUCT(address=0xa94f5374fce5edbc8e2a8697c15331677e6ebf0baa)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "3360005574a94f5374fce5edbc8e2a8697c15331677e6ebf0baaff00"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,8 +69,10 @@ def test_suicide_caller_addres_too_big_right(
 
     post = {
         contract: Account(
-            storage={0: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b},
-            code=Op.SSTORE(key=0x0, value=Op.CALLER) + Op.SELFDESTRUCT(address=0xa94f5374fce5edbc8e2a8697c15331677e6ebf0baa) + Op.STOP,
+            storage={0: 0xA94F5374FCE5EDBC8E2A8697C15331677E6EBF0B},
+            code=bytes.fromhex(
+                "3360005574a94f5374fce5edbc8e2a8697c15331677e6ebf0baaff00"
+            ),
         ),
     }
 

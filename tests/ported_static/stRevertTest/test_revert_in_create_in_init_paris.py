@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRevertTest/RevertInCreateInInit_ParisFiller.json
 """
@@ -19,7 +21,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stRevertTest/RevertInCreateInInit_ParisFiller.json"],
+    [
+        "tests/static/state_tests/stRevertTest/RevertInCreateInInit_ParisFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,11 +50,11 @@ def test_revert_in_create_in_init_paris(
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex(
-            "3050600d80602460003960006000f0503d6000556020600060003e6000516001550000fe"
+            "3050600d80602460003960006000f0503d6000556020600060003e6000516001550000fe"  # noqa: E501
             "6211223360005260206000fd00"
         ),
         gas_limit=200000,

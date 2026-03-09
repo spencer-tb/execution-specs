@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stSystemOperationsTest/suicideNotExistingAccountFiller.json
+tests/static/state_tests/stSystemOperationsTest
+suicideNotExistingAccountFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/suicideNotExistingAccountFiller.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/suicideNotExistingAccountFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,15 +47,15 @@ def test_suicide_not_existing_account(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0xaa1722f3947def4cf144679da39c4c32bdc35681) + Op.STOP,
+        code=bytes.fromhex("73aa1722f3947def4cf144679da39c4c32bdc35681ff00"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -63,7 +67,9 @@ def test_suicide_not_existing_account(
 
     post = {
         contract: Account(
-            code=Op.SELFDESTRUCT(address=0xaa1722f3947def4cf144679da39c4c32bdc35681) + Op.STOP,
+            code=bytes.fromhex(
+                "73aa1722f3947def4cf144679da39c4c32bdc35681ff00"
+            ),
         ),
     }
 

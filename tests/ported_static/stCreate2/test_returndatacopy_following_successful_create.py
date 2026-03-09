@@ -1,8 +1,9 @@
 """
-returndatacopy_following_successful_create for CREATE2
+returndatacopy_following_successful_create for CREATE2.
 
 Ported from:
-tests/static/state_tests/stCreate2/returndatacopy_following_successful_createFiller.json
+tests/static/state_tests/stCreate2
+returndatacopy_following_successful_createFiller.json
 """
 
 import pytest
@@ -15,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreate2/returndatacopy_following_successful_createFiller.json"],
+    [
+        "tests/static/state_tests/stCreate2/returndatacopy_following_successful_createFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -30,7 +32,7 @@ def test_returndatacopy_following_successful_create(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """returndatacopy_following_successful_create for CREATE2."""
+    """Returndatacopy_following_successful_create for CREATE2."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6")
@@ -47,21 +49,16 @@ def test_returndatacopy_following_successful_create(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.PUSH1[0x0] + Op.PUSH1[0x2]
-        + Op.CODECOPY(dest_offset=0x0, offset=0x1f, size=Op.DUP1) + Op.PUSH1[0x0]
-        + Op.PUSH1[0x0] + Op.POP(Op.CREATE2)
-        + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x1, size=0x20)
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP + Op.INVALID
-        + Op.STOP + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600280601f60003960006000f5506020600160003e60005160005500fe0000"  # noqa: E501
+        ),
         storage={0x0: 0x2},
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -74,7 +71,9 @@ def test_returndatacopy_following_successful_create(
     post = {
         contract: Account(
             storage={0: 2},
-            code=Op.PUSH1[0x0] + Op.PUSH1[0x2] + Op.CODECOPY(dest_offset=0x0, offset=0x1f, size=Op.DUP1) + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.POP(Op.CREATE2) + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x1, size=0x20) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP + Op.INVALID + Op.STOP + Op.STOP,
+            code=bytes.fromhex(
+                "6000600280601f60003960006000f5506020600160003e60005160005500fe0000"  # noqa: E501
+            ),
         ),
     }
 

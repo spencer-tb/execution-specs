@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryTest/stackLimitGas_1024Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,19 +44,17 @@ def test_stack_limit_gas_1024(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x3fe) + Op.JUMPDEST + Op.GAS
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.MLOAD(offset=0x0), 0x1))
-        + Op.JUMPI(pc=0x6, condition=Op.MLOAD(offset=0x0)) + Op.STOP + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6103fe6000525b5a6001600051036000526000516006570000"
+        ),
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +66,9 @@ def test_stack_limit_gas_1024(
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x3fe) + Op.JUMPDEST + Op.GAS + Op.MSTORE(offset=0x0, value=Op.SUB(Op.MLOAD(offset=0x0), 0x1)) + Op.JUMPI(pc=0x6, condition=Op.MLOAD(offset=0x0)) + Op.STOP + Op.STOP,
+            code=bytes.fromhex(
+                "6103fe6000525b5a6001600051036000526000516006570000"
+            ),
         ),
     }
 

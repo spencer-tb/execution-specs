@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/SSTORE_BoundsFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,38 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0x1f2aee312c3c47bdeb27ff5275fddb33c543e394"): Account(code=Op.SSTORE(key=0xffffffff, value=0x1) + Op.SSTORE(key=0xffffffffffffffff, value=0x1) + Op.SSTORE(key=0xffffffffffffffffffffffffffffffff, value=0x1) + Op.SSTORE(key=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, value=0x1) + Op.SSTORE(key=0x20, value=0xffffffff) + Op.SSTORE(key=0x40, value=0xffffffffffffffff) + Op.SSTORE(key=0x80, value=0xffffffffffffffffffffffffffffffff) + Op.SSTORE(key=0x100, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) + Op.STOP)}),
-        (16777216, {Address("0x1f2aee312c3c47bdeb27ff5275fddb33c543e394"): Account(storage={32: 0xffffffff, 64: 0xffffffffffffffff, 128: 0xffffffffffffffffffffffffffffffff, 256: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, 0xffffffff: 1, 0xffffffffffffffff: 1, 0xffffffffffffffffffffffffffffffff: 1, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff: 1}, code=Op.SSTORE(key=0xffffffff, value=0x1) + Op.SSTORE(key=0xffffffffffffffff, value=0x1) + Op.SSTORE(key=0xffffffffffffffffffffffffffffffff, value=0x1) + Op.SSTORE(key=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, value=0x1) + Op.SSTORE(key=0x20, value=0xffffffff) + Op.SSTORE(key=0x40, value=0xffffffffffffffff) + Op.SSTORE(key=0x80, value=0xffffffffffffffffffffffffffffffff) + Op.SSTORE(key=0x100, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0x1f2aee312c3c47bdeb27ff5275fddb33c543e394"): Account(
+                    code=bytes.fromhex(
+                        "600163ffffffff55600167ffffffffffffffff5560016fffffffffffffffffffffffffffffffff5560017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5563ffffffff60205567ffffffffffffffff6040556fffffffffffffffffffffffffffffffff6080557fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6101005500"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0x1f2aee312c3c47bdeb27ff5275fddb33c543e394"): Account(
+                    storage={
+                        32: 0xFFFFFFFF,
+                        64: 0xFFFFFFFFFFFFFFFF,
+                        128: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        256: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        0xFFFFFFFF: 1,
+                        0xFFFFFFFFFFFFFFFF: 1,
+                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: 1,
+                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: 1,  # noqa: E501
+                    },
+                    code=bytes.fromhex(
+                        "600163ffffffff55600167ffffffffffffffff5560016fffffffffffffffffffffffffffffffff5560017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5563ffffffff60205567ffffffffffffffff6040556fffffffffffffffffffffffffffffffff6080557fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6101005500"  # noqa: E501
+                    ),
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_sstore_bounds(
@@ -55,23 +84,19 @@ def test_sstore_bounds(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0xffffffff, value=0x1)
-        + Op.SSTORE(key=0xffffffffffffffff, value=0x1)
-        + Op.SSTORE(key=0xffffffffffffffffffffffffffffffff, value=0x1)
-        + Op.SSTORE(key=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, value=0x1)
-        + Op.SSTORE(key=0x20, value=0xffffffff)
-        + Op.SSTORE(key=0x40, value=0xffffffffffffffff)
-        + Op.SSTORE(key=0x80, value=0xffffffffffffffffffffffffffffffff)
-        + Op.SSTORE(key=0x100, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600163ffffffff55600167ffffffffffffffff5560016fffffffffffffffffffffffffff"  # noqa: E501
+            "ffffff5560017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "ffffff5563ffffffff60205567ffffffffffffffff6040556fffffffffffffffffffffff"  # noqa: E501
+            "ffffffffff6080557fffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "ffffffffff6101005500"
+        ),
     )
-    pre[sender] = Account(balance=0x7ffffffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xfe5be118ad5955e30e0ffc4e1f1bbdcaa7f5a67cb1426c4ac19e32c80eccdc06"
+            "0xfe5be118ad5955e30e0ffc4e1f1bbdcaa7f5a67cb1426c4ac19e32c80eccdc06"  # noqa: E501
         ),
         to=contract,
         data=b"",

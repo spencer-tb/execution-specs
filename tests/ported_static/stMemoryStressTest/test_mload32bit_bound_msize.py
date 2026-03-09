@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/mload32bitBound_MsizeFiller.json
 """
@@ -13,23 +15,38 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stMemoryStressTest/mload32bitBound_MsizeFiller.json"],
+    [
+        "tests/static/state_tests/stMemoryStressTest/mload32bitBound_MsizeFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0x15d5a32351458ff3dca214bd202c21f066031ae1"): Account(code=Op.MSTORE(offset=0xffffffff, value=0x1) + Op.SSTORE(key=0x0, value=Op.MSIZE) + Op.STOP)}),
-        (16777216, {Address("0x15d5a32351458ff3dca214bd202c21f066031ae1"): Account(code=Op.MSTORE(offset=0xffffffff, value=0x1) + Op.SSTORE(key=0x0, value=Op.MSIZE) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0x15d5a32351458ff3dca214bd202c21f066031ae1"): Account(
+                    code=bytes.fromhex("600163ffffffff525960005500")
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0x15d5a32351458ff3dca214bd202c21f066031ae1"): Account(
+                    code=bytes.fromhex("600163ffffffff525960005500")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_mload32bit_bound_msize(
@@ -53,18 +70,15 @@ def test_mload32bit_bound_msize(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0xffffffff, value=0x1) + Op.SSTORE(key=0x0, value=Op.MSIZE)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("600163ffffffff525960005500"),
     )
-    pre[sender] = Account(balance=0x186a0c3b1e19a180, nonce=0)
+    pre[sender] = Account(balance=0x186A0C3B1E19A180, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x7dd14755c573e37c1f649b0c53b9815f76aebd636df7ccfa97f4579f33ba59a0"
+            "0x7dd14755c573e37c1f649b0c53b9815f76aebd636df7ccfa97f4579f33ba59a0"  # noqa: E501
         ),
         to=contract,
         data=b"",

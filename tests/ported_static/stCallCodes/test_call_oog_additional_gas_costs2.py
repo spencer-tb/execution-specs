@@ -1,5 +1,5 @@
 """
-call(oog during init) ->  code 
+call(oog during init) ->  code.
 
 Ported from:
 tests/static/state_tests/stCallCodes/call_OOG_additionalGasCosts2Filler.json
@@ -15,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCodes/call_OOG_additionalGasCosts2Filler.json"],
+    [
+        "tests/static/state_tests/stCallCodes/call_OOG_additionalGasCosts2Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -30,7 +31,7 @@ def test_call_oog_additional_gas_costs2(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """call(oog during init) ->  code ."""
+    """Call(oog during init) ->  code."""
     coinbase = Address("0xeb201d2887816e041f6e807e804f64f3a7a226fe")
     sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
     contract = Address("0xc1f36f15e971b13f8178b8c0c5c4f5e6b1b2b2c3")
@@ -45,22 +46,22 @@ def test_call_oog_additional_gas_costs2(
         gas_limit=3000000000,
     )
 
-    pre[callee] = Account(balance=0, nonce=0, code=Op.PUSH1[0x0])
+    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("6000"))
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x1770, address=0x89cd1cb7ad11c6949bec0c8c7533dc073960c54f, value=0x1, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "604060006040600060017389cd1cb7ad11c6949bec0c8c7533dc073960c54f611770f160"  # noqa: E501
+            "005500"
+        ),
         storage={0x0: 0x2},
     )
     pre[coinbase] = Account(balance=0, nonce=1)
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -71,10 +72,12 @@ def test_call_oog_additional_gas_costs2(
     )
 
     post = {
-        callee: Account(code=Op.PUSH1[0x0]),
+        callee: Account(code=bytes.fromhex("6000")),
         contract: Account(
             storage={0: 2},
-            code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x1770, address=0x89cd1cb7ad11c6949bec0c8c7533dc073960c54f, value=0x1, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "604060006040600060017389cd1cb7ad11c6949bec0c8c7533dc073960c54f611770f160005500"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,5 +1,5 @@
 """
-A state test with invalid transaction example filler
+A state test with invalid transaction example filler.
 
 Ported from:
 tests/static/state_tests/stExample/invalidTrFiller.json
@@ -16,7 +16,6 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,17 +45,17 @@ def test_invalid_tr(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)) + Op.STOP,
+        code=bytes.fromhex("600160010160005500"),
     )
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,7 +67,7 @@ def test_invalid_tr(
     )
 
     post = {
-        contract: Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)) + Op.STOP),
+        contract: Account(code=bytes.fromhex("600160010160005500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

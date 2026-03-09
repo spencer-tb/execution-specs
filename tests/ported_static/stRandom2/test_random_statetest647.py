@@ -1,5 +1,5 @@
 """
-Malicious bytecode found by fuzztest tool: returndatacopy(0,-1)
+Malicious bytecode found by fuzztest tool: returndatacopy(0,-1).
 
 Ported from:
 tests/static/state_tests/stRandom2/randomStatetest647Filler.json
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,13 +46,13 @@ def test_random_statetest647(
     pre[contract] = Account(
         balance=0,
         nonce=7,
-        code=Op.RETURNDATACOPY(dest_offset=0x0, offset=Op.SUB(0x0, 0x1), size=0x1) + Op.STOP,
+        code=bytes.fromhex("6001600160000360003e00"),
     )
-    pre[sender] = Account(balance=0x174876e800, nonce=0)
+    pre[sender] = Account(balance=0x174876E800, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x5b7b8efb6d003cd481e408d8759a25adc79955092f1a380d8f8b57346c1d1342"
+            "0x5b7b8efb6d003cd481e408d8759a25adc79955092f1a380d8f8b57346c1d1342"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -64,9 +63,7 @@ def test_random_statetest647(
     )
 
     post = {
-        contract: Account(
-            code=Op.RETURNDATACOPY(dest_offset=0x0, offset=Op.SUB(0x0, 0x1), size=0x1) + Op.STOP,
-        ),
+        contract: Account(code=bytes.fromhex("6001600160000360003e00")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

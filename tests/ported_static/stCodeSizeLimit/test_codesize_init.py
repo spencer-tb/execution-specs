@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCodeSizeLimit/codesizeInitFiller.json
 """
@@ -40,11 +42,11 @@ def test_codesize_init(
         gas_limit=20000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("38600155303b60025500"),
@@ -55,7 +57,9 @@ def test_codesize_init(
     )
 
     post = {
-        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={1: 10}),
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+            storage={1: 10},
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

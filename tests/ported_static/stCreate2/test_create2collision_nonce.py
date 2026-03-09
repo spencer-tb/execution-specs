@@ -1,5 +1,5 @@
 """
-create2 generates an account that already exists and has nonce != 0
+create2 generates an account that already exists and has nonce != 0.
 
 Ported from:
 tests/static/state_tests/stCreate2/create2collisionNonceFiller.json
@@ -31,7 +31,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         ("64600160015560005260006005601b6000f500", {}),
         ("6d6460016001556000526005601bf36000526000600e60126000f500", {}),
     ],
-    ids=['case0', 'case1', 'case2'],
+    ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2collision_nonce(
@@ -40,7 +40,7 @@ def test_create2collision_nonce(
     tx_data_hex: str,
     expected_post: dict,
 ) -> None:
-    """create2 generates an account that already exists and has nonce != 0."""
+    """Create2 generates an account that already exists and has nonce != 0."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01")
@@ -56,7 +56,7 @@ def test_create2collision_nonce(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(balance=0, nonce=1)
     pre[callee_1] = Account(balance=0, nonce=1)
     pre[callee_2] = Account(balance=0, nonce=1)
@@ -65,7 +65,7 @@ def test_create2collision_nonce(
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stMemExpandingEIP150Calls/CallGoesOOGOnSecondLevel2WithMemExpandingCallsFiller.json
+tests/static/state_tests/stMemExpandingEIP150Calls
+CallGoesOOGOnSecondLevel2WithMemExpandingCallsFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stMemExpandingEIP150Calls/CallGoesOOGOnSecondLevel2WithMemExpandingCallsFiller.json"],
+    [
+        "tests/static/state_tests/stMemExpandingEIP150Calls/CallGoesOOGOnSecondLevel2WithMemExpandingCallsFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -47,32 +51,29 @@ def test_call_goes_oog_on_second_level2_with_mem_expanding_calls(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x8, value=Op.GAS)
-        + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0xc10a98222464b07008ceb5a0ec44ed49920addda, value=0x0, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff))
-    ),
+        code=bytes.fromhex(
+            "5a60085560ff60ff60ff60ff600073c10a98222464b07008ceb5a0ec44ed49920addda62"  # noqa: E501
+            "0927c0f1600955"
+        ),
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x8, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.GAS)
-        + Op.SSTORE(key=0xa, value=Op.GAS)
-    ),
+        code=bytes.fromhex("5a6008555a6009555a600a55"),
     )
-    pre[sender] = Account(balance=0xe8d4a510000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A510000, nonce=0)
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x8, value=Op.GAS)
-        + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0x96983de02bfbcb5d0f4e0ee98fdde6d6f0c75fe0, value=0x0, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff))
-    ),
+        code=bytes.fromhex(
+            "5a60085560ff60ff60ff60ff60007396983de02bfbcb5d0f4e0ee98fdde6d6f0c75fe062"  # noqa: E501
+            "0927c0f1600955"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x0b51075bb33d347a23b516e327e1b71c54f63faa192d1d94b62c76e0c26cf98a"
+            "0x0b51075bb33d347a23b516e327e1b71c54f63faa192d1d94b62c76e0c26cf98a"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -84,13 +85,15 @@ def test_call_goes_oog_on_second_level2_with_mem_expanding_calls(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0xc10a98222464b07008ceb5a0ec44ed49920addda, value=0x0, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff)),
+            code=bytes.fromhex(
+                "5a60085560ff60ff60ff60ff600073c10a98222464b07008ceb5a0ec44ed49920addda620927c0f1600955"  # noqa: E501
+            ),
         ),
-        callee: Account(
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.GAS) + Op.SSTORE(key=0xa, value=Op.GAS),
-        ),
+        callee: Account(code=bytes.fromhex("5a6008555a6009555a600a55")),
         callee_1: Account(
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0x96983de02bfbcb5d0f4e0ee98fdde6d6f0c75fe0, value=0x0, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff)),
+            code=bytes.fromhex(
+                "5a60085560ff60ff60ff60ff60007396983de02bfbcb5d0f4e0ee98fdde6d6f0c75fe0620927c0f1600955"  # noqa: E501
+            ),
         ),
     }
 

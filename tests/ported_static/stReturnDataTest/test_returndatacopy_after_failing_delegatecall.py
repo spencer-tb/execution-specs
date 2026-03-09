@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stReturnDataTest/returndatacopy_after_failing_delegatecallFiller.json
+tests/static/state_tests/stReturnDataTest
+returndatacopy_after_failing_delegatecallFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stReturnDataTest/returndatacopy_after_failing_delegatecallFiller.json"],
+    [
+        "tests/static/state_tests/stReturnDataTest/returndatacopy_after_failing_delegatecallFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -47,20 +51,25 @@ def test_returndatacopy_after_failing_delegatecall(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.DELEGATECALL(gas=0x2710, address=0x665521fd750490fd880ee369c267fca44ed8a078, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
-        storage={0x0: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff},
+        code=bytes.fromhex(
+            "600060006000600073665521fd750490fd880ee369c267fca44ed8a078612710f4506020"  # noqa: E501
+            "600060003e60005160005500"
+        ),
+        storage={
+            0x0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+        },
     )
-    pre[callee_1] = Account(balance=0x6400000000, nonce=0, code=Op.REVERT)
+    pre[callee_1] = Account(
+        balance=0x6400000000,
+        nonce=0,
+        code=bytes.fromhex("fd"),
+    )
     pre[contract] = Account(balance=0x100000, nonce=0)
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -72,10 +81,14 @@ def test_returndatacopy_after_failing_delegatecall(
 
     post = {
         callee: Account(
-            storage={0: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff},
-            code=Op.POP(Op.DELEGATECALL(gas=0x2710, address=0x665521fd750490fd880ee369c267fca44ed8a078, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            storage={
+                0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "600060006000600073665521fd750490fd880ee369c267fca44ed8a078612710f4506020600060003e60005160005500"  # noqa: E501
+            ),
         ),
-        callee_1: Account(code=Op.REVERT),
+        callee_1: Account(code=bytes.fromhex("fd")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

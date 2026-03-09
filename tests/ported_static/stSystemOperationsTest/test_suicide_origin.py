@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSystemOperationsTest/suicideOriginFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/suicideOriginFiller.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/suicideOriginFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,18 +46,15 @@ def test_suicide_origin(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ORIGIN) + Op.SELFDESTRUCT(address=Op.ORIGIN)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("3260005532ff00"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,8 +66,8 @@ def test_suicide_origin(
 
     post = {
         contract: Account(
-            storage={0: 0xebaf50debf10e08302fe4280c32df010463ca297},
-            code=Op.SSTORE(key=0x0, value=Op.ORIGIN) + Op.SELFDESTRUCT(address=Op.ORIGIN) + Op.STOP,
+            storage={0: 0xEBAF50DEBF10E08302FE4280C32DF010463CA297},
+            code=bytes.fromhex("3260005532ff00"),
         ),
     }
 

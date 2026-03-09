@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stReturnDataTest/returndatasize_following_successful_createFiller.json
+tests/static/state_tests/stReturnDataTest
+returndatasize_following_successful_createFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stReturnDataTest/returndatasize_following_successful_createFiller.json"],
+    [
+        "tests/static/state_tests/stReturnDataTest/returndatasize_following_successful_createFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,19 +50,15 @@ def test_returndatasize_following_successful_create(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.PUSH1[0xe] + Op.CODECOPY(dest_offset=0x0, offset=0x15, size=Op.DUP1)
-        + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.POP(Op.CREATE)
-        + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE) + Op.STOP + Op.STOP + Op.INVALID
-        + Op.MSTORE(offset=0x0, value=0x112233) + Op.RETURN(offset=0x0, size=0x20)
-        + Op.STOP + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600e80601560003960006000f0503d6000550000fe6211223360005260206000f30000"  # noqa: E501
+        ),
         storage={0x0: 0x1},
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -70,10 +70,14 @@ def test_returndatasize_following_successful_create(
 
     post = {
         Address("0x7b4276a91ae4da6c2f3f0e5bdf79d7f5da7519cb"): Account(
-            code=bytes.fromhex("0000000000000000000000000000000000000000000000000000000000112233"),
+            code=bytes.fromhex(
+                "0000000000000000000000000000000000000000000000000000000000112233"  # noqa: E501
+            ),
         ),
         contract: Account(
-            code=Op.PUSH1[0xe] + Op.CODECOPY(dest_offset=0x0, offset=0x15, size=Op.DUP1) + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.POP(Op.CREATE) + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE) + Op.STOP + Op.STOP + Op.INVALID + Op.MSTORE(offset=0x0, value=0x112233) + Op.RETURN(offset=0x0, size=0x20) + Op.STOP + Op.STOP,
+            code=bytes.fromhex(
+                "600e80601560003960006000f0503d6000550000fe6211223360005260206000f30000"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stHomesteadSpecific/createContractViaContractOOGInitCodeFiller.json
+tests/static/state_tests/stHomesteadSpecific
+createContractViaContractOOGInitCodeFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stHomesteadSpecific/createContractViaContractOOGInitCodeFiller.json"],
+    [
+        "tests/static/state_tests/stHomesteadSpecific/createContractViaContractOOGInitCodeFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,16 +49,13 @@ def test_create_contract_via_contract_oog_init_code(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x602060406000f0600c600055)
-        + Op.CREATE(value=0x0, offset=0x14, size=0xc) + Op.STOP
-    ),
+        code=bytes.fromhex("6b602060406000f0600c600055600052600c60146000f000"),
     )
-    pre[sender] = Account(balance=0x10c8e0, nonce=0)
+    pre[sender] = Account(balance=0x10C8E0, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,7 +67,9 @@ def test_create_contract_via_contract_oog_init_code(
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x602060406000f0600c600055) + Op.CREATE(value=0x0, offset=0x14, size=0xc) + Op.STOP,
+            code=bytes.fromhex(
+                "6b602060406000f0600c600055600052600c60146000f000"
+            ),
         ),
     }
 

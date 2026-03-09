@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryTest/mload8bitBoundFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,15 +44,15 @@ def test_mload8bit_bound(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x100)) + Op.STOP,
+        code=bytes.fromhex("6101005160015500"),
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -62,7 +63,7 @@ def test_mload8bit_bound(
     )
 
     post = {
-        contract: Account(code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x100)) + Op.STOP),
+        contract: Account(code=bytes.fromhex("6101005160015500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

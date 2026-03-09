@@ -1,5 +1,5 @@
 """
-https://github.com/ethereum/tests/issues/493,  CODECOPY and EXTCODECOPY where codesize = 0
+https://github.com/ethereum/tests/issues/493,  CODECOPY and EXTCODECOPY...
 
 Ported from:
 tests/static/state_tests/stExtCodeHash/codeCopyZero_ParisFiller.yml
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -30,7 +29,7 @@ def test_code_copy_zero_paris(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """https://github.com/ethereum/tests/issues/493,  CODECOPY and EXTCODECOPY where codesize = 0."""
+    """Https://github.com/ethereum/tests/issues/493,  CODECOPY and..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0xa000000000000000000000000000000000000000")
@@ -48,52 +47,39 @@ def test_code_copy_zero_paris(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.EXTCODECOPY(address=0xa222000000000000000000000000000000000000, dest_offset=0x0, offset=0x0, size=0x20)
-        + Op.SSTORE(key=0x10, value=Op.MLOAD(offset=0x0))
-        + Op.SSTORE(key=0x11, value=Op.EXTCODESIZE(address=0xa222000000000000000000000000000000000000))
-        + Op.SSTORE(key=0x12, value=Op.EXTCODEHASH(address=0xa222000000000000000000000000000000000000))
-        + Op.SSTORE(key=0x13, value=Op.CALLCODE(gas=0xc350, address=0xa222000000000000000000000000000000000000, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.EXTCODECOPY(address=0xa200000000000000000000000000000000000000, dest_offset=0x0, offset=0x0, size=0x20)
-        + Op.SSTORE(key=0x20, value=Op.MLOAD(offset=0x0))
-        + Op.SSTORE(key=0x21, value=Op.EXTCODESIZE(address=0xa200000000000000000000000000000000000000))
-        + Op.SSTORE(key=0x22, value=Op.EXTCODEHASH(address=0xa200000000000000000000000000000000000000))
-        + Op.SSTORE(key=0x23, value=Op.CALLCODE(gas=0xc350, address=0xa200000000000000000000000000000000000000, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.EXTCODECOPY(address=0xa300000000000000000000000000000000000000, dest_offset=0x0, offset=0x0, size=0x20)
-        + Op.SSTORE(key=0x30, value=Op.MLOAD(offset=0x0))
-        + Op.SSTORE(key=0x31, value=Op.EXTCODESIZE(address=0xa300000000000000000000000000000000000000))
-        + Op.SSTORE(key=0x32, value=Op.EXTCODEHASH(address=0xa300000000000000000000000000000000000000))
-        + Op.SSTORE(key=0x33, value=Op.CALLCODE(gas=0xc350, address=0xa300000000000000000000000000000000000000, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.POP(Op.CALL(gas=0x86470, address=0xa100000000000000000000000000000000000000, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20))
-        + Op.SSTORE(key=0x40, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60206000600073a2220000000000000000000000000000000000003c60005160105573a2"  # noqa: E501
+            "220000000000000000000000000000000000003b60115573a22200000000000000000000"  # noqa: E501
+            "00000000000000003f6012556000600060006000600073a2220000000000000000000000"  # noqa: E501
+            "0000000000000061c350f260135560206000600073a20000000000000000000000000000"  # noqa: E501
+            "00000000003c60005160205573a2000000000000000000000000000000000000003b6021"  # noqa: E501
+            "5573a2000000000000000000000000000000000000003f60225560006000600060006000"  # noqa: E501
+            "73a20000000000000000000000000000000000000061c350f260235560206000600073a3"  # noqa: E501
+            "000000000000000000000000000000000000003c60005160305573a30000000000000000"  # noqa: E501
+            "00000000000000000000003b60315573a300000000000000000000000000000000000000"  # noqa: E501
+            "3f6032556000600060006000600073a30000000000000000000000000000000000000061"  # noqa: E501
+            "c350f26033556020600060006000600073a1000000000000000000000000000000000000"  # noqa: E501
+            "0062086470f15060005160405500"
+        ),
     )
     pre[callee] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.PUSH1[0x0] + Op.PUSH1[0x39]
-        + Op.CODECOPY(dest_offset=0x0, offset=0x1a, size=Op.DUP1) + Op.PUSH1[0x0]
-        + Op.PUSH1[0x0] + Op.MSTORE(offset=0x0, value=Op.CREATE2)
-        + Op.RETURN(offset=0x0, size=0x20) + Op.STOP + Op.STOP + Op.INVALID
-        + Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20)
-        + Op.SSTORE(key=0x50, value=Op.MLOAD(offset=0x0))
-        + Op.SSTORE(key=0x51, value=Op.EXTCODESIZE(address=Op.ADDRESS))
-        + Op.SSTORE(key=0x52, value=Op.EXTCODEHASH(address=Op.ADDRESS))
-        + Op.SSTORE(key=0x53, value=Op.EXTCODESIZE(address=Op.CALLCODE(gas=0xc350, address=Op.ADDRESS, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)))
-        + Op.EXTCODECOPY(address=Op.ADDRESS, dest_offset=0x0, offset=0x0, size=0x20)
-        + Op.SSTORE(key=0x54, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000603980601a60003960006000f560005260206000f30000fe60206000600039600051"  # noqa: E501
+            "605055303b605155303f605255600060006000600060003061c350f23b60535560206000"  # noqa: E501
+            "6000303c60005160545500"
+        ),
     )
-    pre[callee_1] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[callee_1] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[callee_2] = Account(balance=10, nonce=0)
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -105,14 +91,28 @@ def test_code_copy_zero_paris(
 
     post = {
         Address("0x64bc50092fd622c9cc47d658b99c1af75aaa3d68"): Account(
-            storage={80: 0x60206000600039600051605055303b605155303f605255600060006000600060, 82: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470},
+            storage={
+                80: 0x60206000600039600051605055303B605155303F605255600060006000600060,  # noqa: E501
+                82: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
+            },
         ),
         contract: Account(
-            storage={19: 1, 34: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, 35: 1, 50: 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470, 51: 1, 64: 0x64bc50092fd622c9cc47d658b99c1af75aaa3d68},
-            code=Op.EXTCODECOPY(address=0xa222000000000000000000000000000000000000, dest_offset=0x0, offset=0x0, size=0x20) + Op.SSTORE(key=0x10, value=Op.MLOAD(offset=0x0)) + Op.SSTORE(key=0x11, value=Op.EXTCODESIZE(address=0xa222000000000000000000000000000000000000)) + Op.SSTORE(key=0x12, value=Op.EXTCODEHASH(address=0xa222000000000000000000000000000000000000)) + Op.SSTORE(key=0x13, value=Op.CALLCODE(gas=0xc350, address=0xa222000000000000000000000000000000000000, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.EXTCODECOPY(address=0xa200000000000000000000000000000000000000, dest_offset=0x0, offset=0x0, size=0x20) + Op.SSTORE(key=0x20, value=Op.MLOAD(offset=0x0)) + Op.SSTORE(key=0x21, value=Op.EXTCODESIZE(address=0xa200000000000000000000000000000000000000)) + Op.SSTORE(key=0x22, value=Op.EXTCODEHASH(address=0xa200000000000000000000000000000000000000)) + Op.SSTORE(key=0x23, value=Op.CALLCODE(gas=0xc350, address=0xa200000000000000000000000000000000000000, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.EXTCODECOPY(address=0xa300000000000000000000000000000000000000, dest_offset=0x0, offset=0x0, size=0x20) + Op.SSTORE(key=0x30, value=Op.MLOAD(offset=0x0)) + Op.SSTORE(key=0x31, value=Op.EXTCODESIZE(address=0xa300000000000000000000000000000000000000)) + Op.SSTORE(key=0x32, value=Op.EXTCODEHASH(address=0xa300000000000000000000000000000000000000)) + Op.SSTORE(key=0x33, value=Op.CALLCODE(gas=0xc350, address=0xa300000000000000000000000000000000000000, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.POP(Op.CALL(gas=0x86470, address=0xa100000000000000000000000000000000000000, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20)) + Op.SSTORE(key=0x40, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            storage={
+                19: 1,
+                34: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
+                35: 1,
+                50: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
+                51: 1,
+                64: 0x64BC50092FD622C9CC47D658B99C1AF75AAA3D68,
+            },
+            code=bytes.fromhex(
+                "60206000600073a2220000000000000000000000000000000000003c60005160105573a2220000000000000000000000000000000000003b60115573a2220000000000000000000000000000000000003f6012556000600060006000600073a22200000000000000000000000000000000000061c350f260135560206000600073a2000000000000000000000000000000000000003c60005160205573a2000000000000000000000000000000000000003b60215573a2000000000000000000000000000000000000003f6022556000600060006000600073a20000000000000000000000000000000000000061c350f260235560206000600073a3000000000000000000000000000000000000003c60005160305573a3000000000000000000000000000000000000003b60315573a3000000000000000000000000000000000000003f6032556000600060006000600073a30000000000000000000000000000000000000061c350f26033556020600060006000600073a10000000000000000000000000000000000000062086470f15060005160405500"  # noqa: E501
+            ),
         ),
         callee: Account(
-            code=Op.PUSH1[0x0] + Op.PUSH1[0x39] + Op.CODECOPY(dest_offset=0x0, offset=0x1a, size=Op.DUP1) + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.MSTORE(offset=0x0, value=Op.CREATE2) + Op.RETURN(offset=0x0, size=0x20) + Op.STOP + Op.STOP + Op.INVALID + Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20) + Op.SSTORE(key=0x50, value=Op.MLOAD(offset=0x0)) + Op.SSTORE(key=0x51, value=Op.EXTCODESIZE(address=Op.ADDRESS)) + Op.SSTORE(key=0x52, value=Op.EXTCODEHASH(address=Op.ADDRESS)) + Op.SSTORE(key=0x53, value=Op.EXTCODESIZE(address=Op.CALLCODE(gas=0xc350, address=Op.ADDRESS, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))) + Op.EXTCODECOPY(address=Op.ADDRESS, dest_offset=0x0, offset=0x0, size=0x20) + Op.SSTORE(key=0x54, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "6000603980601a60003960006000f560005260206000f30000fe60206000600039600051605055303b605155303f605255600060006000600060003061c350f23b605355602060006000303c60005160545500"  # noqa: E501
+            ),
         ),
     }
 

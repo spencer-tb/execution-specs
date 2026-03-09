@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stTransactionTest/SuicidesStopAfterSuicideFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/SuicidesStopAfterSuicideFiller.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/SuicidesStopAfterSuicideFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,21 +46,21 @@ def test_suicides_stop_after_suicide(
         gas_limit=100000,
     )
 
-    pre[callee] = Account(balance=1110, nonce=0, code=Op.SELFDESTRUCT(address=0x1) + Op.STOP)
+    pre[callee] = Account(
+        balance=1110,
+        nonce=0,
+        code=bytes.fromhex("6001ff00"),
+    )
     pre[sender] = Account(balance=0x7459280, nonce=0)
     pre[contract] = Account(
         balance=0x2710,
         nonce=0,
-        code=(
-        Op.SELFDESTRUCT(address=0x0)
-        + Op.CALL(gas=0x7530, address=0x0, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("6000ff600060006000600060006000617530f100"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,9 +71,9 @@ def test_suicides_stop_after_suicide(
     )
 
     post = {
-        callee: Account(code=Op.SELFDESTRUCT(address=0x1) + Op.STOP),
+        callee: Account(code=bytes.fromhex("6001ff00")),
         contract: Account(
-            code=Op.SELFDESTRUCT(address=0x0) + Op.CALL(gas=0x7530, address=0x0, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP,
+            code=bytes.fromhex("6000ff600060006000600060006000617530f100"),
         ),
     }
 

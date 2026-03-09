@@ -1,8 +1,9 @@
 """
-Account with non-empty code attempts to send tx to call itself
+Account with non-empty code attempts to send tx to call itself.
 
 Ported from:
-tests/static/state_tests/stEIP3607/transactionCollidingWithNonEmptyAccount_callsItselfFiller.yml
+tests/static/state_tests/stEIP3607
+transactionCollidingWithNonEmptyAccount_callsItselfFiller.yml
 """
 
 import pytest
@@ -16,14 +17,15 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP3607/transactionCollidingWithNonEmptyAccount_callsItselfFiller.yml"],
+    [
+        "tests/static/state_tests/stEIP3607/transactionCollidingWithNonEmptyAccount_callsItselfFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,12 +47,16 @@ def test_transaction_colliding_with_non_empty_account_calls_itself(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0, code=Op.SSTORE(key=0x1, value=0x0))
+    pre[sender] = Account(
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        code=bytes.fromhex("6000600155"),
+    )
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x402790500ea083a617ec567407d9ec3bbb3a5c8b812547d9f66e8d7878b8a75d"
+            "0x402790500ea083a617ec567407d9ec3bbb3a5c8b812547d9f66e8d7878b8a75d"  # noqa: E501
         ),
         to=sender,
         data=b"",
@@ -62,7 +68,7 @@ def test_transaction_colliding_with_non_empty_account_calls_itself(
     )
 
     post = {
-        sender: Account(code=Op.SSTORE(key=0x1, value=0x0)),
+        sender: Account(code=bytes.fromhex("6000600155")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

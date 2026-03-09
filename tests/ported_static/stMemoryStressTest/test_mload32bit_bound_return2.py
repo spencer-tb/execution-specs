@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/mload32bitBound_return2Filler.json
 """
@@ -13,23 +15,38 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stMemoryStressTest/mload32bitBound_return2Filler.json"],
+    [
+        "tests/static/state_tests/stMemoryStressTest/mload32bitBound_return2Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0x48c46c265c6883f765eea264f561fe7637968b4e"): Account(code=Op.MSTORE(offset=0x0, value=0x1) + Op.RETURN(offset=0x0, size=0xffffffff) + Op.STOP)}),
-        (16777216, {Address("0x48c46c265c6883f765eea264f561fe7637968b4e"): Account(code=Op.MSTORE(offset=0x0, value=0x1) + Op.RETURN(offset=0x0, size=0xffffffff) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0x48c46c265c6883f765eea264f561fe7637968b4e"): Account(
+                    code=bytes.fromhex("600160005263ffffffff6000f300")
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0x48c46c265c6883f765eea264f561fe7637968b4e"): Account(
+                    code=bytes.fromhex("600160005263ffffffff6000f300")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_mload32bit_bound_return2(
@@ -52,19 +69,16 @@ def test_mload32bit_bound_return2(
         gas_limit=175923205248920000,
     )
 
-    pre[sender] = Account(balance=0x186a0c3b1e19a180, nonce=0)
+    pre[sender] = Account(balance=0x186A0C3B1E19A180, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x1) + Op.RETURN(offset=0x0, size=0xffffffff)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("600160005263ffffffff6000f300"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x7dd14755c573e37c1f649b0c53b9815f76aebd636df7ccfa97f4579f33ba59a0"
+            "0x7dd14755c573e37c1f649b0c53b9815f76aebd636df7ccfa97f4579f33ba59a0"  # noqa: E501
         ),
         to=contract,
         data=b"",

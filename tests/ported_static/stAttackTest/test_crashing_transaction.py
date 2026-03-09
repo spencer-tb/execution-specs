@@ -1,5 +1,5 @@
 """
-https://ropsten.etherscan.io/tx/0x8ec445380649f6c75a042a438ea9256c2fab2a6a3437904c9e5a712fcbf8a54a
+https://ropsten.etherscan.io/tx/0x8ec445380649f6c75a042a438ea9256c2fab2a6a34...
 
 Ported from:
 tests/static/state_tests/stAttackTest/CrashingTransactionFiller.json
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -30,7 +29,7 @@ def test_crashing_transaction(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """https://ropsten.etherscan.io/tx/0x8ec445380649f6c75a042a438ea9256c2fab2a6a3437904c9e5a712fcbf8a54a."""
+    """Https://ropsten.etherscan.io/tx/0x8ec445380649f6c75a042a438ea9256c..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
@@ -43,17 +42,17 @@ def test_crashing_transaction(
         gas_limit=4712388,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=3270)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=3270)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex(
-            "60606040525b5b61c3505a1115602c576040516034806039833901809050604051809103"
-            "906000f0506006565b5b600a80606d6000396000f360606040525b3373ffffffffffffff"
-            "ffffffffffffffffffffffffff16ff5b600a80602a6000396000f360606040526008565b"
+            "60606040525b5b61c3505a1115602c576040516034806039833901809050604051809103"  # noqa: E501
+            "906000f0506006565b5b600a80606d6000396000f360606040525b3373ffffffffffffff"  # noqa: E501
+            "ffffffffffffffffffffffffff16ff5b600a80602a6000396000f360606040526008565b"  # noqa: E501
             "0060606040526008565b00"
         ),
         gas_limit=4657786,
@@ -64,7 +63,7 @@ def test_crashing_transaction(
 
     post = {
         Address("0xecbf9aa676d9e0bbba7e517d1350c1b64f8c6779"): Account(
-            code=Op.MSTORE(offset=0x40, value=0x60) + Op.JUMP(pc=0x8) + Op.JUMPDEST + Op.STOP,
+            code=bytes.fromhex("60606040526008565b00"),
         ),
     }
 

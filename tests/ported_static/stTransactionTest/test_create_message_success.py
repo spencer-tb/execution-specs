@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stTransactionTest/CreateMessageSuccessFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/CreateMessageSuccessFiller.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/CreateMessageSuccessFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -42,19 +45,16 @@ def test_create_message_success(
         gas_limit=1000000000000,
     )
 
-    pre[sender] = Account(balance=0x17d78400, nonce=0)
+    pre[sender] = Account(balance=0x17D78400, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x600c600055)
-        + Op.CREATE(value=0x0, offset=0x1b, size=0x5) + Op.STOP
-    ),
+        code=bytes.fromhex("64600c6000556000526005601b6000f000"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,9 +66,11 @@ def test_create_message_success(
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x600c600055) + Op.CREATE(value=0x0, offset=0x1b, size=0x5) + Op.STOP,
+            code=bytes.fromhex("64600c6000556000526005601b6000f000"),
         ),
-        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(storage={0: 12}),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(
+            storage={0: 12},
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

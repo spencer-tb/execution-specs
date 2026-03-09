@@ -1,5 +1,5 @@
 """
-An example how to use labels in expect section
+An example how to use labels in expect section.
 
 Ported from:
 tests/static/state_tests/stExample/labelsExampleFiller.yml
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -28,12 +27,52 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        ("01", {Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(storage={0: 0x100000000000000000000000000000000000000000000000000000000000000}, code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.STOP)}),
-        ("02", {Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(storage={0: 0x200000000000000000000000000000000000000000000000000000000000000}, code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.STOP)}),
-        ("03", {Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(storage={0: 0x300000000000000000000000000000000000000000000000000000000000000}, code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.STOP)}),
-        ("03", {Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(storage={0: 0x300000000000000000000000000000000000000000000000000000000000000}, code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.STOP)}),
+        (
+            "01",
+            {
+                Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
+                    storage={
+                        0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+                    },
+                    code=bytes.fromhex("60003560005500"),
+                )
+            },
+        ),
+        (
+            "02",
+            {
+                Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
+                    storage={
+                        0: 0x200000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+                    },
+                    code=bytes.fromhex("60003560005500"),
+                )
+            },
+        ),
+        (
+            "03",
+            {
+                Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
+                    storage={
+                        0: 0x300000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+                    },
+                    code=bytes.fromhex("60003560005500"),
+                )
+            },
+        ),
+        (
+            "03",
+            {
+                Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
+                    storage={
+                        0: 0x300000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+                    },
+                    code=bytes.fromhex("60003560005500"),
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_labels_example(
@@ -56,18 +95,18 @@ def test_labels_example(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.STOP,
+        code=bytes.fromhex("60003560005500"),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

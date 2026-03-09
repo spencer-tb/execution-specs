@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stEIP150Specific/CallAndCallcodeConsumeMoreGasThenTransactionHasFiller.json
+tests/static/state_tests/stEIP150Specific
+CallAndCallcodeConsumeMoreGasThenTransactionHasFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP150Specific/CallAndCallcodeConsumeMoreGasThenTransactionHasFiller.json"],
+    [
+        "tests/static/state_tests/stEIP150Specific/CallAndCallcodeConsumeMoreGasThenTransactionHasFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,19 +50,22 @@ def test_call_and_callcode_consume_more_gas_then_transaction_has(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x8, value=Op.GAS)
-        + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0xfd59abae521384b5731ac657616680219fbc423d, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0xa, value=Op.CALLCODE(gas=0x927c0, address=0xfd59abae521384b5731ac657616680219fbc423d, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a6008556000600060006000600073fd59abae521384b5731ac657616680219fbc423d62"  # noqa: E501
+            "0927c0f16009556000600060006000600073fd59abae521384b5731ac657616680219fbc"  # noqa: E501
+            "423d620927c0f2600a5500"
+        ),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
-    pre[callee] = Account(balance=0, nonce=0, code=Op.SSTORE(key=0x0, value=0x12) + Op.STOP)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[callee] = Account(
+        balance=0,
+        nonce=0,
+        code=bytes.fromhex("601260005500"),
+    )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -70,10 +77,12 @@ def test_call_and_callcode_consume_more_gas_then_transaction_has(
 
     post = {
         contract: Account(
-            storage={0: 18, 8: 0x8d5b6, 9: 1, 10: 1},
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0xfd59abae521384b5731ac657616680219fbc423d, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0xa, value=Op.CALLCODE(gas=0x927c0, address=0xfd59abae521384b5731ac657616680219fbc423d, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            storage={0: 18, 8: 0x8D5B6, 9: 1, 10: 1},
+            code=bytes.fromhex(
+                "5a6008556000600060006000600073fd59abae521384b5731ac657616680219fbc423d620927c0f16009556000600060006000600073fd59abae521384b5731ac657616680219fbc423d620927c0f2600a5500"  # noqa: E501
+            ),
         ),
-        callee: Account(storage={0: 18}, code=Op.SSTORE(key=0x0, value=0x12) + Op.STOP),
+        callee: Account(storage={0: 18}, code=bytes.fromhex("601260005500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

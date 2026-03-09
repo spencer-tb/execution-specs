@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stArgsZeroOneBalance/log3NonConstFiller.yml
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,28 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (0, {Address("0x02724f6cb897bbc3e063a03633d2ce4e83da8678"): Account(code=Op.LOG3(offset=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), size=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), topic_1=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), topic_2=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), topic_3=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678)) + Op.STOP)}),
-        (1, {Address("0x02724f6cb897bbc3e063a03633d2ce4e83da8678"): Account(code=Op.LOG3(offset=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), size=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), topic_1=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), topic_2=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), topic_3=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678)) + Op.STOP)}),
+        (
+            0,
+            {
+                Address("0x02724f6cb897bbc3e063a03633d2ce4e83da8678"): Account(
+                    code=bytes.fromhex(
+                        "7302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da867831a300"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            1,
+            {
+                Address("0x02724f6cb897bbc3e063a03633d2ce4e83da8678"): Account(
+                    code=bytes.fromhex(
+                        "7302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da867831a300"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_log3_non_const(
@@ -55,16 +74,18 @@ def test_log3_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.LOG3(offset=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), size=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), topic_1=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), topic_2=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678), topic_3=Op.BALANCE(address=0x2724f6cb897bbc3e063a03633d2ce4e83da8678))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633"  # noqa: E501
+            "d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb8"  # noqa: E501
+            "97bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da86"  # noqa: E501
+            "7831a300"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",

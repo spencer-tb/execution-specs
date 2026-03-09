@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRevertTest/RevertInStaticCallFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,17 +47,21 @@ def test_revert_in_static_call(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.STATICCALL(gas=0xc350, address=0x33fcf0576ab8b4527c9426094e2e355a7ffc7e71, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60406000604060007333fcf0576ab8b4527c9426094e2e355a7ffc7e7161c350fa600055"  # noqa: E501
+            "00"
+        ),
     )
-    pre[callee] = Account(balance=0, nonce=0, code=Op.REVERT(offset=0x0, size=0x0) + Op.STOP)
-    pre[sender] = Account(balance=0x5f5e100, nonce=0)
+    pre[callee] = Account(
+        balance=0,
+        nonce=0,
+        code=bytes.fromhex("60006000fd00"),
+    )
+    pre[sender] = Account(balance=0x5F5E100, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"
+            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,9 +73,11 @@ def test_revert_in_static_call(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x0, value=Op.STATICCALL(gas=0xc350, address=0x33fcf0576ab8b4527c9426094e2e355a7ffc7e71, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "60406000604060007333fcf0576ab8b4527c9426094e2e355a7ffc7e7161c350fa60005500"  # noqa: E501
+            ),
         ),
-        callee: Account(code=Op.REVERT(offset=0x0, size=0x0) + Op.STOP),
+        callee: Account(code=bytes.fromhex("60006000fd00")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

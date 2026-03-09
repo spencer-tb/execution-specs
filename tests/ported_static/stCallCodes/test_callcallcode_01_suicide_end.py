@@ -1,5 +1,5 @@
 """
-call -> (callcode  -> code) suicide
+call -> (callcode  -> code) suicide.
 
 Ported from:
 tests/static/state_tests/stCallCodes/callcallcode_01_SuicideEndFiller.json
@@ -15,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCodes/callcallcode_01_SuicideEndFiller.json"],
+    [
+        "tests/static/state_tests/stCallCodes/callcallcode_01_SuicideEndFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -30,7 +31,7 @@ def test_callcallcode_01_suicide_end(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """call -> (callcode  -> code) suicide."""
+    """Call -> (callcode  -> code) suicide."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
     contract = Address("0x4353e77718be108d4c149d88b34caceda42c5c66")
@@ -47,32 +48,31 @@ def test_callcallcode_01_suicide_end(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x249f0, address=0x799da5a3c983a22f9c430de1bf99134ee561e856, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6040600060406000600073799da5a3c983a22f9c430de1bf99134ee561e856620249f0f1"  # noqa: E501
+            "60005500"
+        ),
     )
     pre[callee] = Account(
-        balance=0x2540be400,
+        balance=0x2540BE400,
         nonce=0,
-        code=Op.SSTORE(key=0x2, value=0x1) + Op.STOP,
+        code=bytes.fromhex("600160025500"),
     )
     pre[callee_1] = Account(
-        balance=0x2540be400,
+        balance=0x2540BE400,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=0xc350, address=0x703b936fd4d674f0ff5d6957f61097152f8781b8, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.SELFDESTRUCT(address=0x4353e77718be108d4c149d88b34caceda42c5c66)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6040600060406000600073703b936fd4d674f0ff5d6957f61097152f8781b861c350f260"  # noqa: E501
+            "0155734353e77718be108d4c149d88b34caceda42c5c66ff00"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -85,12 +85,16 @@ def test_callcallcode_01_suicide_end(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x249f0, address=0x799da5a3c983a22f9c430de1bf99134ee561e856, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "6040600060406000600073799da5a3c983a22f9c430de1bf99134ee561e856620249f0f160005500"  # noqa: E501
+            ),
         ),
-        callee: Account(code=Op.SSTORE(key=0x2, value=0x1) + Op.STOP),
+        callee: Account(code=bytes.fromhex("600160025500")),
         callee_1: Account(
             storage={1: 1, 2: 1},
-            code=Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=0xc350, address=0x703b936fd4d674f0ff5d6957f61097152f8781b8, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.SELFDESTRUCT(address=0x4353e77718be108d4c149d88b34caceda42c5c66) + Op.STOP,
+            code=bytes.fromhex(
+                "6040600060406000600073703b936fd4d674f0ff5d6957f61097152f8781b861c350f2600155734353e77718be108d4c149d88b34caceda42c5c66ff00"  # noqa: E501
+            ),
         ),
     }
 

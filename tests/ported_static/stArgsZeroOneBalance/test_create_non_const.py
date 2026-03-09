@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stArgsZeroOneBalance/createNonConstFiller.yml
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,30 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (0, {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(storage={0: 0xd2571607e241ecf590ed94b12d87c94babe36db6}, code=Op.SSTORE(key=0x0, value=Op.CREATE(value=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87), offset=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87), size=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87))) + Op.STOP)}),
-        (1, {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(storage={0: 0xd2571607e241ecf590ed94b12d87c94babe36db6}, code=Op.SSTORE(key=0x0, value=Op.CREATE(value=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87), offset=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87), size=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87))) + Op.STOP)}),
+        (
+            0,
+            {
+                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+                    storage={0: 0xD2571607E241ECF590ED94B12D87C94BABE36DB6},
+                    code=bytes.fromhex(
+                        "73095e7baea6a6c7c4c2dfeb977efac326af552d873173095e7baea6a6c7c4c2dfeb977efac326af552d873173095e7baea6a6c7c4c2dfeb977efac326af552d8731f060005500"  # noqa: E501
+                    ),
+                )
+            },
+        ),
+        (
+            1,
+            {
+                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+                    storage={0: 0xD2571607E241ECF590ED94B12D87C94BABE36DB6},
+                    code=bytes.fromhex(
+                        "73095e7baea6a6c7c4c2dfeb977efac326af552d873173095e7baea6a6c7c4c2dfeb977efac326af552d873173095e7baea6a6c7c4c2dfeb977efac326af552d8731f060005500"  # noqa: E501
+                    ),
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_non_const(
@@ -55,16 +76,16 @@ def test_create_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CREATE(value=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87), offset=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87), size=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87)))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "73095e7baea6a6c7c4c2dfeb977efac326af552d873173095e7baea6a6c7c4c2dfeb977e"  # noqa: E501
+            "fac326af552d873173095e7baea6a6c7c4c2dfeb977efac326af552d8731f060005500"  # noqa: E501
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",

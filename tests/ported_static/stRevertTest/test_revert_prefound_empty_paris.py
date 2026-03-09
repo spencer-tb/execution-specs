@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRevertTest/RevertPrefoundEmpty_ParisFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stRevertTest/RevertPrefoundEmpty_ParisFiller.json"],
+    [
+        "tests/static/state_tests/stRevertTest/RevertPrefoundEmpty_ParisFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -47,16 +50,13 @@ def test_revert_prefound_empty_paris(
     pre[contract] = Account(
         balance=1,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CREATE(value=0x0, offset=0x0, size=0x20))
-        + Op.SSTORE(key=0x1, value=0xc) + Op.STOP
-    ),
+        code=bytes.fromhex("602060006000f0600055600c60015500"),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,8 +68,11 @@ def test_revert_prefound_empty_paris(
 
     post = {
         contract: Account(
-            storage={0: 0x7db299e0885c85039f56fa504a13dd8ce8a56aa7, 1: 12},
-            code=Op.SSTORE(key=0x0, value=Op.CREATE(value=0x0, offset=0x0, size=0x20)) + Op.SSTORE(key=0x1, value=0xc) + Op.STOP,
+            storage={
+                0: 0x7DB299E0885C85039F56FA504A13DD8CE8A56AA7,
+                1: 12,
+            },
+            code=bytes.fromhex("602060006000f0600055600c60015500"),
         ),
     }
 

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCallCreateCallCodeTest/createInitFail_OOGduringInit2Filler.json
+tests/static/state_tests/stCallCreateCallCodeTest
+createInitFail_OOGduringInit2Filler.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/createInitFail_OOGduringInit2Filler.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/createInitFail_OOGduringInit2Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,19 +47,17 @@ def test_create_init_fail_oo_gduring_init2(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.PUSH1[0xd] + Op.CODECOPY(dest_offset=0x0, offset=0xf, size=Op.DUP1)
-        + Op.PUSH1[0x0] + Op.PUSH1[0x1] + Op.CREATE + Op.STOP + Op.INVALID
-        + Op.SSTORE(key=0x1, value=0x1) + Op.SHA3(offset=0x0, size=0x2fffff) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600d80600f60003960006001f000fe6001600155622fffff60002000"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +69,9 @@ def test_create_init_fail_oo_gduring_init2(
 
     post = {
         contract: Account(
-            code=Op.PUSH1[0xd] + Op.CODECOPY(dest_offset=0x0, offset=0xf, size=Op.DUP1) + Op.PUSH1[0x0] + Op.PUSH1[0x1] + Op.CREATE + Op.STOP + Op.INVALID + Op.SSTORE(key=0x1, value=0x1) + Op.SHA3(offset=0x0, size=0x2fffff) + Op.STOP,
+            code=bytes.fromhex(
+                "600d80600f60003960006001f000fe6001600155622fffff60002000"
+            ),
         ),
     }
 

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stSystemOperationsTest/createNameRegistratorValueTooHighFiller.json
+tests/static/state_tests/stSystemOperationsTest
+createNameRegistratorValueTooHighFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/createNameRegistratorValueTooHighFiller.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/createNameRegistratorValueTooHighFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,19 +47,18 @@ def test_create_name_registrator_value_too_high(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x601080600c6000396000f3006000355415600957005b60203560003555)
-        + Op.SSTORE(key=0x0, value=Op.CREATE(value=0xde0b6b3a7640001, offset=0x3, size=0x1d))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7c601080600c6000396000f3006000355415600957005b60203560003555600052601d60"  # noqa: E501
+            "03670de0b6b3a7640001f060005500"
+        ),
     )
-    pre[sender] = Account(balance=0x5f5e100, nonce=0)
+    pre[sender] = Account(balance=0x5F5E100, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +70,9 @@ def test_create_name_registrator_value_too_high(
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x601080600c6000396000f3006000355415600957005b60203560003555) + Op.SSTORE(key=0x0, value=Op.CREATE(value=0xde0b6b3a7640001, offset=0x3, size=0x1d)) + Op.STOP,
+            code=bytes.fromhex(
+                "7c601080600c6000396000f3006000355415600957005b60203560003555600052601d6003670de0b6b3a7640001f060005500"  # noqa: E501
+            ),
         ),
     }
 

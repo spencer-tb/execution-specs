@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stLogTests/log1_emptyMemFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,23 +45,23 @@ def test_log1_empty_mem(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x3e8, address=0xa86cbc14a38774a22b21cc067ff70dd74cc18e7f, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600060006000601773a86cbc14a38774a22b21cc067ff70dd74cc18e7f6103e8f160"  # noqa: E501
+            "005500"
+        ),
     )
     pre[callee] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.LOG1(offset=0x0, size=0x0, topic_1=0x0) + Op.STOP,
+        code=bytes.fromhex("600060006000a100"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -73,9 +74,11 @@ def test_log1_empty_mem(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x3e8, address=0xa86cbc14a38774a22b21cc067ff70dd74cc18e7f, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000601773a86cbc14a38774a22b21cc067ff70dd74cc18e7f6103e8f160005500"  # noqa: E501
+            ),
         ),
-        callee: Account(code=Op.LOG1(offset=0x0, size=0x0, topic_1=0x0) + Op.STOP),
+        callee: Account(code=bytes.fromhex("600060006000a100")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

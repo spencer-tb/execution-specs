@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/Shanghai/stEIP3855_push0/push0GasFiller.yml
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,15 +47,12 @@ def test_push0_gas(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.GAS) + Op.PUSH0
-        + Op.SSTORE(key=0x1, value=Op.SUB(Op.SLOAD(key=0x0), Op.GAS)) + Op.STOP
-    ),
+        code=bytes.fromhex("5a6000555f5a6000540360015500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xdc4efa209aecdd4c2d5201a419ea27506151b4ec687f14a613229e310932491b"
+            "0xdc4efa209aecdd4c2d5201a419ea27506151b4ec687f14a613229e310932491b"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +65,7 @@ def test_push0_gas(
     post = {
         contract: Account(
             storage={0: 0x13496, 1: 22107},
-            code=Op.SSTORE(key=0x0, value=Op.GAS) + Op.PUSH0 + Op.SSTORE(key=0x1, value=Op.SUB(Op.SLOAD(key=0x0), Op.GAS)) + Op.STOP,
+            code=bytes.fromhex("5a6000555f5a6000540360015500"),
         ),
     }
 

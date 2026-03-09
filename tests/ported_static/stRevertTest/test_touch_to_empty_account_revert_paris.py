@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stRevertTest/TouchToEmptyAccountRevert_ParisFiller.json
+tests/static/state_tests/stRevertTest
+TouchToEmptyAccountRevert_ParisFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stRevertTest/TouchToEmptyAccountRevert_ParisFiller.json"],
+    [
+        "tests/static/state_tests/stRevertTest/TouchToEmptyAccountRevert_ParisFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -47,25 +51,25 @@ def test_touch_to_empty_account_revert_paris(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x7530, address=0xba4d09eb64fddcec11d7587e1f51ac0b07c5069c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x2, value=0x1) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600060006000600073ba4d09eb64fddcec11d7587e1f51ac0b07c5069c617530f160"  # noqa: E501
+            "0055600160025500"
+        ),
     )
     pre[callee] = Account(balance=10, nonce=0)
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=Op.CALL(gas=0x7530, address=0x76fae819612a29489a1a43208613d8f8557b8898, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600060006000600060007376fae819612a29489a1a43208613d8f8557b8898617530f160"  # noqa: E501
+            "015500"
+        ),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -77,10 +81,14 @@ def test_touch_to_empty_account_revert_paris(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x7530, address=0xba4d09eb64fddcec11d7587e1f51ac0b07c5069c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=0x1) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000600073ba4d09eb64fddcec11d7587e1f51ac0b07c5069c617530f1600055600160025500"  # noqa: E501
+            ),
         ),
         callee_1: Account(
-            code=Op.SSTORE(key=0x1, value=Op.CALL(gas=0x7530, address=0x76fae819612a29489a1a43208613d8f8557b8898, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "600060006000600060007376fae819612a29489a1a43208613d8f8557b8898617530f160015500"  # noqa: E501
+            ),
         ),
     }
 

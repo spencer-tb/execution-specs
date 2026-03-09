@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stZeroCallsTest/ZeroValue_SUICIDE_ToEmpty_ParisFiller.json
+tests/static/state_tests/stZeroCallsTest
+ZeroValue_SUICIDE_ToEmpty_ParisFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stZeroCallsTest/ZeroValue_SUICIDE_ToEmpty_ParisFiller.json"],
+    [
+        "tests/static/state_tests/stZeroCallsTest/ZeroValue_SUICIDE_ToEmpty_ParisFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -47,13 +51,13 @@ def test_zero_value_suicide_to_empty_paris(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0x76fae819612a29489a1a43208613d8f8557b8898) + Op.STOP,
+        code=bytes.fromhex("7376fae819612a29489a1a43208613d8f8557b8898ff00"),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -65,7 +69,9 @@ def test_zero_value_suicide_to_empty_paris(
 
     post = {
         contract: Account(
-            code=Op.SELFDESTRUCT(address=0x76fae819612a29489a1a43208613d8f8557b8898) + Op.STOP,
+            code=bytes.fromhex(
+                "7376fae819612a29489a1a43208613d8f8557b8898ff00"
+            ),
         ),
     }
 

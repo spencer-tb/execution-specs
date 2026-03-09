@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stEIP150Specific/CallGoesOOGOnSecondLevel2Filler.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP150Specific/CallGoesOOGOnSecondLevel2Filler.json"],
+    [
+        "tests/static/state_tests/stEIP150Specific/CallGoesOOGOnSecondLevel2Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -47,31 +50,29 @@ def test_call_goes_oog_on_second_level2(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x8, value=Op.GAS)
-        + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0xe1d370a0538366eaffbc9fcd571af7b1e80d377c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a6008556000600060006000600073e1d370a0538366eaffbc9fcd571af7b1e80d377c62"  # noqa: E501
+            "0927c0f160095500"
+        ),
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SHA3(offset=0x0, size=0x2fffff) + Op.STOP,
+        code=bytes.fromhex("5a600855622fffff60002000"),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x8, value=Op.GAS)
-        + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0xbfb2b65e4ef26a144a185b32c7baf39ef8e40b4b, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a6008556000600060006000600073bfb2b65e4ef26a144a185b32c7baf39ef8e40b4b62"  # noqa: E501
+            "0927c0f160095500"
+        ),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -83,13 +84,15 @@ def test_call_goes_oog_on_second_level2(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0xe1d370a0538366eaffbc9fcd571af7b1e80d377c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "5a6008556000600060006000600073e1d370a0538366eaffbc9fcd571af7b1e80d377c620927c0f160095500"  # noqa: E501
+            ),
         ),
-        callee: Account(
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SHA3(offset=0x0, size=0x2fffff) + Op.STOP,
-        ),
+        callee: Account(code=bytes.fromhex("5a600855622fffff60002000")),
         callee_1: Account(
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0xbfb2b65e4ef26a144a185b32c7baf39ef8e40b4b, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "5a6008556000600060006000600073bfb2b65e4ef26a144a185b32c7baf39ef8e40b4b620927c0f160095500"  # noqa: E501
+            ),
         ),
     }
 

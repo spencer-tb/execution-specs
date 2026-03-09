@@ -1,8 +1,9 @@
 """
-create fails because we try to send more wei to it that we have
+create fails because we try to send more wei to it that we have.
 
 Ported from:
-tests/static/state_tests/stCallCreateCallCodeTest/createFailBalanceTooLowFiller.json
+tests/static/state_tests/stCallCreateCallCodeTest
+createFailBalanceTooLowFiller.json
 """
 
 import pytest
@@ -15,23 +16,45 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/createFailBalanceTooLowFiller.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/createFailBalanceTooLowFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (23, {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(code=Op.MSTORE(offset=0x0, value=0x6001600255) + Op.SELFDESTRUCT(address=Op.CREATE(value=0xde0b6b3a7640018, offset=0x1b, size=0x5)) + Op.STOP)}),
-        (24, {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(code=Op.MSTORE(offset=0x0, value=0x6001600255) + Op.SELFDESTRUCT(address=Op.CREATE(value=0xde0b6b3a7640018, offset=0x1b, size=0x5)) + Op.STOP), Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(storage={2: 1})}),
+        (
+            23,
+            {
+                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+                    code=bytes.fromhex(
+                        "6460016002556000526005601b670de0b6b3a7640018f0ff00"
+                    )
+                )
+            },
+        ),
+        (
+            24,
+            {
+                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+                    code=bytes.fromhex(
+                        "6460016002556000526005601b670de0b6b3a7640018f0ff00"
+                    )
+                ),
+                Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(
+                    storage={2: 1}
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_fail_balance_too_low(
@@ -40,7 +63,7 @@ def test_create_fail_balance_too_low(
     tx_value: int,
     expected_post: dict,
 ) -> None:
-    """create fails because we try to send more wei to it that we have."""
+    """Create fails because we try to send more wei to it that we have."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
@@ -55,19 +78,17 @@ def test_create_fail_balance_too_low(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x6001600255)
-        + Op.SELFDESTRUCT(address=Op.CREATE(value=0xde0b6b3a7640018, offset=0x1b, size=0x5))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6460016002556000526005601b670de0b6b3a7640018f0ff00"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",

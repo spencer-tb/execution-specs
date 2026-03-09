@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCreateTest/TransactionCollisionToEmptyButCodeFiller.json
+tests/static/state_tests/stCreateTest
+TransactionCollisionToEmptyButCodeFiller.json
 """
 
 import pytest
@@ -19,18 +22,52 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreateTest/TransactionCollisionToEmptyButCodeFiller.json"],
+    [
+        "tests/static/state_tests/stCreateTest/TransactionCollisionToEmptyButCodeFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, tx_value, expected_post",
     [
-        (600000, 0, {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(code=bytes.fromhex("1122334455"))}),
-        (600000, 1, {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(code=bytes.fromhex("1122334455"))}),
-        (54000, 0, {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(code=bytes.fromhex("1122334455"))}),
-        (54000, 1, {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(code=bytes.fromhex("1122334455"))}),
+        (
+            600000,
+            0,
+            {
+                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+                    code=bytes.fromhex("1122334455")
+                )
+            },
+        ),
+        (
+            600000,
+            1,
+            {
+                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+                    code=bytes.fromhex("1122334455")
+                )
+            },
+        ),
+        (
+            54000,
+            0,
+            {
+                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+                    code=bytes.fromhex("1122334455")
+                )
+            },
+        ),
+        (
+            54000,
+            1,
+            {
+                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+                    code=bytes.fromhex("1122334455")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_transaction_collision_to_empty_but_code(
@@ -54,12 +91,16 @@ def test_transaction_collision_to_empty_but_code(
         gas_limit=10000000,
     )
 
-    pre[contract] = Account(balance=0, nonce=0, code=bytes.fromhex("1122334455"))
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[contract] = Account(
+        balance=0,
+        nonce=0,
+        code=bytes.fromhex("1122334455"),
+    )
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("6001600155"),

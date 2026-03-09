@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stTransactionTest/InternalCallHittingGasLimitFiller.json
+tests/static/state_tests/stTransactionTest
+InternalCallHittingGasLimitFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/InternalCallHittingGasLimitFiller.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/InternalCallHittingGasLimitFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,20 +47,23 @@ def test_internal_call_hitting_gas_limit(
         gas_limit=100000,
     )
 
-    pre[callee] = Account(balance=0, nonce=0, code=Op.SSTORE(key=0x1, value=0x37) + Op.STOP)
-    pre[contract] = Account(
-        balance=0xf4240,
+    pre[callee] = Account(
+        balance=0,
         nonce=0,
-        code=(
-        Op.CALL(gas=0x1388, address=0x9f499a40cbc961c5230197401ce369d5c53ed896, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("603760015500"),
     )
-    pre[sender] = Account(balance=0x3b9aca00, nonce=0)
+    pre[contract] = Account(
+        balance=0xF4240,
+        nonce=0,
+        code=bytes.fromhex(
+            "60006000600060006001739f499a40cbc961c5230197401ce369d5c53ed896611388f100"  # noqa: E501
+        ),
+    )
+    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xf79127a3004abde26a4cbd80c428cb10f829fa11b54d36e7b326f4f4a5927acf"
+            "0xf79127a3004abde26a4cbd80c428cb10f829fa11b54d36e7b326f4f4a5927acf"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,9 +74,11 @@ def test_internal_call_hitting_gas_limit(
     )
 
     post = {
-        callee: Account(code=Op.SSTORE(key=0x1, value=0x37) + Op.STOP),
+        callee: Account(code=bytes.fromhex("603760015500")),
         contract: Account(
-            code=Op.CALL(gas=0x1388, address=0x9f499a40cbc961c5230197401ce369d5c53ed896, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP,
+            code=bytes.fromhex(
+                "60006000600060006001739f499a40cbc961c5230197401ce369d5c53ed896611388f100"  # noqa: E501
+            ),
         ),
     }
 

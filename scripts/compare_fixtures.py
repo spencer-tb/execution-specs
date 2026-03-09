@@ -2,12 +2,17 @@
 """
 Compare two fixture directories by post-state hashes.
 
-Matches fixtures across directories with different path layouts:
-  compiled:  for_{fork}/static/state_tests/{category}/{name}.json
-  generated: for_{fork}/ported_static/{category}/{name}/{name}.json
+Matches fixtures across directories with different path layouts and
+naming conventions:
+  compiled:  state_tests/for_{fork}/static/state_tests/{cat}/{Name}.json
+  generated: state_tests/for_{fork}/ported_static/{cat}/{name}/{name}.json
 
-Fixtures are paired by (fork, category, name), then compared by
-the set of post-state hashes inside each JSON.
+Fixtures are paired by (category, normalized_name) across all fork
+directories.  Names are normalized via the same transforms as
+fixture_to_python.py so that ``addNonConst`` matches ``add_non_const``.
+Post-state hashes are compared only for forks present on both sides.
+
+Unmatched fixtures (present on one side only) are treated as errors.
 
 Usage:
     python scripts/compare_fixtures.py LEFT RIGHT
@@ -18,28 +23,49 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
+from collections import defaultdict
 from pathlib import Path
 
-# Key = (fork, category, name)
-FixtureKey = tuple[str, str, str]
+# Key = (category, normalized_name)
+FixtureKey = tuple[str, str]
+
+# Category directories start with these prefixes (case-sensitive).
+# "st" is followed by an uppercase letter (stBugs, stCallCodes, ...)
+# "vm" and "VM" are followed by anything (vmArith, VMTests, ...)
+_CATEGORY_RE = re.compile(r"^(st[A-Z]|vm|VM)")
 
 
-def _parse_key(path: Path, root: Path) -> FixtureKey | None:
-    """Extract (fork, category, name) from a fixture JSON path.
+def _normalize_name(name: str) -> str:
+    """
+    Normalize a fixture name for comparison.
 
-    Handles both layouts by finding the for_* directory, then
-    taking the last two meaningful path components before the file.
+    Apply the same transforms as filler_name_to_test_name minus the
+    ``test_`` prefix:  camelCase -> snake_case, replace special chars,
+    collapse underscores.
+    """
+    # CamelCase -> snake_case
+    s = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
+    s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", s)
+    s = s.lower()
+    # Replace non-alphanumeric (except _) with _
+    s = re.sub(r"[^a-z0-9_]", "_", s)
+    # Collapse multiple underscores
+    s = re.sub(r"_+", "_", s)
+    return s.strip("_")
 
-    compiled:  for_osaka / static/state_tests / stFoo / bar.json
-    generated: for_osaka / ported_static      / stFoo / bar/bar.json
+
+def _parse_entry(path: Path, root: Path) -> tuple[FixtureKey, str] | None:
+    """
+    Extract ((category, normalized_name), fork) from a fixture path.
+
+    Return None if the path doesn't match a recognizable layout.
     """
     parts = path.relative_to(root).parts
 
     # Find fork directory
-    fork = next(
-        (p for p in parts if p.startswith("for_")), None
-    )
+    fork = next((p for p in parts if p.startswith("for_")), None)
     if fork is None:
         return None
 
@@ -47,18 +73,18 @@ def _parse_key(path: Path, root: Path) -> FixtureKey | None:
     fork_pos = parts.index(fork)
     between = parts[fork_pos + 1 : -1]
 
-    # Walk backwards to find the category (first st*/vm*/VM* dir)
+    # Walk backwards to find the category dir
     category = None
     for part in reversed(between):
-        low = part.lower()
-        if low.startswith("st") or low.startswith("vm"):
+        if _CATEGORY_RE.match(part):
             category = part
             break
 
     if category is None:
         return None
 
-    return (fork, category, path.stem)
+    name = _normalize_name(path.stem)
+    return ((category, name), fork)
 
 
 def _post_hashes(path: Path) -> set[tuple[str, str]]:
@@ -73,16 +99,26 @@ def _post_hashes(path: Path) -> set[tuple[str, str]]:
     return hashes
 
 
-def _index(root: Path) -> dict[FixtureKey, Path]:
-    """Index fixture JSONs by (fork, category, name)."""
-    idx: dict[FixtureKey, Path] = {}
+def _index(
+    root: Path,
+) -> dict[FixtureKey, dict[str, Path]]:
+    """
+    Index fixture JSONs by (category, normalized_name).
+
+    Return {key: {fork: path, ...}} collecting all fork variants.
+    """
+    idx: dict[FixtureKey, dict[str, Path]] = defaultdict(dict)
     for p in root.rglob("*.json"):
-        if p.parts[-2] == ".meta":
+        if ".meta" in p.parts:
             continue
-        key = _parse_key(p, root)
-        if key is not None and key not in idx:
-            idx[key] = p
-    return idx
+        result = _parse_entry(p, root)
+        if result is None:
+            continue
+        key, fork = result
+        # Keep first file per (key, fork)
+        if fork not in idx[key]:
+            idx[key][fork] = p
+    return dict(idx)
 
 
 def compare(
@@ -91,7 +127,7 @@ def compare(
     *,
     show_missing: bool = False,
 ) -> int:
-    """Compare two fixture directories. Return number of mismatches."""
+    """Compare two fixture directories. Return number of errors."""
     left_idx = _index(left)
     right_idx = _index(right)
 
@@ -100,26 +136,86 @@ def compare(
     only_right = sorted(set(right_idx) - set(left_idx))
 
     mismatches = 0
+    no_common_fork = 0
+
     for key in common:
-        lh = _post_hashes(left_idx[key])
-        rh = _post_hashes(right_idx[key])
-        if lh != rh:
-            mismatches += 1
-            print(f"MISMATCH {'/'.join(key)}")
-            print(f"  left:  {left_idx[key]}")
-            print(f"  right: {right_idx[key]}")
-            print(
-                f"  {len(lh - rh)} only in left, "
-                f"{len(rh - lh)} only in right"
-            )
+        l_forks = left_idx[key]
+        r_forks = right_idx[key]
+        shared_forks = set(l_forks) & set(r_forks)
+
+        if not shared_forks:
+            # No common fork dirs — compare post hashes by fork name
+            # inside the JSON (the JSON contains per-fork post entries
+            # regardless of which for_X directory it sits in).
+            lh: set[tuple[str, str]] = set()
+            for p in l_forks.values():
+                lh |= _post_hashes(p)
+            rh: set[tuple[str, str]] = set()
+            for p in r_forks.values():
+                rh |= _post_hashes(p)
+
+            # Find forks present in both JSONs
+            l_fork_names = {f for f, _ in lh}
+            r_fork_names = {f for f, _ in rh}
+            common_forks = l_fork_names & r_fork_names
+
+            if not common_forks:
+                no_common_fork += 1
+                continue
+
+            lh_f = {(f, h) for f, h in lh if f in common_forks}
+            rh_f = {(f, h) for f, h in rh if f in common_forks}
+
+            if lh_f != rh_f:
+                mismatches += 1
+                print(f"MISMATCH {'/'.join(key)} (cross-fork)")
+                diff_l = lh_f - rh_f
+                diff_r = rh_f - lh_f
+                print(
+                    f"  {len(diff_l)} only in left,"
+                    f" {len(diff_r)} only in right"
+                )
+        else:
+            # Compare within shared fork directories
+            for fork in sorted(shared_forks):
+                lh_s = _post_hashes(l_forks[fork])
+                rh_s = _post_hashes(r_forks[fork])
+                if lh_s != rh_s:
+                    mismatches += 1
+                    print(f"MISMATCH {'/'.join(key)} ({fork})")
+                    print(f"  left:  {l_forks[fork]}")
+                    print(f"  right: {r_forks[fork]}")
+                    diff_l = lh_s - rh_s
+                    diff_r = rh_s - lh_s
+                    print(
+                        f"  {len(diff_l)} only in left,"
+                        f" {len(diff_r)} only in right"
+                    )
 
     total = len(common)
+    matched = total - mismatches - no_common_fork
+    # Mismatches and left-only (missing from generated) are errors.
+    # Right-only (extra generated, e.g. fork-specific fillers) are
+    # warnings — the generated side may legitimately have tests that
+    # the compiled reference lacks.
+    errors = mismatches + len(only_left)
+
     print()
-    print(f"Matched:    {total - mismatches}/{total}")
+    print(f"Paired:     {total}")
+    print(f"Matched:    {matched}/{total}")
     if mismatches:
-        print(f"Mismatched: {mismatches}/{total}")
-    print(f"Left only:  {len(only_left)}")
-    print(f"Right only: {len(only_right)}")
+        print(f"Mismatched: {mismatches}")
+    if no_common_fork:
+        print(f"No common fork to compare: {no_common_fork}")
+    if only_left:
+        print(f"Left only:  {len(only_left)}  (ERROR)")
+    if only_right:
+        print(f"Right only: {len(only_right)}")
+
+    if errors:
+        print(f"\nERRORS: {errors}")
+    else:
+        print("\nOK")
 
     if show_missing and only_left:
         print(f"\n-- Only in {left} ({len(only_left)}) --")
@@ -131,14 +227,13 @@ def compare(
         for key in only_right:
             print(f"  {'/'.join(key)}")
 
-    return mismatches
+    return errors
 
 
 def main() -> None:
+    """Compare two fixture directories by post-state hashes."""
     parser = argparse.ArgumentParser(
-        description=(
-            "Compare two fixture directories by post-state hashes."
-        ),
+        description="Compare fixture directories by post-state hashes.",
     )
     parser.add_argument("left", type=Path)
     parser.add_argument("right", type=Path)
@@ -148,7 +243,8 @@ def main() -> None:
         help="List fixtures that exist in only one directory",
     )
     args = parser.parse_args()
-    sys.exit(1 if compare(args.left, args.right, show_missing=args.show_missing) else 0)
+    result = compare(args.left, args.right, show_missing=args.show_missing)
+    sys.exit(1 if result else 0)
 
 
 if __name__ == "__main__":

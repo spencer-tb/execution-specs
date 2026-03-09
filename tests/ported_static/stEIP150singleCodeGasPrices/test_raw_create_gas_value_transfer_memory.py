@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stEIP150singleCodeGasPrices/RawCreateGasValueTransferMemoryFiller.json
+tests/static/state_tests/stEIP150singleCodeGasPrices
+RawCreateGasValueTransferMemoryFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP150singleCodeGasPrices/RawCreateGasValueTransferMemoryFiller.json"],
+    [
+        "tests/static/state_tests/stEIP150singleCodeGasPrices/RawCreateGasValueTransferMemoryFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -42,20 +46,16 @@ def test_raw_create_gas_value_transfer_memory(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.POP(Op.CREATE(value=0xa, offset=0x0, size=0x1f40))
-        + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP
-    ),
+        code=bytes.fromhex("5a600052611f406000600af0505a6000510360015500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,7 +68,7 @@ def test_raw_create_gas_value_transfer_memory(
     post = {
         contract: Account(
             storage={1: 33391},
-            code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.CREATE(value=0xa, offset=0x0, size=0x1f40)) + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP,
+            code=bytes.fromhex("5a600052611f406000600af0505a6000510360015500"),
         ),
     }
 

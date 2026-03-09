@@ -1,5 +1,5 @@
 """
-Consensus issue test produced by fuzz testing team 00000005-storagefuzz-1
+Consensus issue test produced by fuzz testing team 00000005-storagefuzz-1.
 
 Ported from:
 tests/static/state_tests/stRandom2/randomStatetest648Filler.json
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -30,7 +29,7 @@ def test_random_statetest648(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """Consensus issue test produced by fuzz testing team 00000005-storagefuzz-1."""
+    """Consensus issue test produced by fuzz testing team..."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     sender = Address("0x8c78e3e2ffedb0eb21426734400554a5185299de")
     contract = Address("0xca5c69fa03b9dff4d059971ac17edac7ef758725")
@@ -45,25 +44,22 @@ def test_random_statetest648(
         gas_limit=10944489199640098,
     )
 
-    pre[sender] = Account(balance=0xffffffff, nonce=0)
-    pre[callee] = Account(balance=0, nonce=0, code=Op.POP(0x0))
+    pre[sender] = Account(balance=0xFFFFFFFF, nonce=0)
+    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("600050"))
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.DELEGATECALL(gas=Op.GAS, address=0xf1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.PUSH1[0x0] + Op.POP(0x0) + Op.SELFDESTRUCT(address=0xf5) + Op.REVERT
-    ),
+        code=bytes.fromhex("600060006000600060f15af450600060005060f5fffd"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xff348633b687ec0f553647f4ddeed7590e90c7ea65b87c5bd399f4c869b9c9fc"
+            "0xff348633b687ec0f553647f4ddeed7590e90c7ea65b87c5bd399f4c869b9c9fc"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex(
-            "384c289327fda733f319011b605929b98b6cc52e4915c942369264c71a3ca70ebce56fef"
-            "7e41103f1acc71e91f299bf6c5730b265d6f9d475936735ea60c58b9bb125a7817817178"
+            "384c289327fda733f319011b605929b98b6cc52e4915c942369264c71a3ca70ebce56fef"  # noqa: E501
+            "7e41103f1acc71e91f299bf6c5730b265d6f9d475936735ea60c58b9bb125a7817817178"  # noqa: E501
             "4759606d696e98f8522b52fe213edee397b3df6ca9f0c6"
         ),
         gas_limit=343469,
@@ -73,9 +69,9 @@ def test_random_statetest648(
     )
 
     post = {
-        callee: Account(code=Op.POP(0x0)),
+        callee: Account(code=bytes.fromhex("600050")),
         contract: Account(
-            code=Op.POP(Op.DELEGATECALL(gas=Op.GAS, address=0xf1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.PUSH1[0x0] + Op.POP(0x0) + Op.SELFDESTRUCT(address=0xf5) + Op.REVERT,
+            code=bytes.fromhex("600060006000600060f15af450600060005060f5fffd"),
         ),
     }
 

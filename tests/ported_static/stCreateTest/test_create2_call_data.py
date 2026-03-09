@@ -1,7 +1,6 @@
 """
 Test if calldata is empty in initcode context.
 
-
 Ported from:
 tests/static/state_tests/stCreateTest/CREATE2_CallDataFiller.yml
 """
@@ -16,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,8 +29,7 @@ def test_create2_call_data(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """Test if calldata is empty in initcode context.
-."""
+    """Test if calldata is empty in initcode context."""
     coinbase = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0x000000000000000000000000000000000c5ea705")
@@ -49,20 +46,15 @@ def test_create2_call_data(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.PUSH1[0x0] + Op.PUSH1[0x10]
-        + Op.CODECOPY(dest_offset=Op.DUP4, offset=0x11, size=Op.DUP1) + Op.DUP2
-        + Op.DUP1 + Op.SSTORE(key=0x0, value=Op.CREATE2) + Op.STOP + Op.INVALID
-        + Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-        + Op.CALLDATACOPY(dest_offset=Op.DUP1, offset=0x0, size=0x40)
-        + Op.RETURN(offset=0x0, size=Op.MSIZE)
-    ),
+        code=bytes.fromhex(
+            "6000601080601183398180f560005500fe600035600055604060008037596000f3"  # noqa: E501
+        ),
     )
-    pre[sender] = Account(balance=0x5af3107a4000, nonce=0)
+    pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -74,11 +66,15 @@ def test_create2_call_data(
 
     post = {
         contract: Account(
-            storage={0: 0x7f8330ad7bc2afe0dffb2fdc76bbad8bc326296a},
-            code=Op.PUSH1[0x0] + Op.PUSH1[0x10] + Op.CODECOPY(dest_offset=Op.DUP4, offset=0x11, size=Op.DUP1) + Op.DUP2 + Op.DUP1 + Op.SSTORE(key=0x0, value=Op.CREATE2) + Op.STOP + Op.INVALID + Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.CALLDATACOPY(dest_offset=Op.DUP1, offset=0x0, size=0x40) + Op.RETURN(offset=0x0, size=Op.MSIZE),
+            storage={0: 0x7F8330AD7BC2AFE0DFFB2FDC76BBAD8BC326296A},
+            code=bytes.fromhex(
+                "6000601080601183398180f560005500fe600035600055604060008037596000f3"  # noqa: E501
+            ),
         ),
         Address("0x7f8330ad7bc2afe0dffb2fdc76bbad8bc326296a"): Account(
-            code=Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP + Op.STOP,
+            code=bytes.fromhex(
+                "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+            ),
         ),
     }
 

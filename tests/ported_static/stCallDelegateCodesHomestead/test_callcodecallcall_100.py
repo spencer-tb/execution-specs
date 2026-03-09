@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCallDelegateCodesHomestead/callcodecallcall_100Filler.json
+tests/static/state_tests/stCallDelegateCodesHomestead
+callcodecallcall_100Filler.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallDelegateCodesHomestead/callcodecallcall_100Filler.json"],
+    [
+        "tests/static/state_tests/stCallDelegateCodesHomestead/callcodecallcall_100Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -48,45 +52,40 @@ def test_callcodecallcall_100(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x3, value=0x1) + Op.SSTORE(key=0x4, value=Op.CALLER)
-        + Op.SSTORE(key=0x7, value=Op.CALLVALUE)
-        + Op.SSTORE(key=0x14a, value=Op.ADDRESS)
-        + Op.SSTORE(key=0x14c, value=Op.ORIGIN)
-        + Op.SSTORE(key=0x150, value=Op.CALLDATASIZE)
-        + Op.SSTORE(key=0x152, value=Op.CODESIZE)
-        + Op.SSTORE(key=0x154, value=Op.GASPRICE) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600160035533600455346007553061014a553261014c55366101505538610152553a6101"  # noqa: E501
+            "545500"
+        ),
     )
     pre[callee_1] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=Op.CALL(gas=0x493e0, address=0x5f6eacde5a1e97f48c5db4ee84fdf614f9dd9756, value=0x1, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.SSTORE(key=0x5, value=Op.CALLER) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60406000604060006001735f6eacde5a1e97f48c5db4ee84fdf614f9dd9756620493e0f1"  # noqa: E501
+            "6001553360055500"
+        ),
     )
     pre[callee_2] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x2, value=Op.CALL(gas=0x3d090, address=0x181b4ed322e192361633cc3c0a418f259ab0cf4b, value=0x2, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6040600060406000600273181b4ed322e192361633cc3c0a418f259ab0cf4b6203d090f1"  # noqa: E501
+            "60025500"
+        ),
     )
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=0x55730, address=0x3c83297c6dcbc0520cd68714f85dc444469fb287, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6040600060406000733c83297c6dcbc0520cd68714f85dc444469fb28762055730f46000"  # noqa: E501
+            "5500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -98,19 +97,40 @@ def test_callcodecallcall_100(
 
     post = {
         callee: Account(
-            storage={3: 1, 4: 0x5f6eacde5a1e97f48c5db4ee84fdf614f9dd9756, 7: 2, 330: 0x181b4ed322e192361633cc3c0a418f259ab0cf4b, 332: 0xebaf50debf10e08302fe4280c32df010463ca297, 336: 64, 338: 39, 340: 10},
-            code=Op.SSTORE(key=0x3, value=0x1) + Op.SSTORE(key=0x4, value=Op.CALLER) + Op.SSTORE(key=0x7, value=Op.CALLVALUE) + Op.SSTORE(key=0x14a, value=Op.ADDRESS) + Op.SSTORE(key=0x14c, value=Op.ORIGIN) + Op.SSTORE(key=0x150, value=Op.CALLDATASIZE) + Op.SSTORE(key=0x152, value=Op.CODESIZE) + Op.SSTORE(key=0x154, value=Op.GASPRICE) + Op.STOP,
+            storage={
+                3: 1,
+                4: 0x5F6EACDE5A1E97F48C5DB4EE84FDF614F9DD9756,
+                7: 2,
+                330: 0x181B4ED322E192361633CC3C0A418F259AB0CF4B,
+                332: 0xEBAF50DEBF10E08302FE4280C32DF010463CA297,
+                336: 64,
+                338: 39,
+                340: 10,
+            },
+            code=bytes.fromhex(
+                "600160035533600455346007553061014a553261014c55366101505538610152553a6101545500"  # noqa: E501
+            ),
         ),
         callee_1: Account(
-            code=Op.SSTORE(key=0x1, value=Op.CALL(gas=0x493e0, address=0x5f6eacde5a1e97f48c5db4ee84fdf614f9dd9756, value=0x1, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.SSTORE(key=0x5, value=Op.CALLER) + Op.STOP,
+            code=bytes.fromhex(
+                "60406000604060006001735f6eacde5a1e97f48c5db4ee84fdf614f9dd9756620493e0f16001553360055500"  # noqa: E501
+            ),
         ),
         callee_2: Account(
             storage={2: 1},
-            code=Op.SSTORE(key=0x2, value=Op.CALL(gas=0x3d090, address=0x181b4ed322e192361633cc3c0a418f259ab0cf4b, value=0x2, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "6040600060406000600273181b4ed322e192361633cc3c0a418f259ab0cf4b6203d090f160025500"  # noqa: E501
+            ),
         ),
         contract: Account(
-            storage={0: 1, 1: 1, 5: 0xebaf50debf10e08302fe4280c32df010463ca297},
-            code=Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=0x55730, address=0x3c83297c6dcbc0520cd68714f85dc444469fb287, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            storage={
+                0: 1,
+                1: 1,
+                5: 0xEBAF50DEBF10E08302FE4280C32DF010463CA297,
+            },
+            code=bytes.fromhex(
+                "6040600060406000733c83297c6dcbc0520cd68714f85dc444469fb28762055730f460005500"  # noqa: E501
+            ),
         ),
     }
 

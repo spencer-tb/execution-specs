@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCreate2/CREATE2_Bounds3Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,11 +27,38 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0x1000000000000000000000000000000000000000"): Account(code=Op.MSTORE(offset=0x0, value=0x6001600155601080600c6000396000f3006000355415600957005b6020356000) + Op.MSTORE8(offset=0x20, value=0x35) + Op.MSTORE8(offset=0x21, value=0x55) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffffffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xfffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xfffffff, size=0xfffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffff, size=0xffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffff, size=0xffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffff, size=0xffffffffffffffffffffffffffffffff, salt=0x0)) + Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, size=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, salt=0x0) + Op.STOP)}),
-        (1000000, {Address("0x1000000000000000000000000000000000000000"): Account(code=Op.MSTORE(offset=0x0, value=0x6001600155601080600c6000396000f3006000355415600957005b6020356000) + Op.MSTORE8(offset=0x20, value=0x35) + Op.MSTORE8(offset=0x21, value=0x55) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffffffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xfffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xfffffff, size=0xfffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffff, size=0xffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffff, size=0xffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffff, size=0xffffffffffffffffffffffffffffffff, salt=0x0)) + Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, size=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, salt=0x0) + Op.STOP)}),
-        (16777216, {Address("0x1000000000000000000000000000000000000000"): Account(code=Op.MSTORE(offset=0x0, value=0x6001600155601080600c6000396000f3006000355415600957005b6020356000) + Op.MSTORE8(offset=0x20, value=0x35) + Op.MSTORE8(offset=0x21, value=0x55) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffffffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xfffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, size=0x0, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xfffffff, size=0xfffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffff, size=0xffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffff, size=0xffffffffffffffff, salt=0x0)) + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffff, size=0xffffffffffffffffffffffffffffffff, salt=0x0)) + Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, size=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, salt=0x0) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0x1000000000000000000000000000000000000000"): Account(
+                    code=bytes.fromhex(
+                        "7f6001600155601080600c6000396000f3006000355415600957005b602035600060005260356020536055602153600067ffffffffffffffff60006001f55060006fffffffffffffffffffffffffffffffff60006001f55060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60006001f55060006000630fffffff6001f5506000600063ffffffff6001f5506000600067ffffffffffffffff6001f550600060006fffffffffffffffffffffffffffffffff6001f550600060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f5506000630fffffff630fffffff6001f550600063ffffffff63ffffffff6001f550600067ffffffffffffffff67ffffffffffffffff6001f55060006fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff6001f55060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f500"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            1000000,
+            {
+                Address("0x1000000000000000000000000000000000000000"): Account(
+                    code=bytes.fromhex(
+                        "7f6001600155601080600c6000396000f3006000355415600957005b602035600060005260356020536055602153600067ffffffffffffffff60006001f55060006fffffffffffffffffffffffffffffffff60006001f55060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60006001f55060006000630fffffff6001f5506000600063ffffffff6001f5506000600067ffffffffffffffff6001f550600060006fffffffffffffffffffffffffffffffff6001f550600060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f5506000630fffffff630fffffff6001f550600063ffffffff63ffffffff6001f550600067ffffffffffffffff67ffffffffffffffff6001f55060006fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff6001f55060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f500"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0x1000000000000000000000000000000000000000"): Account(
+                    code=bytes.fromhex(
+                        "7f6001600155601080600c6000396000f3006000355415600957005b602035600060005260356020536055602153600067ffffffffffffffff60006001f55060006fffffffffffffffffffffffffffffffff60006001f55060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60006001f55060006000630fffffff6001f5506000600063ffffffff6001f5506000600067ffffffffffffffff6001f550600060006fffffffffffffffffffffffffffffffff6001f550600060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f5506000630fffffff630fffffff6001f550600063ffffffff63ffffffff6001f550600067ffffffffffffffff67ffffffffffffffff6001f55060006fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff6001f55060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f500"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2'],
+    ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2_bounds3(
@@ -56,30 +84,29 @@ def test_create2_bounds3(
     pre[contract] = Account(
         balance=100,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x6001600155601080600c6000396000f3006000355415600957005b6020356000)
-        + Op.MSTORE8(offset=0x20, value=0x35) + Op.MSTORE8(offset=0x21, value=0x55)
-        + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffff, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffffffffffffffffffff, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0xfffffff, size=0x0, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffff, size=0x0, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffff, size=0x0, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffff, size=0x0, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, size=0x0, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0xfffffff, size=0xfffffff, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffff, size=0xffffffff, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffff, size=0xffffffffffffffff, salt=0x0))
-        + Op.POP(Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffff, size=0xffffffffffffffffffffffffffffffff, salt=0x0))
-        + Op.CREATE2(value=0x1, offset=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, size=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, salt=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7f6001600155601080600c6000396000f3006000355415600957005b6020356000600052"  # noqa: E501
+            "60356020536055602153600067ffffffffffffffff60006001f55060006fffffffffffff"  # noqa: E501
+            "ffffffffffffffffffff60006001f55060007fffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "ffffffffffffffffffffffffffffff60006001f55060006000630fffffff6001f5506000"  # noqa: E501
+            "600063ffffffff6001f5506000600067ffffffffffffffff6001f550600060006fffffff"  # noqa: E501
+            "ffffffffffffffffffffffffff6001f550600060007fffffffffffffffffffffffffffff"  # noqa: E501
+            "ffffffffffffffffffffffffffffffffffff6001f5506000630fffffff630fffffff6001"  # noqa: E501
+            "f550600063ffffffff63ffffffff6001f550600067ffffffffffffffff67ffffffffffff"  # noqa: E501
+            "ffff6001f55060006fffffffffffffffffffffffffffffffff6fffffffffffffffffffff"  # noqa: E501
+            "ffffffffffff6001f55060007fffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "ffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "ffffffffffff6001f500"
+        ),
     )
-    pre[sender] = Account(balance=0xfffffffffffffffffffffffffffffffffffffffffffffffff, nonce=0)
+    pre[sender] = Account(
+        balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+        nonce=0,
+    )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",

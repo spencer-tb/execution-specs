@@ -1,8 +1,9 @@
 """
-BLOB003, BLOB004
+BLOB003, BLOB004.
 
 Ported from:
-tests/static/state_tests/Cancun/stEIP4844_blobtransactions/opcodeBlobhashOutOfRangeFiller.yml
+tests/static/state_tests/Cancun/stEIP4844_blobtransactions
+opcodeBlobhashOutOfRangeFiller.yml
 """
 
 import pytest
@@ -16,14 +17,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/Cancun/stEIP4844_blobtransactions/opcodeBlobhashOutOfRangeFiller.yml"],
+    [
+        "tests/static/state_tests/Cancun/stEIP4844_blobtransactions/opcodeBlobhashOutOfRangeFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,19 +48,16 @@ def test_opcode_blobhash_out_of_range(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0))
-        + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xa)) + Op.STOP
-    ),
+        code=bytes.fromhex("600049600055600a4960015500"),
         storage={0x0: 0x1, 0x1: 0x1},
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -66,16 +65,37 @@ def test_opcode_blobhash_out_of_range(
         max_fee_per_gas=5000000000,
         max_priority_fee_per_gas=2,
         max_fee_per_blob_gas=10,
-        blob_versioned_hashes=[Hash("0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"), Hash("0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8")],
+        blob_versioned_hashes=[
+            Hash(
+                "0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
+            ),
+            Hash(
+                "0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
+            ),
+        ],
         nonce=0,
         value=100000,
-        access_list=[AccessList(address=Address("0x0c4d6f62d3c85069cea2411284bd520ac87fb7eb"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
+        access_list=[
+            AccessList(
+                address=Address("0x0c4d6f62d3c85069cea2411284bd520ac87fb7eb"),
+                storage_keys=[
+                    Hash(
+                        "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                    ),
+                    Hash(
+                        "0x0000000000000000000000000000000000000000000000000000000000000001"  # noqa: E501
+                    ),
+                ],
+            ),
+        ],
     )
 
     post = {
         contract: Account(
-            storage={0: 0x1a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8},
-            code=Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0)) + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xa)) + Op.STOP,
+            storage={
+                0: 0x1A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8,  # noqa: E501
+            },
+            code=bytes.fromhex("600049600055600a4960015500"),
         ),
     }
 

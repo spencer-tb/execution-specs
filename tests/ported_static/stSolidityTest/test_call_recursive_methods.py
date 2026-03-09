@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSolidityTest/CallRecursiveMethodsFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSolidityTest/CallRecursiveMethodsFiller.json"],
+    [
+        "tests/static/state_tests/stSolidityTest/CallRecursiveMethodsFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -42,31 +45,22 @@ def test_call_recursive_methods(
         gas_limit=100000000,
     )
 
-    pre[sender] = Account(balance=0x12a05f200, nonce=0)
+    pre[sender] = Account(balance=0x12A05F200, nonce=0)
     pre[contract] = Account(
-        balance=0x186a0,
+        balance=0x186A0,
         nonce=0,
-        code=(
-        Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000)
-        + Op.JUMPI(pc=0x41, condition=Op.EQ(Op.DUP2, 0x296df0df))
-        + Op.JUMPI(pc=0x4d, condition=Op.EQ(0x4893d88a, Op.DUP1))
-        + Op.JUMPI(pc=0x59, condition=Op.EQ(0x981a3165, Op.DUP1)) + Op.STOP
-        + Op.JUMPDEST + Op.PUSH1[0x47] + Op.JUMP(pc=0x65) + Op.JUMPDEST
-        + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x53]
-        + Op.JUMP(pc=0x7a) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0)
-        + Op.JUMPDEST + Op.PUSH1[0x5f] + Op.JUMP(pc=0x72) + Op.JUMPDEST
-        + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.JUMPDEST
-        + Op.JUMPI(pc=0x70, condition=Op.ISZERO(0x1)) + Op.JUMP(pc=0x66) + Op.JUMPDEST
-        + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x78] + Op.JUMP(pc=0x7a) + Op.JUMPDEST
-        + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x80] + Op.JUMP(pc=0x72) + Op.JUMPDEST
-        + Op.JUMP
-    ),
+        code=bytes.fromhex(
+            "7c0100000000000000000000000000000000000000000000000000000000600035046329"  # noqa: E501
+            "6df0df811460415780634893d88a14604d578063981a316514605957005b60476065565b"  # noqa: E501
+            "60006000f35b6053607a565b60006000f35b605f6072565b60006000f35b5b6001156070"  # noqa: E501
+            "576066565b565b6078607a565b565b60806072565b56"
+        ),
     )
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xa9ae12cb2700c0214f86b9796881bc03a1fd5605d0e76d2da2ca592e62d53e52"
+            "0xa9ae12cb2700c0214f86b9796881bc03a1fd5605d0e76d2da2ca592e62d53e52"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("981a3165"),
@@ -78,7 +72,9 @@ def test_call_recursive_methods(
 
     post = {
         contract: Account(
-            code=Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000) + Op.JUMPI(pc=0x41, condition=Op.EQ(Op.DUP2, 0x296df0df)) + Op.JUMPI(pc=0x4d, condition=Op.EQ(0x4893d88a, Op.DUP1)) + Op.JUMPI(pc=0x59, condition=Op.EQ(0x981a3165, Op.DUP1)) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x47] + Op.JUMP(pc=0x65) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x53] + Op.JUMP(pc=0x7a) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x5f] + Op.JUMP(pc=0x72) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.JUMPDEST + Op.JUMPI(pc=0x70, condition=Op.ISZERO(0x1)) + Op.JUMP(pc=0x66) + Op.JUMPDEST + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x78] + Op.JUMP(pc=0x7a) + Op.JUMPDEST + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x80] + Op.JUMP(pc=0x72) + Op.JUMPDEST + Op.JUMP,
+            code=bytes.fromhex(
+                "7c01000000000000000000000000000000000000000000000000000000006000350463296df0df811460415780634893d88a14604d578063981a316514605957005b60476065565b60006000f35b6053607a565b60006000f35b605f6072565b60006000f35b5b6001156070576066565b565b6078607a565b565b60806072565b56"  # noqa: E501
+            ),
         ),
     }
 

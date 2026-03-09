@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryTest/codecopy_dejavu2Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,14 +45,14 @@ def test_codecopy_dejavu2(
 
     pre[sender] = Account(balance=0x271000000000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.CODECOPY(dest_offset=0x1f, offset=0x10000000000000001, size=0xa) + Op.STOP,
+        code=bytes.fromhex("600a68010000000000000001601f3900"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x7dd1d0ec78fe936b0e88f8c21226f51f048579915c7baff1c5d7fd84b2139bf1"
+            "0x7dd1d0ec78fe936b0e88f8c21226f51f048579915c7baff1c5d7fd84b2139bf1"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -63,7 +64,7 @@ def test_codecopy_dejavu2(
 
     post = {
         contract: Account(
-            code=Op.CODECOPY(dest_offset=0x1f, offset=0x10000000000000001, size=0xa) + Op.STOP,
+            code=bytes.fromhex("600a68010000000000000001601f3900"),
         ),
     }
 

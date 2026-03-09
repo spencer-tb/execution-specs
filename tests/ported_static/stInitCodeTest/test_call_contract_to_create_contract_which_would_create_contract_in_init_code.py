@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stInitCodeTest/CallContractToCreateContractWhichWouldCreateContractInInitCodeFiller.json
+tests/static/state_tests/stInitCodeTest
+CallContractToCreateContractWhichWouldCreateContractInInitCodeFiller.json
 """
 
 import pytest
@@ -13,18 +16,19 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stInitCodeTest/CallContractToCreateContractWhichWouldCreateContractInInitCodeFiller.json"],
+    [
+        "tests/static/state_tests/stInitCodeTest/CallContractToCreateContractWhichWouldCreateContractInInitCodeFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
-def test_call_contract_to_create_contract_which_would_create_contract_in_init_code(
+def test_call_contract_to_create_contract_which_would_create_contract_in_init_code(  # noqa: E501
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
@@ -45,16 +49,13 @@ def test_call_contract_to_create_contract_which_would_create_contract_in_init_co
     pre[contract] = Account(
         balance=1,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x600c600055602060406000f0)
-        + Op.CREATE(value=0x0, offset=0x14, size=0xc) + Op.STOP
-    ),
+        code=bytes.fromhex("6b600c600055602060406000f0600052600c60146000f000"),
     )
-    pre[sender] = Account(balance=0x3b9aca00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -66,9 +67,13 @@ def test_call_contract_to_create_contract_which_would_create_contract_in_init_co
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x600c600055602060406000f0) + Op.CREATE(value=0x0, offset=0x14, size=0xc) + Op.STOP,
+            code=bytes.fromhex(
+                "6b600c600055602060406000f0600052600c60146000f000"
+            ),
         ),
-        Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(storage={0: 12}),
+        Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(
+            storage={0: 12},
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stSystemOperationsTest/currentAccountBalanceFiller.json
+tests/static/state_tests/stSystemOperationsTest
+currentAccountBalanceFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/currentAccountBalanceFiller.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/currentAccountBalanceFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -42,16 +46,16 @@ def test_current_account_balance(
         gas_limit=100000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.BALANCE(address=Op.ADDRESS)) + Op.STOP,
+        code=bytes.fromhex("303160005500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -63,8 +67,8 @@ def test_current_account_balance(
 
     post = {
         contract: Account(
-            storage={0: 0xde0b6b3a76586a0},
-            code=Op.SSTORE(key=0x0, value=Op.BALANCE(address=Op.ADDRESS)) + Op.STOP,
+            storage={0: 0xDE0B6B3A76586A0},
+            code=bytes.fromhex("303160005500"),
         ),
     }
 

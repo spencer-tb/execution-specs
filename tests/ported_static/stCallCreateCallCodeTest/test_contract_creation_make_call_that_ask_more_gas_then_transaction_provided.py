@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCallCreateCallCodeTest/contractCreationMakeCallThatAskMoreGasThenTransactionProvidedFiller.json
+tests/static/state_tests/stCallCreateCallCodeTest
+contractCreationMakeCallThatAskMoreGasThenTransactionProvidedFiller.json
 """
 
 import pytest
@@ -13,26 +16,51 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/contractCreationMakeCallThatAskMoreGasThenTransactionProvidedFiller.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/contractCreationMakeCallThatAskMoreGasThenTransactionProvidedFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (96000, {Address("0x1000000000000000000000000000000000000001"): Account(storage={1: 1}, code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP), Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.CALL(gas=0xc350, address=0x1000000000000000000000000000000000000001, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40) + Op.STOP)}),
-        (60000, {Address("0x1000000000000000000000000000000000000001"): Account(code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP), Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.CALL(gas=0xc350, address=0x1000000000000000000000000000000000000001, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40) + Op.STOP)}),
+        (
+            96000,
+            {
+                Address("0x1000000000000000000000000000000000000001"): Account(
+                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                ),
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "6040600060406000600073100000000000000000000000000000000000000161c350f100"  # noqa: E501
+                    )
+                ),
+            },
+        ),
+        (
+            60000,
+            {
+                Address("0x1000000000000000000000000000000000000001"): Account(
+                    code=bytes.fromhex("600160015500")
+                ),
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "6040600060406000600073100000000000000000000000000000000000000161c350f100"  # noqa: E501
+                    )
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
-def test_contract_creation_make_call_that_ask_more_gas_then_transaction_provided(
+def test_contract_creation_make_call_that_ask_more_gas_then_transaction_provided(  # noqa: E501
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
@@ -53,23 +81,28 @@ def test_contract_creation_make_call_that_ask_more_gas_then_transaction_provided
         gas_limit=10000000,
     )
 
-    pre[contract] = Account(balance=0x186a0, nonce=0, code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP)
-    pre[sender] = Account(balance=0x10c8e0, nonce=0)
-    pre[callee_1] = Account(
-        balance=0x186a0,
+    pre[contract] = Account(
+        balance=0x186A0,
         nonce=0,
-        code=(
-        Op.CALL(gas=0xc350, address=0x1000000000000000000000000000000000000001, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("600160015500"),
+    )
+    pre[sender] = Account(balance=0x10C8E0, nonce=0)
+    pre[callee_1] = Account(
+        balance=0x186A0,
+        nonce=0,
+        code=bytes.fromhex(
+            "6040600060406000600073100000000000000000000000000000000000000161c350f100"  # noqa: E501
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
-        data=bytes.fromhex("6040600060406000600073100000000000000000000000000000000000000161c350f1"),
+        data=bytes.fromhex(
+            "6040600060406000600073100000000000000000000000000000000000000161c350f1"  # noqa: E501
+        ),
         gas_limit=tx_gas_limit,
         gas_price=10,
         nonce=0,

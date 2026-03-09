@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stArgsZeroOneBalance/jumpNonConstFiller.yml
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -29,7 +30,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         0,
         1,
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_jump_non_const(
@@ -51,19 +52,16 @@ def test_jump_non_const(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.JUMP(pc=Op.BALANCE(address=0xa82ae24d0d34b26fcb664dacd3e18371c9315e79))
-        + Op.STOP
-    ),
+        code=bytes.fromhex("73a82ae24d0d34b26fcb664dacd3e18371c9315e79315600"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -75,7 +73,9 @@ def test_jump_non_const(
 
     post = {
         contract: Account(
-            code=Op.JUMP(pc=Op.BALANCE(address=0xa82ae24d0d34b26fcb664dacd3e18371c9315e79)) + Op.STOP,
+            code=bytes.fromhex(
+                "73a82ae24d0d34b26fcb664dacd3e18371c9315e79315600"
+            ),
         ),
     }
 

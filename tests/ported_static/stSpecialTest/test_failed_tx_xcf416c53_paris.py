@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSpecialTest/failed_tx_xcf416c53_ParisFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSpecialTest/failed_tx_xcf416c53_ParisFiller.json"],
+    [
+        "tests/static/state_tests/stSpecialTest/failed_tx_xcf416c53_ParisFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -47,27 +50,21 @@ def test_failed_tx_xcf416c53_paris(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000)
-        + Op.JUMPI(pc=Op.PUSH2[0x65], condition=Op.ISZERO(Op.EQ(Op.DUP2, 0x97dd3054)))
-        + Op.MSTORE(offset=0x40, value=Op.CALLDATALOAD(offset=0x4))
-        + Op.MSTORE(offset=0x60, value=Op.CALLDATALOAD(offset=0x24))
-        + Op.MLOAD(offset=0x40) + Op.MLOAD(offset=0x60) + Op.JUMPDEST
-        + Op.JUMPI(pc=Op.PUSH2[0x62], condition=Op.ISZERO(Op.SLT(Op.DUP3, Op.DUP1)))
-        + Op.POP(Op.CALL(gas=0x0, address=Op.DUP7, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.ADD(Op.DUP3, 0x1) + Op.SWAP2 + Op.POP + Op.JUMP(pc=Op.PUSH2[0x40])
-        + Op.JUMPDEST + Op.POP + Op.POP + Op.JUMPDEST + Op.POP
-    ),
+        code=bytes.fromhex(
+            "7c0100000000000000000000000000000000000000000000000000000000600035046397"  # noqa: E501
+            "dd3054811415610065576004356040526024356060526040516060515b80821215610062"  # noqa: E501
+            "5760006000600060006000866000f150600182019150610040565b50505b50"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=1)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x0ff8d58222f34f6890ddaa468c023b77d6691ed7d3c4dcddae38336212faf54b"
+            "0x0ff8d58222f34f6890ddaa468c023b77d6691ed7d3c4dcddae38336212faf54b"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex(
-            "97dd30540000000000000000000000000000000000000000000000000000000000000000"
+            "97dd30540000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
             "00000000000000000000000000000000000000000000000000000000000002bc"
         ),
         gas_limit=16300000,
@@ -78,7 +75,9 @@ def test_failed_tx_xcf416c53_paris(
 
     post = {
         contract: Account(
-            code=Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000) + Op.JUMPI(pc=Op.PUSH2[0x65], condition=Op.ISZERO(Op.EQ(Op.DUP2, 0x97dd3054))) + Op.MSTORE(offset=0x40, value=Op.CALLDATALOAD(offset=0x4)) + Op.MSTORE(offset=0x60, value=Op.CALLDATALOAD(offset=0x24)) + Op.MLOAD(offset=0x40) + Op.MLOAD(offset=0x60) + Op.JUMPDEST + Op.JUMPI(pc=Op.PUSH2[0x62], condition=Op.ISZERO(Op.SLT(Op.DUP3, Op.DUP1))) + Op.POP(Op.CALL(gas=0x0, address=Op.DUP7, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.ADD(Op.DUP3, 0x1) + Op.SWAP2 + Op.POP + Op.JUMP(pc=Op.PUSH2[0x40]) + Op.JUMPDEST + Op.POP + Op.POP + Op.JUMPDEST + Op.POP,
+            code=bytes.fromhex(
+                "7c0100000000000000000000000000000000000000000000000000000000600035046397dd3054811415610065576004356040526024356060526040516060515b808212156100625760006000600060006000866000f150600182019150610040565b50505b50"  # noqa: E501
+            ),
         ),
     }
 

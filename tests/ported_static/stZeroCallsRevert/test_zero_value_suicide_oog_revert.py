@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stZeroCallsRevert/ZeroValue_SUICIDE_OOGRevertFiller.json
+tests/static/state_tests/stZeroCallsRevert
+ZeroValue_SUICIDE_OOGRevertFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stZeroCallsRevert/ZeroValue_SUICIDE_OOGRevertFiller.json"],
+    [
+        "tests/static/state_tests/stZeroCallsRevert/ZeroValue_SUICIDE_OOGRevertFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,22 +50,21 @@ def test_zero_value_suicide_oog_revert(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=0x9c40, address=0xda2eb5512889130c4af686a291b08665b889cb22, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x2, value=0xc) + Op.SSTORE(key=0x3, value=0xc)
-        + Op.SSTORE(key=0x4, value=0xc) + Op.SSTORE(key=0x64, value=Op.GAS) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600060006000600073da2eb5512889130c4af686a291b08665b889cb22619c40f150"  # noqa: E501
+            "600c600255600c600355600c6004555a60645500"
+        ),
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0xda2eb5512889130c4af686a291b08665b889cb22) + Op.STOP,
+        code=bytes.fromhex("73da2eb5512889130c4af686a291b08665b889cb22ff00"),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -73,10 +76,14 @@ def test_zero_value_suicide_oog_revert(
 
     post = {
         contract: Account(
-            code=Op.POP(Op.CALL(gas=0x9c40, address=0xda2eb5512889130c4af686a291b08665b889cb22, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=0xc) + Op.SSTORE(key=0x3, value=0xc) + Op.SSTORE(key=0x4, value=0xc) + Op.SSTORE(key=0x64, value=Op.GAS) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000600073da2eb5512889130c4af686a291b08665b889cb22619c40f150600c600255600c600355600c6004555a60645500"  # noqa: E501
+            ),
         ),
         callee: Account(
-            code=Op.SELFDESTRUCT(address=0xda2eb5512889130c4af686a291b08665b889cb22) + Op.STOP,
+            code=bytes.fromhex(
+                "73da2eb5512889130c4af686a291b08665b889cb22ff00"
+            ),
         ),
     }
 

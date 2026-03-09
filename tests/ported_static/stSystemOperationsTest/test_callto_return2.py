@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSystemOperationsTest/CalltoReturn2Filler.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/CalltoReturn2Filler.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/CalltoReturn2Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,26 +49,23 @@ def test_callto_return2(
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=0x1) + Op.MSTORE8(offset=0x0, value=0x37)
-        + Op.PUSH1[0x2] + Op.PUSH1[0x0] + Op.CALLCODE
-    ),
+        code=bytes.fromhex("6001600155603760005360026000f2"),
     )
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
-        + Op.MSTORE(offset=0x20, value=0xaaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaa)
-        + Op.SSTORE(key=0x0, value=Op.CALL(gas=0x1388, address=0x2b45331c406df38b99656c3ed3a97ef219979232, value=0x17, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x2))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600052"  # noqa: E501
+            "7faaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaa602052"  # noqa: E501
+            "60026000604060006017732b45331c406df38b99656c3ed3a97ef219979232611388f160"  # noqa: E501
+            "005500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -76,11 +76,11 @@ def test_callto_return2(
     )
 
     post = {
-        callee: Account(
-            code=Op.SSTORE(key=0x1, value=0x1) + Op.MSTORE8(offset=0x0, value=0x37) + Op.PUSH1[0x2] + Op.PUSH1[0x0] + Op.CALLCODE,
-        ),
+        callee: Account(code=bytes.fromhex("6001600155603760005360026000f2")),
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) + Op.MSTORE(offset=0x20, value=0xaaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaa) + Op.SSTORE(key=0x0, value=Op.CALL(gas=0x1388, address=0x2b45331c406df38b99656c3ed3a97ef219979232, value=0x17, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x2)) + Op.STOP,
+            code=bytes.fromhex(
+                "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6000527faaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaa60205260026000604060006017732b45331c406df38b99656c3ed3a97ef219979232611388f160005500"  # noqa: E501
+            ),
         ),
     }
 

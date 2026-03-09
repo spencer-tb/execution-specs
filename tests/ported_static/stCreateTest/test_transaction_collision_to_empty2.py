@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCreateTest/TransactionCollisionToEmpty2Filler.json
 """
@@ -19,18 +21,36 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreateTest/TransactionCollisionToEmpty2Filler.json"],
+    [
+        "tests/static/state_tests/stCreateTest/TransactionCollisionToEmpty2Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, tx_value, expected_post",
     [
-        (600000, 0, {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={1: 1})}),
-        (600000, 1, {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={1: 1})}),
+        (
+            600000,
+            0,
+            {
+                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+                    storage={1: 1}
+                )
+            },
+        ),
+        (
+            600000,
+            1,
+            {
+                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+                    storage={1: 1}
+                )
+            },
+        ),
         (54000, 0, {}),
         (54000, 1, {}),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_transaction_collision_to_empty2(
@@ -55,11 +75,11 @@ def test_transaction_collision_to_empty2(
     )
 
     pre[contract] = Account(balance=10, nonce=0)
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("6001600155"),

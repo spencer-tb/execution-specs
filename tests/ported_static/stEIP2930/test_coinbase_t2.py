@@ -1,5 +1,5 @@
 """
-Ori Pomerantz qbzzt1@gmail.com
+Ori Pomerantz qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/stEIP2930/coinbaseT2Filler.yml
@@ -16,7 +16,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -29,16 +28,26 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_access_list",
     [
-        [AccessList(address=Address("0x7704d8a022a1ba8f3539fc82c7d7fb065abc0df3"), storage_keys=[])],
-        [AccessList(address=Address("0x000000000000000000000000000000000000ba5a"), storage_keys=[])],
+        [
+            AccessList(
+                address=Address("0x7704d8a022a1ba8f3539fc82c7d7fb065abc0df3"),
+                storage_keys=[],
+            )
+        ],
+        [
+            AccessList(
+                address=Address("0x000000000000000000000000000000000000ba5a"),
+                storage_keys=[],
+            )
+        ],
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_coinbase_t2(
     state_test: StateTestFiller,
     pre: Alloc,
-    tx_access_list,
+    tx_access_list: list | None,
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x7704d8a022a1ba8f3539fc82c7d7fb065abc0df3")
@@ -55,25 +64,24 @@ def test_coinbase_t2(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=1,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.POP(Op.CALL(gas=Op.GAS, address=0x7704d8a022a1ba8f3539fc82c7d7fb065abc0df3, value=0xf4240, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0))
-        + Op.MSTORE(offset=0x20, value=Op.GAS)
-        + Op.SSTORE(key=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.MLOAD(offset=0x20)), 0x21))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a6000526000808080620f4240737704d8a022a1ba8f3539fc82c7d7fb065abc0df35af1"  # noqa: E501
+            "505a6020526021602051600051030360005500"
+        ),
     )
     pre[coinbase] = Account(balance=0, nonce=1)
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=1)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"
+            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"  # noqa: E501
         ),
         to=contract,
-        data=bytes.fromhex("693c61390000000000000000000000000000000000000000000000000000000000000000"),
+        data=bytes.fromhex(
+            "693c61390000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+        ),
         gas_limit=16777216,
         max_fee_per_gas=10000,
         max_priority_fee_per_gas=100,
@@ -85,7 +93,9 @@ def test_coinbase_t2(
     post = {
         contract: Account(
             storage={0: 6800},
-            code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.CALL(gas=Op.GAS, address=0x7704d8a022a1ba8f3539fc82c7d7fb065abc0df3, value=0xf4240, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0)) + Op.MSTORE(offset=0x20, value=Op.GAS) + Op.SSTORE(key=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.MLOAD(offset=0x20)), 0x21)) + Op.STOP,
+            code=bytes.fromhex(
+                "5a6000526000808080620f4240737704d8a022a1ba8f3539fc82c7d7fb065abc0df35af1505a6020526021602051600051030360005500"  # noqa: E501
+            ),
         ),
     }
 

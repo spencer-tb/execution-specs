@@ -1,5 +1,5 @@
 """
-calldepth with subcall
+calldepth with subcall.
 
 Ported from:
 tests/static/state_tests/stCallCreateCallCodeTest/Call1024PreCallsFiller.json
@@ -15,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/Call1024PreCallsFiller.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/Call1024PreCallsFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.valid_until("Prague")
@@ -32,7 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         9214364837600034817,
         11837600034817,
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_call1024_pre_calls(
@@ -40,7 +41,7 @@ def test_call1024_pre_calls(
     pre: Alloc,
     tx_gas_limit: int,
 ) -> None:
-    """calldepth with subcall."""
+    """Calldepth with subcall."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     sender = Address("0x3f13d7fc49b91cdc388f79f861c0f1a0e708dfbf")
     contract = Address("0x48c20cd83ddbd3908712f4d31c51b3cdaae287ce")
@@ -55,23 +56,22 @@ def test_call1024_pre_calls(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xfffffffffffffffffffffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
     pre[contract] = Account(
         balance=2024,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x2, value=Op.CALL(gas=0xffff, address=0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x3, value=Op.CALL(gas=0xffff, address=0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-        + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xfffffffffff, address=0x48c20cd83ddbd3908712f4d31c51b3cdaae287ce, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600060006000600173d9b97c712ebce43f3c19179bbef44b550f9e8bc061fffff160"  # noqa: E501
+            "02556000600060006000600173d9b97c712ebce43f3c19179bbef44b550f9e8bc061ffff"  # noqa: E501
+            "f1600355600160005401600055600060006000600060007348c20cd83ddbd3908712f4d3"  # noqa: E501
+            "1c51b3cdaae287ce650ffffffffffff160015500"
+        ),
     )
     pre[callee] = Account(balance=7000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xcc381c83857b17ca629268ed418e2915a0287b84efe9cf2204c020302e83cda0"
+            "0xcc381c83857b17ca629268ed418e2915a0287b84efe9cf2204c020302e83cda0"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -84,7 +84,9 @@ def test_call1024_pre_calls(
     post = {
         contract: Account(
             storage={0: 1025, 1: 1},
-            code=Op.SSTORE(key=0x2, value=Op.CALL(gas=0xffff, address=0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x3, value=Op.CALL(gas=0xffff, address=0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)) + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xfffffffffff, address=0x48c20cd83ddbd3908712f4d31c51b3cdaae287ce, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000600173d9b97c712ebce43f3c19179bbef44b550f9e8bc061fffff16002556000600060006000600173d9b97c712ebce43f3c19179bbef44b550f9e8bc061fffff1600355600160005401600055600060006000600060007348c20cd83ddbd3908712f4d31c51b3cdaae287ce650ffffffffffff160015500"  # noqa: E501
+            ),
         ),
     }
 

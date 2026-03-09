@@ -1,5 +1,5 @@
 """
-calldepth and oog
+calldepth and oog.
 
 Ported from:
 tests/static/state_tests/stCallCreateCallCodeTest/Callcode1024OOGFiller.json
@@ -15,23 +15,44 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/Callcode1024OOGFiller.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/Callcode1024OOGFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (15720826, {Address("0x1b803058288dc00000f98311b059597434253374"): Account(storage={0: 146, 1: 1, 2: 0x23a51}, code=Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)) + Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=Op.MUL(Op.SUB(Op.GAS, 0x2710), Op.SUB(0x1, Op.DIV(Op.SLOAD(key=0x0), 0x401))), address=0x1b803058288dc00000f98311b059597434253374, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3e8))) + Op.STOP)}),
-        (13120826, {Address("0x1b803058288dc00000f98311b059597434253374"): Account(storage={0: 134, 1: 1, 2: 0x20b71}, code=Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)) + Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=Op.MUL(Op.SUB(Op.GAS, 0x2710), Op.SUB(0x1, Op.DIV(Op.SLOAD(key=0x0), 0x401))), address=0x1b803058288dc00000f98311b059597434253374, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3e8))) + Op.STOP)}),
+        (
+            15720826,
+            {
+                Address("0x1b803058288dc00000f98311b059597434253374"): Account(
+                    storage={0: 146, 1: 1, 2: 0x23A51},
+                    code=bytes.fromhex(
+                        "60016000540160005560006000600060006000731b803058288dc00000f98311b059597434253374610401600054046001036127105a0302f26001556103e86000540260010160025500"  # noqa: E501
+                    ),
+                )
+            },
+        ),
+        (
+            13120826,
+            {
+                Address("0x1b803058288dc00000f98311b059597434253374"): Account(
+                    storage={0: 134, 1: 1, 2: 0x20B71},
+                    code=bytes.fromhex(
+                        "60016000540160005560006000600060006000731b803058288dc00000f98311b059597434253374610401600054046001036127105a0302f26001556103e86000540260010160025500"  # noqa: E501
+                    ),
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_callcode1024_oog(
@@ -40,7 +61,7 @@ def test_callcode1024_oog(
     tx_gas_limit: int,
     expected_post: dict,
 ) -> None:
-    """calldepth and oog."""
+    """Calldepth and oog."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     sender = Address("0x4768b5e50b0ebe91ae38d84a47e3179e615f9c40")
     contract = Address("0x1b803058288dc00000f98311b059597434253374")
@@ -58,19 +79,18 @@ def test_callcode1024_oog(
     pre[contract] = Account(
         balance=1024,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-        + Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=Op.MUL(Op.SUB(Op.GAS, 0x2710), Op.SUB(0x1, Op.DIV(Op.SLOAD(key=0x0), 0x401))), address=0x1b803058288dc00000f98311b059597434253374, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x2, value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3e8)))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60016000540160005560006000600060006000731b803058288dc00000f98311b0595974"  # noqa: E501
+            "34253374610401600054046001036127105a0302f26001556103e8600054026001016002"  # noqa: E501
+            "5500"
+        ),
     )
-    pre[sender] = Account(balance=0xffffffffffffffffffffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
     pre[callee] = Account(balance=7000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe7c72b378297589acee4e0ba3272841bcfc5e220f86de253f890274cfee9e474"
+            "0xe7c72b378297589acee4e0ba3272841bcfc5e220f86de253f890274cfee9e474"  # noqa: E501
         ),
         to=contract,
         data=b"",

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stReturnDataTest/returndatasize_initial_zero_readFiller.json
+tests/static/state_tests/stReturnDataTest
+returndatasize_initial_zero_readFiller.json
 """
 
 import pytest
@@ -13,23 +16,38 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stReturnDataTest/returndatasize_initial_zero_readFiller.json"],
+    [
+        "tests/static/state_tests/stReturnDataTest/returndatasize_initial_zero_readFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        ("", {Address("0x537cd1744af41c3a74d5aa5ae93958d1160ca98f"): Account(code=Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x0) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("992919aa", {Address("0x537cd1744af41c3a74d5aa5ae93958d1160ca98f"): Account(code=Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x0) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
+        (
+            "",
+            {
+                Address("0x537cd1744af41c3a74d5aa5ae93958d1160ca98f"): Account(
+                    code=bytes.fromhex("6000600060003e60005160005500")
+                )
+            },
+        ),
+        (
+            "992919aa",
+            {
+                Address("0x537cd1744af41c3a74d5aa5ae93958d1160ca98f"): Account(
+                    code=bytes.fromhex("6000600060003e60005160005500")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_returndatasize_initial_zero_read(
@@ -53,12 +71,9 @@ def test_returndatasize_initial_zero_read(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x0)
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex("6000600060003e60005160005500"),
         storage={0x0: 0x1},
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
@@ -67,7 +82,7 @@ def test_returndatasize_initial_zero_read(
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRevertTest/RevertPrefoundOOGFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,17 +47,14 @@ def test_revert_prefound_oog(
     pre[contract] = Account(
         balance=1,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CREATE(value=0x0, offset=0x0, size=0x20))
-        + Op.SHA3(offset=0x0, size=0x2fffff) + Op.STOP
-    ),
+        code=bytes.fromhex("602060006000f0600055622fffff60002000"),
     )
     pre[callee] = Account(balance=1, nonce=0)
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,7 +66,7 @@ def test_revert_prefound_oog(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x0, value=Op.CREATE(value=0x0, offset=0x0, size=0x20)) + Op.SHA3(offset=0x0, size=0x2fffff) + Op.STOP,
+            code=bytes.fromhex("602060006000f0600055622fffff60002000"),
         ),
     }
 

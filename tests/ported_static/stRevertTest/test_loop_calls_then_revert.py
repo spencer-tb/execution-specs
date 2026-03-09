@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRevertTest/LoopCallsThenRevertFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,23 +47,22 @@ def test_loop_calls_then_revert(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.JUMPDEST + Op.SSTORE(key=0x0, value=Op.SUB(Op.SLOAD(key=0x0), 0x1))
-        + Op.POP(Op.CALL(gas=0xc350, address=0xc47bcbf49dd735566cfde927821e938d5b33014c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.JUMPI(pc=0x0, condition=Op.SLOAD(key=0x0))
-    ),
+        code=bytes.fromhex(
+            "5b6001600054036000556000600060006000600073c47bcbf49dd735566cfde927821e93"  # noqa: E501
+            "8d5b33014c61c350f150600054600057"
+        ),
         storage={0x0: 0x352},
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.STOP,
+        code=bytes.fromhex("60005460010160005500"),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -74,11 +74,13 @@ def test_loop_calls_then_revert(
 
     post = {
         contract: Account(
-            code=Op.JUMPDEST + Op.SSTORE(key=0x0, value=Op.SUB(Op.SLOAD(key=0x0), 0x1)) + Op.POP(Op.CALL(gas=0xc350, address=0xc47bcbf49dd735566cfde927821e938d5b33014c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.JUMPI(pc=0x0, condition=Op.SLOAD(key=0x0)),
+            code=bytes.fromhex(
+                "5b6001600054036000556000600060006000600073c47bcbf49dd735566cfde927821e938d5b33014c61c350f150600054600057"  # noqa: E501
+            ),
         ),
         callee: Account(
             storage={0: 850},
-            code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.STOP,
+            code=bytes.fromhex("60005460010160005500"),
         ),
     }
 

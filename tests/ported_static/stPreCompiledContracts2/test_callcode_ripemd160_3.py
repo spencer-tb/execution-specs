@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stPreCompiledContracts2/CALLCODERipemd160_3Filler.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stPreCompiledContracts2/CALLCODERipemd160_3Filler.json"],
+    [
+        "tests/static/state_tests/stPreCompiledContracts2/CALLCODERipemd160_3Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,19 +46,17 @@ def test_callcode_ripemd160_3(
     )
 
     pre[contract] = Account(
-        balance=0x1312d00,
+        balance=0x1312D00,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0xf34578907f)
-        + Op.SSTORE(key=0x2, value=Op.CALLCODE(gas=0x1770, address=0x3, value=0x0, args_offset=0x0, args_size=0x25, ret_offset=0x0, ret_size=0x20))
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "64f34578907f600052602060006025600060006003611770f260025560005160005500"  # noqa: E501
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,8 +68,13 @@ def test_callcode_ripemd160_3(
 
     post = {
         contract: Account(
-            storage={0: 0x316750573f9be26bc17727b47cacedbd0ab3e6ca, 2: 1},
-            code=Op.MSTORE(offset=0x0, value=0xf34578907f) + Op.SSTORE(key=0x2, value=Op.CALLCODE(gas=0x1770, address=0x3, value=0x0, args_offset=0x0, args_size=0x25, ret_offset=0x0, ret_size=0x20)) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            storage={
+                0: 0x316750573F9BE26BC17727B47CACEDBD0AB3E6CA,
+                2: 1,
+            },
+            code=bytes.fromhex(
+                "64f34578907f600052602060006025600060006003611770f260025560005160005500"  # noqa: E501
+            ),
         ),
     }
 

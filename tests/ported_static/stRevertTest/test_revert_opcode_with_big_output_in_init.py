@@ -1,8 +1,9 @@
 """
-A REVERT with a big output should not be confused with a big code deployment.  This test contains a REVERT in a contract init code that returns a big returndata.
+A REVERT with a big output should not be confused with a big code...
 
 Ported from:
-tests/static/state_tests/stRevertTest/RevertOpcodeWithBigOutputInInitFiller.json
+tests/static/state_tests/stRevertTest
+RevertOpcodeWithBigOutputInInitFiller.json
 """
 
 import pytest
@@ -21,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stRevertTest/RevertOpcodeWithBigOutputInInitFiller.json"],
+    [
+        "tests/static/state_tests/stRevertTest/RevertOpcodeWithBigOutputInInitFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -30,7 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         0,
         10,
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_revert_opcode_with_big_output_in_init(
@@ -38,7 +41,7 @@ def test_revert_opcode_with_big_output_in_init(
     pre: Alloc,
     tx_value: int,
 ) -> None:
-    """A REVERT with a big output should not be confused with a big code deployment.  This test contains a REVERT in a contract init code that returns a big returndata.."""
+    """A REVERT with a big output should not be confused with a big code..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
@@ -51,11 +54,11 @@ def test_revert_opcode_with_big_output_in_init(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("600160005560016000fd6011600155"),
@@ -65,6 +68,6 @@ def test_revert_opcode_with_big_output_in_init(
         value=tx_value,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

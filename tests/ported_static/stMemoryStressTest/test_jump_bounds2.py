@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/JUMP_Bounds2Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,28 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0xde573d26b8c4a55fd9daa17e8f93347c269ee4f6"): Account(code=Op.JUMP(pc=0xffffffff) + Op.JUMP(pc=0xffffffffffffffff) + Op.JUMP(pc=0xffffffffffffffffffffffffffffffff) + Op.JUMP(pc=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff))}),
-        (16777216, {Address("0xde573d26b8c4a55fd9daa17e8f93347c269ee4f6"): Account(code=Op.JUMP(pc=0xffffffff) + Op.JUMP(pc=0xffffffffffffffff) + Op.JUMP(pc=0xffffffffffffffffffffffffffffffff) + Op.JUMP(pc=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff))}),
+        (
+            150000,
+            {
+                Address("0xde573d26b8c4a55fd9daa17e8f93347c269ee4f6"): Account(
+                    code=bytes.fromhex(
+                        "63ffffffff5667ffffffffffffffff566fffffffffffffffffffffffffffffffff567fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff56"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0xde573d26b8c4a55fd9daa17e8f93347c269ee4f6"): Account(
+                    code=bytes.fromhex(
+                        "63ffffffff5667ffffffffffffffff566fffffffffffffffffffffffffffffffff567fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff56"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_jump_bounds2(
@@ -55,17 +74,16 @@ def test_jump_bounds2(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.JUMP(pc=0xffffffff) + Op.JUMP(pc=0xffffffffffffffff)
-        + Op.JUMP(pc=0xffffffffffffffffffffffffffffffff)
-        + Op.JUMP(pc=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
-    ),
+        code=bytes.fromhex(
+            "63ffffffff5667ffffffffffffffff566fffffffffffffffffffffffffffffffff567fff"  # noqa: E501
+            "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff56"
+        ),
     )
-    pre[sender] = Account(balance=0x7fffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x31b5af02b012484ae954b3a43943242ede546a2e76fc0a6acc17435107c385eb"
+            "0x31b5af02b012484ae954b3a43943242ede546a2e76fc0a6acc17435107c385eb"  # noqa: E501
         ),
         to=contract,
         data=b"",

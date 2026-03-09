@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stShift/sar_2^254_254Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,19 +43,20 @@ def test_sar_2_254_254(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.SAR(0xfe, 0x4000000000000000000000000000000000000000000000000000000000000000))
-    ),
+        code=bytes.fromhex(
+            "7f400000000000000000000000000000000000000000000000000000000000000060fe1d"  # noqa: E501
+            "600055"
+        ),
         storage={0x0: 0x3},
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +69,9 @@ def test_sar_2_254_254(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.SSTORE(key=0x0, value=Op.SAR(0xfe, 0x4000000000000000000000000000000000000000000000000000000000000000)),
+            code=bytes.fromhex(
+                "7f400000000000000000000000000000000000000000000000000000000000000060fe1d600055"  # noqa: E501
+            ),
         ),
     }
 

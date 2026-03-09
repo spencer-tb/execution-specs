@@ -1,5 +1,5 @@
 """
-Ori Pomerantz qbzzt1@gmail.com
+Ori Pomerantz qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/VMTests/vmTests/randomFiller.yml
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -28,14 +27,176 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        ("693c61390000000000000000000000000000000000000000000000000000000000000000", {Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(code=bytes.fromhex("4040459143404144809759886d608f")), Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(code=Op.BLOCKHASH + Op.COINBASE), Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(code=Op.BLOCKHASH + Op.BLOCKHASH(block_number=Op.GASLIMIT) + Op.COINBASE + Op.GASLIMIT + Op.GASLIMIT + Op.CODECOPY(dest_offset=Op.CALLVALUE, offset=Op.COINBASE, size=Op.PREVRANDAO) + Op.SELFDESTRUCT(address=Op.DUP8) + Op.CALLDATACOPY + Op.CALLDATALOAD + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)), Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(code=Op.NUMBER + Op.NUMBER + Op.TIMESTAMP + Op.PREVRANDAO + Op.TIMESTAMP + Op.PREVRANDAO + Op.GASLIMIT + Op.GASLIMIT + Op.SWAP8), Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(code=Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP), Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(code=bytes.fromhex("65424555")), Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(code=bytes.fromhex("7745414245403745f31387900a8d55"))}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000001", {Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(code=bytes.fromhex("4040459143404144809759886d608f")), Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(code=Op.BLOCKHASH + Op.COINBASE), Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(code=Op.BLOCKHASH + Op.BLOCKHASH(block_number=Op.GASLIMIT) + Op.COINBASE + Op.GASLIMIT + Op.GASLIMIT + Op.CODECOPY(dest_offset=Op.CALLVALUE, offset=Op.COINBASE, size=Op.PREVRANDAO) + Op.SELFDESTRUCT(address=Op.DUP8) + Op.CALLDATACOPY + Op.CALLDATALOAD + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)), Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(code=Op.NUMBER + Op.NUMBER + Op.TIMESTAMP + Op.PREVRANDAO + Op.TIMESTAMP + Op.PREVRANDAO + Op.GASLIMIT + Op.GASLIMIT + Op.SWAP8), Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(code=Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP), Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(code=bytes.fromhex("65424555")), Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(code=bytes.fromhex("7745414245403745f31387900a8d55"))}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000002", {Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(code=bytes.fromhex("4040459143404144809759886d608f")), Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(code=Op.BLOCKHASH + Op.COINBASE), Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(code=Op.BLOCKHASH + Op.BLOCKHASH(block_number=Op.GASLIMIT) + Op.COINBASE + Op.GASLIMIT + Op.GASLIMIT + Op.CODECOPY(dest_offset=Op.CALLVALUE, offset=Op.COINBASE, size=Op.PREVRANDAO) + Op.SELFDESTRUCT(address=Op.DUP8) + Op.CALLDATACOPY + Op.CALLDATALOAD + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)), Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(code=Op.NUMBER + Op.NUMBER + Op.TIMESTAMP + Op.PREVRANDAO + Op.TIMESTAMP + Op.PREVRANDAO + Op.GASLIMIT + Op.GASLIMIT + Op.SWAP8), Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(code=Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP), Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(code=bytes.fromhex("65424555")), Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(code=bytes.fromhex("7745414245403745f31387900a8d55"))}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000003", {Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(code=bytes.fromhex("4040459143404144809759886d608f")), Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(code=Op.BLOCKHASH + Op.COINBASE), Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(code=Op.BLOCKHASH + Op.BLOCKHASH(block_number=Op.GASLIMIT) + Op.COINBASE + Op.GASLIMIT + Op.GASLIMIT + Op.CODECOPY(dest_offset=Op.CALLVALUE, offset=Op.COINBASE, size=Op.PREVRANDAO) + Op.SELFDESTRUCT(address=Op.DUP8) + Op.CALLDATACOPY + Op.CALLDATALOAD + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)), Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(code=Op.NUMBER + Op.NUMBER + Op.TIMESTAMP + Op.PREVRANDAO + Op.TIMESTAMP + Op.PREVRANDAO + Op.GASLIMIT + Op.GASLIMIT + Op.SWAP8), Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(code=Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP), Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(code=bytes.fromhex("65424555")), Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(code=bytes.fromhex("7745414245403745f31387900a8d55"))}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000004", {Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(code=bytes.fromhex("4040459143404144809759886d608f")), Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(code=Op.BLOCKHASH + Op.COINBASE), Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(code=Op.BLOCKHASH + Op.BLOCKHASH(block_number=Op.GASLIMIT) + Op.COINBASE + Op.GASLIMIT + Op.GASLIMIT + Op.CODECOPY(dest_offset=Op.CALLVALUE, offset=Op.COINBASE, size=Op.PREVRANDAO) + Op.SELFDESTRUCT(address=Op.DUP8) + Op.CALLDATACOPY + Op.CALLDATALOAD + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)), Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(code=Op.NUMBER + Op.NUMBER + Op.TIMESTAMP + Op.PREVRANDAO + Op.TIMESTAMP + Op.PREVRANDAO + Op.GASLIMIT + Op.GASLIMIT + Op.SWAP8), Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(code=Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP), Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(code=bytes.fromhex("65424555")), Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(code=bytes.fromhex("7745414245403745f31387900a8d55"))}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000005", {Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(code=bytes.fromhex("4040459143404144809759886d608f")), Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(code=Op.BLOCKHASH + Op.COINBASE), Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(code=Op.BLOCKHASH + Op.BLOCKHASH(block_number=Op.GASLIMIT) + Op.COINBASE + Op.GASLIMIT + Op.GASLIMIT + Op.CODECOPY(dest_offset=Op.CALLVALUE, offset=Op.COINBASE, size=Op.PREVRANDAO) + Op.SELFDESTRUCT(address=Op.DUP8) + Op.CALLDATACOPY + Op.CALLDATALOAD + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)), Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(code=Op.NUMBER + Op.NUMBER + Op.TIMESTAMP + Op.PREVRANDAO + Op.TIMESTAMP + Op.PREVRANDAO + Op.GASLIMIT + Op.GASLIMIT + Op.SWAP8), Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(code=Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP), Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(code=bytes.fromhex("65424555")), Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(code=bytes.fromhex("7745414245403745f31387900a8d55"))}),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
+            {
+                Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(
+                    code=bytes.fromhex("4040459143404144809759886d608f")
+                ),
+                Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
+                    code=bytes.fromhex("4041")
+                ),
+                Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
+                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                ),
+                Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
+                    code=bytes.fromhex("434342444244454597")
+                ),
+                Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af100"
+                    )
+                ),
+                Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
+                    code=bytes.fromhex("65424555")
+                ),
+                Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(
+                    code=bytes.fromhex("7745414245403745f31387900a8d55")
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
+            {
+                Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(
+                    code=bytes.fromhex("4040459143404144809759886d608f")
+                ),
+                Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
+                    code=bytes.fromhex("4041")
+                ),
+                Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
+                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                ),
+                Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
+                    code=bytes.fromhex("434342444244454597")
+                ),
+                Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af100"
+                    )
+                ),
+                Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
+                    code=bytes.fromhex("65424555")
+                ),
+                Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(
+                    code=bytes.fromhex("7745414245403745f31387900a8d55")
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
+            {
+                Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(
+                    code=bytes.fromhex("4040459143404144809759886d608f")
+                ),
+                Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
+                    code=bytes.fromhex("4041")
+                ),
+                Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
+                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                ),
+                Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
+                    code=bytes.fromhex("434342444244454597")
+                ),
+                Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af100"
+                    )
+                ),
+                Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
+                    code=bytes.fromhex("65424555")
+                ),
+                Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(
+                    code=bytes.fromhex("7745414245403745f31387900a8d55")
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000003",  # noqa: E501
+            {
+                Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(
+                    code=bytes.fromhex("4040459143404144809759886d608f")
+                ),
+                Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
+                    code=bytes.fromhex("4041")
+                ),
+                Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
+                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                ),
+                Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
+                    code=bytes.fromhex("434342444244454597")
+                ),
+                Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af100"
+                    )
+                ),
+                Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
+                    code=bytes.fromhex("65424555")
+                ),
+                Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(
+                    code=bytes.fromhex("7745414245403745f31387900a8d55")
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000004",  # noqa: E501
+            {
+                Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(
+                    code=bytes.fromhex("4040459143404144809759886d608f")
+                ),
+                Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
+                    code=bytes.fromhex("4041")
+                ),
+                Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
+                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                ),
+                Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
+                    code=bytes.fromhex("434342444244454597")
+                ),
+                Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af100"
+                    )
+                ),
+                Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
+                    code=bytes.fromhex("65424555")
+                ),
+                Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(
+                    code=bytes.fromhex("7745414245403745f31387900a8d55")
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000005",  # noqa: E501
+            {
+                Address("0x15adfb805be4f3ee3e5c535abc860890a3a2a6c9"): Account(
+                    code=bytes.fromhex("4040459143404144809759886d608f")
+                ),
+                Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
+                    code=bytes.fromhex("4041")
+                ),
+                Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
+                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                ),
+                Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
+                    code=bytes.fromhex("434342444244454597")
+                ),
+                Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af100"
+                    )
+                ),
+                Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
+                    code=bytes.fromhex("65424555")
+                ),
+                Address("0xdfe69e96fb3aafde261565670b1fea29869c6950"): Account(
+                    code=bytes.fromhex("7745414245403745f31387900a8d55")
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5'],
+    ids=["case0", "case1", "case2", "case3", "case4", "case5"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_random(
@@ -65,42 +226,38 @@ def test_random(
     )
 
     pre[callee] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=bytes.fromhex("4040459143404144809759886d608f"),
     )
-    pre[callee_1] = Account(balance=0xba1a9ce0ba1a9ce, nonce=0, code=Op.BLOCKHASH + Op.COINBASE)
-    pre[callee_2] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+    pre[callee_1] = Account(
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=(
-        Op.BLOCKHASH + Op.BLOCKHASH(block_number=Op.GASLIMIT) + Op.COINBASE
-        + Op.GASLIMIT + Op.GASLIMIT
-        + Op.CODECOPY(dest_offset=Op.CALLVALUE, offset=Op.COINBASE, size=Op.PREVRANDAO)
-        + Op.SELFDESTRUCT(address=Op.DUP8) + Op.CALLDATACOPY + Op.CALLDATALOAD
-        + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)
-    ),
+        code=bytes.fromhex("4041"),
+    )
+    pre[callee_2] = Account(
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        code=bytes.fromhex("4045404145454441343987ff3735043055"),
     )
     pre[sender] = Account(balance=0x10000000000000, nonce=0)
     pre[callee_3] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=(
-        Op.NUMBER + Op.NUMBER + Op.TIMESTAMP + Op.PREVRANDAO + Op.TIMESTAMP
-        + Op.PREVRANDAO + Op.GASLIMIT + Op.GASLIMIT + Op.SWAP8
-    ),
+        code=bytes.fromhex("434342444244454597"),
     )
     pre[contract] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=(
-        Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("60006000600060006000600435611000015af100"),
     )
-    pre[callee_4] = Account(balance=0xba1a9ce0ba1a9ce, nonce=0, code=bytes.fromhex("65424555"))
+    pre[callee_4] = Account(
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        code=bytes.fromhex("65424555"),
+    )
     pre[callee_5] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=bytes.fromhex("7745414245403745f31387900a8d55"),
     )
@@ -109,7 +266,7 @@ def test_random(
 
     tx = Transaction(
         secret_key=Hash(
-            "0xf3630c36a29ec9af814ae38e4d48056a3368bb1435c5c2b3289763e4c77a3df0"
+            "0xf3630c36a29ec9af814ae38e4d48056a3368bb1435c5c2b3289763e4c77a3df0"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

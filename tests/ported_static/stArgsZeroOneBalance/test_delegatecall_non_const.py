@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stArgsZeroOneBalance/delegatecallNonConstFiller.yml
 """
@@ -13,23 +15,43 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stArgsZeroOneBalance/delegatecallNonConstFiller.yml"],
+    [
+        "tests/static/state_tests/stArgsZeroOneBalance/delegatecallNonConstFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (0, {Address("0x365aae42316e918da716d904fe31eea4134112c4"): Account(storage={0: 1}, code=Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), address=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), args_offset=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), args_size=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), ret_offset=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), ret_size=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4))) + Op.STOP)}),
-        (1, {Address("0x365aae42316e918da716d904fe31eea4134112c4"): Account(code=Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), address=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), args_offset=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), args_size=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), ret_offset=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), ret_size=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4))) + Op.STOP)}),
+        (
+            0,
+            {
+                Address("0x365aae42316e918da716d904fe31eea4134112c4"): Account(
+                    storage={0: 1},
+                    code=bytes.fromhex(
+                        "73365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112c431f460005500"  # noqa: E501
+                    ),
+                )
+            },
+        ),
+        (
+            1,
+            {
+                Address("0x365aae42316e918da716d904fe31eea4134112c4"): Account(
+                    code=bytes.fromhex(
+                        "73365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112c431f460005500"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_delegatecall_non_const(
@@ -52,19 +74,21 @@ def test_delegatecall_non_const(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), address=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), args_offset=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), args_size=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), ret_offset=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4), ret_size=Op.BALANCE(address=0x365aae42316e918da716d904fe31eea4134112c4)))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "73365aae42316e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe"  # noqa: E501
+            "31eea4134112c43173365aae42316e918da716d904fe31eea4134112c43173365aae4231"  # noqa: E501
+            "6e918da716d904fe31eea4134112c43173365aae42316e918da716d904fe31eea4134112"  # noqa: E501
+            "c43173365aae42316e918da716d904fe31eea4134112c431f460005500"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",

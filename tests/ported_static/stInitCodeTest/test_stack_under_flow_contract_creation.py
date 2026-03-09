@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stInitCodeTest/StackUnderFlowContractCreationFiller.json
+tests/static/state_tests/stInitCodeTest
+StackUnderFlowContractCreationFiller.json
 """
 
 import pytest
@@ -19,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stInitCodeTest/StackUnderFlowContractCreationFiller.json"],
+    [
+        "tests/static/state_tests/stInitCodeTest/StackUnderFlowContractCreationFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -41,11 +46,11 @@ def test_stack_under_flow_contract_creation(
     )
 
     pre[coinbase] = Account(balance=0, nonce=1)
-    pre[sender] = Account(balance=0xae9f7bcc00, nonce=0)
+    pre[sender] = Account(balance=0xAE9F7BCC00, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("6000f1"),
@@ -55,6 +60,6 @@ def test_stack_under_flow_contract_creation(
         value=0,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

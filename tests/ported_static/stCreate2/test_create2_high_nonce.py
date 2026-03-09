@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCreate2/CREATE2_HighNonceFiller.yml
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,20 +43,18 @@ def test_create2_high_nonce(
         gas_limit=89128960,
     )
 
-    pre[sender] = Account(balance=0x3b9aca00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=18446744073709551615,
-        code=(
-        Op.SHL(0xd8, 0x60016000f3) + Op.PUSH1[0x0] + Op.SWAP1 + Op.DUP2 + Op.MSTORE
-        + Op.PUSH1[0x5] + Op.DUP2 + Op.DUP1 + Op.SSTORE(key=0x0, value=Op.CREATE2)
-        + Op.SSTORE(key=Op.DUP1, value=0x1) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6460016000f360d81b600090815260058180f56000556001805500"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,7 +67,9 @@ def test_create2_high_nonce(
     post = {
         contract: Account(
             storage={1: 1},
-            code=Op.SHL(0xd8, 0x60016000f3) + Op.PUSH1[0x0] + Op.SWAP1 + Op.DUP2 + Op.MSTORE + Op.PUSH1[0x5] + Op.DUP2 + Op.DUP1 + Op.SSTORE(key=0x0, value=Op.CREATE2) + Op.SSTORE(key=Op.DUP1, value=0x1) + Op.STOP,
+            code=bytes.fromhex(
+                "6460016000f360d81b600090815260058180f56000556001805500"
+            ),
         ),
     }
 

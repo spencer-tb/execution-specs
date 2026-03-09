@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/SLOAD_BoundsFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -29,7 +30,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         150000,
         16777216,
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_sload_bounds(
@@ -54,19 +55,17 @@ def test_sload_bounds(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.SLOAD(key=0x0)) + Op.POP(Op.SLOAD(key=0xffffffff))
-        + Op.POP(Op.SLOAD(key=0xffffffffffffffff))
-        + Op.POP(Op.SLOAD(key=0xffffffffffffffffffffffffffffffff))
-        + Op.SLOAD(key=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000545063ffffffff545067ffffffffffffffff54506fffffffffffffffffffffffffff"  # noqa: E501
+            "ffffff54507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "ffff5400"
+        ),
     )
-    pre[sender] = Account(balance=0x7ffffffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xfe5be118ad5955e30e0ffc4e1f1bbdcaa7f5a67cb1426c4ac19e32c80eccdc06"
+            "0xfe5be118ad5955e30e0ffc4e1f1bbdcaa7f5a67cb1426c4ac19e32c80eccdc06"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -78,7 +77,9 @@ def test_sload_bounds(
 
     post = {
         contract: Account(
-            code=Op.POP(Op.SLOAD(key=0x0)) + Op.POP(Op.SLOAD(key=0xffffffff)) + Op.POP(Op.SLOAD(key=0xffffffffffffffff)) + Op.POP(Op.SLOAD(key=0xffffffffffffffffffffffffffffffff)) + Op.SLOAD(key=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) + Op.STOP,
+            code=bytes.fromhex(
+                "6000545063ffffffff545067ffffffffffffffff54506fffffffffffffffffffffffffffffffff54507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5400"  # noqa: E501
+            ),
         ),
     }
 

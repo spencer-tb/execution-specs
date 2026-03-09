@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSolidityTest/TestContractSuicideFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,63 +43,32 @@ def test_test_contract_suicide(
         gas_limit=100000000,
     )
 
-    pre[sender] = Account(balance=0x5f5e100, nonce=0)
+    pre[sender] = Account(balance=0x5F5E100, nonce=0)
     pre[contract] = Account(
-        balance=0x186a0,
+        balance=0x186A0,
         nonce=0,
-        code=(
-        Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000)
-        + Op.JUMPI(pc=Op.PUSH2[0x39], condition=Op.EQ(Op.DUP2, 0xa60eedda))
-        + Op.JUMPI(pc=Op.PUSH2[0x4b], condition=Op.EQ(0xc0406226, Op.DUP1)) + Op.STOP
-        + Op.JUMPDEST + Op.PUSH2[0x41] + Op.JUMP(pc=Op.PUSH2[0x5d]) + Op.JUMPDEST
-        + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20)
-        + Op.JUMPDEST + Op.PUSH2[0x53] + Op.JUMP(pc=0x15a) + Op.JUMPDEST
-        + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20)
-        + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x0]
-        + Op.CODECOPY(dest_offset=0x0, offset=0x18a, size=0x81)
-        + Op.CREATE(value=0x0, offset=0x0, size=0x81) + Op.SWAP1 + Op.POP
-        + Op.AND(Op.DUP2, 0xffffffffffffffffffffffffffffffffffffffff)
-        + Op.PUSH3[0xf55d9d] + Op.PUSH1[0x0] + Op.DUP1
-        + Op.MSTORE(offset=Op.DUP3, value=0xf55d9d00000000000000000000000000000000000000000000000000000000)
-        + Op.PUSH1[0x4]
-        + Op.MSTORE(offset=Op.DUP2, value=Op.AND(0xffffffffffffffffffffffffffffffffffffffff, Op.COINBASE))
-        + Op.PUSH1[0x20] + Op.ADD + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.DUP7
-        + Op.SUB(Op.GAS, 0x32) + Op.JUMPI(pc=Op.PUSH2[0xe0], condition=Op.CALL)
-        + Op.STOP + Op.JUMPDEST + Op.POP + Op.POP
-        + Op.AND(Op.DUP2, 0xffffffffffffffffffffffffffffffffffffffff)
-        + Op.PUSH4[0xb9c3d0a5] + Op.PUSH1[0x20] + Op.PUSH1[0x0]
-        + Op.MSTORE(offset=Op.DUP2, value=0xb9c3d0a500000000000000000000000000000000000000000000000000000000)
-        + Op.PUSH1[0x4] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.DUP7
-        + Op.SUB(Op.GAS, 0x32) + Op.JUMPI(pc=0x137, condition=Op.CALL) + Op.STOP
-        + Op.JUMPDEST + Op.POP + Op.POP
-        + Op.JUMPI(pc=0x148, condition=Op.EQ(0xe1, Op.MLOAD(offset=0x0)))
-        + Op.JUMP(pc=0x151) + Op.JUMPDEST + Op.PUSH1[0x1] + Op.SWAP2 + Op.POP
-        + Op.JUMP(pc=0x156) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.SWAP2 + Op.POP
-        + Op.JUMPDEST + Op.POP + Op.SWAP1 + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0]
-        + Op.PUSH2[0x164] + Op.JUMP(pc=Op.PUSH2[0x5d]) + Op.JUMPDEST + Op.PUSH1[0x0]
-        + Op.EXP(0x100, 0x0)
-        + Op.AND(Op.NOT(Op.MUL(0xff, Op.DUP2)), Op.SLOAD(key=Op.DUP2)) + Op.SWAP1
-        + Op.OR(Op.MUL, Op.DUP4) + Op.SWAP1 + Op.SSTORE + Op.POP
-        + Op.AND(Op.DIV(Op.SLOAD(key=0x0), 0x1), 0xff) + Op.SWAP1 + Op.POP + Op.SWAP1
-        + Op.JUMP + Op.STOP + Op.PUSH1[0x75]
-        + Op.CODECOPY(dest_offset=0x0, offset=0xc, size=Op.DUP1) + Op.PUSH1[0x0]
-        + Op.RETURN + Op.STOP
-        + Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000)
-        + Op.JUMPI(pc=0x36, condition=Op.EQ(Op.DUP2, 0xf55d9d))
-        + Op.JUMPI(pc=0x45, condition=Op.EQ(0xb9c3d0a5, Op.DUP1)) + Op.STOP
-        + Op.JUMPDEST + Op.PUSH1[0x3f] + Op.CALLDATALOAD(offset=0x4)
-        + Op.JUMP(pc=0x5a) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0)
-        + Op.JUMPDEST + Op.PUSH1[0x4b] + Op.JUMP(pc=0x55) + Op.JUMPDEST
-        + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20)
-        + Op.JUMPDEST + Op.PUSH1[0xe1] + Op.SWAP1 + Op.JUMP + Op.JUMPDEST
-        + Op.SELFDESTRUCT(address=Op.AND(0xffffffffffffffffffffffffffffffffffffffff, Op.DUP1))
-        + Op.POP + Op.JUMP
-    ),
+        code=bytes.fromhex(
+            "7c01000000000000000000000000000000000000000000000000000000006000350463a6"  # noqa: E501
+            "0eedda8114610039578063c04062261461004b57005b61004161005d565b806000526020"  # noqa: E501
+            "6000f35b61005361015a565b8060005260206000f35b60006000608161018a6000396081"  # noqa: E501
+            "60006000f0905073ffffffffffffffffffffffffffffffffffffffff811662f55d9d6000"  # noqa: E501
+            "807ef55d9d00000000000000000000000000000000000000000000000000000000825260"  # noqa: E501
+            "044173ffffffffffffffffffffffffffffffffffffffff16815260200160006000866032"  # noqa: E501
+            "5a03f16100e057005b505073ffffffffffffffffffffffffffffffffffffffff811663b9"  # noqa: E501
+            "c3d0a5602060007fb9c3d0a5000000000000000000000000000000000000000000000000"  # noqa: E501
+            "0000000081526004600060008660325a03f161013757005b505060005160e11461014857"  # noqa: E501
+            "610151565b60019150610156565b600091505b5090565b600061016461005d565b600060"  # noqa: E501
+            "006101000a81548160ff0219169083021790555060ff6001600054041690509056006075"  # noqa: E501
+            "80600c6000396000f3007c01000000000000000000000000000000000000000000000000"  # noqa: E501
+            "000000006000350462f55d9d81146036578063b9c3d0a514604557005b603f600435605a"  # noqa: E501
+            "565b60006000f35b604b6055565b8060005260206000f35b60e190565b8073ffffffffff"  # noqa: E501
+            "ffffffffffffffffffffffffffffff16ff5056"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"
+            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("c0406226"),
@@ -111,7 +81,9 @@ def test_test_contract_suicide(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000) + Op.JUMPI(pc=Op.PUSH2[0x39], condition=Op.EQ(Op.DUP2, 0xa60eedda)) + Op.JUMPI(pc=Op.PUSH2[0x4b], condition=Op.EQ(0xc0406226, Op.DUP1)) + Op.STOP + Op.JUMPDEST + Op.PUSH2[0x41] + Op.JUMP(pc=Op.PUSH2[0x5d]) + Op.JUMPDEST + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20) + Op.JUMPDEST + Op.PUSH2[0x53] + Op.JUMP(pc=0x15a) + Op.JUMPDEST + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CODECOPY(dest_offset=0x0, offset=0x18a, size=0x81) + Op.CREATE(value=0x0, offset=0x0, size=0x81) + Op.SWAP1 + Op.POP + Op.AND(Op.DUP2, 0xffffffffffffffffffffffffffffffffffffffff) + Op.PUSH3[0xf55d9d] + Op.PUSH1[0x0] + Op.DUP1 + Op.MSTORE(offset=Op.DUP3, value=0xf55d9d00000000000000000000000000000000000000000000000000000000) + Op.PUSH1[0x4] + Op.MSTORE(offset=Op.DUP2, value=Op.AND(0xffffffffffffffffffffffffffffffffffffffff, Op.COINBASE)) + Op.PUSH1[0x20] + Op.ADD + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.DUP7 + Op.SUB(Op.GAS, 0x32) + Op.JUMPI(pc=Op.PUSH2[0xe0], condition=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.POP + Op.POP + Op.AND(Op.DUP2, 0xffffffffffffffffffffffffffffffffffffffff) + Op.PUSH4[0xb9c3d0a5] + Op.PUSH1[0x20] + Op.PUSH1[0x0] + Op.MSTORE(offset=Op.DUP2, value=0xb9c3d0a500000000000000000000000000000000000000000000000000000000) + Op.PUSH1[0x4] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.DUP7 + Op.SUB(Op.GAS, 0x32) + Op.JUMPI(pc=0x137, condition=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.POP + Op.POP + Op.JUMPI(pc=0x148, condition=Op.EQ(0xe1, Op.MLOAD(offset=0x0))) + Op.JUMP(pc=0x151) + Op.JUMPDEST + Op.PUSH1[0x1] + Op.SWAP2 + Op.POP + Op.JUMP(pc=0x156) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.SWAP2 + Op.POP + Op.JUMPDEST + Op.POP + Op.SWAP1 + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH2[0x164] + Op.JUMP(pc=Op.PUSH2[0x5d]) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.EXP(0x100, 0x0) + Op.AND(Op.NOT(Op.MUL(0xff, Op.DUP2)), Op.SLOAD(key=Op.DUP2)) + Op.SWAP1 + Op.OR(Op.MUL, Op.DUP4) + Op.SWAP1 + Op.SSTORE + Op.POP + Op.AND(Op.DIV(Op.SLOAD(key=0x0), 0x1), 0xff) + Op.SWAP1 + Op.POP + Op.SWAP1 + Op.JUMP + Op.STOP + Op.PUSH1[0x75] + Op.CODECOPY(dest_offset=0x0, offset=0xc, size=Op.DUP1) + Op.PUSH1[0x0] + Op.RETURN + Op.STOP + Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000) + Op.JUMPI(pc=0x36, condition=Op.EQ(Op.DUP2, 0xf55d9d)) + Op.JUMPI(pc=0x45, condition=Op.EQ(0xb9c3d0a5, Op.DUP1)) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x3f] + Op.CALLDATALOAD(offset=0x4) + Op.JUMP(pc=0x5a) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x4b] + Op.JUMP(pc=0x55) + Op.JUMPDEST + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20) + Op.JUMPDEST + Op.PUSH1[0xe1] + Op.SWAP1 + Op.JUMP + Op.JUMPDEST + Op.SELFDESTRUCT(address=Op.AND(0xffffffffffffffffffffffffffffffffffffffff, Op.DUP1)) + Op.POP + Op.JUMP,
+            code=bytes.fromhex(
+                "7c01000000000000000000000000000000000000000000000000000000006000350463a60eedda8114610039578063c04062261461004b57005b61004161005d565b8060005260206000f35b61005361015a565b8060005260206000f35b60006000608161018a600039608160006000f0905073ffffffffffffffffffffffffffffffffffffffff811662f55d9d6000807ef55d9d00000000000000000000000000000000000000000000000000000000825260044173ffffffffffffffffffffffffffffffffffffffff168152602001600060008660325a03f16100e057005b505073ffffffffffffffffffffffffffffffffffffffff811663b9c3d0a5602060007fb9c3d0a50000000000000000000000000000000000000000000000000000000081526004600060008660325a03f161013757005b505060005160e11461014857610151565b60019150610156565b600091505b5090565b600061016461005d565b600060006101000a81548160ff0219169083021790555060ff600160005404169050905600607580600c6000396000f3007c01000000000000000000000000000000000000000000000000000000006000350462f55d9d81146036578063b9c3d0a514604557005b603f600435605a565b60006000f35b604b6055565b8060005260206000f35b60e190565b8073ffffffffffffffffffffffffffffffffffffffff16ff5056"  # noqa: E501
+            ),
         ),
     }
 

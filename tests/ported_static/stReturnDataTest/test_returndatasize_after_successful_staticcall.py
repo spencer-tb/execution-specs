@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stReturnDataTest/returndatasize_after_successful_staticcallFiller.json
+tests/static/state_tests/stReturnDataTest
+returndatasize_after_successful_staticcallFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stReturnDataTest/returndatasize_after_successful_staticcallFiller.json"],
+    [
+        "tests/static/state_tests/stReturnDataTest/returndatasize_after_successful_staticcallFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,25 +50,27 @@ def test_returndatasize_after_successful_staticcall(
     pre[callee] = Account(
         balance=0x6400000000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
-        + Op.RETURN(offset=0x0, size=0x6) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600052"  # noqa: E501
+            "60066000f300"
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.STATICCALL(gas=0xea60, address=0xc6426ee9b84ce08176d8d295613a7d10c48576b, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE) + Op.STOP
-    ),
-        storage={0x0: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff},
+        code=bytes.fromhex(
+            "6000600060006000730c6426ee9b84ce08176d8d295613a7d10c48576b61ea60fa503d60"  # noqa: E501
+            "005500"
+        ),
+        storage={
+            0x0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+        },
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -76,11 +82,15 @@ def test_returndatasize_after_successful_staticcall(
 
     post = {
         callee: Account(
-            code=Op.MSTORE(offset=0x0, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) + Op.RETURN(offset=0x0, size=0x6) + Op.STOP,
+            code=bytes.fromhex(
+                "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60005260066000f300"  # noqa: E501
+            ),
         ),
         contract: Account(
             storage={0: 6},
-            code=Op.POP(Op.STATICCALL(gas=0xea60, address=0xc6426ee9b84ce08176d8d295613a7d10c48576b, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000730c6426ee9b84ce08176d8d295613a7d10c48576b61ea60fa503d60005500"  # noqa: E501
+            ),
         ),
     }
 

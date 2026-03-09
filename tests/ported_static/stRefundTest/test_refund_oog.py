@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRefundTest/refund_OOGFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,18 +43,18 @@ def test_refund_oog(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x7a120, nonce=0)
+    pre[sender] = Account(balance=0x7A120, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP,
+        code=bytes.fromhex("600060015500"),
         storage={0x1: 0x1},
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x8518c6b13163f88376adbde956b3d6c1e4e027e25e20994c1ad0d78b8fd7fac9"
+            "0x8518c6b13163f88376adbde956b3d6c1e4e027e25e20994c1ad0d78b8fd7fac9"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -64,7 +65,7 @@ def test_refund_oog(
     )
 
     post = {
-        contract: Account(storage={1: 1}, code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP),
+        contract: Account(storage={1: 1}, code=bytes.fromhex("600060015500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

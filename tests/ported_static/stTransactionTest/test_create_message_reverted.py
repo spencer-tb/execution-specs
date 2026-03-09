@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stTransactionTest/CreateMessageRevertedFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/CreateMessageRevertedFiller.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/CreateMessageRevertedFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,16 +48,13 @@ def test_create_message_reverted(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x600c600055)
-        + Op.CREATE(value=0x0, offset=0x1b, size=0x5) + Op.STOP
-    ),
+        code=bytes.fromhex("64600c6000556000526005601b6000f000"),
     )
-    pre[sender] = Account(balance=0x1c9c380, nonce=0)
+    pre[sender] = Account(balance=0x1C9C380, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x2b75d0c814eb07c075fccbdd9a036faf651d9c46d7477d6c4f30772cfca90d38"
+            "0x2b75d0c814eb07c075fccbdd9a036faf651d9c46d7477d6c4f30772cfca90d38"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,7 +66,7 @@ def test_create_message_reverted(
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x600c600055) + Op.CREATE(value=0x0, offset=0x1b, size=0x5) + Op.STOP,
+            code=bytes.fromhex("64600c6000556000526005601b6000f000"),
         ),
     }
 

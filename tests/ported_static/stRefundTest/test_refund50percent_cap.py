@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRefundTest/refund50percentCapFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,22 +46,25 @@ def test_refund50percent_cap(
     pre[sender] = Account(balance=0x989680, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.POP(Op.SLOAD(key=0x1)) + Op.POP(Op.SLOAD(key=0x2))
-        + Op.SSTORE(key=0xa, value=Op.EXP(0x2, 0xff))
-        + Op.SSTORE(key=0xb, value=Op.BALANCE(address=Op.ADDRESS))
-        + Op.SSTORE(key=0x1, value=0x0) + Op.SSTORE(key=0x2, value=0x0)
-        + Op.SSTORE(key=0x3, value=0x0) + Op.SSTORE(key=0x4, value=0x0)
-        + Op.SSTORE(key=0x5, value=0x0) + Op.SSTORE(key=0x6, value=0x0) + Op.STOP
-    ),
-        storage={0x1: 0x1, 0x2: 0x1, 0x3: 0x1, 0x4: 0x1, 0x5: 0x1, 0x6: 0x1},
+        code=bytes.fromhex(
+            "600154506002545060ff60020a600a553031600b55600060015560006002556000600355"  # noqa: E501
+            "60006004556000600555600060065500"
+        ),
+        storage={
+            0x1: 0x1,
+            0x2: 0x1,
+            0x3: 0x1,
+            0x4: 0x1,
+            0x5: 0x1,
+            0x6: 0x1,
+        },
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xdc4efa209aecdd4c2d5201a419ea27506151b4ec687f14a613229e310932491b"
+            "0xdc4efa209aecdd4c2d5201a419ea27506151b4ec687f14a613229e310932491b"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -72,8 +76,13 @@ def test_refund50percent_cap(
 
     post = {
         contract: Account(
-            storage={10: 0x8000000000000000000000000000000000000000000000000000000000000000, 11: 0xde0b6b3a7640000},
-            code=Op.POP(Op.SLOAD(key=0x1)) + Op.POP(Op.SLOAD(key=0x2)) + Op.SSTORE(key=0xa, value=Op.EXP(0x2, 0xff)) + Op.SSTORE(key=0xb, value=Op.BALANCE(address=Op.ADDRESS)) + Op.SSTORE(key=0x1, value=0x0) + Op.SSTORE(key=0x2, value=0x0) + Op.SSTORE(key=0x3, value=0x0) + Op.SSTORE(key=0x4, value=0x0) + Op.SSTORE(key=0x5, value=0x0) + Op.SSTORE(key=0x6, value=0x0) + Op.STOP,
+            storage={
+                10: 0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
+                11: 0xDE0B6B3A7640000,
+            },
+            code=bytes.fromhex(
+                "600154506002545060ff60020a600a553031600b5560006001556000600255600060035560006004556000600555600060065500"  # noqa: E501
+            ),
         ),
     }
 

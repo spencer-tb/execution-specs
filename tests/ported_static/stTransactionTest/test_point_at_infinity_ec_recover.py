@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stTransactionTest/PointAtInfinityECRecoverFiller.yml
 """
@@ -19,7 +21,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/PointAtInfinityECRecoverFiller.yml"],
+    [
+        "tests/static/state_tests/stTransactionTest/PointAtInfinityECRecoverFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -42,20 +46,20 @@ def test_point_at_infinity_ec_recover(
     )
 
     pre[contract] = Account(
-        balance=0xffffffff,
+        balance=0xFFFFFFFF,
         nonce=0,
         code=bytes.fromhex(
-        "6000805160206065833981519152600052601b6020527f79be667ef9dcbbac55a06295ce"
-        "870b07029bfcdb2dce28d959f2815b16f817986040526000805160206065833981519152"
-        "60605260206000608081806001620f4240f160005560005160015500fe6b8d2c81b11b2d"
-        "699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9"
-    ),
+            "6000805160206065833981519152600052601b6020527f79be667ef9dcbbac55a06295ce"  # noqa: E501
+            "870b07029bfcdb2dce28d959f2815b16f817986040526000805160206065833981519152"  # noqa: E501
+            "60605260206000608081806001620f4240f160005560005160015500fe6b8d2c81b11b2d"  # noqa: E501
+            "699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,8 +71,13 @@ def test_point_at_infinity_ec_recover(
 
     post = {
         contract: Account(
-            storage={0: 1, 1: 0x6b8d2c81b11b2d699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9},
-            code=bytes.fromhex("6000805160206065833981519152600052601b6020527f79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798604052600080516020606583398151915260605260206000608081806001620f4240f160005560005160015500fe6b8d2c81b11b2d699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9"),
+            storage={
+                0: 1,
+                1: 0x6B8D2C81B11B2D699528DDE488DBDF2F94293D0D33C32E347F255FA4A6C1F0A9,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "6000805160206065833981519152600052601b6020527f79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798604052600080516020606583398151915260605260206000608081806001620f4240f160005560005160015500fe6b8d2c81b11b2d699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9"  # noqa: E501
+            ),
         ),
     }
 

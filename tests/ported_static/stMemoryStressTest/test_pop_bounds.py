@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/POP_BoundsFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -29,7 +30,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         150000,
         16777216,
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_pop_bounds(
@@ -54,18 +55,16 @@ def test_pop_bounds(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(0x0) + Op.POP(0xffffffff) + Op.POP(0xffffffffffffffff)
-        + Op.POP(0xffffffffffffffffffffffffffffffff)
-        + Op.POP(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60005063ffffffff5067ffffffffffffffff506fffffffffffffffffffffffffffffffff"  # noqa: E501
+            "507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5000"  # noqa: E501
+        ),
     )
-    pre[sender] = Account(balance=0x7ffffffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xfe5be118ad5955e30e0ffc4e1f1bbdcaa7f5a67cb1426c4ac19e32c80eccdc06"
+            "0xfe5be118ad5955e30e0ffc4e1f1bbdcaa7f5a67cb1426c4ac19e32c80eccdc06"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -77,7 +76,9 @@ def test_pop_bounds(
 
     post = {
         contract: Account(
-            code=Op.POP(0x0) + Op.POP(0xffffffff) + Op.POP(0xffffffffffffffff) + Op.POP(0xffffffffffffffffffffffffffffffff) + Op.POP(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) + Op.STOP,
+            code=bytes.fromhex(
+                "60005063ffffffff5067ffffffffffffffff506fffffffffffffffffffffffffffffffff507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5000"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCallDelegateCodesCallCodeHomestead/callcodecallcallcode_101_SuicideEndFiller.json
+tests/static/state_tests/stCallDelegateCodesCallCodeHomestead
+callcodecallcallcode_101_SuicideEndFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallDelegateCodesCallCodeHomestead/callcodecallcallcode_101_SuicideEndFiller.json"],
+    [
+        "tests/static/state_tests/stCallDelegateCodesCallCodeHomestead/callcodecallcallcode_101_SuicideEndFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,40 +50,39 @@ def test_callcodecallcallcode_101_suicide_end(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=0x249f0, address=0xeaf8c2ae0d01a880cea4e1aa88def5edd153d57b, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "604060006040600073eaf8c2ae0d01a880cea4e1aa88def5edd153d57b620249f0f46000"  # noqa: E501
+            "5500"
+        ),
     )
     pre[callee] = Account(
-        balance=0x2540be400,
+        balance=0x2540BE400,
         nonce=0,
-        code=Op.SSTORE(key=0x3, value=0x1) + Op.STOP,
+        code=bytes.fromhex("600160035500"),
     )
     pre[callee_1] = Account(
-        balance=0x2540be400,
+        balance=0x2540BE400,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x2, value=Op.DELEGATECALL(gas=0xc350, address=0x73b954ebc05bb0ff4a0f6a13a054d50ad1584099, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.SELFDESTRUCT(address=0xeaf8c2ae0d01a880cea4e1aa88def5edd153d57b)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60406000604060007373b954ebc05bb0ff4a0f6a13a054d50ad158409961c350f4600255"  # noqa: E501
+            "73eaf8c2ae0d01a880cea4e1aa88def5edd153d57bff00"
+        ),
     )
     pre[callee_2] = Account(
-        balance=0x2540be400,
+        balance=0x2540BE400,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=0x186a0, address=0xac521409e2fa9526bfe6b827805783d2e307c4ce, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6040600060406000600073ac521409e2fa9526bfe6b827805783d2e307c4ce620186a0f2"  # noqa: E501
+            "60015500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -92,14 +95,20 @@ def test_callcodecallcallcode_101_suicide_end(
     post = {
         contract: Account(
             storage={0: 1, 1: 1, 2: 1, 3: 1},
-            code=Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=0x249f0, address=0xeaf8c2ae0d01a880cea4e1aa88def5edd153d57b, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "604060006040600073eaf8c2ae0d01a880cea4e1aa88def5edd153d57b620249f0f460005500"  # noqa: E501
+            ),
         ),
-        callee: Account(code=Op.SSTORE(key=0x3, value=0x1) + Op.STOP),
+        callee: Account(code=bytes.fromhex("600160035500")),
         callee_1: Account(
-            code=Op.SSTORE(key=0x2, value=Op.DELEGATECALL(gas=0xc350, address=0x73b954ebc05bb0ff4a0f6a13a054d50ad1584099, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.SELFDESTRUCT(address=0xeaf8c2ae0d01a880cea4e1aa88def5edd153d57b) + Op.STOP,
+            code=bytes.fromhex(
+                "60406000604060007373b954ebc05bb0ff4a0f6a13a054d50ad158409961c350f460025573eaf8c2ae0d01a880cea4e1aa88def5edd153d57bff00"  # noqa: E501
+            ),
         ),
         callee_2: Account(
-            code=Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=0x186a0, address=0xac521409e2fa9526bfe6b827805783d2e307c4ce, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "6040600060406000600073ac521409e2fa9526bfe6b827805783d2e307c4ce620186a0f260015500"  # noqa: E501
+            ),
         ),
     }
 

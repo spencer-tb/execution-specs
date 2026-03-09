@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSystemOperationsTest/CallRecursiveBomb0Filler.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/CallRecursiveBomb0Filler.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/CallRecursiveBomb0Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.valid_until("Prague")
@@ -47,25 +50,23 @@ def test_call_recursive_bomb0(
     pre[contract] = Account(
         balance=0x77359400,
         nonce=0,
-        code=(
-        Op.CALL(gas=0x5f5e100, address=0x783516813e6366b978f7101a6a12b4c8498b0283, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600060006000601773783516813e6366b978f7101a6a12b4c8498b02836305f5e100"  # noqa: E501
+            "f100"
+        ),
     )
     pre[callee] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-        + Op.SSTORE(key=0x1, value=Op.CALL(gas=Op.SUB(Op.GAS, 0x2af8), address=Op.ADDRESS, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6001600054016000556000600060006000600030612af85a03f160015500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -77,11 +78,15 @@ def test_call_recursive_bomb0(
 
     post = {
         contract: Account(
-            code=Op.CALL(gas=0x5f5e100, address=0x783516813e6366b978f7101a6a12b4c8498b0283, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000601773783516813e6366b978f7101a6a12b4c8498b02836305f5e100f100"  # noqa: E501
+            ),
         ),
         callee: Account(
             storage={0: 313, 1: 1},
-            code=Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)) + Op.SSTORE(key=0x1, value=Op.CALL(gas=Op.SUB(Op.GAS, 0x2af8), address=Op.ADDRESS, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "6001600054016000556000600060006000600030612af85a03f160015500"
+            ),
         ),
     }
 

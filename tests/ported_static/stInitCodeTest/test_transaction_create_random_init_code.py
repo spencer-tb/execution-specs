@@ -1,8 +1,9 @@
 """
-stack underflow in init code
+stack underflow in init code.
 
 Ported from:
-tests/static/state_tests/stInitCodeTest/TransactionCreateRandomInitCodeFiller.json
+tests/static/state_tests/stInitCodeTest
+TransactionCreateRandomInitCodeFiller.json
 """
 
 import pytest
@@ -21,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stInitCodeTest/TransactionCreateRandomInitCodeFiller.json"],
+    [
+        "tests/static/state_tests/stInitCodeTest/TransactionCreateRandomInitCodeFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -29,7 +32,7 @@ def test_transaction_create_random_init_code(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """stack underflow in init code."""
+    """Stack underflow in init code."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
@@ -43,11 +46,11 @@ def test_transaction_create_random_init_code(
     )
 
     pre[coinbase] = Account(balance=0, nonce=1)
-    pre[sender] = Account(balance=0x2540be400, nonce=0)
+    pre[sender] = Account(balance=0x2540BE400, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("600a80600c6000396000f200600160008035811a8100"),
@@ -57,6 +60,6 @@ def test_transaction_create_random_init_code(
         value=1,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/MSTORE_Bounds2aFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -27,10 +28,24 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0x10da52cbd00939aebe8218a1dd2eda0bffe93f30"): Account(code=Op.MSTORE(offset=0x3fffff, value=0x1) + Op.STOP)}),
-        (250000000, {Address("0x10da52cbd00939aebe8218a1dd2eda0bffe93f30"): Account(code=Op.MSTORE(offset=0x3fffff, value=0x1) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0x10da52cbd00939aebe8218a1dd2eda0bffe93f30"): Account(
+                    code=bytes.fromhex("6001623fffff5200")
+                )
+            },
+        ),
+        (
+            250000000,
+            {
+                Address("0x10da52cbd00939aebe8218a1dd2eda0bffe93f30"): Account(
+                    code=bytes.fromhex("6001623fffff5200")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_mstore_bounds2a(
@@ -56,16 +71,16 @@ def test_mstore_bounds2a(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=Op.MSTORE(offset=0x3fffff, value=0x1) + Op.STOP,
+        code=bytes.fromhex("6001623fffff5200"),
     )
     pre[sender] = Account(
-        balance=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,
+        balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
         nonce=0,
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x50eadfb1030587ab3a993a6ecc073041fc3b45e119daa31a13d78c7e209631a5"
+            "0x50eadfb1030587ab3a993a6ecc073041fc3b45e119daa31a13d78c7e209631a5"  # noqa: E501
         ),
         to=contract,
         data=b"",

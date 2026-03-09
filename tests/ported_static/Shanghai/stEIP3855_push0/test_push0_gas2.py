@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/Shanghai/stEIP3855_push0/push0Gas2Filler.yml
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,42 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        ("0000000000000000000000000000000000001000", {Address("0x0000000000000000000000000000000000000200"): Account(code=Op.GAS + Op.PUSH1[0x0] + Op.GAS + Op.SWAP1 + Op.SWAP2 + Op.SUB + Op.SWAP1 + Op.SSTORE), Address("0x0000000000000000000000000000000000001000"): Account(storage={0: 4}, code=Op.GAS + Op.PUSH0 + Op.GAS + Op.SWAP1 + Op.SWAP2 + Op.SUB + Op.SWAP1 + Op.SSTORE), Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={0: 1, 1: 1}, code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x186a0, address=Op.SHR(0x60, Op.CALLDATALOAD(offset=Op.DUP1)), value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0)) + Op.SSTORE(key=Op.DUP1, value=0x1) + Op.STOP)}),
-        ("0000000000000000000000000000000000000200", {Address("0x0000000000000000000000000000000000000200"): Account(storage={0: 5}, code=Op.GAS + Op.PUSH1[0x0] + Op.GAS + Op.SWAP1 + Op.SWAP2 + Op.SUB + Op.SWAP1 + Op.SSTORE), Address("0x0000000000000000000000000000000000001000"): Account(code=Op.GAS + Op.PUSH0 + Op.GAS + Op.SWAP1 + Op.SWAP2 + Op.SUB + Op.SWAP1 + Op.SSTORE), Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={0: 1, 1: 1}, code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x186a0, address=Op.SHR(0x60, Op.CALLDATALOAD(offset=Op.DUP1)), value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0)) + Op.SSTORE(key=Op.DUP1, value=0x1) + Op.STOP)}),
+        (
+            "0000000000000000000000000000000000001000",
+            {
+                Address("0x0000000000000000000000000000000000000200"): Account(
+                    code=bytes.fromhex("5a60005a9091039055")
+                ),
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    storage={0: 4}, code=bytes.fromhex("5a5f5a9091039055")
+                ),
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    storage={0: 1, 1: 1},
+                    code=bytes.fromhex(
+                        "600080808080803560601c620186a0f16000556001805500"
+                    ),
+                ),
+            },
+        ),
+        (
+            "0000000000000000000000000000000000000200",
+            {
+                Address("0x0000000000000000000000000000000000000200"): Account(
+                    storage={0: 5}, code=bytes.fromhex("5a60005a9091039055")
+                ),
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex("5a5f5a9091039055")
+                ),
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    storage={0: 1, 1: 1},
+                    code=bytes.fromhex(
+                        "600080808080803560601c620186a0f16000556001805500"
+                    ),
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_push0_gas2(
@@ -57,31 +90,25 @@ def test_push0_gas2(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.GAS + Op.PUSH1[0x0] + Op.GAS + Op.SWAP1 + Op.SWAP2 + Op.SUB + Op.SWAP1
-        + Op.SSTORE
-    ),
+        code=bytes.fromhex("5a60005a9091039055"),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=Op.GAS + Op.PUSH0 + Op.GAS + Op.SWAP1 + Op.SWAP2 + Op.SUB + Op.SWAP1 + Op.SSTORE,
+        code=bytes.fromhex("5a5f5a9091039055"),
     )
     pre[sender] = Account(balance=0x989680, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x186a0, address=Op.SHR(0x60, Op.CALLDATALOAD(offset=Op.DUP1)), value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0))
-        + Op.SSTORE(key=Op.DUP1, value=0x1) + Op.STOP
-    ),
+        code=bytes.fromhex("600080808080803560601c620186a0f16000556001805500"),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

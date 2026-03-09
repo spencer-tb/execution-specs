@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stSystemOperationsTest/CallToReturn1ForDynamicJump0Filler.json
+tests/static/state_tests/stSystemOperationsTest
+CallToReturn1ForDynamicJump0Filler.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/CallToReturn1ForDynamicJump0Filler.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/CallToReturn1ForDynamicJump0Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,25 +50,21 @@ def test_call_to_return1_for_dynamic_jump0(
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=0x1) + Op.MSTORE8(offset=0x1f, value=0x2a)
-        + Op.RETURN(offset=0x1f, size=0x1)
-    ),
+        code=bytes.fromhex("6001600155602a601f536001601ff3"),
     )
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x3e8, address=0x64963d42a3dff7bf49ce946e12f6c9034c746888, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x1f, ret_size=0x1))
-        + Op.JUMP(pc=Op.MLOAD(offset=0x0)) + Op.JUMPDEST
-        + Op.SSTORE(key=0x23, value=0x23)
-    ),
+        code=bytes.fromhex(
+            "6001601f6000600060177364963d42a3dff7bf49ce946e12f6c9034c7468886103e8f160"  # noqa: E501
+            "0055600051565b6023602355"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -75,11 +75,11 @@ def test_call_to_return1_for_dynamic_jump0(
     )
 
     post = {
-        callee: Account(
-            code=Op.SSTORE(key=0x1, value=0x1) + Op.MSTORE8(offset=0x1f, value=0x2a) + Op.RETURN(offset=0x1f, size=0x1),
-        ),
+        callee: Account(code=bytes.fromhex("6001600155602a601f536001601ff3")),
         contract: Account(
-            code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x3e8, address=0x64963d42a3dff7bf49ce946e12f6c9034c746888, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x1f, ret_size=0x1)) + Op.JUMP(pc=Op.MLOAD(offset=0x0)) + Op.JUMPDEST + Op.SSTORE(key=0x23, value=0x23),
+            code=bytes.fromhex(
+                "6001601f6000600060177364963d42a3dff7bf49ce946e12f6c9034c7468886103e8f1600055600051565b6023602355"  # noqa: E501
+            ),
         ),
     }
 

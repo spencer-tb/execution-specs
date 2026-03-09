@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stNonZeroCallsTest/NonZeroValue_SUICIDEFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stNonZeroCallsTest/NonZeroValue_SUICIDEFiller.json"],
+    [
+        "tests/static/state_tests/stNonZeroCallsTest/NonZeroValue_SUICIDEFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -42,16 +45,16 @@ def test_non_zero_value_suicide(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
         balance=1,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b) + Op.STOP,
+        code=bytes.fromhex("73c94f5374fce5edbc8e2a8697c15331677e6ebf0bff00"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -63,7 +66,9 @@ def test_non_zero_value_suicide(
 
     post = {
         contract: Account(
-            code=Op.SELFDESTRUCT(address=0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b) + Op.STOP,
+            code=bytes.fromhex(
+                "73c94f5374fce5edbc8e2a8697c15331677e6ebf0bff00"
+            ),
         ),
     }
 

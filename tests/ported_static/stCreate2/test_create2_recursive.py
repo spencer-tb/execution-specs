@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -29,11 +28,38 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (9151314442816847871, {Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.MSTORE(offset=0x0, value=0x606460006000396103e85a10601b576000606460006000f5601d565b5a5b) + Op.CREATE2(value=0x0, offset=0x2, size=0x1e, salt=0x0) + Op.STOP)}),
-        (20070000000000, {Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.MSTORE(offset=0x0, value=0x606460006000396103e85a10601b576000606460006000f5601d565b5a5b) + Op.CREATE2(value=0x0, offset=0x2, size=0x1e, salt=0x0) + Op.STOP)}),
-        (20080000000000, {Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.MSTORE(offset=0x0, value=0x606460006000396103e85a10601b576000606460006000f5601d565b5a5b) + Op.CREATE2(value=0x0, offset=0x2, size=0x1e, salt=0x0) + Op.STOP)}),
+        (
+            9151314442816847871,
+            {
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "7d606460006000396103e85a10601b576000606460006000f5601d565b5a5b6000526000601e60026000f500"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            20070000000000,
+            {
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "7d606460006000396103e85a10601b576000606460006000f5601d565b5a5b6000526000601e60026000f500"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            20080000000000,
+            {
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "7d606460006000396103e85a10601b576000606460006000f5601d565b5a5b6000526000601e60026000f500"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2'],
+    ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2_recursive(
@@ -42,7 +68,7 @@ def test_create2_recursive(
     tx_gas_limit: int,
     expected_post: dict,
 ) -> None:
-    """Create2 inside Create2 inside Create2....."""
+    """Create2 inside Create2 inside Create2...."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
@@ -57,21 +83,21 @@ def test_create2_recursive(
     )
 
     pre[sender] = Account(
-        balance=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,
+        balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
         nonce=0,
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x606460006000396103e85a10601b576000606460006000f5601d565b5a5b)
-        + Op.CREATE2(value=0x0, offset=0x2, size=0x1e, salt=0x0) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7d606460006000396103e85a10601b576000606460006000f5601d565b5a5b6000526000"  # noqa: E501
+            "601e60026000f500"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",

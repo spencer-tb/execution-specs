@@ -1,5 +1,5 @@
 """
-Ori Pomerantz qbzzt1@gmail.com
+Ori Pomerantz qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/VMTests/vmArithmeticTest/fibFiller.yml
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,28 +43,23 @@ def test_fib(
         gas_limit=100000000,
     )
 
-    pre[sender] = Account(balance=0xba1a9ce0ba1a9ce, nonce=0)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
     pre[contract] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x2, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x2, 0x1)), Op.SLOAD(key=Op.SUB(0x2, 0x2))))
-        + Op.SSTORE(key=0x3, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x3, 0x1)), Op.SLOAD(key=Op.SUB(0x3, 0x2))))
-        + Op.SSTORE(key=0x4, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x4, 0x1)), Op.SLOAD(key=Op.SUB(0x4, 0x2))))
-        + Op.SSTORE(key=0x5, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x5, 0x1)), Op.SLOAD(key=Op.SUB(0x5, 0x2))))
-        + Op.SSTORE(key=0x6, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x6, 0x1)), Op.SLOAD(key=Op.SUB(0x6, 0x2))))
-        + Op.SSTORE(key=0x7, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x7, 0x1)), Op.SLOAD(key=Op.SUB(0x7, 0x2))))
-        + Op.SSTORE(key=0x8, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x8, 0x1)), Op.SLOAD(key=Op.SUB(0x8, 0x2))))
-        + Op.SSTORE(key=0x9, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x9, 0x1)), Op.SLOAD(key=Op.SUB(0x9, 0x2))))
-        + Op.SSTORE(key=0xa, value=Op.ADD(Op.SLOAD(key=Op.SUB(0xa, 0x1)), Op.SLOAD(key=Op.SUB(0xa, 0x2))))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600260020354600160020354016002556002600303546001600303540160035560026004"  # noqa: E501
+            "035460016004035401600455600260050354600160050354016005556002600603546001"  # noqa: E501
+            "600603540160065560026007035460016007035401600755600260080354600160080354"  # noqa: E501
+            "01600855600260090354600160090354016009556002600a03546001600a035401600a55"  # noqa: E501
+            "00"
+        ),
         storage={0x0: 0x0, 0x1: 0x1},
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x40ac0fc28c27e961ee46ec43355a094de205856edbd4654cf2577c2608d4ec1e"
+            "0x40ac0fc28c27e961ee46ec43355a094de205856edbd4654cf2577c2608d4ec1e"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("01"),
@@ -77,8 +71,21 @@ def test_fib(
 
     post = {
         contract: Account(
-            storage={1: 1, 2: 1, 3: 2, 4: 3, 5: 5, 6: 8, 7: 13, 8: 21, 9: 34, 10: 55},
-            code=Op.SSTORE(key=0x2, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x2, 0x1)), Op.SLOAD(key=Op.SUB(0x2, 0x2)))) + Op.SSTORE(key=0x3, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x3, 0x1)), Op.SLOAD(key=Op.SUB(0x3, 0x2)))) + Op.SSTORE(key=0x4, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x4, 0x1)), Op.SLOAD(key=Op.SUB(0x4, 0x2)))) + Op.SSTORE(key=0x5, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x5, 0x1)), Op.SLOAD(key=Op.SUB(0x5, 0x2)))) + Op.SSTORE(key=0x6, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x6, 0x1)), Op.SLOAD(key=Op.SUB(0x6, 0x2)))) + Op.SSTORE(key=0x7, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x7, 0x1)), Op.SLOAD(key=Op.SUB(0x7, 0x2)))) + Op.SSTORE(key=0x8, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x8, 0x1)), Op.SLOAD(key=Op.SUB(0x8, 0x2)))) + Op.SSTORE(key=0x9, value=Op.ADD(Op.SLOAD(key=Op.SUB(0x9, 0x1)), Op.SLOAD(key=Op.SUB(0x9, 0x2)))) + Op.SSTORE(key=0xa, value=Op.ADD(Op.SLOAD(key=Op.SUB(0xa, 0x1)), Op.SLOAD(key=Op.SUB(0xa, 0x2)))) + Op.STOP,
+            storage={
+                1: 1,
+                2: 1,
+                3: 2,
+                4: 3,
+                5: 5,
+                6: 8,
+                7: 13,
+                8: 21,
+                9: 34,
+                10: 55,
+            },
+            code=bytes.fromhex(
+                "60026002035460016002035401600255600260030354600160030354016003556002600403546001600403540160045560026005035460016005035401600555600260060354600160060354016006556002600703546001600703540160075560026008035460016008035401600855600260090354600160090354016009556002600a03546001600a035401600a5500"  # noqa: E501
+            ),
         ),
     }
 

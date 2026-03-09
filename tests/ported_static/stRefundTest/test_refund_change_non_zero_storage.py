@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRefundTest/refund_changeNonZeroStorageFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stRefundTest/refund_changeNonZeroStorageFiller.json"],
+    [
+        "tests/static/state_tests/stRefundTest/refund_changeNonZeroStorageFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -42,18 +45,18 @@ def test_refund_change_non_zero_storage(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x3c336080, nonce=0)
+    pre[sender] = Account(balance=0x3C336080, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=0x17) + Op.STOP,
+        code=bytes.fromhex("601760015500"),
         storage={0x1: 0x1},
     )
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4d9fc6fdf95098986741ee78843ac52beed77c8c801dc87bd3f04cd6bbf1a3eb"
+            "0x4d9fc6fdf95098986741ee78843ac52beed77c8c801dc87bd3f04cd6bbf1a3eb"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -64,7 +67,7 @@ def test_refund_change_non_zero_storage(
     )
 
     post = {
-        contract: Account(storage={1: 23}, code=Op.SSTORE(key=0x1, value=0x17) + Op.STOP),
+        contract: Account(storage={1: 23}, code=bytes.fromhex("601760015500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

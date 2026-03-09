@@ -77,6 +77,7 @@ def parse_network_upper_bound(network_str: str) -> str | None:
         ">=Cancun"       -> None (no upper bound)
         ">=Cancun<Osaka" -> "Osaka" (exclusive upper bound)
         "Cancun"         -> None (exact fork)
+
     """
     match = re.search(r"<(\w+)$", network_str.strip())
     if match:
@@ -93,13 +94,14 @@ def camel_to_snake(name: str) -> str:
     """Convert CamelCase to snake_case, preserving leading numbers."""
     # Insert _ before uppercase letters preceded by lowercase or digits
     s = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
-    # Insert _ before uppercase letters followed by lowercase (e.g. ABCDef -> ABC_Def)
+    # Insert _ before uppercase followed by lowercase (ABCDef -> ABC_Def)
     s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", s)
     return s.lower()
 
 
 def filler_name_to_test_name(filler_stem: str) -> str:
-    """Convert filler stem to Python test function/file name.
+    """
+    Convert filler stem to Python test function/file name.
 
     e.g. 'callcode_checkPCFiller' -> 'test_callcode_check_pc'
     e.g. 'ContractCreationSpamFiller' -> 'test_contract_creation_spam'
@@ -131,18 +133,30 @@ def format_balance(v: int) -> str:
     return format_int(v, force_hex=(v > 9999))
 
 
-def format_storage(storage: dict[str, str]) -> str:
+def format_storage(
+    storage: dict[str, str],
+    indent: str = "                ",
+) -> str:
     """Format storage dict as Python literal."""
     if not storage:
         return "{}"
     items = []
     for k, v in sorted(storage.items(), key=lambda x: int(x[0], 16)):
         items.append(f"{hex(int(k, 16))}: {hex(int(v, 16))}")
-    return "{" + ", ".join(items) + "}"
+    single = "{" + ", ".join(items) + "}"
+    if len(single) <= 50:
+        return single
+    formatted: list[str] = []
+    for item in items:
+        formatted.append(item + ",")
+    inner = ("\n" + indent).join(formatted)
+    close = indent[4:] if len(indent) >= 4 else ""
+    return "{\n" + indent + inner + "\n" + close + "}"
 
 
 def _format_exception(exc_str: str) -> str:
-    """Format an expectException string as Python code.
+    """
+    Format an expectException string as Python code.
 
     Single: 'TransactionException.FOO' -> 'TransactionException.FOO'
     Compound: 'TransactionException.FOO|TransactionException.BAR'
@@ -151,10 +165,17 @@ def _format_exception(exc_str: str) -> str:
     parts = [p.strip() for p in exc_str.split("|")]
     if len(parts) == 1:
         return parts[0]
-    return "[" + ", ".join(parts) + "]"
+    single = "[" + ", ".join(parts) + "]"
+    if len("        error=" + single + ",") <= 79:
+        return single
+    inner = ",\n            ".join(parts)
+    return "[\n            " + inner + ",\n        ]"
 
 
-def _format_access_list(al: list[dict[str, Any]]) -> str:
+def _format_access_list(
+    al: list[dict[str, Any]],
+    multiline: bool = True,
+) -> str:
     """Format an access list as Python code."""
     if not al:
         return "[]"
@@ -164,21 +185,40 @@ def _format_access_list(al: list[dict[str, Any]]) -> str:
         keys = entry.get("storageKeys", [])
         if keys:
             key_strs = ", ".join(f'Hash("{k}")' for k in keys)
-            items.append(
-                f'AccessList(address=Address("{addr}"), storage_keys=[{key_strs}])'
+            single = (
+                f'AccessList(address=Address("{addr}"),'
+                f" storage_keys=[{key_strs}])"
             )
+            if multiline and len("            " + single) > 79:
+                key_items = [f'Hash("{k}")' for k in keys]
+                ki = ",\n                    ".join(key_items)
+                items.append(
+                    f"AccessList(\n"
+                    f'                address=Address("{addr}"),\n'
+                    f"                storage_keys=[\n"
+                    f"                    {ki},\n"
+                    f"                ],\n"
+                    f"            )"
+                )
+            else:
+                items.append(single)
         else:
             items.append(
                 f'AccessList(address=Address("{addr}"), storage_keys=[])'
             )
+    if not multiline:
+        return "[" + ", ".join(items) + "]"
     if len(items) == 1:
-        return f"[{items[0]}]"
+        single = f"[{items[0]}]"
+        if "\n" not in single and len("        " + single + ",") <= 79:
+            return single
     inner = ",\n            ".join(items)
     return f"[\n            {inner},\n        ]"
 
 
 def bytecode_to_op_string(hex_code: str) -> str | None:
-    """Convert hex bytecode to Op expression string.
+    """
+    Convert hex bytecode to Op expression string.
 
     Returns None if bytecode is empty, conversion fails, or roundtrip
     produces different bytecode (evm_bytes has edge cases with PUSH parsing).
@@ -190,7 +230,6 @@ def bytecode_to_op_string(hex_code: str) -> str | None:
 
     try:
         from execution_testing.cli.evm_bytes import process_evm_bytes_string
-        from execution_testing.vm import Op  # noqa: F811
 
         op_str = process_evm_bytes_string(raw, assembly=False)
         # Verify roundtrip: compile Op back to hex and compare
@@ -215,7 +254,7 @@ def bytecode_to_assembly_summary(
         from execution_testing.cli.evm_bytes import process_evm_bytes_string
 
         asm = process_evm_bytes_string(raw, assembly=True)
-        lines = [l for l in asm.split("\n") if l.strip()]
+        lines = [x for x in asm.split("\n") if x.strip()]
         if len(lines) <= max_lines:
             return "\n".join(lines)
         return (
@@ -236,7 +275,8 @@ _FILLER_GIT_REF = "b0e75de2a~1"
 
 
 def _load_filler_data(filler_path: Path) -> dict | None:
-    """Load and parse a filler file (JSON or YAML).
+    """
+    Load and parse a filler file (JSON or YAML).
 
     Try the on-disk path first.  If the file doesn't exist (fillers were
     deleted), fall back to ``git show <ref>:<relative_path>``.
@@ -300,7 +340,7 @@ def load_filler_comment(filler_path: Path) -> str:
     if not data:
         return ""
     try:
-        for test_name, test_data in data.items():
+        for _test_name, test_data in data.items():
             if isinstance(test_data, dict) and "_info" in test_data:
                 comment = test_data["_info"].get("comment", "")
                 if comment:
@@ -311,7 +351,8 @@ def load_filler_comment(filler_path: Path) -> str:
 
 
 def load_filler_network_upper_bound(filler_path: Path) -> str | None:
-    """Extract the strictest upper fork bound from a filler's network fields.
+    """
+    Extract the strictest upper fork bound from a filler's network fields.
 
     Parses expect[].network entries like ">=Cancun<Osaka" and returns the
     excluded fork name (e.g. "Osaka").  Returns None if no upper bound.
@@ -390,7 +431,8 @@ def _normalize_address(addr: str) -> str:
 
 
 def load_filler_expect_results(filler_path: Path) -> list[dict]:
-    """Load expect entries from a filler file.
+    """
+    Load expect entries from a filler file.
 
     Return list of dicts with keys:
         indexes: {"data": ..., "gas": ..., "value": ...}
@@ -451,7 +493,8 @@ def load_filler_expect_results(filler_path: Path) -> list[dict]:
 def load_filler_tx_dimensions(
     filler_path: Path,
 ) -> tuple[int, int, int] | None:
-    """Load transaction dimensions (data, gas, value) from a filler.
+    """
+    Load transaction dimensions (data, gas, value) from a filler.
 
     Return (num_data, num_gas, num_value) or None on failure.
     """
@@ -475,7 +518,8 @@ def load_filler_tx_dimensions(
 
 
 def _index_matches(selector: Any, case_idx: int) -> bool:
-    """Check if an index selector matches a specific case index.
+    """
+    Check if an index selector matches a specific case index.
 
     Selector can be:
     - -1: matches any index
@@ -528,7 +572,8 @@ def resolve_expect_for_case(
 
 
 def extract_case_indices(fixture_key: str) -> tuple[int, int, int]:
-    """Extract (data_idx, gas_idx, value_idx) from fixture key.
+    """
+    Extract (data_idx, gas_idx, value_idx) from fixture key.
 
     Key format: "tests/.../XFiller.json::TestName[d0g0v0-Cancun]"
     """
@@ -543,10 +588,129 @@ def extract_case_indices(fixture_key: str) -> tuple[int, int, int]:
 # ---------------------------------------------------------------------------
 
 
+def _find_top_level_eq(s: str) -> int:
+    """Find the position of '=' that is not inside parens/brackets."""
+    depth = 0
+    for i, ch in enumerate(s):
+        if ch in ("(", "["):
+            depth += 1
+        elif ch in (")", "]"):
+            depth -= 1
+        elif ch == "=" and depth == 0:
+            return i
+    return -1
+
+
+def _wrap_long_op_call(op_call: str, indent: str) -> str:
+    """
+    Wrap a single long Op call across keyword arguments.
+
+    E.g. Op.CALL(gas=X, address=Y, ...) becomes:
+        Op.CALL(
+            gas=X,
+            address=Y,
+            ...
+        )
+    Recursively wraps nested calls that are also too long.
+    """
+    # Find the opening paren
+    if "(" not in op_call:
+        return op_call
+    paren_pos = op_call.index("(")
+    func_name = op_call[: paren_pos + 1]
+    args_str = op_call[paren_pos + 1 : -1]  # strip outer parens
+
+    # Split by ", " but respect nested parens
+    args: list[str] = []
+    depth = 0
+    current = ""
+    for ch in args_str:
+        if ch in ("(", "["):
+            depth += 1
+        elif ch in (")", "]"):
+            depth -= 1
+        if ch == "," and depth == 0:
+            args.append(current.strip())
+            current = ""
+        else:
+            current += ch
+    if current.strip():
+        args.append(current.strip())
+
+    arg_indent = indent + "    "
+    arg_lines: list[str] = []
+    for a in args:
+        line = f"{arg_indent}{a},"
+        if len(line) > 79 and "(" in a:
+            # Find top-level '=' (not inside parens)
+            eq_pos = _find_top_level_eq(a)
+            if eq_pos > 0:
+                key = a[: eq_pos + 1]
+                val = a[eq_pos + 1 :]
+                wrapped_val = _wrap_long_op_call(val, arg_indent)
+                arg_lines.append(f"{arg_indent}{key}{wrapped_val},")
+            else:
+                arg_lines.append(
+                    f"{arg_indent}{_wrap_long_op_call(a, arg_indent)},"
+                )
+        else:
+            arg_lines.append(line)
+    return func_name + "\n" + "\n".join(arg_lines) + "\n" + indent + ")"
+
+
+def _wrap_op_chain(
+    op_str: str,
+    indent: str = "        ",
+    prefix: str = "code=",
+) -> str:
+    """
+    Wrap a long Op chain string to fit within 79 chars.
+
+    Return the original string if it fits, otherwise wrap with
+    line continuations.
+    """
+    # Use 78 to leave room for trailing comma
+    if len(indent + prefix + op_str) <= 78:
+        return op_str
+    parts = op_str.split(" + ")
+
+    # Wrap individual Op calls that are too long on their own
+    max_part_len = 79 - len(indent + "+ ")
+    wrapped_parts = []
+    for part in parts:
+        if len(part) > max_part_len and "(" in part:
+            wrapped_parts.append(_wrap_long_op_call(part, indent))
+        else:
+            wrapped_parts.append(part)
+
+    lines: list[str] = []
+    current = wrapped_parts[0]
+    line_indent = indent + "+ "
+    for part in wrapped_parts[1:]:
+        has_newline = "\n" in current or "\n" in part
+        candidate = current + " + " + part
+        # First line has prefix, subsequent have "+ "
+        # Use 78 to leave room for trailing comma
+        if lines:
+            limit = 78 - len(line_indent)
+        else:
+            limit = 78 - len(indent + prefix)
+        if has_newline or len(candidate) > limit:
+            lines.append(current)
+            current = part
+        else:
+            current = candidate
+    lines.append(current)
+    joined = ("\n" + line_indent).join(lines)
+    close_indent = indent[4:] if len(indent) >= 4 else ""
+    return f"(\n{indent}{joined}\n{close_indent})"
+
+
 def generate_code_expr(
     hex_code: str, indent: str = "        "
 ) -> tuple[str, str]:
-    """Generate Python code expression for bytecode.
+    """
+    Generate Python code expression for bytecode.
 
     Returns (code_expr, pre_comment) where:
     - code_expr is the Python expression (Op chain or bytes.fromhex fallback)
@@ -560,22 +724,8 @@ def generate_code_expr(
     # Always use Op format — readable and round-trips to identical bytecode
     op_str = bytecode_to_op_string(hex_code)
     if op_str is not None:
-        # Wrap long Op chains
-        if len(op_str) > 80:
-            parts = op_str.split(" + ")
-            lines = []
-            current_line = parts[0]
-            for part in parts[1:]:
-                if len(current_line) + len(part) + 3 > 76:
-                    lines.append(current_line)
-                    current_line = part
-                else:
-                    current_line += " + " + part
-            lines.append(current_line)
-
-            joined = ("\n" + indent + "+ ").join(lines)
-            return f"(\n{indent}{joined}\n{indent[4:]})", ""
-        return op_str, ""
+        wrapped = _wrap_op_chain(op_str, indent=indent, prefix="code=")
+        return wrapped, ""
 
     # bytes.fromhex fallback only if Op conversion fails entirely
     if len(raw) > 72:
@@ -589,7 +739,7 @@ def generate_code_expr(
 
 
 def generate_account_setup(
-    address: str,
+    address: str,  # noqa: ARG001
     account: dict[str, Any],
     var_name: str,
     indent: str = "    ",
@@ -621,13 +771,12 @@ def generate_account_setup(
 
     # Format as single line or multi-line
     single = f"{indent}pre[{var_name}] = Account({', '.join(parts)})"
-    if len(single) <= 100 and "\n" not in "".join(parts):
+    if len(single) <= 79 and "\n" not in "".join(parts):
         lines.append(single)
     else:
         lines.append(f"{indent}pre[{var_name}] = Account(")
-        for i, part in enumerate(parts):
-            comma = ","
-            lines.append(f"{indent}    {part}{comma}")
+        for part in parts:
+            lines.append(f"{indent}    {part},")
         lines.append(f"{indent})")
 
     return "\n".join(lines)
@@ -654,8 +803,8 @@ def _parse_result_int(v: Any) -> int:
         return 0
 
 
-def _format_storage_from_result(storage: dict) -> str:
-    """Format storage dict from filler result (keys/values may be various formats)."""
+def _format_storage_flat(storage: dict) -> str:
+    """Format storage dict on a single line (for parametrize values)."""
     if not storage:
         return "{}"
     items = []
@@ -666,11 +815,36 @@ def _format_storage_from_result(storage: dict) -> str:
     return "{" + ", ".join(items) + "}"
 
 
+def _format_storage_from_result(
+    storage: dict,
+    indent: str = "                ",
+) -> str:
+    """Format storage dict from filler result."""
+    if not storage:
+        return "{}"
+    items = []
+    for k, v in sorted(storage.items(), key=lambda x: _parse_result_int(x[0])):
+        key_int = _parse_result_int(k)
+        val_int = _parse_result_int(v)
+        item = f"{format_int(key_int)}: {format_int(val_int)}"
+        items.append(item)
+    single = "{" + ", ".join(items) + "}"
+    if len(single) <= 50:
+        return single
+    formatted: list[str] = []
+    for item in items:
+        formatted.append(item + ",")
+    inner = ("\n" + indent).join(formatted)
+    close = indent[4:] if len(indent) >= 4 else ""
+    return "{\n" + indent + inner + "\n" + close + "}"
+
+
 def generate_post_dict(
     result: dict[str, dict],
     addr_vars: dict[str, str],
 ) -> str:
-    """Generate the post = {...} dict from filler expect result.
+    """
+    Generate the post = {...} dict from filler expect result.
 
     Handle all 5 field types: storage, nonce, balance, code, shouldnotexist.
     Skip coinbase address.
@@ -717,7 +891,7 @@ def generate_post_dict(
         if parts:
             parts_str = ", ".join(parts)
             single = f"        {var}: Account({parts_str}),"
-            if len(single) <= 100 and "\n" not in parts_str:
+            if len(single) <= 79 and "\n" not in parts_str:
                 lines.append(single)
             else:
                 lines.append(f"        {var}: Account(")
@@ -727,8 +901,20 @@ def generate_post_dict(
             has_entries = True
     lines.append("    }")
     if not has_entries:
-        return "    post = {}"
+        return "    post: dict = {}"
     return "\n".join(lines)
+
+
+def _truncate_at_word(text: str, max_len: int) -> str:
+    """Truncate text at a word boundary, appending '...'."""
+    if len(text) <= max_len:
+        return text
+    # Find last space before the limit (leaving room for "...")
+    cut = text.rfind(" ", 0, max_len - 3)
+    if cut <= 0:
+        # No space found; hard-cut
+        return text[: max_len - 3] + "..."
+    return text[:cut] + "..."
 
 
 def _pad_address(addr: str) -> str:
@@ -740,7 +926,8 @@ def _pad_address(addr: str) -> str:
 
 
 def generate_post_value_string(result: dict | None) -> str:
-    """Generate a post dict expression for use in parametrize values.
+    """
+    Generate a post dict expression for use in parametrize values.
 
     Use Address("0x...") literals (not variable names) since parametrize
     evaluates at module import time.  Return "{}" for None/empty results.
@@ -759,21 +946,16 @@ def generate_post_value_string(result: dict | None) -> str:
         padded = _pad_address(addr)
 
         if "shouldnotexist" in fields:
-            parts.append(
-                f'Address("{padded}"): Account.NONEXISTENT'
-            )
+            parts.append(f'Address("{padded}"): Account.NONEXISTENT')
             continue
 
         acct_parts: list[str] = []
         if "storage" in fields:
             acct_parts.append(
-                f"storage="
-                f"{_format_storage_from_result(fields['storage'])}"
+                f"storage={_format_storage_from_result(fields['storage'])}"
             )
         if "nonce" in fields:
-            acct_parts.append(
-                f"nonce={_parse_result_int(fields['nonce'])}"
-            )
+            acct_parts.append(f"nonce={_parse_result_int(fields['nonce'])}")
         if "balance" in fields:
             val = _parse_result_int(fields["balance"])
             acct_parts.append(f"balance={format_balance(val)}")
@@ -789,19 +971,13 @@ def generate_post_value_string(result: dict | None) -> str:
                     acct_parts.append(f"code={op_str}")
                 else:
                     raw = (
-                        code_hex[2:]
-                        if code_hex.startswith("0x")
-                        else code_hex
+                        code_hex[2:] if code_hex.startswith("0x") else code_hex
                     )
-                    acct_parts.append(
-                        f'code=bytes.fromhex("{raw}")'
-                    )
+                    acct_parts.append(f'code=bytes.fromhex("{raw}")')
 
         if acct_parts:
             acct_str = ", ".join(acct_parts)
-            parts.append(
-                f'Address("{padded}"): Account({acct_str})'
-            )
+            parts.append(f'Address("{padded}"): Account({acct_str})')
 
     if not parts:
         return "{}"
@@ -815,7 +991,8 @@ def _generate_post_from_fixture_state(
     post_state: dict[str, dict],
     addr_vars: dict[str, str],
 ) -> str:
-    """Generate the post = {...} dict from compiled fixture post state.
+    """
+    Generate the post = {...} dict from compiled fixture post state.
 
     The fixture post state format is:
         {address: {balance: "0x...", nonce: "0x...", code: "0x...",
@@ -838,27 +1015,29 @@ def _generate_post_from_fixture_state(
         parts = []
         if "storage" in fields and fields["storage"]:
             parts.append(
-                f"storage="
-                f"{_format_storage_from_result(fields['storage'])}"
+                f"storage={_format_storage_from_result(fields['storage'])}"
             )
         if "code" in fields:
             code_hex = str(fields["code"])
             if code_hex not in ("0x", ""):
                 op_str = bytecode_to_op_string(code_hex)
                 if op_str is not None:
-                    parts.append(f"code={op_str}")
+                    wrapped = _wrap_op_chain(
+                        op_str,
+                        indent="            ",
+                        prefix="code=",
+                    )
+                    parts.append(f"code={wrapped}")
                 else:
                     raw = (
-                        code_hex[2:]
-                        if code_hex.startswith("0x")
-                        else code_hex
+                        code_hex[2:] if code_hex.startswith("0x") else code_hex
                     )
                     parts.append(f'code=bytes.fromhex("{raw}")')
 
         if parts:
             parts_str = ", ".join(parts)
             single = f"        {var}: Account({parts_str}),"
-            if len(single) <= 100 and "\n" not in parts_str:
+            if len(single) <= 79 and "\n" not in parts_str:
                 lines.append(single)
             else:
                 lines.append(f"        {var}: Account(")
@@ -870,14 +1049,15 @@ def _generate_post_from_fixture_state(
 
     lines.append("    }")
     if not has_entries:
-        return "    post = {}"
+        return "    post: dict = {}"
     return "\n".join(lines)
 
 
 def _generate_post_value_from_fixture_state(
     post_state: dict[str, dict],
 ) -> str:
-    """Generate a post dict expression from fixture state for parametrize.
+    """
+    Generate a post dict expression from fixture state for parametrize.
 
     Use Address("0x...") literals (not variable names).
     Only assert on storage and code (not balance/nonce).
@@ -894,9 +1074,9 @@ def _generate_post_value_from_fixture_state(
 
         acct_parts: list[str] = []
         if "storage" in fields and fields["storage"]:
+            # Flat format for parametrize (no multiline wrapping)
             acct_parts.append(
-                f"storage="
-                f"{_format_storage_from_result(fields['storage'])}"
+                f"storage={_format_storage_flat(fields['storage'])}"
             )
         if "code" in fields:
             code_hex = str(fields["code"])
@@ -906,22 +1086,17 @@ def _generate_post_value_from_fixture_state(
                     acct_parts.append(f"code={op_str}")
                 else:
                     raw = (
-                        code_hex[2:]
-                        if code_hex.startswith("0x")
-                        else code_hex
+                        code_hex[2:] if code_hex.startswith("0x") else code_hex
                     )
-                    acct_parts.append(
-                        f'code=bytes.fromhex("{raw}")'
-                    )
+                    acct_parts.append(f'code=bytes.fromhex("{raw}")')
 
         if acct_parts:
             acct_str = ", ".join(acct_parts)
-            parts.append(
-                f'Address("{padded}"): Account({acct_str})'
-            )
+            parts.append(f'Address("{padded}"): Account({acct_str})')
 
     if not parts:
         return "{}"
+    # Parametrize values stay on one line (ruff format + noqa post-step)
     if len(parts) == 1:
         return "{" + parts[0] + "}"
     inner = ", ".join(parts)
@@ -938,7 +1113,7 @@ def generate_test_file(
     filler_path: str,
     filler_comment: str,
     valid_until: str | None = None,
-    filler_full_path: Path | None = None,
+    filler_full_path: Path | None = None,  # noqa: ARG001
 ) -> str:
     """Generate a complete Python test file from fixture data."""
     # Compiled fixtures have one top-level key per (case × fork).
@@ -1033,10 +1208,59 @@ def generate_test_file(
     # Module docstring
     doc_lines = []
     if filler_comment:
-        doc_lines.append(filler_comment)
+        comment_lines = [line.rstrip() for line in filler_comment.splitlines()]
+        # Find first non-empty line for the summary
+        summary = ""
+        rest_start = 0
+        for i, line in enumerate(comment_lines):
+            if line.strip():
+                summary = line.strip()
+                rest_start = i + 1
+                break
+        if not summary:
+            summary = "Test ported from static filler"
+        # D404: first word should not be "This"
+        if summary.startswith("This "):
+            summary = summary[5:]
+            summary = summary[0].upper() + summary[1:]
+        # D400/D415: ensure ends with punctuation
+        if summary and summary[-1] not in ".?!":
+            summary += "."
+        # Truncate/wrap summary to 79 chars
+        if len(summary) > 79:
+            summary = _truncate_at_word(summary, 79)
+        doc_lines.append(summary)
+        # Add remaining lines with blank separator
+        remaining = comment_lines[rest_start:]
+        if remaining and any(x.strip() for x in remaining):
+            doc_lines.append("")
+            for line in remaining:
+                if len(line) <= 79:
+                    doc_lines.append(line)
+                elif line.startswith("http"):
+                    # Don't wrap URLs — add noqa
+                    doc_lines.append(line)
+                else:
+                    doc_lines.extend(textwrap.wrap(line, width=79))
+        doc_lines.append("")
+    else:
+        doc_lines.append("Test ported from static filler.")
         doc_lines.append("")
     doc_lines.append("Ported from:")
-    doc_lines.append(filler_path)
+    if len(filler_path) > 79:
+        # Break path at directory separator
+        parts = filler_path.split("/")
+        current = parts[0]
+        for p in parts[1:]:
+            candidate = current + "/" + p
+            if len(candidate) > 79:
+                doc_lines.append(current)
+                current = p
+            else:
+                current = candidate
+        doc_lines.append(current)
+    else:
+        doc_lines.append(filler_path)
 
     # Add assembly summaries for contracts
     for addr in sorted(pre.keys()):
@@ -1065,10 +1289,8 @@ def generate_test_file(
             needs_op = True
             break
 
-    # Check if we need AccessList import
-    needs_access_list = any(
-        c["access_list"] is not None for c in cases_for_fork
-    )
+    # Check if we need AccessList import (non-empty lists only)
+    needs_access_list = any(c["access_list"] for c in cases_for_fork)
     # Check if we need TransactionException import
     needs_tx_exception = any(c.get("expect_exception") for c in cases_for_fork)
 
@@ -1123,7 +1345,7 @@ def generate_test_file(
         env_parts.append(f"excess_blob_gas={excess_blob}")
 
     # Include gas_limit from original fixture for hasher match.
-    # Amsterdam update (commit 2) will remove this to get framework default 100M.
+    # Amsterdam update: remove this to get framework default 100M.
     block_gas_limit = hex_to_int(env.get("currentGasLimit", "0x05f5e100"))
     env_parts.append(f"gas_limit={block_gas_limit}")
 
@@ -1150,9 +1372,9 @@ def generate_test_file(
     )
 
     if to_addr:
-        tx_parts.append(
-            f"to={addr_vars.get(to_addr, f'Address({chr(34)}{to_addr}{chr(34)})')}"
-        )
+        q = chr(34)
+        fallback = f"Address({q}{to_addr}{q})"
+        tx_parts.append(f"to={addr_vars.get(to_addr, fallback)}")
     else:
         tx_parts.append("to=None")
 
@@ -1167,9 +1389,12 @@ def generate_test_file(
                     data_raw[i : i + 72] for i in range(0, len(data_raw), 72)
                 ]
                 hex_joined = '"\n            "'.join(chunks)
-                tx_parts.append(
-                    f'data=bytes.fromhex(\n            "{hex_joined}"\n        )'
+                fromhex = (
+                    f"data=bytes.fromhex(\n"
+                    f'            "{hex_joined}"\n'
+                    f"        )"
                 )
+                tx_parts.append(fromhex)
             else:
                 tx_parts.append(f'data=bytes.fromhex("{data_raw}")')
         else:
@@ -1182,7 +1407,20 @@ def generate_test_file(
             data_hex = cases_for_fork[0]["data"]
             data_raw = data_hex[2:] if data_hex.startswith("0x") else data_hex
             if data_raw:
-                tx_parts.append(f'data=bytes.fromhex("{data_raw}")')
+                if len(data_raw) > 55:
+                    chunks = [
+                        data_raw[i : i + 72]
+                        for i in range(0, len(data_raw), 72)
+                    ]
+                    hex_joined = '"\n            "'.join(chunks)
+                    fromhex = (
+                        f"data=bytes.fromhex(\n"
+                        f'            "{hex_joined}"\n'
+                        f"        )"
+                    )
+                    tx_parts.append(fromhex)
+                else:
+                    tx_parts.append(f'data=bytes.fromhex("{data_raw}")')
             else:
                 tx_parts.append('data=b""')
         if gas_varies:
@@ -1209,8 +1447,17 @@ def generate_test_file(
         tx_parts.append(f"max_fee_per_blob_gas={hex_to_int(max_fee_blob)}")
     if blob_hashes is not None:
         if blob_hashes:
-            hash_strs = ", ".join(f'Hash("{h}")' for h in blob_hashes)
-            tx_parts.append(f"blob_versioned_hashes=[{hash_strs}]")
+            hash_items = [f'Hash("{h}")' for h in blob_hashes]
+            single = "blob_versioned_hashes=[" + ", ".join(hash_items) + "]"
+            if len("        " + single + ",") <= 79:
+                tx_parts.append(single)
+            else:
+                inner = ",\n                ".join(hash_items)
+                tx_parts.append(
+                    "blob_versioned_hashes=[\n"
+                    "                " + inner + ",\n"
+                    "            ]"
+                )
         else:
             tx_parts.append("blob_versioned_hashes=[]")
 
@@ -1248,7 +1495,7 @@ def generate_test_file(
     # -----------------------------------------------------------------------
     # Compute post-state assertions from compiled fixture post state
     # -----------------------------------------------------------------------
-    post_code = "    post = {}"
+    post_code = "    post: dict = {}"
     extra_param_name: str | None = None  # e.g. "expected_storage"
     extra_param_vals: list[str] = []  # per-case values
     extra_func_param: str | None = None  # e.g. "    expected_storage: dict,"
@@ -1257,14 +1504,10 @@ def generate_test_file(
         # Single-case: use compiled fixture's post state directly
         ps = cases_for_fork[0].get("post_state", {})
         if ps:
-            post_code = _generate_post_from_fixture_state(
-                ps, addr_vars
-            )
+            post_code = _generate_post_from_fixture_state(ps, addr_vars)
     else:
         # Multi-case: check if all post states are identical
-        all_post_states = [
-            c.get("post_state", {}) for c in cases_for_fork
-        ]
+        all_post_states = [c.get("post_state", {}) for c in cases_for_fork]
         all_same = len(all_post_states) > 0 and all(
             ps == all_post_states[0] for ps in all_post_states
         )
@@ -1322,9 +1565,18 @@ def generate_test_file(
             param_names.append(extra_param_name)
 
         out.append("")
-        out.append("@pytest.mark.ported_from(")
-        out.append(f'    ["{filler_path}"],')
-        out.append(")")
+        ported_line = f'    ["{filler_path}"],'
+        if len(ported_line) > 79:
+            out.append("@pytest.mark.ported_from(")
+            inner = f'        "{filler_path}",'
+            out.append("    [")
+            out.append(inner)
+            out.append("    ],")
+            out.append(")")
+        else:
+            out.append("@pytest.mark.ported_from(")
+            out.append(ported_line)
+            out.append(")")
         out.append(f'@pytest.mark.valid_from("{fork_name}")')
         if valid_until:
             out.append(f'@pytest.mark.valid_until("{valid_until}")')
@@ -1351,7 +1603,7 @@ def generate_test_file(
                 if al is None:
                     vals.append("None")
                 else:
-                    vals.append(_format_access_list(al))
+                    vals.append(_format_access_list(al, multiline=False))
             if exc_varies:
                 exc = case.get("expect_exception") or ""
                 if exc:
@@ -1370,45 +1622,69 @@ def generate_test_file(
             param_ids.append(f"case{i}")
 
         if exc_varies:
-            # Use pytest.param for individual entries (each needs its own id + maybe marks)
-            out.append(f"@pytest.mark.parametrize(")
-            out.append(f'    "{", ".join(param_names)}",')
-            out.append(f"    [")
-            for i, (vals, has_exc) in enumerate(zip(param_vals, case_has_exc)):
+            # Use pytest.param for entries (each needs id + marks)
+            out.append("@pytest.mark.parametrize(")
+            names_line = f'    "{", ".join(param_names)}",'
+            out.append(names_line)
+            out.append("    [")
+            for i, (vals, has_exc) in enumerate(
+                zip(param_vals, case_has_exc, strict=True)
+            ):
                 if has_exc:
-                    entry = f'pytest.param({", ".join(vals)}, id="{param_ids[i]}", marks=pytest.mark.exception_test)'
+                    joined = ", ".join(vals)
+                    pid = param_ids[i]
+                    entry = (
+                        f"pytest.param({joined},"
+                        f' id="{pid}",'
+                        f" marks=pytest.mark.exception_test)"
+                    )
                 elif len(vals) == 1:
                     entry = f'pytest.param({vals[0]}, id="{param_ids[i]}")'
                 else:
                     entry = (
                         f'pytest.param({", ".join(vals)}, id="{param_ids[i]}")'
                     )
-                out.append(f"        {entry},")
-            out.append(f"    ],")
-            out.append(f")")
+                line = f"        {entry},"
+                out.append(line)
+            out.append("    ],")
+            out.append(")")
         elif len(param_names) == 1:
-            out.append(f"@pytest.mark.parametrize(")
+            out.append("@pytest.mark.parametrize(")
             out.append(f'    "{param_names[0]}",')
-            out.append(f"    [")
-            for i, vals in enumerate(param_vals):
-                out.append(f"        {vals[0]},")
-            out.append(f"    ],")
-            out.append(f"    ids={param_ids},")
-            out.append(f")")
+            out.append("    [")
+            for vals in param_vals:
+                line = f"        {vals[0]},"
+                out.append(line)
+            out.append("    ],")
+            ids_line = f"    ids={param_ids},"
+            out.append(ids_line)
+            out.append(")")
         else:
-            out.append(f"@pytest.mark.parametrize(")
-            out.append(f'    "{", ".join(param_names)}",')
-            out.append(f"    [")
-            for i, vals in enumerate(param_vals):
-                out.append(f"        ({', '.join(vals)}),")
-            out.append(f"    ],")
-            out.append(f"    ids={param_ids},")
-            out.append(f")")
+            out.append("@pytest.mark.parametrize(")
+            names_line2 = f'    "{", ".join(param_names)}",'
+            out.append(names_line2)
+            out.append("    [")
+            for vals in param_vals:
+                line = f"        ({', '.join(vals)}),"
+                out.append(line)
+            out.append("    ],")
+            ids_line = f"    ids={param_ids},"
+            out.append(ids_line)
+            out.append(")")
     else:
         out.append("")
-        out.append("@pytest.mark.ported_from(")
-        out.append(f'    ["{filler_path}"],')
-        out.append(")")
+        ported_line = f'    ["{filler_path}"],'
+        if len(ported_line) > 79:
+            out.append("@pytest.mark.ported_from(")
+            inner = f'        "{filler_path}",'
+            out.append("    [")
+            out.append(inner)
+            out.append("    ],")
+            out.append(")")
+        else:
+            out.append("@pytest.mark.ported_from(")
+            out.append(ported_line)
+            out.append(")")
         out.append(f'@pytest.mark.valid_from("{fork_name}")')
         if valid_until:
             out.append(f'@pytest.mark.valid_until("{valid_until}")')
@@ -1431,24 +1707,43 @@ def generate_test_file(
         if value_varies:
             func_params.append("    tx_value: int,")
         if al_varies:
-            func_params.append("    tx_access_list,")
+            func_params.append("    tx_access_list: list | None,")
         if exc_varies:
-            func_params.append("    tx_error,")
+            func_params.append("    tx_error: object,")
         if extra_func_param:
             func_params.append(extra_func_param)
-    out.append(f"def {test_func_name}(")
+    def_line = f"def {test_func_name}("
+    out.append(def_line)
     out.extend(func_params)
     out.append(") -> None:")
 
-    # Function docstring
-    if filler_comment:
-        out.append(f'    """{filler_comment}."""')
-    else:
-        out.append(f'    """Test ported from static filler."""')
+    # Function docstring — single-line, with punctuation (D400/D415)
+    func_doc = filler_comment.split("\n")[0].rstrip() if filler_comment else ""
+    if not func_doc:
+        func_doc = "Test ported from static filler"
+    if func_doc[-1] not in ".?!":
+        func_doc += "."
+    # D404: first word should not be "This"
+    if func_doc.startswith("This "):
+        func_doc = func_doc[5:]
+    # Capitalize first letter (D403)
+    func_doc = func_doc[0].upper() + func_doc[1:] if func_doc else func_doc
+    # Truncate if too long for single-line docstring (79 - 4 - 6 = 69)
+    if len(func_doc) > 69:
+        func_doc = _truncate_at_word(func_doc, 69)
+    out.append(f'    """{func_doc}"""')
 
-    # Address variables
+    # Address variables — only emit if used somewhere
+    pre_addrs = {a.lower() for a in pre.keys()}
+    all_code = post_code + " ".join(str(p) for p in tx_parts)
     for addr, var, _ in var_names:
-        out.append(f'    {var} = Address("{addr}")')
+        used = (
+            addr in pre_addrs
+            or var == "coinbase"  # fee_recipient=coinbase
+            or var in all_code  # used in post or tx
+        )
+        if used:
+            out.append(f'    {var} = Address("{addr}")')
     out.append("")
 
     # Environment
@@ -1510,7 +1805,7 @@ def find_fixture_files(fixtures_dir: Path) -> list[Path]:
 def fixture_to_filler_path(fixture_data: dict) -> str | None:
     """Extract the filler path from a fixture's test key."""
     for key in fixture_data:
-        # Key format: "tests/static/state_tests/.../XFiller.json::TestName[...]"
+        # Key: "tests/static/.../XFiller.json::TestName[...]"
         if "::" in key:
             return key.split("::")[0]
     return None
@@ -1536,7 +1831,7 @@ def process_single_fixture(
         filler_full_path = Path(filler_path)
     filler_comment = load_filler_comment(filler_full_path)
 
-    # Detect fork upper bound from filler's network field (e.g. ">=Cancun<Osaka")
+    # Detect fork upper bound from filler network (e.g. ">=Cancun<Osaka")
     upper_bound = load_filler_network_upper_bound(filler_full_path)
     valid_until = fork_before(upper_bound) if upper_bound else None
 
@@ -1571,10 +1866,14 @@ def process_single_fixture(
     out_dir = output_dir / category if category else output_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Write __init__.py if needed
-    init_file = out_dir / "__init__.py"
-    if not init_file.exists():
-        init_file.write_text("")
+    # Write __init__.py files with docstrings in every package dir
+    for parent in [out_dir, *out_dir.parents]:
+        if parent == output_dir.parent:
+            break
+        init_file = parent / "__init__.py"
+        if not init_file.exists() or init_file.stat().st_size == 0:
+            pkg = parent.name
+            init_file.write_text(f'"""Tests ported from {pkg}."""\n')
 
     out_file = out_dir / f"{test_name}.py"
     out_file.write_text(python_code)
@@ -1585,7 +1884,7 @@ def process_single_fixture(
 def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Convert compiled state_test fixtures to Python test files."
+        description="Convert compiled state_test fixtures to Python."
     )
     parser.add_argument(
         "--fixtures",
@@ -1615,7 +1914,7 @@ def main() -> None:
         "--filter",
         type=Path,
         default=None,
-        help="Only convert fixtures whose filler path is in this file (one per line)",
+        help="Only convert fixtures in this file (one per line)",
     )
     args = parser.parse_args()
 
@@ -1639,9 +1938,7 @@ def main() -> None:
             filler_path = fixture_to_filler_path(data)
             if filler_path and filler_path in filter_set:
                 filtered.append(fp)
-        print(
-            f"Filtered: {len(filtered)}/{len(files)} fixtures match filter list"
-        )
+        print(f"Filtered: {len(filtered)}/{len(files)} fixtures match")
         files = filtered
 
     if not files:
@@ -1666,6 +1963,33 @@ def main() -> None:
     print(f"\nDone: {success_count} generated, {fail_count} failed")
     if fail_count > 0:
         sys.exit(1)
+
+    # Post-process: ruff format + add noqa: E501 to unsplittable lines
+    _post_format(args.output)
+
+
+def _post_format(output_dir: Path) -> None:
+    """Run ruff format on generated files, then suppress E501."""
+    print("\nRunning ruff format...")
+    subprocess.run(
+        ["ruff", "format", str(output_dir)],
+        check=False,
+    )
+
+    print("Adding # noqa: E501 to long lines...")
+    count = 0
+    for py_file in output_dir.rglob("*.py"):
+        text = py_file.read_text()
+        lines = text.split("\n")
+        changed = False
+        for i, line in enumerate(lines):
+            if len(line) > 79 and "# noqa: E501" not in line:
+                lines[i] = line + "  # noqa: E501"
+                changed = True
+        if changed:
+            py_file.write_text("\n".join(lines))
+            count += 1
+    print(f"  Patched {count} files")
 
 
 if __name__ == "__main__":

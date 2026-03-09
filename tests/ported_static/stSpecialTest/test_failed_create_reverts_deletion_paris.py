@@ -1,8 +1,9 @@
 """
-A modification of stRevertTests/RevertInCreateInInit.  That test, for EIP158 only, accidentally tested the case where a contract creation transaction touches an empty account and then fails.  This one tests the same thing not just for EIP158 but any network thereafter.
+A modification of stRevertTests/RevertInCreateInInit.  That test, for...
 
 Ported from:
-tests/static/state_tests/stSpecialTest/FailedCreateRevertsDeletionParisFiller.json
+tests/static/state_tests/stSpecialTest
+FailedCreateRevertsDeletionParisFiller.json
 """
 
 import pytest
@@ -21,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSpecialTest/FailedCreateRevertsDeletionParisFiller.json"],
+    [
+        "tests/static/state_tests/stSpecialTest/FailedCreateRevertsDeletionParisFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -29,7 +32,7 @@ def test_failed_create_reverts_deletion_paris(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """A modification of stRevertTests/RevertInCreateInInit.  That test, for EIP158 only, accidentally tested the case where a contract creation transaction touches an empty account and then fails.  This one tests the same thing not just for EIP158 but any network thereafter.."""
+    """A modification of stRevertTests/RevertInCreateInInit.  That test,..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xc102734f6a1e4747310179c0a0fc16e674aa901d")
     contract = Address("0x4757608f18b70777ae788dd4056eeed52f7aa68f")
@@ -48,10 +51,12 @@ def test_failed_create_reverts_deletion_paris(
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=None,
-        data=bytes.fromhex("3050600d80601360003960006000f050fe00fe6211223360005260206000fd00"),
+        data=bytes.fromhex(
+            "3050600d80601360003960006000f050fe00fe6211223360005260206000fd00"
+        ),
         gas_limit=100000,
         gas_price=10,
         nonce=0,

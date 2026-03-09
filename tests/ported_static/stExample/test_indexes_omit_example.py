@@ -1,5 +1,5 @@
 """
-expect section set -indexes field by default equal to -1
+expect section set -indexes field by default equal to -1.
 
 Ported from:
 tests/static/state_tests/stExample/indexesOmitExampleFiller.yml
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -30,7 +29,7 @@ def test_indexes_omit_example(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """expect section set -indexes field by default equal to -1."""
+    """Expect section set -indexes field by default equal to -1."""
     coinbase = Address("0xeb201d2887816e041f6e807e804f64f3a7a226fe")
     sender = Address("0x2e3d0156d2b99a6eacba540c55f423c8f5a33143")
     contract = Address("0xad21eb96c7a254c810474f7b1e1e66ca449a3426")
@@ -44,17 +43,17 @@ def test_indexes_omit_example(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)) + Op.STOP,
+        code=bytes.fromhex("600160010160005500"),
     )
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +66,7 @@ def test_indexes_omit_example(
     post = {
         contract: Account(
             storage={0: 2},
-            code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)) + Op.STOP,
+            code=bytes.fromhex("600160010160005500"),
         ),
     }
 

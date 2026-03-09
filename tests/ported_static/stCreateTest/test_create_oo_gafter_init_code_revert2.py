@@ -1,5 +1,5 @@
 """
-Calls a contract that runs CREATE which deploy a code. then after deployment and exiting from CREATE a REVERT is called. check the REVERT data in this case equal to RETURN value of CREATE. CREATE fails due to the deployment cost.
+Calls a contract that runs CREATE which deploy a code. then after...
 
 Ported from:
 tests/static/state_tests/stCreateTest/CreateOOGafterInitCodeRevert2Filler.json
@@ -15,23 +15,71 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreateTest/CreateOOGafterInitCodeRevert2Filler.json"],
+    [
+        "tests/static/state_tests/stCreateTest/CreateOOGafterInitCodeRevert2Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        ("000000000000000000000000c94f5374fce5edbc8e2a8697c15331677e6ebf0b", {Address("0x1000000000000000000000000000000000000000"): Account(code=Op.CALL(gas=Op.GAS, address=Op.CALLDATALOAD(offset=0x0), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP), Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.MSTORE(offset=0x0, value=0x6460016001556000526005601bf3) + Op.POP(Op.CREATE(value=0x0, offset=0x12, size=0xe)) + Op.REVERT(offset=0x0, size=0x20) + Op.STOP), Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={1: 0x6460016001556000526005601bf3}, code=Op.POP(Op.CALL(gas=0x80e8, address=0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={1: 255}, code=Op.POP(Op.CALL(gas=0x59d8, address=0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("000000000000000000000000d94f5374fce5edbc8e2a8697c15331677e6ebf0b", {Address("0x1000000000000000000000000000000000000000"): Account(code=Op.CALL(gas=Op.GAS, address=Op.CALLDATALOAD(offset=0x0), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP), Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.MSTORE(offset=0x0, value=0x6460016001556000526005601bf3) + Op.POP(Op.CREATE(value=0x0, offset=0x12, size=0xe)) + Op.REVERT(offset=0x0, size=0x20) + Op.STOP), Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(storage={1: 255}, code=Op.POP(Op.CALL(gas=0x80e8, address=0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.POP(Op.CALL(gas=0x59d8, address=0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
+        (
+            "000000000000000000000000c94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+            {
+                Address("0x1000000000000000000000000000000000000000"): Account(
+                    code=bytes.fromhex("600060006000600060006000355af100")
+                ),
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "6d6460016001556000526005601bf3600052600e60126000f05060206000fd00"  # noqa: E501
+                    )
+                ),
+                Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    storage={1: 0x6460016001556000526005601BF3},
+                    code=bytes.fromhex(
+                        "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b6180e8f15060005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    storage={1: 255},
+                    code=bytes.fromhex(
+                        "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b6159d8f15060005160015500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "000000000000000000000000d94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+            {
+                Address("0x1000000000000000000000000000000000000000"): Account(
+                    code=bytes.fromhex("600060006000600060006000355af100")
+                ),
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "6d6460016001556000526005601bf3600052600e60126000f05060206000fd00"  # noqa: E501
+                    )
+                ),
+                Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    storage={1: 255},
+                    code=bytes.fromhex(
+                        "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b6180e8f15060005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b6159d8f15060005160015500"  # noqa: E501
+                    )
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_oo_gafter_init_code_revert2(
@@ -40,7 +88,7 @@ def test_create_oo_gafter_init_code_revert2(
     tx_data_hex: str,
     expected_post: dict,
 ) -> None:
-    """Calls a contract that runs CREATE which deploy a code. then after deployment and exiting from CREATE a REVERT is called. check the REVERT data in this case equal to RETURN value of CREATE. CREATE fails due to the deployment cost.."""
+    """Calls a contract that runs CREATE which deploy a code. then after..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0x1000000000000000000000000000000000000000")
@@ -58,47 +106,42 @@ def test_create_oo_gafter_init_code_revert2(
     )
 
     pre[contract] = Account(
-        balance=0xe8d4a51000,
+        balance=0xE8D4A51000,
         nonce=0,
-        code=(
-        Op.CALL(gas=Op.GAS, address=Op.CALLDATALOAD(offset=0x0), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("600060006000600060006000355af100"),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x6460016001556000526005601bf3)
-        + Op.POP(Op.CREATE(value=0x0, offset=0x12, size=0xe))
-        + Op.REVERT(offset=0x0, size=0x20) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6d6460016001556000526005601bf3600052600e60126000f05060206000fd00"
+        ),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=0x80e8, address=0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
-        storage={0x1: 0xff},
+        code=bytes.fromhex(
+            "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b6180e8f150"  # noqa: E501
+            "60005160015500"
+        ),
+        storage={0x1: 0xFF},
     )
     pre[callee_2] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=0x59d8, address=0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
-        storage={0x1: 0xff},
+        code=bytes.fromhex(
+            "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b6159d8f150"  # noqa: E501
+            "60005160015500"
+        ),
+        storage={0x1: 0xFF},
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRevertTest/RevertOpcodeFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,12 +27,44 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, tx_value, expected_post",
     [
-        (800000, 0, {Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(code=Op.SSTORE(key=0x0, value=0x1) + Op.REVERT(offset=0x0, size=0x1) + Op.SSTORE(key=0x1, value=0x11))}),
-        (800000, 10, {Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(code=Op.SSTORE(key=0x0, value=0x1) + Op.REVERT(offset=0x0, size=0x1) + Op.SSTORE(key=0x1, value=0x11))}),
-        (30000, 0, {Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(code=Op.SSTORE(key=0x0, value=0x1) + Op.REVERT(offset=0x0, size=0x1) + Op.SSTORE(key=0x1, value=0x11))}),
-        (30000, 10, {Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(code=Op.SSTORE(key=0x0, value=0x1) + Op.REVERT(offset=0x0, size=0x1) + Op.SSTORE(key=0x1, value=0x11))}),
+        (
+            800000,
+            0,
+            {
+                Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(
+                    code=bytes.fromhex("600160005560016000fd6011600155")
+                )
+            },
+        ),
+        (
+            800000,
+            10,
+            {
+                Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(
+                    code=bytes.fromhex("600160005560016000fd6011600155")
+                )
+            },
+        ),
+        (
+            30000,
+            0,
+            {
+                Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(
+                    code=bytes.fromhex("600160005560016000fd6011600155")
+                )
+            },
+        ),
+        (
+            30000,
+            10,
+            {
+                Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(
+                    code=bytes.fromhex("600160005560016000fd6011600155")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_revert_opcode(
@@ -58,16 +91,13 @@ def test_revert_opcode(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=0x1) + Op.REVERT(offset=0x0, size=0x1)
-        + Op.SSTORE(key=0x1, value=0x11)
-    ),
+        code=bytes.fromhex("600160005560016000fd6011600155"),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",

@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCodeSizeLimit/codesizeOOGInvalidSizeFiller.json
 """
@@ -19,7 +21,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCodeSizeLimit/codesizeOOGInvalidSizeFiller.json"],
+    [
+        "tests/static/state_tests/stCodeSizeLimit/codesizeOOGInvalidSizeFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -28,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "61600d600d60003961600d6000f3",
         "616001600d6000396160016000f3",
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_codesize_oog_invalid_size(
@@ -49,13 +53,13 @@ def test_codesize_oog_invalid_size(
         gas_limit=20000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,
@@ -65,6 +69,6 @@ def test_codesize_oog_invalid_size(
         value=1,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

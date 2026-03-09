@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stInitCodeTest/ReturnTest2Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,27 +47,21 @@ def test_return_test2(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x15)
-        + Op.POP(Op.CALL(gas=0x1b58, address=0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x0, args_size=0x20, ret_offset=0x20, ret_size=0x20))
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x20))
-        + Op.RETURN(offset=0x0, size=0x40) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60156000526020602060206000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b"  # noqa: E501
+            "611b58f15060005160005560205160015560406000f300"
+        ),
     )
     pre[sender] = Account(balance=0x989680, nonce=0)
     pre[callee] = Account(
-        balance=0x186a0,
+        balance=0x186A0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.MUL(0x3, Op.CALLDATALOAD(offset=0x0)))
-        + Op.RETURN(offset=0x0, size=0x20) + Op.STOP
-    ),
+        code=bytes.fromhex("60003560030260005260206000f300"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -79,11 +74,11 @@ def test_return_test2(
     post = {
         contract: Account(
             storage={0: 21, 1: 63},
-            code=Op.MSTORE(offset=0x0, value=0x15) + Op.POP(Op.CALL(gas=0x1b58, address=0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x0, args_size=0x20, ret_offset=0x20, ret_size=0x20)) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x20)) + Op.RETURN(offset=0x0, size=0x40) + Op.STOP,
+            code=bytes.fromhex(
+                "60156000526020602060206000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b611b58f15060005160005560205160015560406000f300"  # noqa: E501
+            ),
         ),
-        callee: Account(
-            code=Op.MSTORE(offset=0x0, value=Op.MUL(0x3, Op.CALLDATALOAD(offset=0x0))) + Op.RETURN(offset=0x0, size=0x20) + Op.STOP,
-        ),
+        callee: Account(code=bytes.fromhex("60003560030260005260206000f300")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

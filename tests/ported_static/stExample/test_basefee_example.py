@@ -1,5 +1,5 @@
 """
-A test shows basefee transaction example
+A test shows basefee transaction example.
 
 Ported from:
 tests/static/state_tests/stExample/basefeeExampleFiller.yml
@@ -16,7 +16,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,16 +44,16 @@ def test_basefee_example(
         gas_limit=68719476736,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)) + Op.STOP,
+        code=bytes.fromhex("600160010160005500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -63,13 +62,25 @@ def test_basefee_example(
         max_priority_fee_per_gas=2,
         nonce=0,
         value=100000,
-        access_list=[AccessList(address=Address("0xad21eb96c7a254c810474f7b1e1e66ca449a3426"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
+        access_list=[
+            AccessList(
+                address=Address("0xad21eb96c7a254c810474f7b1e1e66ca449a3426"),
+                storage_keys=[
+                    Hash(
+                        "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                    ),
+                    Hash(
+                        "0x0000000000000000000000000000000000000000000000000000000000000001"  # noqa: E501
+                    ),
+                ],
+            ),
+        ],
     )
 
     post = {
         contract: Account(
             storage={0: 2},
-            code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)) + Op.STOP,
+            code=bytes.fromhex("600160010160005500"),
         ),
     }
 

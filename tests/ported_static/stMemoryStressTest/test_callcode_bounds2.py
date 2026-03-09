@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/CALLCODE_Bounds2Filler.json
 """
@@ -13,23 +15,48 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stMemoryStressTest/CALLCODE_Bounds2Filler.json"],
+    [
+        "tests/static/state_tests/stMemoryStressTest/CALLCODE_Bounds2Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0x814cc86eb9caa0e43cfea934fbb77c7917f5cc0e"): Account(code=Op.CALLCODE(gas=0x7ffffffffffffff, address=0x849f53126ade5f72469029537296f2b6644d4d41, value=0x0, args_offset=0xfffffff, args_size=0xfffffff, ret_offset=0xfffffff, ret_size=0xfffffff) + Op.STOP), Address("0x849f53126ade5f72469029537296f2b6644d4d41"): Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.STOP)}),
-        (16777216, {Address("0x814cc86eb9caa0e43cfea934fbb77c7917f5cc0e"): Account(code=Op.CALLCODE(gas=0x7ffffffffffffff, address=0x849f53126ade5f72469029537296f2b6644d4d41, value=0x0, args_offset=0xfffffff, args_size=0xfffffff, ret_offset=0xfffffff, ret_size=0xfffffff) + Op.STOP), Address("0x849f53126ade5f72469029537296f2b6644d4d41"): Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0x814cc86eb9caa0e43cfea934fbb77c7917f5cc0e"): Account(
+                    code=bytes.fromhex(
+                        "630fffffff630fffffff630fffffff630fffffff600073849f53126ade5f72469029537296f2b6644d4d416707fffffffffffffff200"  # noqa: E501
+                    )
+                ),
+                Address("0x849f53126ade5f72469029537296f2b6644d4d41"): Account(
+                    code=bytes.fromhex("60005460010160005500")
+                ),
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0x814cc86eb9caa0e43cfea934fbb77c7917f5cc0e"): Account(
+                    code=bytes.fromhex(
+                        "630fffffff630fffffff630fffffff630fffffff600073849f53126ade5f72469029537296f2b6644d4d416707fffffffffffffff200"  # noqa: E501
+                    )
+                ),
+                Address("0x849f53126ade5f72469029537296f2b6644d4d41"): Account(
+                    code=bytes.fromhex("60005460010160005500")
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_callcode_bounds2(
@@ -56,24 +83,24 @@ def test_callcode_bounds2(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.CALLCODE(gas=0x7ffffffffffffff, address=0x849f53126ade5f72469029537296f2b6644d4d41, value=0x0, args_offset=0xfffffff, args_size=0xfffffff, ret_offset=0xfffffff, ret_size=0xfffffff)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "630fffffff630fffffff630fffffff630fffffff600073849f53126ade5f724690295372"  # noqa: E501
+            "96f2b6644d4d416707fffffffffffffff200"
+        ),
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.STOP,
+        code=bytes.fromhex("60005460010160005500"),
     )
     pre[sender] = Account(
-        balance=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,
+        balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
         nonce=0,
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x50eadfb1030587ab3a993a6ecc073041fc3b45e119daa31a13d78c7e209631a5"
+            "0x50eadfb1030587ab3a993a6ecc073041fc3b45e119daa31a13d78c7e209631a5"  # noqa: E501
         ),
         to=contract,
         data=b"",

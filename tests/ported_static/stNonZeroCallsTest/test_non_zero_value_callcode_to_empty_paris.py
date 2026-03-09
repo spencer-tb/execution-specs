@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stNonZeroCallsTest/NonZeroValue_CALLCODE_ToEmpty_ParisFiller.json
+tests/static/state_tests/stNonZeroCallsTest
+NonZeroValue_CALLCODE_ToEmpty_ParisFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stNonZeroCallsTest/NonZeroValue_CALLCODE_ToEmpty_ParisFiller.json"],
+    [
+        "tests/static/state_tests/stNonZeroCallsTest/NonZeroValue_CALLCODE_ToEmpty_ParisFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,18 +50,17 @@ def test_non_zero_value_callcode_to_empty_paris(
     pre[contract] = Account(
         balance=100,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=0xea60, address=0x85b89db0e2aef2a23f50801209a3de4c65c58d9d, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a600052600060006000600060017385b89db0e2aef2a23f50801209a3de4c65c58d9d61"  # noqa: E501
+            "ea60f26001555a6000510360645500"
+        ),
     )
     pre[callee] = Account(balance=10, nonce=0)
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -70,7 +73,9 @@ def test_non_zero_value_callcode_to_empty_paris(
     post = {
         contract: Account(
             storage={1: 1, 100: 31435},
-            code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x1, value=Op.CALLCODE(gas=0xea60, address=0x85b89db0e2aef2a23f50801209a3de4c65c58d9d, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP,
+            code=bytes.fromhex(
+                "5a600052600060006000600060017385b89db0e2aef2a23f50801209a3de4c65c58d9d61ea60f26001555a6000510360645500"  # noqa: E501
+            ),
         ),
     }
 

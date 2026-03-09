@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stEIP150Specific/ExecuteCallThatAskForeGasThenTrabsactionHasFiller.json
+tests/static/state_tests/stEIP150Specific
+ExecuteCallThatAskForeGasThenTrabsactionHasFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP150Specific/ExecuteCallThatAskForeGasThenTrabsactionHasFiller.json"],
+    [
+        "tests/static/state_tests/stEIP150Specific/ExecuteCallThatAskForeGasThenTrabsactionHasFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,17 +50,21 @@ def test_execute_call_that_ask_fore_gas_then_trabsaction_has(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=Op.CALL(gas=0x927c0, address=0xbfdd294028701b119d416c68eff7dd9f7effd249, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600060006000600073bfdd294028701b119d416c68eff7dd9f7effd249620927c0f1"  # noqa: E501
+            "60015500"
+        ),
     )
-    pre[sender] = Account(balance=0x5f5e100, nonce=0)
-    pre[callee] = Account(balance=0x186a0, nonce=0, code=Op.SSTORE(key=0x1, value=0xc) + Op.STOP)
+    pre[sender] = Account(balance=0x5F5E100, nonce=0)
+    pre[callee] = Account(
+        balance=0x186A0,
+        nonce=0,
+        code=bytes.fromhex("600c60015500"),
+    )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"
+            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -69,9 +77,11 @@ def test_execute_call_that_ask_fore_gas_then_trabsaction_has(
     post = {
         contract: Account(
             storage={1: 1},
-            code=Op.SSTORE(key=0x1, value=Op.CALL(gas=0x927c0, address=0xbfdd294028701b119d416c68eff7dd9f7effd249, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000600073bfdd294028701b119d416c68eff7dd9f7effd249620927c0f160015500"  # noqa: E501
+            ),
         ),
-        callee: Account(storage={1: 12}, code=Op.SSTORE(key=0x1, value=0xc) + Op.STOP),
+        callee: Account(storage={1: 12}, code=bytes.fromhex("600c60015500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stMemExpandingEIP150Calls/DelegateCallOnEIPWithMemExpandingCallsFiller.json
+tests/static/state_tests/stMemExpandingEIP150Calls
+DelegateCallOnEIPWithMemExpandingCallsFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stMemExpandingEIP150Calls/DelegateCallOnEIPWithMemExpandingCallsFiller.json"],
+    [
+        "tests/static/state_tests/stMemExpandingEIP150Calls/DelegateCallOnEIPWithMemExpandingCallsFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,17 +50,17 @@ def test_delegate_call_on_eip_with_mem_expanding_calls(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x8, value=Op.GAS)
-        + Op.SSTORE(key=0x9, value=Op.DELEGATECALL(gas=0x927c0, address=0xa1f6e75a455896613053d45331763a07f4718969, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff))
-    ),
+        code=bytes.fromhex(
+            "5a60085560ff60ff60ff60ff73a1f6e75a455896613053d45331763a07f4718969620927"  # noqa: E501
+            "c0f4600955"
+        ),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
-    pre[callee] = Account(balance=0, nonce=0, code=Op.SSTORE(key=0x0, value=0x12))
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("6012600055"))
 
     tx = Transaction(
         secret_key=Hash(
-            "0x8d19f2b0d2f5689c1771fbca70476ca6e877a81ee15c3733de87fae38e5abcef"
+            "0x8d19f2b0d2f5689c1771fbca70476ca6e877a81ee15c3733de87fae38e5abcef"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,10 +72,12 @@ def test_delegate_call_on_eip_with_mem_expanding_calls(
 
     post = {
         contract: Account(
-            storage={0: 18, 8: 0x8d5b6, 9: 1},
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.DELEGATECALL(gas=0x927c0, address=0xa1f6e75a455896613053d45331763a07f4718969, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff)),
+            storage={0: 18, 8: 0x8D5B6, 9: 1},
+            code=bytes.fromhex(
+                "5a60085560ff60ff60ff60ff73a1f6e75a455896613053d45331763a07f4718969620927c0f4600955"  # noqa: E501
+            ),
         ),
-        callee: Account(code=Op.SSTORE(key=0x0, value=0x12)),
+        callee: Account(code=bytes.fromhex("6012600055")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

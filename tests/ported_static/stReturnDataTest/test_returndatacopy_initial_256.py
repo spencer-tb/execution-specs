@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stReturnDataTest/returndatacopy_initial_256Filler.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stReturnDataTest/returndatacopy_initial_256Filler.json"],
+    [
+        "tests/static/state_tests/stReturnDataTest/returndatacopy_initial_256Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -30,7 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "0000000000000000000000000000000000000000000000000000000000000063",
         "0000000000000000000000000000000000000000000000000000000000000065",
     ],
-    ids=['case0', 'case1', 'case2'],
+    ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_returndatacopy_initial_256(
@@ -53,13 +56,12 @@ def test_returndatacopy_initial_256(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.RETURNDATACOPY(dest_offset=Op.SUB(0x0, Op.CALLDATALOAD(offset=0x0)), offset=0x0, size=0x64)
-        + Op.MSTORE(offset=0x0, value=0x112233445566778899aabbccddeeff)
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "606460006000356000033e6e112233445566778899aabbccddeeff600052600051600055"  # noqa: E501
+            "00"
+        ),
         storage={0x0: 0x1},
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
@@ -68,7 +70,7 @@ def test_returndatacopy_initial_256(
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=tx_data,
@@ -81,7 +83,9 @@ def test_returndatacopy_initial_256(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.RETURNDATACOPY(dest_offset=Op.SUB(0x0, Op.CALLDATALOAD(offset=0x0)), offset=0x0, size=0x64) + Op.MSTORE(offset=0x0, value=0x112233445566778899aabbccddeeff) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "606460006000356000033e6e112233445566778899aabbccddeeff60005260005160005500"  # noqa: E501
+            ),
         ),
     }
 

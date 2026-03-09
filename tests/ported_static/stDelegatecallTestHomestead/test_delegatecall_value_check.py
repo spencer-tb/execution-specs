@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stDelegatecallTestHomestead/delegatecallValueCheckFiller.json
+tests/static/state_tests/stDelegatecallTestHomestead
+delegatecallValueCheckFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stDelegatecallTestHomestead/delegatecallValueCheckFiller.json"],
+    [
+        "tests/static/state_tests/stDelegatecallTestHomestead/delegatecallValueCheckFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -44,23 +48,23 @@ def test_delegatecall_value_check(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=0x7a120, address=0x5d25ad2a26f849e9400d6b65244f26f4eea11adf, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x2))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6002600060406000735d25ad2a26f849e9400d6b65244f26f4eea11adf6207a120f46000"  # noqa: E501
+            "5500"
+        ),
     )
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=Op.CALLVALUE) + Op.STOP,
+        code=bytes.fromhex("3460015500"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -73,9 +77,11 @@ def test_delegatecall_value_check(
     post = {
         contract: Account(
             storage={0: 1, 1: 23},
-            code=Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=0x7a120, address=0x5d25ad2a26f849e9400d6b65244f26f4eea11adf, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x2)) + Op.STOP,
+            code=bytes.fromhex(
+                "6002600060406000735d25ad2a26f849e9400d6b65244f26f4eea11adf6207a120f460005500"  # noqa: E501
+            ),
         ),
-        callee: Account(code=Op.SSTORE(key=0x1, value=Op.CALLVALUE) + Op.STOP),
+        callee: Account(code=bytes.fromhex("3460015500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stEIP158Specific/EXP_EmptyFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,38 +46,22 @@ def test_exp_empty(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0x1, value=Op.EXP(0x0, 0xc))
-        + Op.SSTORE(key=0x2, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
-        + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0x3, value=Op.EXP(0xc, 0x0))
-        + Op.SSTORE(key=0x4, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
-        + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0x5, value=Op.EXP(0x0, 0xffffffffffffffff))
-        + Op.SSTORE(key=0x6, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
-        + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0x7, value=Op.EXP(0x0, 0xffffffffffffffffffffffffffffffff))
-        + Op.SSTORE(key=0x8, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
-        + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0x9, value=Op.EXP(0x0, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff))
-        + Op.SSTORE(key=0xa, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
-        + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0xb, value=Op.EXP(0xffffffffffffffff, 0x0))
-        + Op.SSTORE(key=0xc, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
-        + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0xd, value=Op.EXP(0xffffffffffffffffffffffffffffffff, 0x0))
-        + Op.SSTORE(key=0xe, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
-        + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0xf, value=Op.EXP(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, 0x0))
-        + Op.SSTORE(key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a600052600c60000a6001555a600051036002555a6000526000600c0a6003555a600051"  # noqa: E501
+            "036004555a60005267ffffffffffffffff60000a6005555a600051036006555a6000526f"  # noqa: E501
+            "ffffffffffffffffffffffffffffffff60000a6007555a600051036008555a6000527fff"  # noqa: E501
+            "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60000a6009"  # noqa: E501
+            "555a60005103600a555a600052600067ffffffffffffffff0a600b555a60005103600c55"  # noqa: E501
+            "5a60005260006fffffffffffffffffffffffffffffffff0a600d555a60005103600e555a"  # noqa: E501
+            "60005260007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "ffff0a600f555a6000510360645500"
+        ),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -88,8 +73,23 @@ def test_exp_empty(
 
     post = {
         contract: Account(
-            storage={2: 2280, 3: 1, 4: 22127, 6: 2627, 8: 3027, 10: 3827, 11: 1, 12: 22127, 13: 1, 14: 22127, 15: 1, 100: 22127},
-            code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x1, value=Op.EXP(0x0, 0xc)) + Op.SSTORE(key=0x2, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x3, value=Op.EXP(0xc, 0x0)) + Op.SSTORE(key=0x4, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x5, value=Op.EXP(0x0, 0xffffffffffffffff)) + Op.SSTORE(key=0x6, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x7, value=Op.EXP(0x0, 0xffffffffffffffffffffffffffffffff)) + Op.SSTORE(key=0x8, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.EXP(0x0, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)) + Op.SSTORE(key=0xa, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0xb, value=Op.EXP(0xffffffffffffffff, 0x0)) + Op.SSTORE(key=0xc, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0xd, value=Op.EXP(0xffffffffffffffffffffffffffffffff, 0x0)) + Op.SSTORE(key=0xe, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0xf, value=Op.EXP(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, 0x0)) + Op.SSTORE(key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP,
+            storage={
+                2: 2280,
+                3: 1,
+                4: 22127,
+                6: 2627,
+                8: 3027,
+                10: 3827,
+                11: 1,
+                12: 22127,
+                13: 1,
+                14: 22127,
+                15: 1,
+                100: 22127,
+            },
+            code=bytes.fromhex(
+                "5a600052600c60000a6001555a600051036002555a6000526000600c0a6003555a600051036004555a60005267ffffffffffffffff60000a6005555a600051036006555a6000526fffffffffffffffffffffffffffffffff60000a6007555a600051036008555a6000527fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60000a6009555a60005103600a555a600052600067ffffffffffffffff0a600b555a60005103600c555a60005260006fffffffffffffffffffffffffffffffff0a600d555a60005103600e555a60005260007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0a600f555a6000510360645500"  # noqa: E501
+            ),
         ),
     }
 

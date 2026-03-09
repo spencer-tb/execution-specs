@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSpecialTest/StackDepthLimitSECFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -41,15 +42,15 @@ def test_stack_depth_limit_sec(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x2540be400, nonce=0)
+    pre[sender] = Account(balance=0x2540BE400, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex(
-            "305032503350600460006000396000515060046000600037600051506f60006000600060"
+            "305032503350600460006000396000515060046000600037600051506f60006000600060"  # noqa: E501
             "0060003060405a03f160005260106010f3"
         ),
         gas_limit=1000000,
@@ -60,7 +61,7 @@ def test_stack_depth_limit_sec(
 
     post = {
         Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-            code=Op.CALL(gas=Op.SUB(Op.GAS, 0x40), address=Op.ADDRESS, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0),
+            code=bytes.fromhex("600060006000600060003060405a03f1"),
         ),
     }
 

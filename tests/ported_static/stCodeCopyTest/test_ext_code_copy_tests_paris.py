@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCodeCopyTest/ExtCodeCopyTestsParisFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCodeCopyTest/ExtCodeCopyTestsParisFiller.json"],
+    [
+        "tests/static/state_tests/stCodeCopyTest/ExtCodeCopyTestsParisFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,34 +48,31 @@ def test_ext_code_copy_tests_paris(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xffffffffffffffffffffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
     pre[contract] = Account(
         balance=7000,
         nonce=0,
-        code=(
-        Op.EXTCODECOPY(address=0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2)
-        + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
-        + Op.EXTCODECOPY(address=0xcccf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2)
-        + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x0))
-        + Op.EXTCODECOPY(address=0xdddf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2)
-        + Op.SSTORE(key=0x4, value=Op.MLOAD(offset=0x0))
-        + Op.EXTCODECOPY(address=0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2)
-        + Op.SSTORE(key=0x5, value=Op.MLOAD(offset=0x0))
-        + Op.EXTCODECOPY(address=0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0xc8)
-        + Op.SSTORE(key=0x6, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6002600a600173bbbf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516002556002"  # noqa: E501
+            "600a600173cccf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516003556002600a"  # noqa: E501
+            "600173dddf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516004556002600a6001"  # noqa: E501
+            "73eeef5374fce5edbc8e2a8697c15331677e6ebf0b3c60005160055560c8600a600173ee"  # noqa: E501
+            "ef5374fce5edbc8e2a8697c15331677e6ebf0b3c60005160065500"
+        ),
     )
     pre[callee] = Account(balance=10, nonce=0)
     pre[callee_1] = Account(balance=0, nonce=1)
     pre[callee_2] = Account(
         balance=0,
         nonce=1,
-        code=bytes.fromhex("1122334455667788991011121314151617181920212223242526272829303132"),
+        code=bytes.fromhex(
+            "1122334455667788991011121314151617181920212223242526272829303132"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -84,11 +84,18 @@ def test_ext_code_copy_tests_paris(
 
     post = {
         contract: Account(
-            storage={5: 0x11120000000000000000000000000000000000000000000000000000000000, 6: 0x11121314151617181920212223242526272829303132000000000000000000},
-            code=Op.EXTCODECOPY(address=0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.EXTCODECOPY(address=0xcccf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2) + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x0)) + Op.EXTCODECOPY(address=0xdddf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2) + Op.SSTORE(key=0x4, value=Op.MLOAD(offset=0x0)) + Op.EXTCODECOPY(address=0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2) + Op.SSTORE(key=0x5, value=Op.MLOAD(offset=0x0)) + Op.EXTCODECOPY(address=0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0xc8) + Op.SSTORE(key=0x6, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            storage={
+                5: 0x11120000000000000000000000000000000000000000000000000000000000,  # noqa: E501
+                6: 0x11121314151617181920212223242526272829303132000000000000000000,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "6002600a600173bbbf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516002556002600a600173cccf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516003556002600a600173dddf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516004556002600a600173eeef5374fce5edbc8e2a8697c15331677e6ebf0b3c60005160055560c8600a600173eeef5374fce5edbc8e2a8697c15331677e6ebf0b3c60005160065500"  # noqa: E501
+            ),
         ),
         callee_2: Account(
-            code=bytes.fromhex("1122334455667788991011121314151617181920212223242526272829303132"),
+            code=bytes.fromhex(
+                "1122334455667788991011121314151617181920212223242526272829303132"  # noqa: E501
+            ),
         ),
     }
 

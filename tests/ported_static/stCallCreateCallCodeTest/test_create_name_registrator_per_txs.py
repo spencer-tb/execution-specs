@@ -1,8 +1,9 @@
 """
-Legacy Test from Christoph. J
+Legacy Test from Christoph. J.
 
 Ported from:
-tests/static/state_tests/stCallCreateCallCodeTest/createNameRegistratorPerTxsFiller.json
+tests/static/state_tests/stCallCreateCallCodeTest
+createNameRegistratorPerTxsFiller.json
 """
 
 import pytest
@@ -21,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/createNameRegistratorPerTxsFiller.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/createNameRegistratorPerTxsFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -42,14 +45,16 @@ def test_create_name_registrator_per_txs(
         gas_limit=10000000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
-        data=bytes.fromhex("6001600155601080600c6000396000f3006000355415600957005b60203560003555"),
+        data=bytes.fromhex(
+            "6001600155601080600c6000396000f3006000355415600957005b60203560003555"  # noqa: E501
+        ),
         gas_limit=1250528,
         gas_price=10,
         nonce=0,

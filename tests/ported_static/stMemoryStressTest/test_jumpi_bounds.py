@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/JUMPI_BoundsFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,28 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9"): Account(code=Op.JUMPI(pc=0xffffffff, condition=0x1) + Op.JUMPI(pc=0xffffffffffffffff, condition=0x1) + Op.JUMPI(pc=0xffffffffffffffffffffffffffffffff, condition=0x1) + Op.JUMPI(pc=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, condition=0x1) + Op.STOP)}),
-        (16777216, {Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9"): Account(code=Op.JUMPI(pc=0xffffffff, condition=0x1) + Op.JUMPI(pc=0xffffffffffffffff, condition=0x1) + Op.JUMPI(pc=0xffffffffffffffffffffffffffffffff, condition=0x1) + Op.JUMPI(pc=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, condition=0x1) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9"): Account(
+                    code=bytes.fromhex(
+                        "600163ffffffff57600167ffffffffffffffff5760016fffffffffffffffffffffffffffffffff5760017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5700"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9"): Account(
+                    code=bytes.fromhex(
+                        "600163ffffffff57600167ffffffffffffffff5760016fffffffffffffffffffffffffffffffff5760017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5700"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_jumpi_bounds(
@@ -55,19 +74,17 @@ def test_jumpi_bounds(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.JUMPI(pc=0xffffffff, condition=0x1)
-        + Op.JUMPI(pc=0xffffffffffffffff, condition=0x1)
-        + Op.JUMPI(pc=0xffffffffffffffffffffffffffffffff, condition=0x1)
-        + Op.JUMPI(pc=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, condition=0x1)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600163ffffffff57600167ffffffffffffffff5760016fffffffffffffffffffffffffff"  # noqa: E501
+            "ffffff5760017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "ffffff5700"
+        ),
     )
-    pre[sender] = Account(balance=0x7fffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x31b5af02b012484ae954b3a43943242ede546a2e76fc0a6acc17435107c385eb"
+            "0x31b5af02b012484ae954b3a43943242ede546a2e76fc0a6acc17435107c385eb"  # noqa: E501
         ),
         to=contract,
         data=b"",

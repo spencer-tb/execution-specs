@@ -1,5 +1,5 @@
 """
-DIV/SDIV/MOD/SMOD by zero tests
+DIV/SDIV/MOD/SMOD by zero tests.
 
 Ported from:
 tests/static/state_tests/stSolidityTest/ByZeroFiller.json
@@ -32,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "600160006001065500",
         "600160006001075500",
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_by_zero(
@@ -53,13 +53,13 @@ def test_by_zero(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x8ac7230489e80000, nonce=0)
+    pre[sender] = Account(balance=0x8AC7230489E80000, nonce=0)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,
@@ -70,7 +70,9 @@ def test_by_zero(
     )
 
     post = {
-        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={0: 1}),
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+            storage={0: 1},
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

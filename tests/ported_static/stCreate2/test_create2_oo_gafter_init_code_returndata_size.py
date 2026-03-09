@@ -1,8 +1,9 @@
 """
-Calls a contract that runs CREATE2 which deploy a code. then OOG happens upon deployment of the actual code. check the RETURNDATASIZE after create. fails with OOG if RETURNDATASIZE != 0
+Calls a contract that runs CREATE2 which deploy a code. then OOG happens...
 
 Ported from:
-tests/static/state_tests/stCreate2/Create2OOGafterInitCodeReturndataSizeFiller.json
+tests/static/state_tests/stCreate2
+Create2OOGafterInitCodeReturndataSizeFiller.json
 """
 
 import pytest
@@ -15,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreate2/Create2OOGafterInitCodeReturndataSizeFiller.json"],
+    [
+        "tests/static/state_tests/stCreate2/Create2OOGafterInitCodeReturndataSizeFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -30,7 +32,7 @@ def test_create2_oo_gafter_init_code_returndata_size(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """Calls a contract that runs CREATE2 which deploy a code. then OOG happens upon deployment of the actual code. check the RETURNDATASIZE after create. fails with OOG if RETURNDATASIZE != 0."""
+    """Calls a contract that runs CREATE2 which deploy a code. then OOG..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
@@ -44,20 +46,19 @@ def test_create2_oo_gafter_init_code_returndata_size(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x6960016001556001600255600052600a6016f3)
-        + Op.POP(Op.CREATE2(value=0x0, offset=0xd, size=0x13, salt=0x0))
-        + Op.EXP(0x2, Op.RETURNDATASIZE) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "726960016001556001600255600052600a6016f360005260006013600d6000f5503d6002"  # noqa: E501
+            "0a00"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -69,7 +70,9 @@ def test_create2_oo_gafter_init_code_returndata_size(
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x6960016001556001600255600052600a6016f3) + Op.POP(Op.CREATE2(value=0x0, offset=0xd, size=0x13, salt=0x0)) + Op.EXP(0x2, Op.RETURNDATASIZE) + Op.STOP,
+            code=bytes.fromhex(
+                "726960016001556001600255600052600a6016f360005260006013600d6000f5503d60020a00"  # noqa: E501
+            ),
         ),
     }
 

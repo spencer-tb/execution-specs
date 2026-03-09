@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSelfBalance/selfBalanceEqualsBalanceFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSelfBalance/selfBalanceEqualsBalanceFiller.json"],
+    [
+        "tests/static/state_tests/stSelfBalance/selfBalanceEqualsBalanceFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,16 +48,13 @@ def test_self_balance_equals_balance(
     pre[contract] = Account(
         balance=500,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=Op.EQ(Op.SELFBALANCE, Op.BALANCE(address=Op.ADDRESS)))
-        + Op.STOP
-    ),
+        code=bytes.fromhex("3031471460015500"),
     )
-    pre[sender] = Account(balance=0x3635c9adc5dea00000, nonce=0)
+    pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x897b12d02d588d8a4fe16ff831cbd4459c6f62f8c845b0ccdd31caf068c84a26"
+            "0x897b12d02d588d8a4fe16ff831cbd4459c6f62f8c845b0ccdd31caf068c84a26"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +67,7 @@ def test_self_balance_equals_balance(
     post = {
         contract: Account(
             storage={1: 1},
-            code=Op.SSTORE(key=0x1, value=Op.EQ(Op.SELFBALANCE, Op.BALANCE(address=Op.ADDRESS))) + Op.STOP,
+            code=bytes.fromhex("3031471460015500"),
         ),
     }
 

@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryTest/calldatacopy_dejavu2Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,19 +45,16 @@ def test_calldatacopy_dejavu2(
 
     pre[sender] = Account(balance=0x271000000000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE8(offset=0x1f, value=0x42)
-        + Op.CALLDATACOPY(dest_offset=0x1f, offset=0x0, size=0x103)
-        + Op.JUMPI(pc=0x1f, condition=Op.EQ(Op.MLOAD(offset=0x0), 0x60))
-        + Op.SSTORE(key=0xff, value=0xbadc0ffee) + Op.JUMPDEST + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6042601f536101036000601f37606060005114601f57640badc0ffee60ff555b00"  # noqa: E501
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x7dd1d0ec78fe936b0e88f8c21226f51f048579915c7baff1c5d7fd84b2139bf1"
+            "0x7dd1d0ec78fe936b0e88f8c21226f51f048579915c7baff1c5d7fd84b2139bf1"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,8 +66,10 @@ def test_calldatacopy_dejavu2(
 
     post = {
         contract: Account(
-            storage={255: 0xbadc0ffee},
-            code=Op.MSTORE8(offset=0x1f, value=0x42) + Op.CALLDATACOPY(dest_offset=0x1f, offset=0x0, size=0x103) + Op.JUMPI(pc=0x1f, condition=Op.EQ(Op.MLOAD(offset=0x0), 0x60)) + Op.SSTORE(key=0xff, value=0xbadc0ffee) + Op.JUMPDEST + Op.STOP,
+            storage={255: 0xBADC0FFEE},
+            code=bytes.fromhex(
+                "6042601f536101036000601f37606060005114601f57640badc0ffee60ff555b00"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,5 +1,5 @@
 """
-Ori Pomerantz qbzzt1@gmail.com
+Ori Pomerantz qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/stMemoryTest/memCopySelfFiller.yml
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,27 +43,20 @@ def test_mem_copy_self(
         gas_limit=100000000,
     )
 
-    pre[sender] = Account(balance=0xba1a9ce0ba1a9ce, nonce=1)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
     pre[contract] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
-        code=(
-        Op.PUSH1[0x4] + Op.PUSH1[0x0] + Op.JUMPDEST
-        + Op.JUMPI(pc=0x30, condition=Op.LT(Op.DUP2, 0xf)) + Op.PUSH1[0xa]
-        + Op.PUSH1[0x2] + Op.DUP2 + Op.PUSH1[0x0] + Op.DUP1 + Op.DUP7
-        + Op.SSTORE(key=Op.DUP3, value=Op.MLOAD(offset=Op.DUP2)) + Op.GAS
-        + Op.POP(Op.CALL) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
-        + Op.RETURNDATACOPY(dest_offset=0x20, offset=0x0, size=0xa)
-        + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x20)) + Op.STOP + Op.JUMPDEST
-        + Op.DUP1 + Op.PUSH1[0x11] + Op.PUSH1[0x1] + Op.DUP1 + Op.SWAP4 + Op.ADD
-        + Op.MSTORE8(offset=Op.DUP2, value=Op.MUL) + Op.ADD + Op.JUMP(pc=0x4)
-    ),
-        storage={0x0: 0x60a7},
+        code=bytes.fromhex(
+            "600460005b600f8110603057600a60028160008086815182555af150600051600155600a"  # noqa: E501
+            "600060203e602051600255005b806011600180930102815301600456"
+        ),
+        storage={0x0: 0x60A7},
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x48dc5a9f099caaaa557742ca3a990a94be45b9969126a1bc74e5e8be5a2b5b47"
+            "0x48dc5a9f099caaaa557742ca3a990a94be45b9969126a1bc74e5e8be5a2b5b47"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -76,8 +68,14 @@ def test_mem_copy_self(
 
     post = {
         contract: Account(
-            storage={0: 0x112233445566778899aabbccddeeff0000000000000000000000000000000000, 1: 0x1122112233445566778899aaddeeff0000000000000000000000000000000000, 2: 0x112233445566778899aa00000000000000000000000000000000000000000000},
-            code=Op.PUSH1[0x4] + Op.PUSH1[0x0] + Op.JUMPDEST + Op.JUMPI(pc=0x30, condition=Op.LT(Op.DUP2, 0xf)) + Op.PUSH1[0xa] + Op.PUSH1[0x2] + Op.DUP2 + Op.PUSH1[0x0] + Op.DUP1 + Op.DUP7 + Op.SSTORE(key=Op.DUP3, value=Op.MLOAD(offset=Op.DUP2)) + Op.GAS + Op.POP(Op.CALL) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.RETURNDATACOPY(dest_offset=0x20, offset=0x0, size=0xa) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x20)) + Op.STOP + Op.JUMPDEST + Op.DUP1 + Op.PUSH1[0x11] + Op.PUSH1[0x1] + Op.DUP1 + Op.SWAP4 + Op.ADD + Op.MSTORE8(offset=Op.DUP2, value=Op.MUL) + Op.ADD + Op.JUMP(pc=0x4),
+            storage={
+                0: 0x112233445566778899AABBCCDDEEFF0000000000000000000000000000000000,  # noqa: E501
+                1: 0x1122112233445566778899AADDEEFF0000000000000000000000000000000000,  # noqa: E501
+                2: 0x112233445566778899AA00000000000000000000000000000000000000000000,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "600460005b600f8110603057600a60028160008086815182555af150600051600155600a600060203e602051600255005b806011600180930102815301600456"  # noqa: E501
+            ),
         ),
     }
 

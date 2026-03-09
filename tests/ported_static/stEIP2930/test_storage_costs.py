@@ -1,5 +1,5 @@
 """
-Ori Pomerantz qbzzt1@gmail.com
+Ori Pomerantz qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/stEIP2930/storageCostsFiller.yml
@@ -16,7 +16,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -29,56 +28,2845 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_data_hex, tx_access_list, expected_post",
     [
-        ("693c61390000000000000000000000000000000000000000000000000000000000000002", [AccessList(address=Address("0x0000000000000000000000000000000000001002"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={1: 2903}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000005", [AccessList(address=Address("0x0000000000000000000000000000000000001005"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(storage={1: 103}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000004", [AccessList(address=Address("0x0000000000000000000000000000000000001004"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743, 1: 103}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000001", [AccessList(address=Address("0x0000000000000000000000000000000000001001"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(storage={1: 100}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000021", [AccessList(address=Address("0x0000000000000000000000000000000000001021"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(storage={1: 97}, code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000011", [AccessList(address=Address("0x0000000000000000000000000000000000001011"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(storage={0: 24743, 1: 100}, code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000003", [AccessList(address=Address("0x0000000000000000000000000000000000001003"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 48879, 1: 2903}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000000", [
-            AccessList(address=Address("0x00000000000000000000000000000000000060a7"), storage_keys=[Hash("0x000000000000000000000000000000000000000000000000000000000fffffad"), Hash("0x00000000000000000000000000000000000000000000000000000000000000ad"), Hash("0x00000000000000000000000000000000000000000000000000000123214342ad"), Hash("0x00000000000000000000000000000000000000000000000000000000deadbeef")]),
-            AccessList(address=Address("0x0000000000000000000000000000000000001000"), storage_keys=[Hash("0x00000000000000000000000000000000000000000000000000000000000fffff"), Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"), Hash("0x0000000000000000000000000000000000000000000000000000000123214342"), Hash("0x00000000000000000000000000000000000000000000000000000000deadbeef")]),
-            AccessList(address=Address("0x0000000000000000000000000010000000000100"), storage_keys=[Hash("0x000000000000000000000000000000000000000000000000000000000fffffbc"), Hash("0x00000000000000000000000000000000000000000000000000000000000000bc"), Hash("0x00000000000000000000000000000000000000000000000000000123214342bc"), Hash("0x000000000000000000000000000000000000000000000000000000deadbeefbc")]),
-            AccessList(address=Address("0xffffffffffffffffffffffffffffffffffffffff"), storage_keys=[Hash("0x000000000000000000000000000000000000000000000000000000000fffffbc"), Hash("0x00000000000000000000000000000000000000000000000000000000000000bc"), Hash("0x00000000000000000000000000000000000000000000000000000123214342bc"), Hash("0x000000000000000000000000000000000000000000000000000000deadbeefbc"), Hash("0xdeadbeef12345678deadbeef12345678deadbeef12345678deadbeef12345678"), Hash("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")]),
-        ], {Address("0x0000000000000000000000000000000000001000"): Account(storage={0: 2, 1: 20003}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000000", [AccessList(address=Address("0x0000000000000000000000000000000000001000"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(storage={0: 2, 1: 20003}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000020", [AccessList(address=Address("0x0000000000000000000000000000000000001020"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(storage={0: 2, 1: 20000}, code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000010", [AccessList(address=Address("0x0000000000000000000000000000000000001010"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(storage={0: 2, 1: 103}, code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000fff", [AccessList(address=Address("0xcccccccccccccccccccccccccccccccccccccccc"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001"), Hash("0x0000000000000000000000000000000000000000000000000000000000000002"), Hash("0x00000000000000000000000000000000000000000000000000000000000060a7")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 100, 2: 20000, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000002", [AccessList(address=Address("0xf000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={1: 5003}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000002", None, {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={1: 5003}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000002", [AccessList(address=Address("0x0000000000000000000000000000000000001002"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000010")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={1: 5003}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000004", [AccessList(address=Address("0xf000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743, 1: 2203}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000004", None, {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743, 1: 2203}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000005", [AccessList(address=Address("0xf000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(storage={1: 2203}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000005", None, {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(storage={1: 2203}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000005", [AccessList(address=Address("0x0000000000000000000000000000000000001005"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000010")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(storage={1: 2203}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000004", [AccessList(address=Address("0x0000000000000000000000000000000000001004"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000010")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743, 1: 2203}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000001", [AccessList(address=Address("0xf000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(storage={1: 2100}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000001", None, {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(storage={1: 2100}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000001", [AccessList(address=Address("0x0000000000000000000000000000000000001001"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000010")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(storage={1: 2100}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000021", [AccessList(address=Address("0x0000000000000000000000000000000000001021"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000010")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(storage={1: 97}, code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000011", [AccessList(address=Address("0x0000000000000000000000000000000000001011"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000010")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(storage={0: 24743, 1: 100}, code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000003", [AccessList(address=Address("0xf000000000000000000000000000000000000101"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 48879, 1: 5003}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000003", None, {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 48879, 1: 5003}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000003", [AccessList(address=Address("0x0000000000000000000000000000000000001003"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000010")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 48879, 1: 5003}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000000", [AccessList(address=Address("0xf000000000000000000000000000000000000100"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000")])], {Address("0x0000000000000000000000000000000000001000"): Account(storage={0: 2, 1: 22103}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000000", None, {Address("0x0000000000000000000000000000000000001000"): Account(storage={0: 2, 1: 22103}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000000", [AccessList(address=Address("0x0000000000000000000000000000000000001000"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000010")])], {Address("0x0000000000000000000000000000000000001000"): Account(storage={0: 2, 1: 22103}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000020", [AccessList(address=Address("0x0000000000000000000000000000000000001020"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000010")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(storage={0: 2, 1: 20000}, code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000010", [AccessList(address=Address("0x0000000000000000000000000000000000001010"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000010")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(storage={0: 2, 1: 103}, code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000fff", [AccessList(address=Address("0xcccccccccccccccccccccccccccccccccccccccc"), storage_keys=[Hash("0x000000000000000000000000000000000000000000000000000000000000f000"), Hash("0x000000000000000000000000000000000000000000000000000000000000f001"), Hash("0x000000000000000000000000000000000000000000000000000000000000f002"), Hash("0x000000000000000000000000000000000000000000000000000000000000f0a7")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
-        ("693c61390000000000000000000000000000000000000000000000000000000000000fff", [AccessList(address=Address("0xcccccccccccccccccccccccccccccccccc000000"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001"), Hash("0x0000000000000000000000000000000000000000000000000000000000000002"), Hash("0x00000000000000000000000000000000000000000000000000000000000060a7")])], {Address("0x0000000000000000000000000000000000001000"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001001"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001002"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001003"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001004"): Account(storage={0: 24743}, code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001005"): Account(code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001010"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001011"): Account(code=Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001020"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0x0000000000000000000000000000000000001021"): Account(code=Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP), Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(storage={0: 2, 1: 2100, 2: 22100, 24743: 57005}, code=Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7)) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2) + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11)) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP)}),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001002"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={1: 2903},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000005",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001005"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    storage={1: 103},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000004",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001004"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743, 1: 103},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001001"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    storage={1: 100},
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000021",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001021"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    storage={1: 97},
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000011",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001011"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    storage={0: 24743, 1: 100},
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000003",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001003"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 48879, 1: 2903},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x00000000000000000000000000000000000060a7"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x000000000000000000000000000000000000000000000000000000000fffffad"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000000000000ad"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000123214342ad"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000000deadbeef"  # noqa: E501
+                        ),
+                    ],
+                ),
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001000"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000000000fffff"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        ),
+                        Hash(
+                            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000123214342"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000000deadbeef"  # noqa: E501
+                        ),
+                    ],
+                ),
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000010000000000100"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x000000000000000000000000000000000000000000000000000000000fffffbc"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000000000000bc"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000123214342bc"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x000000000000000000000000000000000000000000000000000000deadbeefbc"  # noqa: E501
+                        ),
+                    ],
+                ),
+                AccessList(
+                    address=Address(
+                        "0xffffffffffffffffffffffffffffffffffffffff"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x000000000000000000000000000000000000000000000000000000000fffffbc"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000000000000bc"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000123214342bc"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x000000000000000000000000000000000000000000000000000000deadbeefbc"  # noqa: E501
+                        ),
+                        Hash(
+                            "0xdeadbeef12345678deadbeef12345678deadbeef12345678deadbeef12345678"  # noqa: E501
+                        ),
+                        Hash(
+                            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
+                        ),
+                    ],
+                ),
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    storage={0: 2, 1: 20003},
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001000"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    storage={0: 2, 1: 20003},
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000020",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001020"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    storage={0: 2, 1: 20000},
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000010",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001010"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    storage={0: 2, 1: 103},
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000fff",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0xcccccccccccccccccccccccccccccccccccccccc"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000001"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000002"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000000000060a7"  # noqa: E501
+                        ),
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 100, 2: 20000, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0xf000000000000000000000000000000000000101"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={1: 5003},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
+            None,
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={1: 5003},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001002"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000010"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={1: 5003},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000004",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0xf000000000000000000000000000000000000101"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743, 1: 2203},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000004",  # noqa: E501
+            None,
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743, 1: 2203},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000005",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0xf000000000000000000000000000000000000101"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    storage={1: 2203},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000005",  # noqa: E501
+            None,
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    storage={1: 2203},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000005",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001005"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000010"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    storage={1: 2203},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000004",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001004"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000010"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743, 1: 2203},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0xf000000000000000000000000000000000000101"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    storage={1: 2100},
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
+            None,
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    storage={1: 2100},
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001001"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000010"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    storage={1: 2100},
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000021",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001021"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000010"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    storage={1: 97},
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000011",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001011"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000010"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    storage={0: 24743, 1: 100},
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000003",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0xf000000000000000000000000000000000000101"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 48879, 1: 5003},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000003",  # noqa: E501
+            None,
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 48879, 1: 5003},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000003",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001003"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000010"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 48879, 1: 5003},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0xf000000000000000000000000000000000000100"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    storage={0: 2, 1: 22103},
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
+            None,
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    storage={0: 2, 1: 22103},
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001000"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000010"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    storage={0: 2, 1: 22103},
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000020",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001020"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000010"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    storage={0: 2, 1: 20000},
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000010",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0x0000000000000000000000000000000000001010"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000010"  # noqa: E501
+                        )
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    storage={0: 2, 1: 103},
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000fff",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0xcccccccccccccccccccccccccccccccccccccccc"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x000000000000000000000000000000000000000000000000000000000000f000"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x000000000000000000000000000000000000000000000000000000000000f001"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x000000000000000000000000000000000000000000000000000000000000f002"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x000000000000000000000000000000000000000000000000000000000000f0a7"  # noqa: E501
+                        ),
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000000000000000000000000000000000000000000fff",  # noqa: E501
+            [
+                AccessList(
+                    address=Address(
+                        "0xcccccccccccccccccccccccccccccccccc000000"
+                    ),
+                    storage_keys=[
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000001"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x0000000000000000000000000000000000000000000000000000000000000002"  # noqa: E501
+                        ),
+                        Hash(
+                            "0x00000000000000000000000000000000000000000000000000000000000060a7"  # noqa: E501
+                        ),
+                    ],
+                )
+            ],
+            {
+                Address("0x0000000000000000000000000000000000001000"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001001"): Account(
+                    code=bytes.fromhex(
+                        "5a6000526000545060135a600051030360005260005160015500"
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001002"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001003"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a60005261beef60005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001004"): Account(
+                    storage={0: 24743},
+                    code=bytes.fromhex(
+                        "5a6000526160a760005560115a600051030360005260005160015500"  # noqa: E501
+                    ),
+                ),
+                Address("0x0000000000000000000000000000000000001005"): Account(
+                    code=bytes.fromhex(
+                        "5a600052600060005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001010"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001011"): Account(
+                    code=bytes.fromhex(
+                        "6160a76000555a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001020"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x0000000000000000000000000000000000001021"): Account(
+                    code=bytes.fromhex(
+                        "6000546020525a6000526000545060135a600051030360005260005160015500"  # noqa: E501
+                    )
+                ),
+                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
+                    storage={0: 2, 1: 2100, 2: 22100, 24743: 57005},
+                    code=bytes.fromhex(
+                        "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103036000526000516001555a600052600260005560115a600051030360005260005160025500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3', 'case4', 'case5', 'case6', 'case7', 'case8', 'case9', 'case10', 'case11', 'case12', 'case13', 'case14', 'case15', 'case16', 'case17', 'case18', 'case19', 'case20', 'case21', 'case22', 'case23', 'case24', 'case25', 'case26', 'case27', 'case28', 'case29', 'case30', 'case31', 'case32', 'case33', 'case34', 'case35'],
+    ids=[
+        "case0",
+        "case1",
+        "case2",
+        "case3",
+        "case4",
+        "case5",
+        "case6",
+        "case7",
+        "case8",
+        "case9",
+        "case10",
+        "case11",
+        "case12",
+        "case13",
+        "case14",
+        "case15",
+        "case16",
+        "case17",
+        "case18",
+        "case19",
+        "case20",
+        "case21",
+        "case22",
+        "case23",
+        "case24",
+        "case25",
+        "case26",
+        "case27",
+        "case28",
+        "case29",
+        "case30",
+        "case31",
+        "case32",
+        "case33",
+        "case34",
+        "case35",
+    ],
 )
 @pytest.mark.pre_alloc_mutable
 def test_storage_costs(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_data_hex: str,
-    tx_access_list,
+    tx_access_list: list | None,
     expected_post: dict,
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
@@ -106,124 +2894,96 @@ def test_storage_costs(
     )
 
     pre[callee] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2)
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a600052600260005560115a600051030360005260005160015500"
+        ),
     )
     pre[callee_1] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0))
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a6000526000545060135a600051030360005260005160015500"
+        ),
     )
     pre[callee_2] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0)
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
-        storage={0x0: 0x60a7},
+        code=bytes.fromhex(
+            "5a600052600060005560115a600051030360005260005160015500"
+        ),
+        storage={0x0: 0x60A7},
     )
     pre[callee_3] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0xbeef)
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
-        storage={0x0: 0x60a7},
+        code=bytes.fromhex(
+            "5a60005261beef60005560115a600051030360005260005160015500"
+        ),
+        storage={0x0: 0x60A7},
     )
     pre[callee_4] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x60a7)
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
-        storage={0x0: 0x60a7},
+        code=bytes.fromhex(
+            "5a6000526160a760005560115a600051030360005260005160015500"
+        ),
+        storage={0x0: 0x60A7},
     )
     pre[callee_5] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x0)
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a600052600060005560115a600051030360005260005160015500"
+        ),
         storage={0x0: 0x0},
     )
     pre[callee_6] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0x0, value=0x2)
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6160a76000555a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+        ),
     )
     pre[callee_7] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=0x60a7) + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.POP(Op.SLOAD(key=0x0))
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6160a76000555a6000526000545060135a600051030360005260005160015500"
+        ),
     )
     pre[callee_8] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0))
-        + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2)
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000546020525a600052600260005560115a600051030360005260005160015500"  # noqa: E501
+        ),
     )
     pre[callee_9] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x20, value=Op.SLOAD(key=0x0))
-        + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x0))
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000546020525a6000526000545060135a600051030360005260005160015500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=Op.GAS, address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.SLOAD(key=0x60a7))
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x13))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
-        + Op.MSTORE(offset=0x0, value=Op.GAS) + Op.SSTORE(key=0x0, value=0x2)
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.SUB(Op.MLOAD(offset=0x0), Op.GAS), 0x11))
-        + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
-        storage={0x60a7: 0xdead},
+        code=bytes.fromhex(
+            "60006000600060006000600435611000015af1505a6000526160a7545060135a60005103"  # noqa: E501
+            "036000526000516001555a600052600260005560115a6000510303600052600051600255"  # noqa: E501
+            "00"
+        ),
+        storage={0x60A7: 0xDEAD},
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

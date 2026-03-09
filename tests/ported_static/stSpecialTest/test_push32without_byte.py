@@ -1,5 +1,5 @@
 """
-push expect 32 bytes. but we have only 10 byte
+push expect 32 bytes. but we have only 10 byte.
 
 Ported from:
 tests/static/state_tests/stSpecialTest/push32withoutByteFiller.json
@@ -29,7 +29,7 @@ def test_push32without_byte(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """push expect 32 bytes. but we have only 10 byte."""
+    """Push expect 32 bytes. but we have only 10 byte."""
     coinbase = Address("0x68795c4aa09d6f4ed3e5deddf8c2ad3049a601da")
     sender = Address("0x77f53e97f087927e147467450e9dedd02b0f79e1")
     contract = Address("0xc46ea1c1ad6c8ee63711d0377ef63e51c05d38a0")
@@ -43,12 +43,16 @@ def test_push32without_byte(
         gas_limit=3141592,
     )
 
-    pre[sender] = Account(balance=0x8ac7230489e80000, nonce=1)
-    pre[contract] = Account(balance=0, nonce=0, code=bytes.fromhex("7f11223344556677889910"))
+    pre[sender] = Account(balance=0x8AC7230489E80000, nonce=1)
+    pre[contract] = Account(
+        balance=0,
+        nonce=0,
+        code=bytes.fromhex("7f11223344556677889910"),
+    )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x043f683ff58b5310699989dd19a4e1439e5333e2e3445374f7bc1446baeddd80"
+            "0x043f683ff58b5310699989dd19a4e1439e5333e2e3445374f7bc1446baeddd80"  # noqa: E501
         ),
         to=contract,
         data=b"",

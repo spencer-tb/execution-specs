@@ -1,5 +1,5 @@
 """
-Ori Pomerantz qbzzt1@gmail.com
+Ori Pomerantz qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/stEIP1559/tipTooHighFiller.yml
@@ -7,7 +7,6 @@ tests/static/state_tests/stEIP1559/tipTooHighFiller.yml
 
 import pytest
 from execution_testing import (
-    AccessList,
     Account,
     Address,
     Alloc,
@@ -17,7 +16,6 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,16 +45,16 @@ def test_tip_too_high(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=1)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
+        code=bytes.fromhex("600260005500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"
+            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -70,7 +68,7 @@ def test_tip_too_high(
     )
 
     post = {
-        contract: Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP),
+        contract: Account(code=bytes.fromhex("600260005500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

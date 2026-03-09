@@ -1,7 +1,7 @@
 """
-Tests if CALLDATALOAD, CALLDATACOPY, CODECOPY and CODESIZE work correctly in initcode context:
-call data is always empty in initcode context and "code" is initcode.
+Tests if CALLDATALOAD, CALLDATACOPY, CODECOPY and CODESIZE work correctly...
 
+call data is always empty in initcode context and "code" is initcode.
 
 Ported from:
 tests/static/state_tests/stCreateTest/CreateTransactionCallDataFiller.yml
@@ -17,14 +17,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreateTest/CreateTransactionCallDataFiller.yml"],
+    [
+        "tests/static/state_tests/stCreateTest/CreateTransactionCallDataFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -32,9 +33,16 @@ REFERENCE_SPEC_VERSION = "N/A"
     [
         ("6001600080376000516000556020600160003760005160015500", {}),
         ("60003560005560213560015500", {}),
-        ("3860008039386000f3", {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(code=Op.CODECOPY(dest_offset=Op.DUP1, offset=0x0, size=Op.CODESIZE) + Op.RETURN(offset=0x0, size=Op.CODESIZE))}),
+        (
+            "3860008039386000f3",
+            {
+                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+                    code=bytes.fromhex("3860008039386000f3")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2'],
+    ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_transaction_call_data(
@@ -43,9 +51,7 @@ def test_create_transaction_call_data(
     tx_data_hex: str,
     expected_post: dict,
 ) -> None:
-    """Tests if CALLDATALOAD, CALLDATACOPY, CODECOPY and CODESIZE work correctly in initcode context:
-call data is always empty in initcode context and "code" is initcode.
-."""
+    """Tests if CALLDATALOAD, CALLDATACOPY, CODECOPY and CODESIZE work..."""
     coinbase = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
@@ -58,13 +64,13 @@ call data is always empty in initcode context and "code" is initcode.
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x5af3107a4000, nonce=0)
+    pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCreateTest/CREATE_ContractSSTOREDuringInitFiller.json
+tests/static/state_tests/stCreateTest
+CREATE_ContractSSTOREDuringInitFiller.json
 """
 
 import pytest
@@ -19,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreateTest/CREATE_ContractSSTOREDuringInitFiller.json"],
+    [
+        "tests/static/state_tests/stCreateTest/CREATE_ContractSSTOREDuringInitFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -40,11 +45,11 @@ def test_create_contract_sstore_during_init(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0x174876e800, nonce=0)
+    pre[sender] = Account(balance=0x174876E800, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("60ff600055"),
@@ -55,7 +60,9 @@ def test_create_contract_sstore_during_init(
     )
 
     post = {
-        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={0: 255}),
+        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+            storage={0: 255},
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

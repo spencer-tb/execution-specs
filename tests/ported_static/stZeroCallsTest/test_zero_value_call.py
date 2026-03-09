@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stZeroCallsTest/ZeroValue_CALLFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,20 +43,19 @@ def test_zero_value_call(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xea60, address=0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x64, value=0x1) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a6000556000600060006000600073c94f5374fce5edbc8e2a8697c15331677e6ebf0b61"  # noqa: E501
+            "ea60f1600155600160645500"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,8 +67,10 @@ def test_zero_value_call(
 
     post = {
         contract: Account(
-            storage={0: 0x8d5b6, 1: 1, 100: 1},
-            code=Op.SSTORE(key=0x0, value=Op.GAS) + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xea60, address=0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x64, value=0x1) + Op.STOP,
+            storage={0: 0x8D5B6, 1: 1, 100: 1},
+            code=bytes.fromhex(
+                "5a6000556000600060006000600073c94f5374fce5edbc8e2a8697c15331677e6ebf0b61ea60f1600155600160645500"  # noqa: E501
+            ),
         ),
     }
 

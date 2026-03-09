@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCreateTest/CREATE_EmptyContractWithStorageAndCallIt_0weiFiller.json
+tests/static/state_tests/stCreateTest
+CREATE_EmptyContractWithStorageAndCallIt_0weiFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreateTest/CREATE_EmptyContractWithStorageAndCallIt_0weiFiller.json"],
+    [
+        "tests/static/state_tests/stCreateTest/CREATE_EmptyContractWithStorageAndCallIt_0weiFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,29 +47,26 @@ def test_create_empty_contract_with_storage_and_call_it_0wei(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.GAS)
-        + Op.MSTORE(offset=0x0, value=0x600c6000556000600060006000600073c94f5374fce5edbc8e2a8697c1533167)
-        + Op.MSTORE(offset=0x20, value=0x7e6ebf0b61ea60f1000000000000000000000000000000000000000000000000)
-        + Op.SSTORE(key=0x1, value=Op.CREATE(value=0x0, offset=0x0, size=0x40))
-        + Op.SSTORE(key=0x2, value=Op.GAS)
-        + Op.SSTORE(key=0x3, value=Op.CALL(gas=0xea60, address=Op.SLOAD(key=0x1), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x64, value=Op.GAS) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a6000557f600c6000556000600060006000600073c94f5374fce5edbc8e2a8697c15331"  # noqa: E501
+            "676000527f7e6ebf0b61ea60f10000000000000000000000000000000000000000000000"  # noqa: E501
+            "00602052604060006000f06001555a6002556000600060006000600060015461ea60f160"  # noqa: E501
+            "03555a60645500"
+        ),
     )
     pre[callee] = Account(
-        balance=0xe8d4a51000,
+        balance=0xE8D4A51000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=0xc) + Op.STOP,
+        code=bytes.fromhex("600c60015500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -77,11 +78,21 @@ def test_create_empty_contract_with_storage_and_call_it_0wei(
 
     post = {
         contract: Account(
-            storage={0: 0x8d5b6, 1: 0xf1ecf98489fa9ed60a664fc4998db699cfa39d40, 2: 0x6f4f0, 3: 1, 100: 0x64763},
-            code=Op.SSTORE(key=0x0, value=Op.GAS) + Op.MSTORE(offset=0x0, value=0x600c6000556000600060006000600073c94f5374fce5edbc8e2a8697c1533167) + Op.MSTORE(offset=0x20, value=0x7e6ebf0b61ea60f1000000000000000000000000000000000000000000000000) + Op.SSTORE(key=0x1, value=Op.CREATE(value=0x0, offset=0x0, size=0x40)) + Op.SSTORE(key=0x2, value=Op.GAS) + Op.SSTORE(key=0x3, value=Op.CALL(gas=0xea60, address=Op.SLOAD(key=0x1), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x64, value=Op.GAS) + Op.STOP,
+            storage={
+                0: 0x8D5B6,
+                1: 0xF1ECF98489FA9ED60A664FC4998DB699CFA39D40,
+                2: 0x6F4F0,
+                3: 1,
+                100: 0x64763,
+            },
+            code=bytes.fromhex(
+                "5a6000557f600c6000556000600060006000600073c94f5374fce5edbc8e2a8697c15331676000527f7e6ebf0b61ea60f1000000000000000000000000000000000000000000000000602052604060006000f06001555a6002556000600060006000600060015461ea60f16003555a60645500"  # noqa: E501
+            ),
         ),
-        callee: Account(storage={1: 12}, code=Op.SSTORE(key=0x1, value=0xc) + Op.STOP),
-        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(storage={0: 12}),
+        callee: Account(storage={1: 12}, code=bytes.fromhex("600c60015500")),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(
+            storage={0: 12},
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

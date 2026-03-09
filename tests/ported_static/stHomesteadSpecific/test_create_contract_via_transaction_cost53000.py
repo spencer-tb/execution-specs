@@ -1,8 +1,9 @@
 """
-trigger transaction creating gasPrice in the state
+trigger transaction creating gasPrice in the state.
 
 Ported from:
-tests/static/state_tests/stHomesteadSpecific/createContractViaTransactionCost53000Filler.json
+tests/static/state_tests/stHomesteadSpecific
+createContractViaTransactionCost53000Filler.json
 """
 
 import pytest
@@ -21,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stHomesteadSpecific/createContractViaTransactionCost53000Filler.json"],
+    [
+        "tests/static/state_tests/stHomesteadSpecific/createContractViaTransactionCost53000Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -29,7 +32,7 @@ def test_create_contract_via_transaction_cost53000(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """trigger transaction creating gasPrice in the state."""
+    """Trigger transaction creating gasPrice in the state."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
@@ -42,11 +45,11 @@ def test_create_contract_via_transaction_cost53000(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xf4240, nonce=0)
+    pre[sender] = Account(balance=0xF4240, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=b"",
@@ -56,6 +59,6 @@ def test_create_contract_via_transaction_cost53000(
         value=0,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

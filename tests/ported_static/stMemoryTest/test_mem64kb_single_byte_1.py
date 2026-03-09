@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryTest/mem64kb_singleByte-1Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,17 +45,14 @@ def test_mem64kb_single_byte_1(
 
     pre[sender] = Account(balance=0x6400000000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE8(offset=0xf9fe, value=0x2a) + Op.SSTORE(key=0x0, value=Op.MSIZE)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("602a61f9fe535960005500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +65,7 @@ def test_mem64kb_single_byte_1(
     post = {
         contract: Account(
             storage={0: 64000},
-            code=Op.MSTORE8(offset=0xf9fe, value=0x2a) + Op.SSTORE(key=0x0, value=Op.MSIZE) + Op.STOP,
+            code=bytes.fromhex("602a61f9fe535960005500"),
         ),
     }
 

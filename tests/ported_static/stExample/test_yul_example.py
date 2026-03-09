@@ -1,5 +1,5 @@
 """
-An example test for using simple yul contracts in the test
+An example test for using simple yul contracts in the test.
 
 Ported from:
 tests/static/state_tests/stExample/yulExampleFiller.yml
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,16 +43,16 @@ def test_yul_example(
         gas_limit=100000000,
     )
 
-    pre[sender] = Account(balance=0xba1a9ce0ba1a9ce, nonce=0)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
     pre[contract] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=0x3) + Op.RETURN(offset=0x0, size=0x20),
+        code=bytes.fromhex("600360005560206000f3"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x40ac0fc28c27e961ee46ec43355a094de205856edbd4654cf2577c2608d4ec1e"
+            "0x40ac0fc28c27e961ee46ec43355a094de205856edbd4654cf2577c2608d4ec1e"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,7 +65,7 @@ def test_yul_example(
     post = {
         contract: Account(
             storage={0: 3},
-            code=Op.SSTORE(key=0x0, value=0x3) + Op.RETURN(offset=0x0, size=0x20),
+            code=bytes.fromhex("600360005560206000f3"),
         ),
     }
 

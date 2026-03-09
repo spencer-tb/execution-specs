@@ -1,5 +1,5 @@
 """
-A contract which performs SUICIDE, and is then attempted to be recreated (different code, same init-code) during the same transaction. This ought to fail, since the code is not cleaned out until after the transaction is ended.
+A contract which performs SUICIDE, and is then attempted to be recreated...
 
 Ported from:
 tests/static/state_tests/stCreate2/create2collisionSelfdestructed2Filler.json
@@ -15,23 +15,44 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreate2/create2collisionSelfdestructed2Filler.json"],
+    [
+        "tests/static/state_tests/stCreate2/create2collisionSelfdestructed2Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        ("6000600060006000600073fce41d047b4a1d4450382dcc29ec7e5fedc5f9a361c350f1506b620102036000526003601df36000526000600c60146000f500", {Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779"): Account(code=Op.SELFDESTRUCT(address=0x10)), Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"): Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP)}),
-        ("6000600060006000600073cff64f4c5df8f436c4f2c1af4b2e3f9e3004c77961c350f1506b626010ff6000526003601df36000526000600c60146000f500", {Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779"): Account(code=Op.SELFDESTRUCT(address=0x10)), Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"): Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP)}),
+        (
+            "6000600060006000600073fce41d047b4a1d4450382dcc29ec7e5fedc5f9a361c350f1506b620102036000526003601df36000526000600c60146000f500",  # noqa: E501
+            {
+                Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779"): Account(
+                    code=bytes.fromhex("6010ff")
+                ),
+                Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"): Account(
+                    code=bytes.fromhex("6010ff00")
+                ),
+            },
+        ),
+        (
+            "6000600060006000600073cff64f4c5df8f436c4f2c1af4b2e3f9e3004c77961c350f1506b626010ff6000526003601df36000526000600c60146000f500",  # noqa: E501
+            {
+                Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779"): Account(
+                    code=bytes.fromhex("6010ff")
+                ),
+                Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"): Account(
+                    code=bytes.fromhex("6010ff00")
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2collision_selfdestructed2(
@@ -40,7 +61,7 @@ def test_create2collision_selfdestructed2(
     tx_data_hex: str,
     expected_post: dict,
 ) -> None:
-    """A contract which performs SUICIDE, and is then attempted to be recreated (different code, same init-code) during the same transaction. This ought to fail, since the code is not cleaned out until after the transaction is ended.."""
+    """A contract which performs SUICIDE, and is then attempted to be..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779")
@@ -55,15 +76,15 @@ def test_create2collision_selfdestructed2(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
-    pre[contract] = Account(balance=1, nonce=1, code=Op.SELFDESTRUCT(address=0x10))
-    pre[callee_1] = Account(balance=1, nonce=0, code=Op.SELFDESTRUCT(address=0x10) + Op.STOP)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[contract] = Account(balance=1, nonce=1, code=bytes.fromhex("6010ff"))
+    pre[callee_1] = Account(balance=1, nonce=0, code=bytes.fromhex("6010ff00"))
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,

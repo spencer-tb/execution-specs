@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stNonZeroCallsTest/NonZeroValue_TransactionCALLwithDataFiller.json
+tests/static/state_tests/stNonZeroCallsTest
+NonZeroValue_TransactionCALLwithDataFiller.json
 """
 
 import pytest
@@ -19,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stNonZeroCallsTest/NonZeroValue_TransactionCALLwithDataFiller.json"],
+    [
+        "tests/static/state_tests/stNonZeroCallsTest/NonZeroValue_TransactionCALLwithDataFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -41,11 +46,11 @@ def test_non_zero_value_transaction_cal_lwith_data(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("1122334455667788991011121314151617181920"),
@@ -55,6 +60,6 @@ def test_non_zero_value_transaction_cal_lwith_data(
         value=1,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

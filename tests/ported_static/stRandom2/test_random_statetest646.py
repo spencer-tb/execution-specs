@@ -1,5 +1,5 @@
 """
-Geth Failed this test on all networks
+Geth Failed this test on all networks.
 
 Ported from:
 tests/static/state_tests/stRandom2/randomStatetest646Filler.json
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,32 +44,30 @@ def test_random_statetest646(
         gas_limit=18857228215205537,
     )
 
-    pre[sender] = Account(balance=0x54465ef1c769628b, nonce=0)
-    pre[callee] = Account(balance=0x33888d4ce6b934, nonce=7)
+    pre[sender] = Account(balance=0x54465EF1C769628B, nonce=0)
+    pre[callee] = Account(balance=0x33888D4CE6B934, nonce=7)
     pre[contract] = Account(
-        balance=0xd61773f0c27b842f,
+        balance=0xD61773F0C27B842F,
         nonce=28,
-        code=(
-        Op.SLOAD(key=0xba8b878e01) + Op.PUSH9[0x9b908f27acb42e5269]
-        + Op.SSTORE(key=0x609834bf9a7e578e45609242172907dd75a925, value=0x39)
-        + Op.PUSH6[0x6c5aa6e92481]
-        + Op.CREATE(value=0x446d325d, offset=0x38648, size=0x13ffa) + Op.CALLER
-        + Op.NOT(0x2c38cfa2f1cdf8cb623c05919874)
-    ),
+        code=bytes.fromhex(
+            "64ba8b878e0154689b908f27acb42e5269603972609834bf9a7e578e45609242172907dd"  # noqa: E501
+            "75a92555656c5aa6e9248162013ffa6203864863446d325df0336d2c38cfa2f1cdf8cb62"  # noqa: E501
+            "3c0591987419"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex(
-            "785196fdcb5d7e54c4b381e68c7eaeae2735e5537830130057f554672e70a6b867385ea2"
-            "714ea3185b854bf0b4f9617fb47e6afe9ed4ed68f94b50776420fa24010960ce6b65e2a1"
-            "ebdce518181d6c69a678989d767fc3d28b6c524f52a87d05519cb32e38fbdc5f801f7569"
-            "22b90c0e2e5bc848bb9c6a5d08ee65470af4fbbeacf87a65c90dc57babd8cdc9819f8985"
-            "51925828bfd360e8a1f1616619d171c23004b0045424cc962e09d8a65d9fd94af9863d61"
-            "eba97d76dc150e19d991ff1b5fd340dd4fd7e522a659ddf69bcbc729599667aa30536cd8"
+            "785196fdcb5d7e54c4b381e68c7eaeae2735e5537830130057f554672e70a6b867385ea2"  # noqa: E501
+            "714ea3185b854bf0b4f9617fb47e6afe9ed4ed68f94b50776420fa24010960ce6b65e2a1"  # noqa: E501
+            "ebdce518181d6c69a678989d767fc3d28b6c524f52a87d05519cb32e38fbdc5f801f7569"  # noqa: E501
+            "22b90c0e2e5bc848bb9c6a5d08ee65470af4fbbeacf87a65c90dc57babd8cdc9819f8985"  # noqa: E501
+            "51925828bfd360e8a1f1616619d171c23004b0045424cc962e09d8a65d9fd94af9863d61"  # noqa: E501
+            "eba97d76dc150e19d991ff1b5fd340dd4fd7e522a659ddf69bcbc729599667aa30536cd8"  # noqa: E501
             "5576cc3477495dae10c85b56"
         ),
         gas_limit=5786929,
@@ -81,7 +78,9 @@ def test_random_statetest646(
 
     post = {
         contract: Account(
-            code=Op.SLOAD(key=0xba8b878e01) + Op.PUSH9[0x9b908f27acb42e5269] + Op.SSTORE(key=0x609834bf9a7e578e45609242172907dd75a925, value=0x39) + Op.PUSH6[0x6c5aa6e92481] + Op.CREATE(value=0x446d325d, offset=0x38648, size=0x13ffa) + Op.CALLER + Op.NOT(0x2c38cfa2f1cdf8cb623c05919874),
+            code=bytes.fromhex(
+                "64ba8b878e0154689b908f27acb42e5269603972609834bf9a7e578e45609242172907dd75a92555656c5aa6e9248162013ffa6203864863446d325df0336d2c38cfa2f1cdf8cb623c0591987419"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stTransactionTest/InternalCallStoreClearsSuccessFiller.json
+tests/static/state_tests/stTransactionTest
+InternalCallStoreClearsSuccessFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/InternalCallStoreClearsSuccessFiller.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/InternalCallStoreClearsSuccessFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,28 +50,36 @@ def test_internal_call_store_clears_success(
     pre[contract] = Account(
         balance=10,
         nonce=0,
-        code=(
-        Op.CALL(gas=0x186a0, address=0xd61e0564fab2b0da5136f75db579b663bd9f2bd8, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600060006000600173d61e0564fab2b0da5136f75db579b663bd9f2bd8620186a0f1"  # noqa: E501
+            "00"
+        ),
     )
-    pre[sender] = Account(balance=0x3b9aca00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=0x0) + Op.SSTORE(key=0x1, value=0x0)
-        + Op.SSTORE(key=0x2, value=0x0) + Op.SSTORE(key=0x3, value=0x0)
-        + Op.SSTORE(key=0x4, value=0x0) + Op.SSTORE(key=0x5, value=0x0)
-        + Op.SSTORE(key=0x6, value=0x0) + Op.SSTORE(key=0x7, value=0x0)
-        + Op.SSTORE(key=0x8, value=0x0) + Op.SSTORE(key=0x9, value=0x0) + Op.STOP
-    ),
-        storage={0x0: 0xc, 0x1: 0xc, 0x2: 0xc, 0x3: 0xc, 0x4: 0xc, 0x5: 0xc, 0x6: 0xc, 0x7: 0xc, 0x8: 0xc, 0x9: 0xc},
+        code=bytes.fromhex(
+            "600060005560006001556000600255600060035560006004556000600555600060065560"  # noqa: E501
+            "006007556000600855600060095500"
+        ),
+        storage={
+            0x0: 0xC,
+            0x1: 0xC,
+            0x2: 0xC,
+            0x3: 0xC,
+            0x4: 0xC,
+            0x5: 0xC,
+            0x6: 0xC,
+            0x7: 0xC,
+            0x8: 0xC,
+            0x9: 0xC,
+        },
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xf79127a3004abde26a4cbd80c428cb10f829fa11b54d36e7b326f4f4a5927acf"
+            "0xf79127a3004abde26a4cbd80c428cb10f829fa11b54d36e7b326f4f4a5927acf"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -79,10 +91,14 @@ def test_internal_call_store_clears_success(
 
     post = {
         contract: Account(
-            code=Op.CALL(gas=0x186a0, address=0xd61e0564fab2b0da5136f75db579b663bd9f2bd8, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000600173d61e0564fab2b0da5136f75db579b663bd9f2bd8620186a0f100"  # noqa: E501
+            ),
         ),
         callee: Account(
-            code=Op.SSTORE(key=0x0, value=0x0) + Op.SSTORE(key=0x1, value=0x0) + Op.SSTORE(key=0x2, value=0x0) + Op.SSTORE(key=0x3, value=0x0) + Op.SSTORE(key=0x4, value=0x0) + Op.SSTORE(key=0x5, value=0x0) + Op.SSTORE(key=0x6, value=0x0) + Op.SSTORE(key=0x7, value=0x0) + Op.SSTORE(key=0x8, value=0x0) + Op.SSTORE(key=0x9, value=0x0) + Op.STOP,
+            code=bytes.fromhex(
+                "600060005560006001556000600255600060035560006004556000600555600060065560006007556000600855600060095500"  # noqa: E501
+            ),
         ),
     }
 

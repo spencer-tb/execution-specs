@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRevertTest/LoopCallsDepthThenRevertFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stRevertTest/LoopCallsDepthThenRevertFiller.json"],
+    [
+        "tests/static/state_tests/stRevertTest/LoopCallsDepthThenRevertFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,26 +49,24 @@ def test_loop_calls_depth_then_revert(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-        + Op.CALL(gas=Op.GAS, address=0xf59fd1c021541704a4a52c067454304566717666, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6001600054016000556000600060006000600073f59fd1c021541704a4a52c0674543045"  # noqa: E501
+            "667176665af100"
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-        + Op.CALL(gas=Op.GAS, address=0x80d46fa47b41ab46a227915ae4f63559c0d4dfe2, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600160005401600055600060006000600060007380d46fa47b41ab46a227915ae4f63559"  # noqa: E501
+            "c0d4dfe25af100"
+        ),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -78,11 +79,15 @@ def test_loop_calls_depth_then_revert(
     post = {
         callee: Account(
             storage={0: 192},
-            code=Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)) + Op.CALL(gas=Op.GAS, address=0xf59fd1c021541704a4a52c067454304566717666, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP,
+            code=bytes.fromhex(
+                "6001600054016000556000600060006000600073f59fd1c021541704a4a52c0674543045667176665af100"  # noqa: E501
+            ),
         ),
         contract: Account(
             storage={0: 193},
-            code=Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)) + Op.CALL(gas=Op.GAS, address=0x80d46fa47b41ab46a227915ae4f63559c0d4dfe2, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP,
+            code=bytes.fromhex(
+                "600160005401600055600060006000600060007380d46fa47b41ab46a227915ae4f63559c0d4dfe25af100"  # noqa: E501
+            ),
         ),
     }
 

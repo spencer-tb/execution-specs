@@ -1,5 +1,5 @@
 """
-Ori Pomerantz qbzzt1@gmail.com
+Ori Pomerantz qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/stEIP1559/lowGasLimitFiller.yml
@@ -7,7 +7,6 @@ tests/static/state_tests/stEIP1559/lowGasLimitFiller.yml
 
 import pytest
 from execution_testing import (
-    AccessList,
     Account,
     Address,
     Alloc,
@@ -17,7 +16,6 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -30,10 +28,48 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, tx_error, expected_post",
     [
-        pytest.param(90000, TransactionException.GAS_ALLOWANCE_EXCEEDED, {Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(storage={0: 24743}, code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case0", marks=pytest.mark.exception_test),
-        pytest.param(50000, None, {Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(storage={0: 2}, code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case1"),
-        pytest.param(25000, None, {Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(storage={0: 24743}, code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case2"),
-        pytest.param(20000, TransactionException.INTRINSIC_GAS_TOO_LOW, {Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(storage={0: 24743}, code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP)}, id="case3", marks=pytest.mark.exception_test),
+        pytest.param(
+            90000,
+            TransactionException.GAS_ALLOWANCE_EXCEEDED,
+            {
+                Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
+                    storage={0: 24743}, code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case0",
+            marks=pytest.mark.exception_test,
+        ),
+        pytest.param(
+            50000,
+            None,
+            {
+                Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
+                    storage={0: 2}, code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case1",
+        ),
+        pytest.param(
+            25000,
+            None,
+            {
+                Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
+                    storage={0: 24743}, code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case2",
+        ),
+        pytest.param(
+            20000,
+            TransactionException.INTRINSIC_GAS_TOO_LOW,
+            {
+                Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
+                    storage={0: 24743}, code=bytes.fromhex("600260005500")
+                )
+            },
+            id="case3",
+            marks=pytest.mark.exception_test,
+        ),
     ],
 )
 @pytest.mark.pre_alloc_mutable
@@ -41,7 +77,7 @@ def test_low_gas_limit(
     state_test: StateTestFiller,
     pre: Alloc,
     tx_gas_limit: int,
-    tx_error,
+    tx_error: object,
     expected_post: dict,
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
@@ -58,17 +94,17 @@ def test_low_gas_limit(
         gas_limit=80000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=1)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
-        storage={0x0: 0x60a7},
+        code=bytes.fromhex("600260005500"),
+        storage={0x0: 0x60A7},
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"
+            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),

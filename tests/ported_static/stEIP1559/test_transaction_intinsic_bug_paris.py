@@ -1,5 +1,5 @@
 """
-Bug discovered on ropsten https://github.com/ethereum/go-ethereum/pull/23244/files
+Bug discovered on ropsten...
 
 Ported from:
 tests/static/state_tests/stEIP1559/transactionIntinsicBug_ParisFiller.yml
@@ -7,7 +7,6 @@ tests/static/state_tests/stEIP1559/transactionIntinsicBug_ParisFiller.yml
 
 import pytest
 from execution_testing import (
-    AccessList,
     Account,
     Address,
     Alloc,
@@ -23,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP1559/transactionIntinsicBug_ParisFiller.yml"],
+    [
+        "tests/static/state_tests/stEIP1559/transactionIntinsicBug_ParisFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -32,7 +33,7 @@ def test_transaction_intinsic_bug_paris(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """Bug discovered on ropsten https://github.com/ethereum/go-ethereum/pull/23244/files."""
+    """Bug discovered on ropsten..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0x090e11fe4ad84eb49bb6ed74fcdedb27cee38121")
     contract = Address("0x85b89db0e2aef2a23f50801209a3de4c65c58d9d")
@@ -46,12 +47,12 @@ def test_transaction_intinsic_bug_paris(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(balance=0x2faf094, nonce=1)
+    pre[sender] = Account(balance=0x2FAF094, nonce=1)
     pre[contract] = Account(balance=10, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x91e0c3c68d9de64b3299188625bebd08c8b66d1c7e853e155f997c465e8f5f47"
+            "0x91e0c3c68d9de64b3299188625bebd08c8b66d1c7e853e155f997c465e8f5f47"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -64,6 +65,6 @@ def test_transaction_intinsic_bug_paris(
         error=TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

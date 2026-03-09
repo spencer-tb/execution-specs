@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stBadOpcode/eip2315NotRemovedFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,18 +44,15 @@ def test_eip2315_not_removed(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.PUSH1[0x4] + Op.MCOPY + Op.STOP + Op.TLOAD
-        + Op.SSTORE(key=0x0, value=0x1) + Op.TSTORE
-    ),
+        code=bytes.fromhex("60045e005c60016000555d"),
     )
-    pre[sender] = Account(balance=0x7fffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x31b5af02b012484ae954b3a43943242ede546a2e76fc0a6acc17435107c385eb"
+            "0x31b5af02b012484ae954b3a43943242ede546a2e76fc0a6acc17435107c385eb"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -65,9 +63,7 @@ def test_eip2315_not_removed(
     )
 
     post = {
-        contract: Account(
-            code=Op.PUSH1[0x4] + Op.MCOPY + Op.STOP + Op.TLOAD + Op.SSTORE(key=0x0, value=0x1) + Op.TSTORE,
-        ),
+        contract: Account(code=bytes.fromhex("60045e005c60016000555d")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

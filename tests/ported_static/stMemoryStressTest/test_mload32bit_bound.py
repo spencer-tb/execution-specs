@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/mload32bitBoundFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,24 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0x74639acdfe345f749d595381961dac48c3c5e56a"): Account(code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x100000000)) + Op.STOP)}),
-        (16777216, {Address("0x74639acdfe345f749d595381961dac48c3c5e56a"): Account(code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x100000000)) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0x74639acdfe345f749d595381961dac48c3c5e56a"): Account(
+                    code=bytes.fromhex("6401000000005160015500")
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0x74639acdfe345f749d595381961dac48c3c5e56a"): Account(
+                    code=bytes.fromhex("6401000000005160015500")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_mload32bit_bound(
@@ -52,16 +67,16 @@ def test_mload32bit_bound(
         gas_limit=17592320524892,
     )
 
-    pre[sender] = Account(balance=0x3e801f4fa93760, nonce=0)
+    pre[sender] = Account(balance=0x3E801F4FA93760, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x100000000)) + Op.STOP,
+        code=bytes.fromhex("6401000000005160015500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xa3a3360edacc183e5d6d28657fc0a09cd4819b2c73a02881b04471f81be35a5a"
+            "0xa3a3360edacc183e5d6d28657fc0a09cd4819b2c73a02881b04471f81be35a5a"  # noqa: E501
         ),
         to=contract,
         data=b"",

@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRandom/randomStatetest178Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,60 +47,53 @@ def test_random_statetest178(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.CALLDATALOAD(offset=0x342beabe599e4bc177fd97d36df48d50650ba6129a9a83d4cf809ec21452)
-        + Op.PUSH29[0x620167f530c3265be9887f6e5b8186decdc00a6a801e5f56dd8d9d36a4]
-        + Op.DUP1 + Op.PUSH14[0xbccc299e4bbf46ad577e25b5b1fc]
-        + Op.PUSH23[0xb6999cb23a6a03c4035e36b8494135ee170647395da00b]
-        + Op.PUSH15[0xa64c43f3358b8bdcf593c89fb70b8] + Op.PUSH6[0xef153b5195c7]
-        + Op.PUSH26[0x59256beb4f932095eb8ac80bc2c050f6f550a362aac77f5c4b19]
-        + Op.PUSH18[0x51df039d64b77dca22eb8fd4b8cf50fb85a3]
-        + Op.PUSH16[0x1d909d1919a47fe97de5526726b4a47b] + Op.DUP7
-        + Op.LOG3(offset=0x6291, size=0x3e, topic_1=0x56ff5dd24a1f49e50b9f5924f473b2dc5306d67054ca575d0, topic_2=0xd9, topic_3=0x7b13471056439457cd7cbc50)
-        + Op.CALL(gas=0xe3319c8, address=0x1b0a78bdf6595742d34bf13386bcc01efaddf68c, value=0x38a57ddc, args_offset=0x1f, args_size=0x9, ret_offset=0x10, ret_size=0x14)
-        + Op.CALLER
-    ),
+        code=bytes.fromhex(
+            "7d342beabe599e4bc177fd97d36df48d50650ba6129a9a83d4cf809ec21452357c620167"  # noqa: E501
+            "f530c3265be9887f6e5b8186decdc00a6a801e5f56dd8d9d36a4806dbccc299e4bbf46ad"  # noqa: E501
+            "577e25b5b1fc76b6999cb23a6a03c4035e36b8494135ee170647395da00b6e0a64c43f33"  # noqa: E501
+            "58b8bdcf593c89fb70b865ef153b5195c77959256beb4f932095eb8ac80bc2c050f6f550"  # noqa: E501
+            "a362aac77f5c4b197151df039d64b77dca22eb8fd4b8cf50fb85a36f1d909d1919a47fe9"  # noqa: E501
+            "7de5526726b4a47b866b7b13471056439457cd7cbc5060d978056ff5dd24a1f49e50b9f5"  # noqa: E501
+            "924f473b2dc5306d67054ca575d0603e616291a3601460106009601f6338a57ddc731b0a"  # noqa: E501
+            "78bdf6595742d34bf13386bcc01efaddf68c630e3319c8f133"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=(
-        Op.JUMPI(pc=0x9, condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))))
-        + Op.STOP + Op.JUMPDEST
-        + Op.SSTORE(key=Op.CALLDATALOAD(offset=0x0), value=Op.CALLDATALOAD(offset=0x20))
-    ),
+        code=bytes.fromhex("6000355415600957005b60203560003555"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex(
-            "66fd78520a4acd897a6e29cf1b15f576b05a2bc0c18bb93a759d3f5e1ac5d34ba1e261c7"
-            "0b7afd59945da98cc373eac6aa543bae2e6726e3ff03ad2e788dc33f3b736ef736637d8a"
-            "c680281bb29884e641473063e58e7318f5f4cbade311c02eed1c323c19bba7df47294064"
-            "64b42ed0cb6d0189be83857fb09713ae69e7d2d472e6d85d23920625c84c39489fc80d27"
-            "2868f40c64cc6cb93ea5741d1918dfc8f61086b1b0637390a1934b637c37ec94877d3ea7"
-            "63b20b9e04fa589f30da18f1565bcf15ad38bc735b9d45b5d963cadd77e9e3db27853e74"
-            "62a6417a4ac9af38f967a198c6f50deb53634bcbbe9c6a83a7357847acc4f6360fa46e43"
-            "595a8936969798890170a6874b4e67391c228e9d0a754f68635d505c3f9a8c2555728626"
-            "e286db52177c2228fb04d4b702bea78df3747d6fa1079394222b8d2a0dfc34ce6d9e5664"
-            "062fa8977526ced3516147e12a7b9e36f6628dd9efe320bef809146e8fad97d5aedf559b"
-            "cc15442b1fd347758332cb1d4bb96471a01de009dc175e3eae40d189755a7c1f46c55d33"
-            "53af6fd0ee638735594b4bb2e6aa99fdbc96508431f421dd770b6379f9b5cbee55423a23"
-            "c5538390612dc07c752c39f1c87a02777b0fa261dd883d49b2ae5c02c6e81bd0a53ba5d5"
-            "3e12530485664f77811ffaca4c688d18d6122f3a564151676f40f70e45da4fe562355ba1"
-            "7d36458de5f760c8148a11b1fece135e184d2dbf9ecf019d634d8498ae6c6862431f356e"
-            "1940bc7bb1a252ece1b1605e467f328c79bb45440e29a9444f1948f3737dc02ec2c10862"
-            "323af3bae0db487768f3aa49fb0967d7eb138302bcb9cedb6b327f4d35a39cf561f1ee73"
-            "c294825a5de76bd6bf707c5a660e3a417b6ac0586e80ecb6300ea61a618b628d8fcc6c80"
-            "a37fbfda4e162006259f39441a81fd310c9a323be96b826199149ebdb88ea3e87df96d06"
-            "c71959b65c4a3e73b50da0a67590625ad154729d9a0a585ba3fc028fc342115f2308566e"
-            "69cd557f7a7a73474bae3846016f5281b41609a85ee1b4244652d5c1360c9d30fe27dd2d"
-            "62b415d06a278aafd0816e734b76a3500869747b893809a7c2a185836da26ef253e0a0de"
-            "429e617a82f8f17f055b1b67fe7366d9a5a491fb47f997937d38e7e8d4cbe8fa227c8b70"
+            "66fd78520a4acd897a6e29cf1b15f576b05a2bc0c18bb93a759d3f5e1ac5d34ba1e261c7"  # noqa: E501
+            "0b7afd59945da98cc373eac6aa543bae2e6726e3ff03ad2e788dc33f3b736ef736637d8a"  # noqa: E501
+            "c680281bb29884e641473063e58e7318f5f4cbade311c02eed1c323c19bba7df47294064"  # noqa: E501
+            "64b42ed0cb6d0189be83857fb09713ae69e7d2d472e6d85d23920625c84c39489fc80d27"  # noqa: E501
+            "2868f40c64cc6cb93ea5741d1918dfc8f61086b1b0637390a1934b637c37ec94877d3ea7"  # noqa: E501
+            "63b20b9e04fa589f30da18f1565bcf15ad38bc735b9d45b5d963cadd77e9e3db27853e74"  # noqa: E501
+            "62a6417a4ac9af38f967a198c6f50deb53634bcbbe9c6a83a7357847acc4f6360fa46e43"  # noqa: E501
+            "595a8936969798890170a6874b4e67391c228e9d0a754f68635d505c3f9a8c2555728626"  # noqa: E501
+            "e286db52177c2228fb04d4b702bea78df3747d6fa1079394222b8d2a0dfc34ce6d9e5664"  # noqa: E501
+            "062fa8977526ced3516147e12a7b9e36f6628dd9efe320bef809146e8fad97d5aedf559b"  # noqa: E501
+            "cc15442b1fd347758332cb1d4bb96471a01de009dc175e3eae40d189755a7c1f46c55d33"  # noqa: E501
+            "53af6fd0ee638735594b4bb2e6aa99fdbc96508431f421dd770b6379f9b5cbee55423a23"  # noqa: E501
+            "c5538390612dc07c752c39f1c87a02777b0fa261dd883d49b2ae5c02c6e81bd0a53ba5d5"  # noqa: E501
+            "3e12530485664f77811ffaca4c688d18d6122f3a564151676f40f70e45da4fe562355ba1"  # noqa: E501
+            "7d36458de5f760c8148a11b1fece135e184d2dbf9ecf019d634d8498ae6c6862431f356e"  # noqa: E501
+            "1940bc7bb1a252ece1b1605e467f328c79bb45440e29a9444f1948f3737dc02ec2c10862"  # noqa: E501
+            "323af3bae0db487768f3aa49fb0967d7eb138302bcb9cedb6b327f4d35a39cf561f1ee73"  # noqa: E501
+            "c294825a5de76bd6bf707c5a660e3a417b6ac0586e80ecb6300ea61a618b628d8fcc6c80"  # noqa: E501
+            "a37fbfda4e162006259f39441a81fd310c9a323be96b826199149ebdb88ea3e87df96d06"  # noqa: E501
+            "c71959b65c4a3e73b50da0a67590625ad154729d9a0a585ba3fc028fc342115f2308566e"  # noqa: E501
+            "69cd557f7a7a73474bae3846016f5281b41609a85ee1b4244652d5c1360c9d30fe27dd2d"  # noqa: E501
+            "62b415d06a278aafd0816e734b76a3500869747b893809a7c2a185836da26ef253e0a0de"  # noqa: E501
+            "429e617a82f8f17f055b1b67fe7366d9a5a491fb47f997937d38e7e8d4cbe8fa227c8b70"  # noqa: E501
             "f8a70e7b667883e393d677c86a9c8ec7144c61cf62e2403893"
         ),
         gas_limit=952280955,
@@ -110,10 +104,12 @@ def test_random_statetest178(
 
     post = {
         contract: Account(
-            code=Op.CALLDATALOAD(offset=0x342beabe599e4bc177fd97d36df48d50650ba6129a9a83d4cf809ec21452) + Op.PUSH29[0x620167f530c3265be9887f6e5b8186decdc00a6a801e5f56dd8d9d36a4] + Op.DUP1 + Op.PUSH14[0xbccc299e4bbf46ad577e25b5b1fc] + Op.PUSH23[0xb6999cb23a6a03c4035e36b8494135ee170647395da00b] + Op.PUSH15[0xa64c43f3358b8bdcf593c89fb70b8] + Op.PUSH6[0xef153b5195c7] + Op.PUSH26[0x59256beb4f932095eb8ac80bc2c050f6f550a362aac77f5c4b19] + Op.PUSH18[0x51df039d64b77dca22eb8fd4b8cf50fb85a3] + Op.PUSH16[0x1d909d1919a47fe97de5526726b4a47b] + Op.DUP7 + Op.LOG3(offset=0x6291, size=0x3e, topic_1=0x56ff5dd24a1f49e50b9f5924f473b2dc5306d67054ca575d0, topic_2=0xd9, topic_3=0x7b13471056439457cd7cbc50) + Op.CALL(gas=0xe3319c8, address=0x1b0a78bdf6595742d34bf13386bcc01efaddf68c, value=0x38a57ddc, args_offset=0x1f, args_size=0x9, ret_offset=0x10, ret_size=0x14) + Op.CALLER,
+            code=bytes.fromhex(
+                "7d342beabe599e4bc177fd97d36df48d50650ba6129a9a83d4cf809ec21452357c620167f530c3265be9887f6e5b8186decdc00a6a801e5f56dd8d9d36a4806dbccc299e4bbf46ad577e25b5b1fc76b6999cb23a6a03c4035e36b8494135ee170647395da00b6e0a64c43f3358b8bdcf593c89fb70b865ef153b5195c77959256beb4f932095eb8ac80bc2c050f6f550a362aac77f5c4b197151df039d64b77dca22eb8fd4b8cf50fb85a36f1d909d1919a47fe97de5526726b4a47b866b7b13471056439457cd7cbc5060d978056ff5dd24a1f49e50b9f5924f473b2dc5306d67054ca575d0603e616291a3601460106009601f6338a57ddc731b0a78bdf6595742d34bf13386bcc01efaddf68c630e3319c8f133"  # noqa: E501
+            ),
         ),
         coinbase: Account(
-            code=Op.JUMPI(pc=0x9, condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0)))) + Op.STOP + Op.JUMPDEST + Op.SSTORE(key=Op.CALLDATALOAD(offset=0x0), value=Op.CALLDATALOAD(offset=0x20)),
+            code=bytes.fromhex("6000355415600957005b60203560003555"),
         ),
     }
 

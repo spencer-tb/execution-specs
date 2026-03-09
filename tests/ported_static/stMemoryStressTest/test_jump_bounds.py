@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/JUMP_BoundsFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,24 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0xb2448deb71e9fd31ed854e3b856f729adbc0c288"): Account(code=Op.JUMP(pc=0x0) + Op.STOP)}),
-        (16777216, {Address("0xb2448deb71e9fd31ed854e3b856f729adbc0c288"): Account(code=Op.JUMP(pc=0x0) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0xb2448deb71e9fd31ed854e3b856f729adbc0c288"): Account(
+                    code=bytes.fromhex("60005600")
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0xb2448deb71e9fd31ed854e3b856f729adbc0c288"): Account(
+                    code=bytes.fromhex("60005600")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_jump_bounds(
@@ -52,12 +67,12 @@ def test_jump_bounds(
         gas_limit=9223372036854775807,
     )
 
-    pre[contract] = Account(balance=0, nonce=0, code=Op.JUMP(pc=0x0) + Op.STOP)
-    pre[sender] = Account(balance=0x7fffffffffffffff, nonce=0)
+    pre[contract] = Account(balance=0, nonce=0, code=bytes.fromhex("60005600"))
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x31b5af02b012484ae954b3a43943242ede546a2e76fc0a6acc17435107c385eb"
+            "0x31b5af02b012484ae954b3a43943242ede546a2e76fc0a6acc17435107c385eb"  # noqa: E501
         ),
         to=contract,
         data=b"",

@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stPreCompiledContracts2/CallEcrecover3Filler.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stPreCompiledContracts2/CallEcrecover3Filler.json"],
+    [
+        "tests/static/state_tests/stPreCompiledContracts2/CallEcrecover3Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,23 +46,21 @@ def test_call_ecrecover3(
     )
 
     pre[contract] = Account(
-        balance=0x1312d00,
+        balance=0x1312D00,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x2f380a2dea7e778d81affc2443403b8fe4644db442ae4862ff5bb3732829cdb9)
-        + Op.MSTORE(offset=0x20, value=0x1b)
-        + Op.MSTORE(offset=0x40, value=0x6b65ccb0558806e9b097f27a396d08f964e37b8b7af6ceeb516ff86739fbea0a)
-        + Op.MSTORE(offset=0x60, value=0x37cbc8d883e129a4b1ef9d5f1df53c4f21a3ef147cf2a50a4ede0eb06ce092d4)
-        + Op.SSTORE(key=0x2, value=Op.CALL(gas=0x186a0, address=0x1, value=0x0, args_offset=0x0, args_size=0x80, ret_offset=0x80, ret_size=0x20))
-        + Op.SSTORE(key=0x0, value=Op.MOD(Op.MLOAD(offset=0x80), Op.EXP(0x2, 0xa0)))
-        + Op.SSTORE(key=0x1, value=Op.EQ(Op.ORIGIN, Op.SLOAD(key=0x0))) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7f2f380a2dea7e778d81affc2443403b8fe4644db442ae4862ff5bb3732829cdb9600052"  # noqa: E501
+            "601b6020527f6b65ccb0558806e9b097f27a396d08f964e37b8b7af6ceeb516ff86739fb"  # noqa: E501
+            "ea0a6040527f37cbc8d883e129a4b1ef9d5f1df53c4f21a3ef147cf2a50a4ede0eb06ce0"  # noqa: E501
+            "92d4606052602060806080600060006001620186a0f160025560a060020a608051066000"  # noqa: E501
+            "55600054321460015500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -71,8 +72,13 @@ def test_call_ecrecover3(
 
     post = {
         contract: Account(
-            storage={0: 0xe4319f4b631c6d0fcfc84045dbcb676865fe5e13, 2: 1},
-            code=Op.MSTORE(offset=0x0, value=0x2f380a2dea7e778d81affc2443403b8fe4644db442ae4862ff5bb3732829cdb9) + Op.MSTORE(offset=0x20, value=0x1b) + Op.MSTORE(offset=0x40, value=0x6b65ccb0558806e9b097f27a396d08f964e37b8b7af6ceeb516ff86739fbea0a) + Op.MSTORE(offset=0x60, value=0x37cbc8d883e129a4b1ef9d5f1df53c4f21a3ef147cf2a50a4ede0eb06ce092d4) + Op.SSTORE(key=0x2, value=Op.CALL(gas=0x186a0, address=0x1, value=0x0, args_offset=0x0, args_size=0x80, ret_offset=0x80, ret_size=0x20)) + Op.SSTORE(key=0x0, value=Op.MOD(Op.MLOAD(offset=0x80), Op.EXP(0x2, 0xa0))) + Op.SSTORE(key=0x1, value=Op.EQ(Op.ORIGIN, Op.SLOAD(key=0x0))) + Op.STOP,
+            storage={
+                0: 0xE4319F4B631C6D0FCFC84045DBCB676865FE5E13,
+                2: 1,
+            },
+            code=bytes.fromhex(
+                "7f2f380a2dea7e778d81affc2443403b8fe4644db442ae4862ff5bb3732829cdb9600052601b6020527f6b65ccb0558806e9b097f27a396d08f964e37b8b7af6ceeb516ff86739fbea0a6040527f37cbc8d883e129a4b1ef9d5f1df53c4f21a3ef147cf2a50a4ede0eb06ce092d4606052602060806080600060006001620186a0f160025560a060020a60805106600055600054321460015500"  # noqa: E501
+            ),
         ),
     }
 

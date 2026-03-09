@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stLogTests/log0_logMemStartTooHighFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,27 +45,27 @@ def test_log0_log_mem_start_too_high(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x3e8, address=0x4e46dd6ccd823bbe05d8ceaf0ca778101f8d8e6b, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60006000600060006017734e46dd6ccd823bbe05d8ceaf0ca778101f8d8e6b6103e8f160"  # noqa: E501
+            "005500"
+        ),
     )
     pre[callee] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0xaabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd)
-        + Op.LOG0(offset=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, size=0x1)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7faabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd600052"  # noqa: E501
+            "60017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa0"  # noqa: E501
+            "00"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -76,10 +77,14 @@ def test_log0_log_mem_start_too_high(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x3e8, address=0x4e46dd6ccd823bbe05d8ceaf0ca778101f8d8e6b, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "60006000600060006017734e46dd6ccd823bbe05d8ceaf0ca778101f8d8e6b6103e8f160005500"  # noqa: E501
+            ),
         ),
         callee: Account(
-            code=Op.MSTORE(offset=0x0, value=0xaabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd) + Op.LOG0(offset=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, size=0x1) + Op.STOP,
+            code=bytes.fromhex(
+                "7faabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd60005260017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa000"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stEIP150singleCodeGasPrices/RawCallMemoryGasAskFiller.json
+tests/static/state_tests/stEIP150singleCodeGasPrices
+RawCallMemoryGasAskFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP150singleCodeGasPrices/RawCallMemoryGasAskFiller.json"],
+    [
+        "tests/static/state_tests/stEIP150singleCodeGasPrices/RawCallMemoryGasAskFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,18 +50,17 @@ def test_raw_call_memory_gas_ask(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.POP(Op.CALL(gas=0x2dc6c0, address=0xe497cd0909c3691e0b6d2a42e26f36696fc27ba5, value=0x0, args_offset=0x0, args_size=0x1f40, ret_offset=0x0, ret_size=0x1f40))
-        + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a600052611f406000611f406000600073e497cd0909c3691e0b6d2a42e26f36696fc27b"  # noqa: E501
+            "a5622dc6c0f1505a6000510360015500"
+        ),
     )
-    pre[callee] = Account(balance=0, nonce=0, code=Op.SSTORE(key=0x2, value=Op.GAS) + Op.STOP)
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("5a60025500"))
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -70,9 +73,14 @@ def test_raw_call_memory_gas_ask(
     post = {
         contract: Account(
             storage={1: 25608},
-            code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.CALL(gas=0x2dc6c0, address=0xe497cd0909c3691e0b6d2a42e26f36696fc27ba5, value=0x0, args_offset=0x0, args_size=0x1f40, ret_offset=0x0, ret_size=0x1f40)) + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP,
+            code=bytes.fromhex(
+                "5a600052611f406000611f406000600073e497cd0909c3691e0b6d2a42e26f36696fc27ba5622dc6c0f1505a6000510360015500"  # noqa: E501
+            ),
         ),
-        callee: Account(storage={2: 0x72464}, code=Op.SSTORE(key=0x2, value=Op.GAS) + Op.STOP),
+        callee: Account(
+            storage={2: 0x72464},
+            code=bytes.fromhex("5a60025500"),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

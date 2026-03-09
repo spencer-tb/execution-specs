@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stLogTests/log4_CallerFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,27 +45,23 @@ def test_log4_caller(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x3e8, address=0x3aac40e63f4e85b4f222671fb5691c8a4fdfb3de, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60006000600060006017733aac40e63f4e85b4f222671fb5691c8a4fdfb3de6103e8f160"  # noqa: E501
+            "005500"
+        ),
     )
     pre[callee] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE8(offset=0x0, value=0xff)
-        + Op.LOG4(offset=0x0, size=0x20, topic_1=0x0, topic_2=0x0, topic_3=0x0, topic_4=Op.CALLER)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("60ff6000533360006000600060206000a400"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -77,10 +74,12 @@ def test_log4_caller(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x3e8, address=0x3aac40e63f4e85b4f222671fb5691c8a4fdfb3de, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "60006000600060006017733aac40e63f4e85b4f222671fb5691c8a4fdfb3de6103e8f160005500"  # noqa: E501
+            ),
         ),
         callee: Account(
-            code=Op.MSTORE8(offset=0x0, value=0xff) + Op.LOG4(offset=0x0, size=0x20, topic_1=0x0, topic_2=0x0, topic_3=0x0, topic_4=Op.CALLER) + Op.STOP,
+            code=bytes.fromhex("60ff6000533360006000600060206000a400"),
         ),
     }
 

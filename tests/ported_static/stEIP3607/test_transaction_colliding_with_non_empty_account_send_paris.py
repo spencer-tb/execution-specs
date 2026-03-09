@@ -1,8 +1,9 @@
 """
-Account with non-empty code attempts to send tx to another account with empty code
+Account with non-empty code attempts to send tx to another account with...
 
 Ported from:
-tests/static/state_tests/stEIP3607/transactionCollidingWithNonEmptyAccount_send_ParisFiller.yml
+tests/static/state_tests/stEIP3607
+transactionCollidingWithNonEmptyAccount_send_ParisFiller.yml
 """
 
 import pytest
@@ -16,14 +17,15 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP3607/transactionCollidingWithNonEmptyAccount_send_ParisFiller.yml"],
+    [
+        "tests/static/state_tests/stEIP3607/transactionCollidingWithNonEmptyAccount_send_ParisFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -32,7 +34,7 @@ def test_transaction_colliding_with_non_empty_account_send_paris(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """Account with non-empty code attempts to send tx to another account with empty code."""
+    """Account with non-empty code attempts to send tx to another..."""
     coinbase = Address("0xeb201d2887816e041f6e807e804f64f3a7a226fe")
     sender = Address("0x2822eae5589c28b202c5ab4c9e07fb69edc8e65a")
     contract = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
@@ -46,13 +48,17 @@ def test_transaction_colliding_with_non_empty_account_send_paris(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0, code=Op.SSTORE(key=0x1, value=0x0))
+    pre[sender] = Account(
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        code=bytes.fromhex("6000600155"),
+    )
     pre[contract] = Account(balance=10, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x402790500ea083a617ec567407d9ec3bbb3a5c8b812547d9f66e8d7878b8a75d"
+            "0x402790500ea083a617ec567407d9ec3bbb3a5c8b812547d9f66e8d7878b8a75d"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -64,7 +70,7 @@ def test_transaction_colliding_with_non_empty_account_send_paris(
     )
 
     post = {
-        sender: Account(code=Op.SSTORE(key=0x1, value=0x0)),
+        sender: Account(code=bytes.fromhex("6000600155")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

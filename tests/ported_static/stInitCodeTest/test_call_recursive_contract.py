@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stInitCodeTest/CallRecursiveContractFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stInitCodeTest/CallRecursiveContractFiller.json"],
+    [
+        "tests/static/state_tests/stInitCodeTest/CallRecursiveContractFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,17 +48,13 @@ def test_call_recursive_contract(
     pre[contract] = Account(
         balance=0,
         nonce=40,
-        code=(
-        Op.SSTORE(key=0x2, value=Op.ADDRESS)
-        + Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20)
-        + Op.CREATE(value=0x0, offset=0x0, size=0x20) + Op.STOP
-    ),
+        code=bytes.fromhex("3060025560206000600039602060006000f000"),
     )
     pre[sender] = Account(balance=0x989680, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -67,23 +66,23 @@ def test_call_recursive_contract(
 
     post = {
         contract: Account(
-            storage={2: 0x95e7baea6a6c7c4c2dfeb977efac326af552d87},
-            code=Op.SSTORE(key=0x2, value=Op.ADDRESS) + Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20) + Op.CREATE(value=0x0, offset=0x0, size=0x20) + Op.STOP,
+            storage={2: 0x95E7BAEA6A6C7C4C2DFEB977EFAC326AF552D87},
+            code=bytes.fromhex("3060025560206000600039602060006000f000"),
         ),
         Address("0x4b0b4b3c7fd3dd5cea1d04dcf027dea29f84acb1"): Account(
-            storage={2: 0x4b0b4b3c7fd3dd5cea1d04dcf027dea29f84acb1},
+            storage={2: 0x4B0B4B3C7FD3DD5CEA1D04DCF027DEA29F84ACB1},
         ),
         Address("0x60f971aa65f7e520dcb750823e2c239e61c3736b"): Account(
-            storage={2: 0x60f971aa65f7e520dcb750823e2c239e61c3736b},
+            storage={2: 0x60F971AA65F7E520DCB750823E2C239E61C3736B},
         ),
         Address("0x6fc9df08d2206eff4f4c378aeb2a1f8c570952b9"): Account(
-            storage={2: 0x6fc9df08d2206eff4f4c378aeb2a1f8c570952b9},
+            storage={2: 0x6FC9DF08D2206EFF4F4C378AEB2A1F8C570952B9},
         ),
         Address("0x74a77e95f3228f0b4d116d5a12e09aaf99ce54ae"): Account(
-            storage={2: 0x74a77e95f3228f0b4d116d5a12e09aaf99ce54ae},
+            storage={2: 0x74A77E95F3228F0B4D116D5A12E09AAF99CE54AE},
         ),
         Address("0xf0064be0919341a45680ec0d592eaee47df671ac"): Account(
-            storage={2: 0xf0064be0919341a45680ec0d592eaee47df671ac},
+            storage={2: 0xF0064BE0919341A45680EC0D592EAEE47DF671AC},
         ),
     }
 

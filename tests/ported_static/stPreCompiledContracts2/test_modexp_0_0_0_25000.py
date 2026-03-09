@@ -1,5 +1,5 @@
 """
-Puts the base 0, exponent 0 and modulus 0 into the MODEXP precompile, saves the hash of the result. Gives the execution 25000 gas
+Puts the base 0, exponent 0 and modulus 0 into the MODEXP precompile, saves...
 
 Ported from:
 tests/static/state_tests/stPreCompiledContracts2/modexp_0_0_0_25000Filler.json
@@ -15,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stPreCompiledContracts2/modexp_0_0_0_25000Filler.json"],
+    [
+        "tests/static/state_tests/stPreCompiledContracts2/modexp_0_0_0_25000Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -33,7 +34,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         110000,
         200000,
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_modexp_0_0_0_25000(
@@ -41,7 +42,7 @@ def test_modexp_0_0_0_25000(
     pre: Alloc,
     tx_gas_limit: int,
 ) -> None:
-    """Puts the base 0, exponent 0 and modulus 0 into the MODEXP precompile, saves the hash of the result. Gives the execution 25000 gas."""
+    """Puts the base 0, exponent 0 and modulus 0 into the MODEXP..."""
     coinbase = Address("0x3535353535353535353535353535353535353535")
     sender = Address("0x82a978b3f5962a5b0957d9ee9eef472ee55b42f1")
     contract = Address("0xc305c901078781c232a2a521c2af7980f8385ee9")
@@ -71,40 +72,36 @@ def test_modexp_0_0_0_25000(
     pre[callee_5] = Account(balance=1, nonce=0)
     pre[callee_6] = Account(balance=1, nonce=0)
     pre[callee_7] = Account(balance=1, nonce=0)
-    pre[coinbase] = Account(balance=0x201ee, nonce=0)
-    pre[sender] = Account(balance=0xde0b6b3a761fe12, nonce=1)
+    pre[coinbase] = Account(balance=0x201EE, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A761FE12, nonce=1)
     pre[contract] = Account(
         balance=0,
         nonce=1,
-        code=(
-        Op.MSTORE(offset=0x1c, value=Op.CALLDATALOAD(offset=0x0))
-        + Op.MSTORE(offset=0x20, value=0x10000000000000000000000000000000000000000)
-        + Op.MSTORE(offset=0x40, value=0xffffffffffffffffffffffffffffffff)
-        + Op.MSTORE(offset=0x60, value=0xffffffffffffffffffffffffffffffff00000000000000000000000000000001)
-        + Op.MSTORE(offset=0x80, value=0x2540be3fffffffffffffffffffffffffdabf41c00)
-        + Op.MSTORE(offset=0xa0, value=0xfffffffffffffffffffffffdabf41c00000000000000000000000002540be400)
-        + Op.JUMPI(pc=0x12b, condition=Op.ISZERO(Op.EQ(Op.MLOAD(offset=0x0), 0x30c8d1da)))
-        + Op.JUMPI(pc=Op.PC, condition=Op.ISZERO(Op.ISZERO(Op.GT(Op.CALLDATALOAD(offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4))), 0x84))))
-        + Op.CALLDATACOPY(dest_offset=0x140, offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4)), size=Op.ADD(0x20, Op.CALLDATALOAD(offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4)))))
-        + Op.JUMPI(pc=Op.PC, condition=Op.ISZERO(Op.CALL(gas=0x5f5e0ff, address=0x5, value=0x0, args_offset=0x160, args_size=Op.MLOAD(offset=0x140), ret_offset=0x240, ret_size=0x1)))
-        + Op.MSTORE(offset=0x220, value=0x1) + Op.PUSH2[0x220] + Op.PUSH1[0x21]
-        + Op.POP(Op.CALL(gas=0x15, address=0x4, value=0x0, args_offset=Op.DUP5, args_size=Op.DUP3, ret_offset=0x280, ret_size=Op.DUP1))
-        + Op.POP + Op.POP + Op.PUSH2[0x280]
-        + Op.SHA3(offset=Op.ADD(Op.DUP3, 0x20), size=Op.MLOAD(offset=Op.DUP1))
-        + Op.SWAP1 + Op.POP + Op.PUSH1[0x0] + Op.SSTORE + Op.PUSH2[0x280]
-        + Op.MSTORE(offset=Op.SUB(Op.DUP3, 0x20), value=0x20)
-        + Op.ADD(Op.MLOAD(offset=Op.DUP2), 0x40)
-        + Op.SUB(Op.ADD(Op.DUP3, 0x1f), Op.MOD(Op.SUB(Op.DUP3, 0x1), 0x20)) + Op.SWAP1
-        + Op.POP + Op.SUB(Op.DUP3, 0x20) + Op.RETURN + Op.POP + Op.STOP + Op.JUMPDEST
-    ),
+        code=bytes.fromhex(
+            "600035601c52740100000000000000000000000000000000000000006020526fffffffff"  # noqa: E501
+            "ffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff00000000"  # noqa: E501
+            "0000000000000000000000016060527402540be3fffffffffffffffffffffffffdabf41c"  # noqa: E501
+            "006080527ffffffffffffffffffffffffdabf41c00000000000000000000000002540be4"  # noqa: E501
+            "0060a0526330c8d1da600051141561012b57608460043560040135111515585760043560"  # noqa: E501
+            "04013560200160043560040161014037600161024061014051610160600060056305f5e0"  # noqa: E501
+            "fff11558576001610220526102206021806102808284600060046015f150505061028080"  # noqa: E501
+            "516020820120905060005561028060206020820352604081510160206001820306601f82"  # noqa: E501
+            "0103905060208203f350005b"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x044852b2a670ade5407e78fb2863c51de9fcb96542a07186fe3aeda6bb8a116d"
+            "0x044852b2a670ade5407e78fb2863c51de9fcb96542a07186fe3aeda6bb8a116d"  # noqa: E501
         ),
         to=contract,
-        data=bytes.fromhex("30c8d1da00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"),
+        data=bytes.fromhex(
+            "30c8d1da0000000000000000000000000000000000000000000000000000000000000020"  # noqa: E501
+            "000000000000000000000000000000000000000000000000000000000000006000000000"  # noqa: E501
+            "000000000000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+            "000000000000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+            "0000000000000000000000000000000000000000"
+        ),
         gas_limit=tx_gas_limit,
         gas_price=10,
         nonce=1,
@@ -113,8 +110,12 @@ def test_modexp_0_0_0_25000(
 
     post = {
         contract: Account(
-            storage={0: 0xbc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a},
-            code=Op.MSTORE(offset=0x1c, value=Op.CALLDATALOAD(offset=0x0)) + Op.MSTORE(offset=0x20, value=0x10000000000000000000000000000000000000000) + Op.MSTORE(offset=0x40, value=0xffffffffffffffffffffffffffffffff) + Op.MSTORE(offset=0x60, value=0xffffffffffffffffffffffffffffffff00000000000000000000000000000001) + Op.MSTORE(offset=0x80, value=0x2540be3fffffffffffffffffffffffffdabf41c00) + Op.MSTORE(offset=0xa0, value=0xfffffffffffffffffffffffdabf41c00000000000000000000000002540be400) + Op.JUMPI(pc=0x12b, condition=Op.ISZERO(Op.EQ(Op.MLOAD(offset=0x0), 0x30c8d1da))) + Op.JUMPI(pc=Op.PC, condition=Op.ISZERO(Op.ISZERO(Op.GT(Op.CALLDATALOAD(offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4))), 0x84)))) + Op.CALLDATACOPY(dest_offset=0x140, offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4)), size=Op.ADD(0x20, Op.CALLDATALOAD(offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4))))) + Op.JUMPI(pc=Op.PC, condition=Op.ISZERO(Op.CALL(gas=0x5f5e0ff, address=0x5, value=0x0, args_offset=0x160, args_size=Op.MLOAD(offset=0x140), ret_offset=0x240, ret_size=0x1))) + Op.MSTORE(offset=0x220, value=0x1) + Op.PUSH2[0x220] + Op.PUSH1[0x21] + Op.POP(Op.CALL(gas=0x15, address=0x4, value=0x0, args_offset=Op.DUP5, args_size=Op.DUP3, ret_offset=0x280, ret_size=Op.DUP1)) + Op.POP + Op.POP + Op.PUSH2[0x280] + Op.SHA3(offset=Op.ADD(Op.DUP3, 0x20), size=Op.MLOAD(offset=Op.DUP1)) + Op.SWAP1 + Op.POP + Op.PUSH1[0x0] + Op.SSTORE + Op.PUSH2[0x280] + Op.MSTORE(offset=Op.SUB(Op.DUP3, 0x20), value=0x20) + Op.ADD(Op.MLOAD(offset=Op.DUP2), 0x40) + Op.SUB(Op.ADD(Op.DUP3, 0x1f), Op.MOD(Op.SUB(Op.DUP3, 0x1), 0x20)) + Op.SWAP1 + Op.POP + Op.SUB(Op.DUP3, 0x20) + Op.RETURN + Op.POP + Op.STOP + Op.JUMPDEST,
+            storage={
+                0: 0xBC36789E7A1E281436464229828F817D6612F7B477D66591FF96A9E064BCC98A,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "600035601c52740100000000000000000000000000000000000000006020526fffffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff000000000000000000000000000000016060527402540be3fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffdabf41c00000000000000000000000002540be40060a0526330c8d1da600051141561012b5760846004356004013511151558576004356004013560200160043560040161014037600161024061014051610160600060056305f5e0fff11558576001610220526102206021806102808284600060046015f150505061028080516020820120905060005561028060206020820352604081510160206001820306601f820103905060208203f350005b"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stPreCompiledContracts2/CALLCODEEcrecoverV_prefixedf0Filler.json
+tests/static/state_tests/stPreCompiledContracts2
+CALLCODEEcrecoverV_prefixedf0Filler.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stPreCompiledContracts2/CALLCODEEcrecoverV_prefixedf0Filler.json"],
+    [
+        "tests/static/state_tests/stPreCompiledContracts2/CALLCODEEcrecoverV_prefixedf0Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -29,7 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "000000000000000000000000000000000000000000000000000000000000f01c",
         "00000000000000000000000000000000f000000000000000000000000000001c",
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_callcode_ecrecover_v_prefixedf0(
@@ -51,26 +55,24 @@ def test_callcode_ecrecover_v_prefixedf0(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0x1312d00,
+        balance=0x1312D00,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x18c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c)
-        + Op.MSTORE(offset=0x20, value=Op.CALLDATALOAD(offset=0x0))
-        + Op.MSTORE(offset=0x40, value=0x73b1693892219d736caba55bdb67216e485557ea6b6af75f37096c9aa6a5a75f)
-        + Op.MSTORE(offset=0x60, value=0xeeb940b1d03b21e36b0e47e79769f095fe2ab855bd91e3a38756b7d75a9c4549)
-        + Op.SSTORE(key=0x2, value=Op.CALLCODE(gas=0x493e0, address=0x1, value=0x0, args_offset=0x0, args_size=0x80, ret_offset=0x80, ret_size=0x20))
-        + Op.SSTORE(key=0x0, value=Op.MOD(Op.MLOAD(offset=0x80), Op.EXP(0x2, 0xa0)))
-        + Op.SSTORE(key=0x1, value=Op.EQ(Op.ORIGIN, Op.SLOAD(key=0x0))) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7f18c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c600052"  # noqa: E501
+            "6000356020527f73b1693892219d736caba55bdb67216e485557ea6b6af75f37096c9aa6"  # noqa: E501
+            "a5a75f6040527feeb940b1d03b21e36b0e47e79769f095fe2ab855bd91e3a38756b7d75a"  # noqa: E501
+            "9c4549606052602060806080600060006001620493e0f260025560a060020a6080510660"  # noqa: E501
+            "0055600054321460015500"
+        ),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=tx_data,
@@ -83,7 +85,9 @@ def test_callcode_ecrecover_v_prefixedf0(
     post = {
         contract: Account(
             storage={2: 1},
-            code=Op.MSTORE(offset=0x0, value=0x18c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c) + Op.MSTORE(offset=0x20, value=Op.CALLDATALOAD(offset=0x0)) + Op.MSTORE(offset=0x40, value=0x73b1693892219d736caba55bdb67216e485557ea6b6af75f37096c9aa6a5a75f) + Op.MSTORE(offset=0x60, value=0xeeb940b1d03b21e36b0e47e79769f095fe2ab855bd91e3a38756b7d75a9c4549) + Op.SSTORE(key=0x2, value=Op.CALLCODE(gas=0x493e0, address=0x1, value=0x0, args_offset=0x0, args_size=0x80, ret_offset=0x80, ret_size=0x20)) + Op.SSTORE(key=0x0, value=Op.MOD(Op.MLOAD(offset=0x80), Op.EXP(0x2, 0xa0))) + Op.SSTORE(key=0x1, value=Op.EQ(Op.ORIGIN, Op.SLOAD(key=0x0))) + Op.STOP,
+            code=bytes.fromhex(
+                "7f18c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c6000526000356020527f73b1693892219d736caba55bdb67216e485557ea6b6af75f37096c9aa6a5a75f6040527feeb940b1d03b21e36b0e47e79769f095fe2ab855bd91e3a38756b7d75a9c4549606052602060806080600060006001620493e0f260025560a060020a60805106600055600054321460015500"  # noqa: E501
+            ),
         ),
     }
 

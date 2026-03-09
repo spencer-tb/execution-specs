@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCreateTest/CREATE_ContractRETURNBigOffsetFiller.yml
 """
@@ -19,7 +21,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreateTest/CREATE_ContractRETURNBigOffsetFiller.yml"],
+    [
+        "tests/static/state_tests/stCreateTest/CREATE_ContractRETURNBigOffsetFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -30,7 +34,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "62051eb962074ac2f3",
         "620d15bc62074ac2f3",
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_contract_return_big_offset(
@@ -51,13 +55,13 @@ def test_create_contract_return_big_offset(
         gas_limit=89128960,
     )
 
-    pre[sender] = Account(balance=0x9184e72a000, nonce=0)
+    pre[sender] = Account(balance=0x9184E72A000, nonce=0)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,
@@ -67,6 +71,6 @@ def test_create_contract_return_big_offset(
         value=0,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

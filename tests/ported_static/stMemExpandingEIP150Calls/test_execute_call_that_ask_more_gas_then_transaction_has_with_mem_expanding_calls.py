@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stMemExpandingEIP150Calls/ExecuteCallThatAskMoreGasThenTransactionHasWithMemExpandingCallsFiller.json
+tests/static/state_tests/stMemExpandingEIP150Calls
+ExecuteCallThatAskMoreGasThenTransactionHasWithMemExpandingCallsFiller.json
 """
 
 import pytest
@@ -13,18 +16,19 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stMemExpandingEIP150Calls/ExecuteCallThatAskMoreGasThenTransactionHasWithMemExpandingCallsFiller.json"],
+    [
+        "tests/static/state_tests/stMemExpandingEIP150Calls/ExecuteCallThatAskMoreGasThenTransactionHasWithMemExpandingCallsFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
-def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_calls(
+def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_calls(  # noqa: E501
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
@@ -43,19 +47,24 @@ def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_
         gas_limit=10000000,
     )
 
-    pre[callee] = Account(balance=0x186a0, nonce=0, code=Op.SSTORE(key=0x1, value=0xc))
+    pre[callee] = Account(
+        balance=0x186A0,
+        nonce=0,
+        code=bytes.fromhex("600c600155"),
+    )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=Op.CALL(gas=0x927c0, address=0x73d01f7d28c5a55520cd80d2c3f0938c1834ccff, value=0x0, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff))
-    ),
+        code=bytes.fromhex(
+            "60ff60ff60ff60ff60007373d01f7d28c5a55520cd80d2c3f0938c1834ccff620927c0f1"  # noqa: E501
+            "600155"
+        ),
     )
-    pre[sender] = Account(balance=0x186a000, nonce=0)
+    pre[sender] = Account(balance=0x186A000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x6a3a7e4100e459734759453f3aebb7f5fe9b806baa83232cd5c42fe0a359ca67"
+            "0x6a3a7e4100e459734759453f3aebb7f5fe9b806baa83232cd5c42fe0a359ca67"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,10 +75,12 @@ def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_
     )
 
     post = {
-        callee: Account(storage={1: 12}, code=Op.SSTORE(key=0x1, value=0xc)),
+        callee: Account(storage={1: 12}, code=bytes.fromhex("600c600155")),
         contract: Account(
             storage={1: 1},
-            code=Op.SSTORE(key=0x1, value=Op.CALL(gas=0x927c0, address=0x73d01f7d28c5a55520cd80d2c3f0938c1834ccff, value=0x0, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff)),
+            code=bytes.fromhex(
+                "60ff60ff60ff60ff60007373d01f7d28c5a55520cd80d2c3f0938c1834ccff620927c0f1600155"  # noqa: E501
+            ),
         ),
     }
 

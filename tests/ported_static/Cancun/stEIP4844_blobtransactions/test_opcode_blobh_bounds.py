@@ -1,8 +1,9 @@
 """
-BLOB005
+BLOB005.
 
 Ported from:
-tests/static/state_tests/Cancun/stEIP4844_blobtransactions/opcodeBlobhBoundsFiller.yml
+tests/static/state_tests/Cancun/stEIP4844_blobtransactions
+opcodeBlobhBoundsFiller.yml
 """
 
 import pytest
@@ -16,14 +17,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/Cancun/stEIP4844_blobtransactions/opcodeBlobhBoundsFiller.yml"],
+    [
+        "tests/static/state_tests/Cancun/stEIP4844_blobtransactions/opcodeBlobhBoundsFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,25 +47,28 @@ def test_opcode_blobh_bounds(
         gas_limit=68719476736,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0))
-        + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xa))
-        + Op.SSTORE(key=0x2, value=Op.BLOBHASH(index=0xffffffff))
-        + Op.SSTORE(key=0x3, value=Op.BLOBHASH(index=0xffffffffffffffff))
-        + Op.SSTORE(key=0x4, value=Op.BLOBHASH(index=0xffffffffffffffffffffffffffffffff))
-        + Op.SSTORE(key=0x5, value=Op.BLOBHASH(index=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff))
-        + Op.STOP
-    ),
-        storage={0x0: 0x1, 0x1: 0x1, 0x2: 0x1, 0x3: 0x1, 0x4: 0x1, 0x5: 0x1},
+        code=bytes.fromhex(
+            "600049600055600a4960015563ffffffff4960025567ffffffffffffffff496003556fff"  # noqa: E501
+            "ffffffffffffffffffffffffffffff496004557fffffffffffffffffffffffffffffffff"  # noqa: E501
+            "ffffffffffffffffffffffffffffffff4960055500"
+        ),
+        storage={
+            0x0: 0x1,
+            0x1: 0x1,
+            0x2: 0x1,
+            0x3: 0x1,
+            0x4: 0x1,
+            0x5: 0x1,
+        },
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -71,16 +76,39 @@ def test_opcode_blobh_bounds(
         max_fee_per_gas=5000000000,
         max_priority_fee_per_gas=2,
         max_fee_per_blob_gas=10,
-        blob_versioned_hashes=[Hash("0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"), Hash("0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8")],
+        blob_versioned_hashes=[
+            Hash(
+                "0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
+            ),
+            Hash(
+                "0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
+            ),
+        ],
         nonce=0,
         value=100000,
-        access_list=[AccessList(address=Address("0xc8126e943c569c35df09619f8e1e67460acff695"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
+        access_list=[
+            AccessList(
+                address=Address("0xc8126e943c569c35df09619f8e1e67460acff695"),
+                storage_keys=[
+                    Hash(
+                        "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                    ),
+                    Hash(
+                        "0x0000000000000000000000000000000000000000000000000000000000000001"  # noqa: E501
+                    ),
+                ],
+            ),
+        ],
     )
 
     post = {
         contract: Account(
-            storage={0: 0x1a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8},
-            code=Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0)) + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xa)) + Op.SSTORE(key=0x2, value=Op.BLOBHASH(index=0xffffffff)) + Op.SSTORE(key=0x3, value=Op.BLOBHASH(index=0xffffffffffffffff)) + Op.SSTORE(key=0x4, value=Op.BLOBHASH(index=0xffffffffffffffffffffffffffffffff)) + Op.SSTORE(key=0x5, value=Op.BLOBHASH(index=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)) + Op.STOP,
+            storage={
+                0: 0x1A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "600049600055600a4960015563ffffffff4960025567ffffffffffffffff496003556fffffffffffffffffffffffffffffffff496004557fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff4960055500"  # noqa: E501
+            ),
         ),
     }
 

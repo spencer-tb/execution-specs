@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSystemOperationsTest/ABAcalls0Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,24 +47,24 @@ def test_ab_acalls0(
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=(
-        Op.SSTORE(key=Op.PC, value=Op.ADD(0x1, Op.CALL(gas=0xc350, address=0xd6cd6ec9adca299f2bbfd754ff8bcf6a4b9aae40, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600060006000601773d6cd6ec9adca299f2bbfd754ff8bcf6a4b9aae4061c350f160"  # noqa: E501
+            "0101585500"
+        ),
     )
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=Op.PC, value=Op.CALL(gas=0x186a0, address=0x44eb1162303b6a60f2f8882d43d661787b3011e6, value=0x18, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "600060006000600060187344eb1162303b6a60f2f8882d43d661787b3011e6620186a0f1"  # noqa: E501
+            "585500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -76,11 +77,15 @@ def test_ab_acalls0(
     post = {
         callee: Account(
             storage={38: 1},
-            code=Op.SSTORE(key=Op.PC, value=Op.ADD(0x1, Op.CALL(gas=0xc350, address=0xd6cd6ec9adca299f2bbfd754ff8bcf6a4b9aae40, value=0x17, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000601773d6cd6ec9adca299f2bbfd754ff8bcf6a4b9aae4061c350f1600101585500"  # noqa: E501
+            ),
         ),
         contract: Account(
             storage={36: 1},
-            code=Op.SSTORE(key=Op.PC, value=Op.CALL(gas=0x186a0, address=0x44eb1162303b6a60f2f8882d43d661787b3011e6, value=0x18, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "600060006000600060187344eb1162303b6a60f2f8882d43d661787b3011e6620186a0f1585500"  # noqa: E501
+            ),
         ),
     }
 

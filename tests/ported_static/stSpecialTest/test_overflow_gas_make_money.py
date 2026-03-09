@@ -1,5 +1,5 @@
 """
-Apparently this test was testing theoretical issue occur when tr gas > block gas limit overflow. no longer the case
+Apparently this test was testing theoretical issue occur when tr gas >...
 
 Ported from:
 tests/static/state_tests/stSpecialTest/OverflowGasMakeMoneyFiller.json
@@ -29,7 +29,7 @@ def test_overflow_gas_make_money(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """Apparently this test was testing theoretical issue occur when tr gas > block gas limit overflow. no longer the case."""
+    """Apparently this test was testing theoretical issue occur when tr..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xde1dfd9a06b67489748eeab5f2ae651c85bc1654")
     contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
@@ -43,11 +43,11 @@ def test_overflow_gas_make_money(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0x4fec000000000139c, nonce=0)
+    pre[sender] = Account(balance=0x4FEC000000000139C, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4c30106c229cd77a61e9eab5fcee11cc912bf94f785ee56f406817744bb6a074"
+            "0x4c30106c229cd77a61e9eab5fcee11cc912bf94f785ee56f406817744bb6a074"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -57,6 +57,6 @@ def test_overflow_gas_make_money(
         value=501,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

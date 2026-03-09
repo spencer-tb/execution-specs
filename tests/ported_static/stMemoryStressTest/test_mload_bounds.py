@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/MLOAD_BoundsFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,24 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0x8b0647e983082e6923f7b20e38972690fce91e9b"): Account(code=Op.POP(Op.MLOAD(offset=0x0)) + Op.MLOAD(offset=0xffffffff) + Op.STOP)}),
-        (16777216, {Address("0x8b0647e983082e6923f7b20e38972690fce91e9b"): Account(code=Op.POP(Op.MLOAD(offset=0x0)) + Op.MLOAD(offset=0xffffffff) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0x8b0647e983082e6923f7b20e38972690fce91e9b"): Account(
+                    code=bytes.fromhex("6000515063ffffffff5100")
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0x8b0647e983082e6923f7b20e38972690fce91e9b"): Account(
+                    code=bytes.fromhex("6000515063ffffffff5100")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_mload_bounds(
@@ -55,13 +70,13 @@ def test_mload_bounds(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=Op.POP(Op.MLOAD(offset=0x0)) + Op.MLOAD(offset=0xffffffff) + Op.STOP,
+        code=bytes.fromhex("6000515063ffffffff5100"),
     )
-    pre[sender] = Account(balance=0x7ffffffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xfe5be118ad5955e30e0ffc4e1f1bbdcaa7f5a67cb1426c4ac19e32c80eccdc06"
+            "0xfe5be118ad5955e30e0ffc4e1f1bbdcaa7f5a67cb1426c4ac19e32c80eccdc06"  # noqa: E501
         ),
         to=contract,
         data=b"",

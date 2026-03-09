@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stReturnDataTest/returndatacopy_initialFiller.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stReturnDataTest/returndatacopy_initialFiller.json"],
+    [
+        "tests/static/state_tests/stReturnDataTest/returndatacopy_initialFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,20 +46,18 @@ def test_returndatacopy_initial(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x112233445566778899aabbccddeeff)
-        + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6e112233445566778899aabbccddeeff6000526020600060003e60005160005500"  # noqa: E501
+        ),
         storage={0x0: 0x1},
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -69,7 +70,9 @@ def test_returndatacopy_initial(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.MSTORE(offset=0x0, value=0x112233445566778899aabbccddeeff) + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "6e112233445566778899aabbccddeeff6000526020600060003e60005160005500"  # noqa: E501
+            ),
         ),
     }
 

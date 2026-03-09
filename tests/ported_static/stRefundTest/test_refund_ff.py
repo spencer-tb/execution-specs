@@ -1,5 +1,5 @@
 """
-Ori Pomerantz   qbzzt1@gmail.com
+Ori Pomerantz   qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/stRefundTest/refundFFFiller.yml
@@ -7,7 +7,6 @@ tests/static/state_tests/stRefundTest/refundFFFiller.yml
 
 import pytest
 from execution_testing import (
-    AccessList,
     Account,
     Address,
     Alloc,
@@ -16,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,17 +44,17 @@ def test_refund_ff(
         gas_limit=16777216,
     )
 
-    pre[sender] = Account(balance=0xe8d6599218, nonce=1)
+    pre[sender] = Account(balance=0xE8D6599218, nonce=1)
     pre[callee] = Account(balance=0, nonce=1)
     pre[contract] = Account(
         balance=0,
         nonce=1,
-        code=Op.SELFDESTRUCT(address=0x7704d8a022a1ba8f3539fc82c7d7fb065abc0df3),
+        code=bytes.fromhex("737704d8a022a1ba8f3539fc82c7d7fb065abc0df3ff"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xd6b0676afde099a078f9d00f24d2c1cb4278546e1734927015023db0980a92c5"
+            "0xd6b0676afde099a078f9d00f24d2c1cb4278546e1734927015023db0980a92c5"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -68,7 +66,9 @@ def test_refund_ff(
     )
 
     post = {
-        contract: Account(code=Op.SELFDESTRUCT(address=0x7704d8a022a1ba8f3539fc82c7d7fb065abc0df3)),
+        contract: Account(
+            code=bytes.fromhex("737704d8a022a1ba8f3539fc82c7d7fb065abc0df3ff"),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

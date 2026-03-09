@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCreateTest/CreateOOGafterInitCodeFiller.json
 """
@@ -13,23 +15,45 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreateTest/CreateOOGafterInitCodeFiller.json"],
+    [
+        "tests/static/state_tests/stCreateTest/CreateOOGafterInitCodeFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (54000, {Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.MSTORE(offset=0x0, value=0x6460016001556000526005601bf3) + Op.CREATE(value=0x0, offset=0x12, size=0xe) + Op.STOP)}),
-        (55000, {Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.MSTORE(offset=0x0, value=0x6460016001556000526005601bf3) + Op.CREATE(value=0x0, offset=0x12, size=0xe) + Op.STOP), Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(code=Op.SSTORE(key=0x1, value=0x1))}),
+        (
+            54000,
+            {
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "6d6460016001556000526005601bf3600052600e60126000f000"
+                    )
+                )
+            },
+        ),
+        (
+            55000,
+            {
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "6d6460016001556000526005601bf3600052600e60126000f000"
+                    )
+                ),
+                Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(
+                    code=bytes.fromhex("6001600155")
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_oo_gafter_init_code(
@@ -52,19 +76,18 @@ def test_create_oo_gafter_init_code(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x6460016001556000526005601bf3)
-        + Op.CREATE(value=0x0, offset=0x12, size=0xe) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6d6460016001556000526005601bf3600052600e60126000f000"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",

@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCreate2/returndatacopy_0_0_following_successful_createFiller.json
+tests/static/state_tests/stCreate2
+returndatacopy_0_0_following_successful_createFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreate2/returndatacopy_0_0_following_successful_createFiller.json"],
+    [
+        "tests/static/state_tests/stCreate2/returndatacopy_0_0_following_successful_createFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,21 +49,17 @@ def test_returndatacopy_0_0_following_successful_create(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.PUSH1[0x0] + Op.PUSH1[0x7]
-        + Op.CODECOPY(dest_offset=0x0, offset=0x1f, size=Op.DUP1) + Op.PUSH1[0x0]
-        + Op.PUSH1[0x0] + Op.POP(Op.CREATE2)
-        + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x0)
-        + Op.SSTORE(key=0x0, value=0x0) + Op.STOP + Op.STOP + Op.INVALID
-        + Op.SSTORE(key=0x0, value=0x1) + Op.STOP + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600780601f60003960006000f5506000600060003e60006000550000fe6001600055"  # noqa: E501
+            "0000"
+        ),
         storage={0x0: 0x1},
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -71,9 +71,13 @@ def test_returndatacopy_0_0_following_successful_create(
 
     post = {
         contract: Account(
-            code=Op.PUSH1[0x0] + Op.PUSH1[0x7] + Op.CODECOPY(dest_offset=0x0, offset=0x1f, size=Op.DUP1) + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.POP(Op.CREATE2) + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x0) + Op.SSTORE(key=0x0, value=0x0) + Op.STOP + Op.STOP + Op.INVALID + Op.SSTORE(key=0x0, value=0x1) + Op.STOP + Op.STOP,
+            code=bytes.fromhex(
+                "6000600780601f60003960006000f5506000600060003e60006000550000fe60016000550000"  # noqa: E501
+            ),
         ),
-        Address("0x75579e0e990d8361c48b86c1b57686589df3264a"): Account(storage={0: 1}),
+        Address("0x75579e0e990d8361c48b86c1b57686589df3264a"): Account(
+            storage={0: 1},
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

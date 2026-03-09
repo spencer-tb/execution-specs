@@ -1,8 +1,9 @@
 """
-call with value. call takes more gas then tx has, and more value than account has
+call with value. call takes more gas then tx has, and more value than...
 
 Ported from:
-tests/static/state_tests/stCallCreateCallCodeTest/callWithHighValueAndOOGatTxLevelFiller.json
+tests/static/state_tests/stCallCreateCallCodeTest
+callWithHighValueAndOOGatTxLevelFiller.json
 """
 
 import pytest
@@ -15,23 +16,50 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/callWithHighValueAndOOGatTxLevelFiller.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/callWithHighValueAndOOGatTxLevelFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (0, {Address("0x0896f13e800125c0ccec44f3c434335f0a97bc1b"): Account(code=Op.SSTORE(key=0x1, value=0x1) + Op.MSTORE8(offset=0x0, value=0x37) + Op.RETURN(offset=0x0, size=0x2)), Address("0x9001fa64dbba07e3eb711a42cf25b34ccee2bd2b"): Account(code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x2dc6c1, address=0x896f13e800125c0ccec44f3c434335f0a97bc1b, value=0x186a1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP)}),
-        (1, {Address("0x0896f13e800125c0ccec44f3c434335f0a97bc1b"): Account(storage={1: 1}, code=Op.SSTORE(key=0x1, value=0x1) + Op.MSTORE8(offset=0x0, value=0x37) + Op.RETURN(offset=0x0, size=0x2)), Address("0x9001fa64dbba07e3eb711a42cf25b34ccee2bd2b"): Account(storage={0: 1}, code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x2dc6c1, address=0x896f13e800125c0ccec44f3c434335f0a97bc1b, value=0x186a1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP)}),
+        (
+            0,
+            {
+                Address("0x0896f13e800125c0ccec44f3c434335f0a97bc1b"): Account(
+                    code=bytes.fromhex("6001600155603760005360026000f3")
+                ),
+                Address("0x9001fa64dbba07e3eb711a42cf25b34ccee2bd2b"): Account(
+                    code=bytes.fromhex(
+                        "6000600060006000620186a1730896f13e800125c0ccec44f3c434335f0a97bc1b622dc6c1f160005500"  # noqa: E501
+                    )
+                ),
+            },
+        ),
+        (
+            1,
+            {
+                Address("0x0896f13e800125c0ccec44f3c434335f0a97bc1b"): Account(
+                    storage={1: 1},
+                    code=bytes.fromhex("6001600155603760005360026000f3"),
+                ),
+                Address("0x9001fa64dbba07e3eb711a42cf25b34ccee2bd2b"): Account(
+                    storage={0: 1},
+                    code=bytes.fromhex(
+                        "6000600060006000620186a1730896f13e800125c0ccec44f3c434335f0a97bc1b622dc6c1f160005500"  # noqa: E501
+                    ),
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_call_with_high_value_and_oo_gat_tx_level(
@@ -40,7 +68,7 @@ def test_call_with_high_value_and_oo_gat_tx_level(
     tx_value: int,
     expected_post: dict,
 ) -> None:
-    """call with value. call takes more gas then tx has, and more value than account has."""
+    """Call with value. call takes more gas then tx has, and more value..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
     contract = Address("0x9001fa64dbba07e3eb711a42cf25b34ccee2bd2b")
@@ -58,25 +86,22 @@ def test_call_with_high_value_and_oo_gat_tx_level(
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=0x1) + Op.MSTORE8(offset=0x0, value=0x37)
-        + Op.RETURN(offset=0x0, size=0x2)
-    ),
+        code=bytes.fromhex("6001600155603760005360026000f3"),
     )
     pre[contract] = Account(
-        balance=0x186a0,
+        balance=0x186A0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x2dc6c1, address=0x896f13e800125c0ccec44f3c434335f0a97bc1b, value=0x186a1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600060006000620186a1730896f13e800125c0ccec44f3c434335f0a97bc1b622dc6"  # noqa: E501
+            "c1f160005500"
+        ),
         storage={0x0: 0x5},
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",

@@ -1,8 +1,9 @@
 """
-Legacy Test from Christoph. J
+Legacy Test from Christoph. J.
 
 Ported from:
-tests/static/state_tests/stCallCreateCallCodeTest/createNameRegistratorPreStore1NotEnoughGasFiller.json
+tests/static/state_tests/stCallCreateCallCodeTest
+createNameRegistratorPreStore1NotEnoughGasFiller.json
 """
 
 import pytest
@@ -15,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/createNameRegistratorPreStore1NotEnoughGasFiller.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/createNameRegistratorPreStore1NotEnoughGasFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,19 +47,18 @@ def test_create_name_registrator_pre_store1_not_enough_gas(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x6001600155601080600c6000396000f3006000355415600957005b6020356000)
-        + Op.MSTORE8(offset=0x20, value=0x35) + Op.MSTORE8(offset=0x21, value=0x55)
-        + Op.CREATE(value=0x17, offset=0x0, size=0x22) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7f6001600155601080600c6000396000f3006000355415600957005b6020356000600052"  # noqa: E501
+            "60356020536055602153602260006017f000"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -69,7 +70,9 @@ def test_create_name_registrator_pre_store1_not_enough_gas(
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x6001600155601080600c6000396000f3006000355415600957005b6020356000) + Op.MSTORE8(offset=0x20, value=0x35) + Op.MSTORE8(offset=0x21, value=0x55) + Op.CREATE(value=0x17, offset=0x0, size=0x22) + Op.STOP,
+            code=bytes.fromhex(
+                "7f6001600155601080600c6000396000f3006000355415600957005b602035600060005260356020536055602153602260006017f000"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,5 +1,5 @@
 """
-Ori Pomerantz   qbzzt1@gmail.com
+Ori Pomerantz   qbzzt1@gmail.com.
 
 Ported from:
 tests/static/state_tests/stRefundTest/refundSSTOREFiller.yml
@@ -7,7 +7,6 @@ tests/static/state_tests/stRefundTest/refundSSTOREFiller.yml
 
 import pytest
 from execution_testing import (
-    AccessList,
     Account,
     Address,
     Alloc,
@@ -16,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,17 +43,17 @@ def test_refund_sstore(
         gas_limit=16777216,
     )
 
-    pre[sender] = Account(balance=0xe8d631f190, nonce=1)
+    pre[sender] = Account(balance=0xE8D631F190, nonce=1)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=1,
-        code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP,
-        storage={0x0: 0x60a7},
+        code=bytes.fromhex("6000805500"),
+        storage={0x0: 0x60A7},
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x8c45b94dca330650c0392398fb2097bb64764e973720a845ee67605ffabf0c7c"
+            "0x8c45b94dca330650c0392398fb2097bb64764e973720a845ee67605ffabf0c7c"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -67,7 +65,7 @@ def test_refund_sstore(
     )
 
     post = {
-        contract: Account(code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP),
+        contract: Account(code=bytes.fromhex("6000805500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

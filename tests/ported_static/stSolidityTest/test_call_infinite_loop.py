@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSolidityTest/CallInfiniteLoopFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,31 +43,21 @@ def test_call_infinite_loop(
         gas_limit=100000000,
     )
 
-    pre[sender] = Account(balance=0x1dcd6500, nonce=0)
+    pre[sender] = Account(balance=0x1DCD6500, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)
     pre[contract] = Account(
-        balance=0x186a0,
+        balance=0x186A0,
         nonce=0,
-        code=(
-        Op.CALLDATALOAD(offset=0x0) + Op.EXP(0x2, 0xe0) + Op.SWAP1 + Op.DIV
-        + Op.JUMPI(pc=0x29, condition=Op.EQ(0x296df0df, Op.DUP1))
-        + Op.JUMPI(pc=0x35, condition=Op.EQ(0x4893d88a, Op.DUP1))
-        + Op.JUMPI(pc=0x41, condition=Op.EQ(0x981a3165, Op.DUP1)) + Op.STOP
-        + Op.JUMPDEST + Op.PUSH1[0x2f] + Op.JUMP(pc=0x4d) + Op.JUMPDEST
-        + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x3b]
-        + Op.JUMP(pc=0x62) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0)
-        + Op.JUMPDEST + Op.PUSH1[0x47] + Op.JUMP(pc=0x5a) + Op.JUMPDEST
-        + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.JUMPDEST
-        + Op.JUMPI(pc=0x58, condition=Op.ISZERO(0x1)) + Op.JUMP(pc=0x4e) + Op.JUMPDEST
-        + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x60] + Op.JUMP(pc=0x62) + Op.JUMPDEST
-        + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x68] + Op.JUMP(pc=0x5a) + Op.JUMPDEST
-        + Op.JUMP
-    ),
+        code=bytes.fromhex(
+            "60003560e060020a90048063296df0df1460295780634893d88a146035578063981a3165"  # noqa: E501
+            "14604157005b602f604d565b60006000f35b603b6062565b60006000f35b6047605a565b"  # noqa: E501
+            "60006000f35b5b600115605857604e565b565b60606062565b565b6068605a565b56"  # noqa: E501
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x96c07046493ec8728482079ab999d2994420d9cf4d3491dfd06871b106d9d87b"
+            "0x96c07046493ec8728482079ab999d2994420d9cf4d3491dfd06871b106d9d87b"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("296df0df"),
@@ -78,7 +69,9 @@ def test_call_infinite_loop(
 
     post = {
         contract: Account(
-            code=Op.CALLDATALOAD(offset=0x0) + Op.EXP(0x2, 0xe0) + Op.SWAP1 + Op.DIV + Op.JUMPI(pc=0x29, condition=Op.EQ(0x296df0df, Op.DUP1)) + Op.JUMPI(pc=0x35, condition=Op.EQ(0x4893d88a, Op.DUP1)) + Op.JUMPI(pc=0x41, condition=Op.EQ(0x981a3165, Op.DUP1)) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x2f] + Op.JUMP(pc=0x4d) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x3b] + Op.JUMP(pc=0x62) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x47] + Op.JUMP(pc=0x5a) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.JUMPDEST + Op.JUMPI(pc=0x58, condition=Op.ISZERO(0x1)) + Op.JUMP(pc=0x4e) + Op.JUMPDEST + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x60] + Op.JUMP(pc=0x62) + Op.JUMPDEST + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x68] + Op.JUMP(pc=0x5a) + Op.JUMPDEST + Op.JUMP,
+            code=bytes.fromhex(
+                "60003560e060020a90048063296df0df1460295780634893d88a146035578063981a316514604157005b602f604d565b60006000f35b603b6062565b60006000f35b6047605a565b60006000f35b5b600115605857604e565b565b60606062565b565b6068605a565b56"  # noqa: E501
+            ),
         ),
     }
 

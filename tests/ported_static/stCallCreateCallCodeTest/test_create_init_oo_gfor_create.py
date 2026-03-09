@@ -1,8 +1,9 @@
 """
-Suicide to a dynamic created contract, oog on create
+Suicide to a dynamic created contract, oog on create.
 
 Ported from:
-tests/static/state_tests/stCallCreateCallCodeTest/createInitOOGforCREATEFiller.json
+tests/static/state_tests/stCallCreateCallCodeTest
+createInitOOGforCREATEFiller.json
 """
 
 import pytest
@@ -15,23 +16,38 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/createInitOOGforCREATEFiller.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/createInitOOGforCREATEFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (53020, {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(code=Op.MSTORE8(offset=0x0, value=0x5a) + Op.SELFDESTRUCT(address=Op.CREATE(value=0x1, offset=0x0, size=0x1)) + Op.STOP)}),
-        (1000000, {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(code=Op.MSTORE8(offset=0x0, value=0x5a) + Op.SELFDESTRUCT(address=Op.CREATE(value=0x1, offset=0x0, size=0x1)) + Op.STOP)}),
+        (
+            53020,
+            {
+                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+                    code=bytes.fromhex("605a600053600160006001f0ff00")
+                )
+            },
+        ),
+        (
+            1000000,
+            {
+                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+                    code=bytes.fromhex("605a600053600160006001f0ff00")
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_init_oo_gfor_create(
@@ -55,19 +71,15 @@ def test_create_init_oo_gfor_create(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE8(offset=0x0, value=0x5a)
-        + Op.SELFDESTRUCT(address=Op.CREATE(value=0x1, offset=0x0, size=0x1))
-        + Op.STOP
-    ),
+        code=bytes.fromhex("605a600053600160006001f0ff00"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",

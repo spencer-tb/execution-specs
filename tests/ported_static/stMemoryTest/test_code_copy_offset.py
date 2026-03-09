@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryTest/codeCopyOffsetFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,28 +45,26 @@ def test_code_copy_offset(
     )
 
     pre[callee] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=1,
-        code=(
-        Op.MSTORE(offset=0x0, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
-        + Op.CODECOPY(dest_offset=0x0, offset=0xffff, size=0x10)
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600052"  # noqa: E501
+            "601061ffff60003960005160005500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=1,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x123456789abcdef)
-        + Op.CALL(gas=0xffff, address=0x27d16e1d3cc862149f1e7162e612635fcaef9ff4, value=Op.DUP1, args_offset=Op.DUP2, args_size=0xf, ret_offset=Op.DUP1, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "670123456789abcdef600052600080600f81807327d16e1d3cc862149f1e7162e612635f"  # noqa: E501
+            "caef9ff461fffff100"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -77,11 +76,15 @@ def test_code_copy_offset(
 
     post = {
         callee: Account(
-            storage={0: 0xffffffffffffffffffffffffffffffff},
-            code=Op.MSTORE(offset=0x0, value=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) + Op.CODECOPY(dest_offset=0x0, offset=0xffff, size=0x10) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            storage={0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
+            code=bytes.fromhex(
+                "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600052601061ffff60003960005160005500"  # noqa: E501
+            ),
         ),
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x123456789abcdef) + Op.CALL(gas=0xffff, address=0x27d16e1d3cc862149f1e7162e612635fcaef9ff4, value=Op.DUP1, args_offset=Op.DUP2, args_size=0xf, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP,
+            code=bytes.fromhex(
+                "670123456789abcdef600052600080600f81807327d16e1d3cc862149f1e7162e612635fcaef9ff461fffff100"  # noqa: E501
+            ),
         ),
     }
 

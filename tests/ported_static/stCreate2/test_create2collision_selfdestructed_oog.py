@@ -1,5 +1,5 @@
 """
-collision with address that has been selfdestructed in the same transaction but then OOG
+collision with address that has been selfdestructed in the same transaction...
 
 Ported from:
 tests/static/state_tests/stCreate2/create2collisionSelfdestructedOOGFiller.json
@@ -15,24 +15,25 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreate2/create2collisionSelfdestructedOOGFiller.json"],
+    [
+        "tests/static/state_tests/stCreate2/create2collisionSelfdestructedOOGFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex",
     [
-        "6000600060006000600073e2b35478fdd26477cc576dd906e6277761246a3c61c350f1506000600060006000f5506211223360005500",
-        "6000600060006000600073af3ecba2fe09a4f6c19f16a9d119e44e08c2da0161c350f15064600160015560005260006005601b6000f5506211223360005500",
-        "6000600060006000600073ec2c6832d00680ece8ff9254f81fdab0a5a2ac5061c350f1506d6460016001556000526005601bf36000526000600e60126000f5506211223360005500",
+        "6000600060006000600073e2b35478fdd26477cc576dd906e6277761246a3c61c350f1506000600060006000f5506211223360005500",  # noqa: E501
+        "6000600060006000600073af3ecba2fe09a4f6c19f16a9d119e44e08c2da0161c350f15064600160015560005260006005601b6000f5506211223360005500",  # noqa: E501
+        "6000600060006000600073ec2c6832d00680ece8ff9254f81fdab0a5a2ac5061c350f1506d6460016001556000526005601bf36000526000600e60126000f5506211223360005500",  # noqa: E501
     ],
-    ids=['case0', 'case1', 'case2'],
+    ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2collision_selfdestructed_oog(
@@ -40,7 +41,7 @@ def test_create2collision_selfdestructed_oog(
     pre: Alloc,
     tx_data_hex: str,
 ) -> None:
-    """collision with address that has been selfdestructed in the same transaction but then OOG."""
+    """Collision with address that has been selfdestructed in the same..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     contract = Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01")
@@ -56,16 +57,16 @@ def test_create2collision_selfdestructed_oog(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
-    pre[contract] = Account(balance=1, nonce=0, code=Op.SELFDESTRUCT(address=0x10) + Op.STOP)
-    pre[callee_1] = Account(balance=1, nonce=0, code=Op.SELFDESTRUCT(address=0x10) + Op.STOP)
-    pre[callee_2] = Account(balance=1, nonce=0, code=Op.SELFDESTRUCT(address=0x10) + Op.STOP)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[contract] = Account(balance=1, nonce=0, code=bytes.fromhex("6010ff00"))
+    pre[callee_1] = Account(balance=1, nonce=0, code=bytes.fromhex("6010ff00"))
+    pre[callee_2] = Account(balance=1, nonce=0, code=bytes.fromhex("6010ff00"))
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,
@@ -76,9 +77,9 @@ def test_create2collision_selfdestructed_oog(
     )
 
     post = {
-        contract: Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP),
-        callee_1: Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP),
-        callee_2: Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP),
+        contract: Account(code=bytes.fromhex("6010ff00")),
+        callee_1: Account(code=bytes.fromhex("6010ff00")),
+        callee_2: Account(code=bytes.fromhex("6010ff00")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

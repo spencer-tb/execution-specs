@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stEIP150singleCodeGasPrices/RawExtCodeSizeGasFiller.json
+tests/static/state_tests/stEIP150singleCodeGasPrices
+RawExtCodeSizeGasFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP150singleCodeGasPrices/RawExtCodeSizeGasFiller.json"],
+    [
+        "tests/static/state_tests/stEIP150singleCodeGasPrices/RawExtCodeSizeGasFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,22 +50,22 @@ def test_raw_ext_code_size_gas(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("0112233445566778899101112131415161718191202122232425"),
+        code=bytes.fromhex(
+            "0112233445566778899101112131415161718191202122232425"
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.POP(Op.EXTCODESIZE(address=0x4a84c43fba78ae75cbc15c5b63caa15da55f4464))
-        + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a600052734a84c43fba78ae75cbc15c5b63caa15da55f44643b505a6000510360015500"  # noqa: E501
+        ),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -72,10 +76,16 @@ def test_raw_ext_code_size_gas(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("0112233445566778899101112131415161718191202122232425")),
+        callee: Account(
+            code=bytes.fromhex(
+                "0112233445566778899101112131415161718191202122232425"
+            ),
+        ),
         contract: Account(
             storage={1: 2616},
-            code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.EXTCODESIZE(address=0x4a84c43fba78ae75cbc15c5b63caa15da55f4464)) + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP,
+            code=bytes.fromhex(
+                "5a600052734a84c43fba78ae75cbc15c5b63caa15da55f44643b505a6000510360015500"  # noqa: E501
+            ),
         ),
     }
 

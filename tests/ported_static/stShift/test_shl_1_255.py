@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stShift/shl_-1_255Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,18 +44,19 @@ def test_shl_1_255(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.SHL(0xff, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff))
-    ),
+        code=bytes.fromhex(
+            "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60ff1b"  # noqa: E501
+            "600055"
+        ),
         storage={0x0: 0x3},
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,8 +68,12 @@ def test_shl_1_255(
 
     post = {
         contract: Account(
-            storage={0: 0x8000000000000000000000000000000000000000000000000000000000000000},
-            code=Op.SSTORE(key=0x0, value=Op.SHL(0xff, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)),
+            storage={
+                0: 0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60ff1b600055"  # noqa: E501
+            ),
         ),
     }
 

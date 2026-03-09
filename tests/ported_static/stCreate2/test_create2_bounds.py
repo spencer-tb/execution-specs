@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCreate2/CREATE2_BoundsFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,28 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (150000, {Address("0x1000000000000000000000000000000000000000"): Account(code=Op.MSTORE(offset=0x0, value=0x6001600155601080600c6000396000f3006000355415600957005b6020356000) + Op.MSTORE8(offset=0x20, value=0x35) + Op.MSTORE8(offset=0x21, value=0x55) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0x0, salt=0x0)) + Op.CREATE2(value=0x1, offset=0x0, size=0xfffffff, salt=0x0) + Op.STOP)}),
-        (16777216, {Address("0x1000000000000000000000000000000000000000"): Account(code=Op.MSTORE(offset=0x0, value=0x6001600155601080600c6000396000f3006000355415600957005b6020356000) + Op.MSTORE8(offset=0x20, value=0x35) + Op.MSTORE8(offset=0x21, value=0x55) + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0x0, salt=0x0)) + Op.CREATE2(value=0x1, offset=0x0, size=0xfffffff, salt=0x0) + Op.STOP)}),
+        (
+            150000,
+            {
+                Address("0x1000000000000000000000000000000000000000"): Account(
+                    code=bytes.fromhex(
+                        "7f6001600155601080600c6000396000f3006000355415600957005b6020356000600052603560205360556021536000600060006001f5506000630fffffff60006001f500"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            16777216,
+            {
+                Address("0x1000000000000000000000000000000000000000"): Account(
+                    code=bytes.fromhex(
+                        "7f6001600155601080600c6000396000f3006000355415600957005b6020356000600052603560205360556021536000600060006001f5506000630fffffff60006001f500"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create2_bounds(
@@ -55,18 +74,19 @@ def test_create2_bounds(
     pre[contract] = Account(
         balance=100,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x6001600155601080600c6000396000f3006000355415600957005b6020356000)
-        + Op.MSTORE8(offset=0x20, value=0x35) + Op.MSTORE8(offset=0x21, value=0x55)
-        + Op.POP(Op.CREATE2(value=0x1, offset=0x0, size=0x0, salt=0x0))
-        + Op.CREATE2(value=0x1, offset=0x0, size=0xfffffff, salt=0x0) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7f6001600155601080600c6000396000f3006000355415600957005b6020356000600052"  # noqa: E501
+            "603560205360556021536000600060006001f5506000630fffffff60006001f500"  # noqa: E501
+        ),
     )
-    pre[sender] = Account(balance=0xfffffffffffffffffffffffffffffffffffffffffffffffff, nonce=0)
+    pre[sender] = Account(
+        balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+        nonce=0,
+    )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",

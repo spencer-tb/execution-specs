@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryTest/mstroe8_dejavuFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,14 +45,14 @@ def test_mstroe8_dejavu(
 
     pre[sender] = Account(balance=0x271000000000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.MSTORE8(offset=0xfffffff, value=0xf1),
+        code=bytes.fromhex("60f1630fffffff53"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x7dd1d0ec78fe936b0e88f8c21226f51f048579915c7baff1c5d7fd84b2139bf1"
+            "0x7dd1d0ec78fe936b0e88f8c21226f51f048579915c7baff1c5d7fd84b2139bf1"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -62,7 +63,7 @@ def test_mstroe8_dejavu(
     )
 
     post = {
-        contract: Account(code=Op.MSTORE8(offset=0xfffffff, value=0xf1)),
+        contract: Account(code=bytes.fromhex("60f1630fffffff53")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

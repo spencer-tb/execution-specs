@@ -1,8 +1,9 @@
 """
-Account with non-empty code attempts to send tx to create a contract
+Account with non-empty code attempts to send tx to create a contract.
 
 Ported from:
-tests/static/state_tests/stEIP3607/transactionCollidingWithNonEmptyAccount_init_ParisFiller.yml
+tests/static/state_tests/stEIP3607
+transactionCollidingWithNonEmptyAccount_init_ParisFiller.yml
 """
 
 import pytest
@@ -22,7 +23,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP3607/transactionCollidingWithNonEmptyAccount_init_ParisFiller.yml"],
+    [
+        "tests/static/state_tests/stEIP3607/transactionCollidingWithNonEmptyAccount_init_ParisFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -33,7 +36,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "600080808061271073cc7c3c64708397216f5f8aeb34a43f1749693fa95af100",
         "600080808073cc7c3c64708397216f5f8aeb34a43f1749693fa95af400",
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 @pytest.mark.exception_test
@@ -58,7 +61,11 @@ def test_transaction_colliding_with_non_empty_account_init_paris(
     )
 
     pre[contract] = Account(balance=10, nonce=0)
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0, code=bytes.fromhex("00"))
+    pre[sender] = Account(
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        code=bytes.fromhex("00"),
+    )
     pre[callee_1] = Account(balance=10, nonce=0, code=bytes.fromhex("00"))
     pre[coinbase] = Account(balance=0, nonce=1)
 
@@ -66,7 +73,7 @@ def test_transaction_colliding_with_non_empty_account_init_paris(
 
     tx = Transaction(
         secret_key=Hash(
-            "0x3696bfbdbc65b14f4dc76d7762e0567e1dd55f053314276e47969d22e70a554e"
+            "0x3696bfbdbc65b14f4dc76d7762e0567e1dd55f053314276e47969d22e70a554e"  # noqa: E501
         ),
         to=None,
         data=tx_data,

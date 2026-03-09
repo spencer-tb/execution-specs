@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stDelegatecallTestHomestead/delegatecallEmptycontractFiller.json
+tests/static/state_tests/stDelegatecallTestHomestead
+delegatecallEmptycontractFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stDelegatecallTestHomestead/delegatecallEmptycontractFiller.json"],
+    [
+        "tests/static/state_tests/stDelegatecallTestHomestead/delegatecallEmptycontractFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,16 +49,16 @@ def test_delegatecall_emptycontract(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=0xc350, address=0x945304eb96065b2a98b57a48a06ae28d285a71b5, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "604060006040600073945304eb96065b2a98b57a48a06ae28d285a71b561c350f4600055"  # noqa: E501
+            "00"
+        ),
     )
-    pre[sender] = Account(balance=0x10c8e0, nonce=0)
+    pre[sender] = Account(balance=0x10C8E0, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x11489f9b076d3f3185ebe5c6e2dbedbe9e283a6ce75895780134252b3dd5dbcc"
+            "0x11489f9b076d3f3185ebe5c6e2dbedbe9e283a6ce75895780134252b3dd5dbcc"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +71,9 @@ def test_delegatecall_emptycontract(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.SSTORE(key=0x0, value=Op.DELEGATECALL(gas=0xc350, address=0x945304eb96065b2a98b57a48a06ae28d285a71b5, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "604060006040600073945304eb96065b2a98b57a48a06ae28d285a71b561c350f460005500"  # noqa: E501
+            ),
         ),
     }
 

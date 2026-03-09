@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stZeroCallsRevert/ZeroValue_SUICIDE_ToOneStorageKey_OOGRevert_ParisFiller.json
+tests/static/state_tests/stZeroCallsRevert
+ZeroValue_SUICIDE_ToOneStorageKey_OOGRevert_ParisFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stZeroCallsRevert/ZeroValue_SUICIDE_ToOneStorageKey_OOGRevert_ParisFiller.json"],
+    [
+        "tests/static/state_tests/stZeroCallsRevert/ZeroValue_SUICIDE_ToOneStorageKey_OOGRevert_ParisFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -47,25 +51,24 @@ def test_zero_value_suicide_to_one_storage_key_oog_revert_paris(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=0xc350, address=0x8d444744833c9b79fdfe630f155cf1f3bbeb92e3, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x2, value=0xc) + Op.SSTORE(key=0x3, value=0xc)
-        + Op.SSTORE(key=0x4, value=0xc) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60006000600060006000738d444744833c9b79fdfe630f155cf1f3bbeb92e361c350f150"  # noqa: E501
+            "600c600255600c600355600c60045500"
+        ),
         storage={0x0: 0x1},
     )
     pre[callee] = Account(balance=10, nonce=0, storage={0x0: 0x1})
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0x4757608f18b70777ae788dd4056eeed52f7aa68f) + Op.STOP,
+        code=bytes.fromhex("734757608f18b70777ae788dd4056eeed52f7aa68fff00"),
         storage={0x0: 0x1},
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -78,12 +81,16 @@ def test_zero_value_suicide_to_one_storage_key_oog_revert_paris(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.POP(Op.CALL(gas=0xc350, address=0x8d444744833c9b79fdfe630f155cf1f3bbeb92e3, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=0xc) + Op.SSTORE(key=0x3, value=0xc) + Op.SSTORE(key=0x4, value=0xc) + Op.STOP,
+            code=bytes.fromhex(
+                "60006000600060006000738d444744833c9b79fdfe630f155cf1f3bbeb92e361c350f150600c600255600c600355600c60045500"  # noqa: E501
+            ),
         ),
         callee: Account(storage={0: 1}),
         callee_1: Account(
             storage={0: 1},
-            code=Op.SELFDESTRUCT(address=0x4757608f18b70777ae788dd4056eeed52f7aa68f) + Op.STOP,
+            code=bytes.fromhex(
+                "734757608f18b70777ae788dd4056eeed52f7aa68fff00"
+            ),
         ),
     }
 

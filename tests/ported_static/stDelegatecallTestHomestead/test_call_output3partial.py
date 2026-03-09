@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stDelegatecallTestHomestead/callOutput3partialFiller.json
+tests/static/state_tests/stDelegatecallTestHomestead
+callOutput3partialFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stDelegatecallTestHomestead/callOutput3partialFiller.json"],
+    [
+        "tests/static/state_tests/stDelegatecallTestHomestead/callOutput3partialFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,25 +47,25 @@ def test_call_output3partial(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[callee] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)),
+        code=bytes.fromhex("6001600101600055"),
     )
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x5e20a0453cecd065ea59c37ac63e079ee08998b6045136a8ce6635c7912ec0b6)
-        + Op.POP(Op.DELEGATECALL(gas=0xc350, address=0xbcc1197ccd23a97607f2f96d031f3432e0d16a02, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0xa))
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7f5e20a0453cecd065ea59c37ac63e079ee08998b6045136a8ce6635c7912ec0b6600052"  # noqa: E501
+            "600a60006000600073bcc1197ccd23a97607f2f96d031f3432e0d16a0261c350f4506000"  # noqa: E501
+            "5160005500"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -72,10 +76,14 @@ def test_call_output3partial(
     )
 
     post = {
-        callee: Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1))),
+        callee: Account(code=bytes.fromhex("6001600101600055")),
         contract: Account(
-            storage={0: 0x5e20a0453cecd065ea59c37ac63e079ee08998b6045136a8ce6635c7912ec0b6},
-            code=Op.MSTORE(offset=0x0, value=0x5e20a0453cecd065ea59c37ac63e079ee08998b6045136a8ce6635c7912ec0b6) + Op.POP(Op.DELEGATECALL(gas=0xc350, address=0xbcc1197ccd23a97607f2f96d031f3432e0d16a02, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0xa)) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            storage={
+                0: 0x5E20A0453CECD065EA59C37AC63E079EE08998B6045136A8CE6635C7912EC0B6,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "7f5e20a0453cecd065ea59c37ac63e079ee08998b6045136a8ce6635c7912ec0b6600052600a60006000600073bcc1197ccd23a97607f2f96d031f3432e0d16a0261c350f45060005160005500"  # noqa: E501
+            ),
         ),
     }
 

@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stTransactionTest/StoreGasOnCreateFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -41,19 +42,16 @@ def test_store_gas_on_create(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x17d78400, nonce=0)
+    pre[sender] = Account(balance=0x17D78400, nonce=0)
     pre[coinbase] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x5a60fd55)
-        + Op.CREATE(value=0x0, offset=0x1c, size=0x4) + Op.STOP
-    ),
+        code=bytes.fromhex("635a60fd556000526004601c6000f000"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=coinbase,
         data=b"",
@@ -65,9 +63,11 @@ def test_store_gas_on_create(
 
     post = {
         coinbase: Account(
-            code=Op.MSTORE(offset=0x0, value=0x5a60fd55) + Op.CREATE(value=0x0, offset=0x1c, size=0x4) + Op.STOP,
+            code=bytes.fromhex("635a60fd556000526004601c6000f000"),
         ),
-        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(storage={253: 0x12f39}),
+        Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(
+            storage={253: 0x12F39},
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

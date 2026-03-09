@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRefundTest/refund_CallAFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -44,26 +45,26 @@ def test_refund_call_a(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x157c, address=0xf4c9fc42faeda49049e3b8e2b97a17cc2fe95718, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000600060006000600073f4c9fc42faeda49049e3b8e2b97a17cc2fe9571861157cf160"  # noqa: E501
+            "005500"
+        ),
         storage={0x1: 0x1},
     )
-    pre[sender] = Account(balance=0x1312d00, nonce=0)
+    pre[sender] = Account(balance=0x1312D00, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)
     pre[callee] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP,
+        code=bytes.fromhex("600060015500"),
         storage={0x1: 0x1},
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x752660e61324e901f7231dfae39984f4d433a241d533838e4700925f477814fd"
+            "0x752660e61324e901f7231dfae39984f4d433a241d533838e4700925f477814fd"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -76,9 +77,11 @@ def test_refund_call_a(
     post = {
         contract: Account(
             storage={0: 1, 1: 1},
-            code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x157c, address=0xf4c9fc42faeda49049e3b8e2b97a17cc2fe95718, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000600073f4c9fc42faeda49049e3b8e2b97a17cc2fe9571861157cf160005500"  # noqa: E501
+            ),
         ),
-        callee: Account(code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP),
+        callee: Account(code=bytes.fromhex("600060015500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

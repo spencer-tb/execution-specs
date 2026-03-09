@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stTransactionTest/HighGasLimitFiller.json
 """
@@ -42,13 +44,13 @@ def test_high_gas_limit(
     )
 
     pre[sender] = Account(
-        balance=0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,
+        balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
         nonce=0,
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x50eadfb1030587ab3a993a6ecc073041fc3b45e119daa31a13d78c7e209631a5"
+            "0x50eadfb1030587ab3a993a6ecc073041fc3b45e119daa31a13d78c7e209631a5"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("3240349548983454"),
@@ -58,6 +60,6 @@ def test_high_gas_limit(
         value=900,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

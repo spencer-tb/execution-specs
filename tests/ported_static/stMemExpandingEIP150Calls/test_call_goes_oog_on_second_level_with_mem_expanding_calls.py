@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stMemExpandingEIP150Calls/CallGoesOOGOnSecondLevelWithMemExpandingCallsFiller.json
+tests/static/state_tests/stMemExpandingEIP150Calls
+CallGoesOOGOnSecondLevelWithMemExpandingCallsFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stMemExpandingEIP150Calls/CallGoesOOGOnSecondLevelWithMemExpandingCallsFiller.json"],
+    [
+        "tests/static/state_tests/stMemExpandingEIP150Calls/CallGoesOOGOnSecondLevelWithMemExpandingCallsFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -47,34 +51,31 @@ def test_call_goes_oog_on_second_level_with_mem_expanding_calls(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x8, value=Op.GAS)
-        + Op.POP(Op.CREATE(value=0x0, offset=0x0, size=0x0))
-        + Op.POP(Op.CREATE(value=0x0, offset=0x0, size=0x0))
-        + Op.SSTORE(key=0x9, value=Op.GAS) + Op.SSTORE(key=0xa, value=Op.GAS)
-    ),
+        code=bytes.fromhex(
+            "5a600855600060006000f050600060006000f0505a6009555a600a55"
+        ),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x8, value=Op.GAS)
-        + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0x2ef686162bebf2542147767d5be471976860cceb, value=0x0, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff))
-    ),
+        code=bytes.fromhex(
+            "5a60085560ff60ff60ff60ff6000732ef686162bebf2542147767d5be471976860cceb62"  # noqa: E501
+            "0927c0f1600955"
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x8, value=Op.GAS)
-        + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0xa27e20572430916b3d6772b27329cc460224904d, value=0x0, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff))
-    ),
+        code=bytes.fromhex(
+            "5a60085560ff60ff60ff60ff600073a27e20572430916b3d6772b27329cc460224904d62"  # noqa: E501
+            "0927c0f1600955"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x8d19f2b0d2f5689c1771fbca70476ca6e877a81ee15c3733de87fae38e5abcef"
+            "0x8d19f2b0d2f5689c1771fbca70476ca6e877a81ee15c3733de87fae38e5abcef"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -86,14 +87,20 @@ def test_call_goes_oog_on_second_level_with_mem_expanding_calls(
 
     post = {
         callee: Account(
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.POP(Op.CREATE(value=0x0, offset=0x0, size=0x0)) + Op.POP(Op.CREATE(value=0x0, offset=0x0, size=0x0)) + Op.SSTORE(key=0x9, value=Op.GAS) + Op.SSTORE(key=0xa, value=Op.GAS),
+            code=bytes.fromhex(
+                "5a600855600060006000f050600060006000f0505a6009555a600a55"
+            ),
         ),
         callee_1: Account(
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0x2ef686162bebf2542147767d5be471976860cceb, value=0x0, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff)),
+            code=bytes.fromhex(
+                "5a60085560ff60ff60ff60ff6000732ef686162bebf2542147767d5be471976860cceb620927c0f1600955"  # noqa: E501
+            ),
         ),
         contract: Account(
             storage={8: 0x30956},
-            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.SSTORE(key=0x9, value=Op.CALL(gas=0x927c0, address=0xa27e20572430916b3d6772b27329cc460224904d, value=0x0, args_offset=0xff, args_size=0xff, ret_offset=0xff, ret_size=0xff)),
+            code=bytes.fromhex(
+                "5a60085560ff60ff60ff60ff600073a27e20572430916b3d6772b27329cc460224904d620927c0f1600955"  # noqa: E501
+            ),
         ),
     }
 

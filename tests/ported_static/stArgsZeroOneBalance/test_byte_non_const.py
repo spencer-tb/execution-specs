@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stArgsZeroOneBalance/byteNonConstFiller.yml
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,28 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (0, {Address("0x86d606901085ba78c64d2e0b16831e6afd89de2d"): Account(code=Op.SSTORE(key=0x0, value=Op.BYTE(Op.BALANCE(address=0x86d606901085ba78c64d2e0b16831e6afd89de2d), Op.BALANCE(address=0x86d606901085ba78c64d2e0b16831e6afd89de2d))) + Op.STOP)}),
-        (1, {Address("0x86d606901085ba78c64d2e0b16831e6afd89de2d"): Account(code=Op.SSTORE(key=0x0, value=Op.BYTE(Op.BALANCE(address=0x86d606901085ba78c64d2e0b16831e6afd89de2d), Op.BALANCE(address=0x86d606901085ba78c64d2e0b16831e6afd89de2d))) + Op.STOP)}),
+        (
+            0,
+            {
+                Address("0x86d606901085ba78c64d2e0b16831e6afd89de2d"): Account(
+                    code=bytes.fromhex(
+                        "7386d606901085ba78c64d2e0b16831e6afd89de2d317386d606901085ba78c64d2e0b16831e6afd89de2d311a60005500"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            1,
+            {
+                Address("0x86d606901085ba78c64d2e0b16831e6afd89de2d"): Account(
+                    code=bytes.fromhex(
+                        "7386d606901085ba78c64d2e0b16831e6afd89de2d317386d606901085ba78c64d2e0b16831e6afd89de2d311a60005500"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_byte_non_const(
@@ -52,19 +71,19 @@ def test_byte_non_const(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.BYTE(Op.BALANCE(address=0x86d606901085ba78c64d2e0b16831e6afd89de2d), Op.BALANCE(address=0x86d606901085ba78c64d2e0b16831e6afd89de2d)))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "7386d606901085ba78c64d2e0b16831e6afd89de2d317386d606901085ba78c64d2e0b16"  # noqa: E501
+            "831e6afd89de2d311a60005500"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",

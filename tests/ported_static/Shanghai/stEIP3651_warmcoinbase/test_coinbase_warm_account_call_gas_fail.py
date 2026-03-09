@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/Shanghai/stEIP3651_warmcoinbase/coinbaseWarmAccountCallGasFailFiller.yml
+tests/static/state_tests/Shanghai/stEIP3651_warmcoinbase
+coinbaseWarmAccountCallGasFailFiller.yml
 """
 
 import pytest
@@ -13,25 +16,114 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/Shanghai/stEIP3651_warmcoinbase/coinbaseWarmAccountCallGasFailFiller.yml"],
+    [
+        "tests/static/state_tests/Shanghai/stEIP3651_warmcoinbase/coinbaseWarmAccountCallGasFailFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        ("693c61390000000000000000000000008ddf5d9a5251c41efd2949f53db0a464116c7c6e", {Address("0x0a92fc97bb4c47b3d5e9e96fbb1c3fc2f07dba81"): Account(storage={0: 1}, code=Op.PUSH1[0x0] + Op.DUP1 + Op.DUP1 + Op.DUP1 + Op.DUP1 + Op.CALLDATALOAD(offset=0x4) + Op.PUSH1[0x64] + Op.DUP2 + Op.JUMPI(pc=0x88, condition=Op.EQ(0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e, Op.DUP1)) + Op.JUMPI(pc=0x88, condition=Op.EQ(0x498516b6b2f25cb6a8e011a7c37a617b77e7d500, Op.DUP1)) + Op.JUMPI(pc=0x80, condition=Op.EQ(0x8873820bb96daa39db93ae64a9d6397e4c6a48d7, Op.DUP1)) + Op.PUSH20[0x303b6790d019874a107418eb549e4e7766a64728] + Op.JUMPI(pc=0x79, condition=Op.EQ) + Op.JUMPDEST + Op.SSTORE(key=0x0, value=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x18] + Op.ADD + Op.JUMP(pc=0x73) + Op.JUMPDEST + Op.POP + Op.PUSH1[0x18] + Op.ADD + Op.JUMP(pc=0x73) + Op.JUMPDEST + Op.POP + Op.PUSH1[0x1b] + Op.ADD + Op.JUMP(pc=0x73)), Address("0x303b6790d019874a107418eb549e4e7766a64728"): Account(code=Op.STATICCALL(gas=Op.DUP2, address=Op.COINBASE, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x498516b6b2f25cb6a8e011a7c37a617b77e7d500"): Account(code=Op.CALLCODE(gas=Op.DUP2, address=Op.COINBASE, value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x8873820bb96daa39db93ae64a9d6397e4c6a48d7"): Account(code=Op.DELEGATECALL(gas=Op.DUP2, address=Op.COINBASE, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e"): Account(code=Op.CALL(gas=Op.DUP2, address=Op.COINBASE, value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP)}),
-        ("693c6139000000000000000000000000498516b6b2f25cb6a8e011a7c37a617b77e7d500", {Address("0x0a92fc97bb4c47b3d5e9e96fbb1c3fc2f07dba81"): Account(storage={0: 1}, code=Op.PUSH1[0x0] + Op.DUP1 + Op.DUP1 + Op.DUP1 + Op.DUP1 + Op.CALLDATALOAD(offset=0x4) + Op.PUSH1[0x64] + Op.DUP2 + Op.JUMPI(pc=0x88, condition=Op.EQ(0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e, Op.DUP1)) + Op.JUMPI(pc=0x88, condition=Op.EQ(0x498516b6b2f25cb6a8e011a7c37a617b77e7d500, Op.DUP1)) + Op.JUMPI(pc=0x80, condition=Op.EQ(0x8873820bb96daa39db93ae64a9d6397e4c6a48d7, Op.DUP1)) + Op.PUSH20[0x303b6790d019874a107418eb549e4e7766a64728] + Op.JUMPI(pc=0x79, condition=Op.EQ) + Op.JUMPDEST + Op.SSTORE(key=0x0, value=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x18] + Op.ADD + Op.JUMP(pc=0x73) + Op.JUMPDEST + Op.POP + Op.PUSH1[0x18] + Op.ADD + Op.JUMP(pc=0x73) + Op.JUMPDEST + Op.POP + Op.PUSH1[0x1b] + Op.ADD + Op.JUMP(pc=0x73)), Address("0x303b6790d019874a107418eb549e4e7766a64728"): Account(code=Op.STATICCALL(gas=Op.DUP2, address=Op.COINBASE, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x498516b6b2f25cb6a8e011a7c37a617b77e7d500"): Account(code=Op.CALLCODE(gas=Op.DUP2, address=Op.COINBASE, value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x8873820bb96daa39db93ae64a9d6397e4c6a48d7"): Account(code=Op.DELEGATECALL(gas=Op.DUP2, address=Op.COINBASE, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e"): Account(code=Op.CALL(gas=Op.DUP2, address=Op.COINBASE, value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP)}),
-        ("693c61390000000000000000000000008873820bb96daa39db93ae64a9d6397e4c6a48d7", {Address("0x0a92fc97bb4c47b3d5e9e96fbb1c3fc2f07dba81"): Account(storage={0: 1}, code=Op.PUSH1[0x0] + Op.DUP1 + Op.DUP1 + Op.DUP1 + Op.DUP1 + Op.CALLDATALOAD(offset=0x4) + Op.PUSH1[0x64] + Op.DUP2 + Op.JUMPI(pc=0x88, condition=Op.EQ(0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e, Op.DUP1)) + Op.JUMPI(pc=0x88, condition=Op.EQ(0x498516b6b2f25cb6a8e011a7c37a617b77e7d500, Op.DUP1)) + Op.JUMPI(pc=0x80, condition=Op.EQ(0x8873820bb96daa39db93ae64a9d6397e4c6a48d7, Op.DUP1)) + Op.PUSH20[0x303b6790d019874a107418eb549e4e7766a64728] + Op.JUMPI(pc=0x79, condition=Op.EQ) + Op.JUMPDEST + Op.SSTORE(key=0x0, value=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x18] + Op.ADD + Op.JUMP(pc=0x73) + Op.JUMPDEST + Op.POP + Op.PUSH1[0x18] + Op.ADD + Op.JUMP(pc=0x73) + Op.JUMPDEST + Op.POP + Op.PUSH1[0x1b] + Op.ADD + Op.JUMP(pc=0x73)), Address("0x303b6790d019874a107418eb549e4e7766a64728"): Account(code=Op.STATICCALL(gas=Op.DUP2, address=Op.COINBASE, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x498516b6b2f25cb6a8e011a7c37a617b77e7d500"): Account(code=Op.CALLCODE(gas=Op.DUP2, address=Op.COINBASE, value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x8873820bb96daa39db93ae64a9d6397e4c6a48d7"): Account(code=Op.DELEGATECALL(gas=Op.DUP2, address=Op.COINBASE, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e"): Account(code=Op.CALL(gas=Op.DUP2, address=Op.COINBASE, value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP)}),
-        ("693c6139000000000000000000000000303b6790d019874a107418eb549e4e7766a64728", {Address("0x0a92fc97bb4c47b3d5e9e96fbb1c3fc2f07dba81"): Account(storage={0: 1}, code=Op.PUSH1[0x0] + Op.DUP1 + Op.DUP1 + Op.DUP1 + Op.DUP1 + Op.CALLDATALOAD(offset=0x4) + Op.PUSH1[0x64] + Op.DUP2 + Op.JUMPI(pc=0x88, condition=Op.EQ(0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e, Op.DUP1)) + Op.JUMPI(pc=0x88, condition=Op.EQ(0x498516b6b2f25cb6a8e011a7c37a617b77e7d500, Op.DUP1)) + Op.JUMPI(pc=0x80, condition=Op.EQ(0x8873820bb96daa39db93ae64a9d6397e4c6a48d7, Op.DUP1)) + Op.PUSH20[0x303b6790d019874a107418eb549e4e7766a64728] + Op.JUMPI(pc=0x79, condition=Op.EQ) + Op.JUMPDEST + Op.SSTORE(key=0x0, value=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x18] + Op.ADD + Op.JUMP(pc=0x73) + Op.JUMPDEST + Op.POP + Op.PUSH1[0x18] + Op.ADD + Op.JUMP(pc=0x73) + Op.JUMPDEST + Op.POP + Op.PUSH1[0x1b] + Op.ADD + Op.JUMP(pc=0x73)), Address("0x303b6790d019874a107418eb549e4e7766a64728"): Account(code=Op.STATICCALL(gas=Op.DUP2, address=Op.COINBASE, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x498516b6b2f25cb6a8e011a7c37a617b77e7d500"): Account(code=Op.CALLCODE(gas=Op.DUP2, address=Op.COINBASE, value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x8873820bb96daa39db93ae64a9d6397e4c6a48d7"): Account(code=Op.DELEGATECALL(gas=Op.DUP2, address=Op.COINBASE, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP), Address("0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e"): Account(code=Op.CALL(gas=Op.DUP2, address=Op.COINBASE, value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0) + Op.STOP)}),
+        (
+            "693c61390000000000000000000000008ddf5d9a5251c41efd2949f53db0a464116c7c6e",  # noqa: E501
+            {
+                Address("0x0a92fc97bb4c47b3d5e9e96fbb1c3fc2f07dba81"): Account(
+                    storage={0: 1},
+                    code=bytes.fromhex(
+                        "60008080808060043560648180738ddf5d9a5251c41efd2949f53db0a464116c7c6e146088578073498516b6b2f25cb6a8e011a7c37a617b77e7d5001460885780738873820bb96daa39db93ae64a9d6397e4c6a48d71460805773303b6790d019874a107418eb549e4e7766a64728146079575bf1600055005b6018016073565b506018016073565b50601b01607356"  # noqa: E501
+                    ),
+                ),
+                Address("0x303b6790d019874a107418eb549e4e7766a64728"): Account(
+                    code=bytes.fromhex("60008080804181fa00")
+                ),
+                Address("0x498516b6b2f25cb6a8e011a7c37a617b77e7d500"): Account(
+                    code=bytes.fromhex("6000808080804181f200")
+                ),
+                Address("0x8873820bb96daa39db93ae64a9d6397e4c6a48d7"): Account(
+                    code=bytes.fromhex("60008080804181f400")
+                ),
+                Address("0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e"): Account(
+                    code=bytes.fromhex("6000808080804181f100")
+                ),
+            },
+        ),
+        (
+            "693c6139000000000000000000000000498516b6b2f25cb6a8e011a7c37a617b77e7d500",  # noqa: E501
+            {
+                Address("0x0a92fc97bb4c47b3d5e9e96fbb1c3fc2f07dba81"): Account(
+                    storage={0: 1},
+                    code=bytes.fromhex(
+                        "60008080808060043560648180738ddf5d9a5251c41efd2949f53db0a464116c7c6e146088578073498516b6b2f25cb6a8e011a7c37a617b77e7d5001460885780738873820bb96daa39db93ae64a9d6397e4c6a48d71460805773303b6790d019874a107418eb549e4e7766a64728146079575bf1600055005b6018016073565b506018016073565b50601b01607356"  # noqa: E501
+                    ),
+                ),
+                Address("0x303b6790d019874a107418eb549e4e7766a64728"): Account(
+                    code=bytes.fromhex("60008080804181fa00")
+                ),
+                Address("0x498516b6b2f25cb6a8e011a7c37a617b77e7d500"): Account(
+                    code=bytes.fromhex("6000808080804181f200")
+                ),
+                Address("0x8873820bb96daa39db93ae64a9d6397e4c6a48d7"): Account(
+                    code=bytes.fromhex("60008080804181f400")
+                ),
+                Address("0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e"): Account(
+                    code=bytes.fromhex("6000808080804181f100")
+                ),
+            },
+        ),
+        (
+            "693c61390000000000000000000000008873820bb96daa39db93ae64a9d6397e4c6a48d7",  # noqa: E501
+            {
+                Address("0x0a92fc97bb4c47b3d5e9e96fbb1c3fc2f07dba81"): Account(
+                    storage={0: 1},
+                    code=bytes.fromhex(
+                        "60008080808060043560648180738ddf5d9a5251c41efd2949f53db0a464116c7c6e146088578073498516b6b2f25cb6a8e011a7c37a617b77e7d5001460885780738873820bb96daa39db93ae64a9d6397e4c6a48d71460805773303b6790d019874a107418eb549e4e7766a64728146079575bf1600055005b6018016073565b506018016073565b50601b01607356"  # noqa: E501
+                    ),
+                ),
+                Address("0x303b6790d019874a107418eb549e4e7766a64728"): Account(
+                    code=bytes.fromhex("60008080804181fa00")
+                ),
+                Address("0x498516b6b2f25cb6a8e011a7c37a617b77e7d500"): Account(
+                    code=bytes.fromhex("6000808080804181f200")
+                ),
+                Address("0x8873820bb96daa39db93ae64a9d6397e4c6a48d7"): Account(
+                    code=bytes.fromhex("60008080804181f400")
+                ),
+                Address("0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e"): Account(
+                    code=bytes.fromhex("6000808080804181f100")
+                ),
+            },
+        ),
+        (
+            "693c6139000000000000000000000000303b6790d019874a107418eb549e4e7766a64728",  # noqa: E501
+            {
+                Address("0x0a92fc97bb4c47b3d5e9e96fbb1c3fc2f07dba81"): Account(
+                    storage={0: 1},
+                    code=bytes.fromhex(
+                        "60008080808060043560648180738ddf5d9a5251c41efd2949f53db0a464116c7c6e146088578073498516b6b2f25cb6a8e011a7c37a617b77e7d5001460885780738873820bb96daa39db93ae64a9d6397e4c6a48d71460805773303b6790d019874a107418eb549e4e7766a64728146079575bf1600055005b6018016073565b506018016073565b50601b01607356"  # noqa: E501
+                    ),
+                ),
+                Address("0x303b6790d019874a107418eb549e4e7766a64728"): Account(
+                    code=bytes.fromhex("60008080804181fa00")
+                ),
+                Address("0x498516b6b2f25cb6a8e011a7c37a617b77e7d500"): Account(
+                    code=bytes.fromhex("6000808080804181f200")
+                ),
+                Address("0x8873820bb96daa39db93ae64a9d6397e4c6a48d7"): Account(
+                    code=bytes.fromhex("60008080804181f400")
+                ),
+                Address("0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e"): Account(
+                    code=bytes.fromhex("6000808080804181f100")
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_coinbase_warm_account_call_gas_fail(
@@ -59,62 +151,43 @@ def test_coinbase_warm_account_call_gas_fail(
     )
 
     pre[contract] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
-        code=(
-        Op.PUSH1[0x0] + Op.DUP1 + Op.DUP1 + Op.DUP1 + Op.DUP1
-        + Op.CALLDATALOAD(offset=0x4) + Op.PUSH1[0x64] + Op.DUP2
-        + Op.JUMPI(pc=0x88, condition=Op.EQ(0x8ddf5d9a5251c41efd2949f53db0a464116c7c6e, Op.DUP1))
-        + Op.JUMPI(pc=0x88, condition=Op.EQ(0x498516b6b2f25cb6a8e011a7c37a617b77e7d500, Op.DUP1))
-        + Op.JUMPI(pc=0x80, condition=Op.EQ(0x8873820bb96daa39db93ae64a9d6397e4c6a48d7, Op.DUP1))
-        + Op.PUSH20[0x303b6790d019874a107418eb549e4e7766a64728]
-        + Op.JUMPI(pc=0x79, condition=Op.EQ) + Op.JUMPDEST
-        + Op.SSTORE(key=0x0, value=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x18]
-        + Op.ADD + Op.JUMP(pc=0x73) + Op.JUMPDEST + Op.POP + Op.PUSH1[0x18] + Op.ADD
-        + Op.JUMP(pc=0x73) + Op.JUMPDEST + Op.POP + Op.PUSH1[0x1b] + Op.ADD
-        + Op.JUMP(pc=0x73)
-    ),
+        code=bytes.fromhex(
+            "60008080808060043560648180738ddf5d9a5251c41efd2949f53db0a464116c7c6e1460"  # noqa: E501
+            "88578073498516b6b2f25cb6a8e011a7c37a617b77e7d5001460885780738873820bb96d"  # noqa: E501
+            "aa39db93ae64a9d6397e4c6a48d71460805773303b6790d019874a107418eb549e4e7766"  # noqa: E501
+            "a64728146079575bf1600055005b6018016073565b506018016073565b50601b01607356"  # noqa: E501
+        ),
     )
     pre[callee] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
-        code=(
-        Op.STATICCALL(gas=Op.DUP2, address=Op.COINBASE, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("60008080804181fa00"),
     )
-    pre[sender] = Account(balance=0xba1a9ce0ba1a9ce, nonce=1)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
     pre[callee_1] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
-        code=(
-        Op.CALLCODE(gas=Op.DUP2, address=Op.COINBASE, value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("6000808080804181f200"),
     )
-    pre[coinbase] = Account(balance=0xba1a9ce0ba1a9ce, nonce=1)
+    pre[coinbase] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
     pre[callee_2] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
-        code=(
-        Op.DELEGATECALL(gas=Op.DUP2, address=Op.COINBASE, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("60008080804181f400"),
     )
     pre[callee_3] = Account(
-        balance=0xba1a9ce0ba1a9ce,
+        balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
-        code=(
-        Op.CALL(gas=Op.DUP2, address=Op.COINBASE, value=Op.DUP1, args_offset=Op.DUP1, args_size=Op.DUP1, ret_offset=Op.DUP1, ret_size=0x0)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("6000808080804181f100"),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x48dc5a9f099caaaa557742ca3a990a94be45b9969126a1bc74e5e8be5a2b5b47"
+            "0x48dc5a9f099caaaa557742ca3a990a94be45b9969126a1bc74e5e8be5a2b5b47"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

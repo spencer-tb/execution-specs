@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRevertTest/RevertDepth2Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -26,10 +27,54 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (170685, {Address("0x0707f29673f05e46feeb7c4766419a222010ae45"): Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xc350, address=0xc47bcbf49dd735566cfde927821e938d5b33014c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP), Address("0x68ea09e164a8b66de117a2c306b3966e6d71ca93"): Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.SSTORE(key=0x1, value=Op.CALL(gas=0x249f0, address=0x707f29673f05e46feeb7c4766419a222010ae45, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=Op.CALL(gas=0x249f0, address=0x78ed2eb0809cd080c7837dc83afc388a2b98d200, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP), Address("0x78ed2eb0809cd080c7837dc83afc388a2b98d200"): Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xc350, address=0xc47bcbf49dd735566cfde927821e938d5b33014c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=Op.GAS) + Op.STOP), Address("0xc47bcbf49dd735566cfde927821e938d5b33014c"): Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.STOP)}),
-        (136685, {Address("0x0707f29673f05e46feeb7c4766419a222010ae45"): Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xc350, address=0xc47bcbf49dd735566cfde927821e938d5b33014c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP), Address("0x68ea09e164a8b66de117a2c306b3966e6d71ca93"): Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.SSTORE(key=0x1, value=Op.CALL(gas=0x249f0, address=0x707f29673f05e46feeb7c4766419a222010ae45, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=Op.CALL(gas=0x249f0, address=0x78ed2eb0809cd080c7837dc83afc388a2b98d200, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP), Address("0x78ed2eb0809cd080c7837dc83afc388a2b98d200"): Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xc350, address=0xc47bcbf49dd735566cfde927821e938d5b33014c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=Op.GAS) + Op.STOP), Address("0xc47bcbf49dd735566cfde927821e938d5b33014c"): Account(code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.STOP)}),
+        (
+            170685,
+            {
+                Address("0x0707f29673f05e46feeb7c4766419a222010ae45"): Account(
+                    code=bytes.fromhex(
+                        "6000546001016000556000600060006000600073c47bcbf49dd735566cfde927821e938d5b33014c61c350f160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x68ea09e164a8b66de117a2c306b3966e6d71ca93"): Account(
+                    code=bytes.fromhex(
+                        "60005460010160005560006000600060006000730707f29673f05e46feeb7c4766419a222010ae45620249f0f1600155600060006000600060007378ed2eb0809cd080c7837dc83afc388a2b98d200620249f0f160025500"  # noqa: E501
+                    )
+                ),
+                Address("0x78ed2eb0809cd080c7837dc83afc388a2b98d200"): Account(
+                    code=bytes.fromhex(
+                        "6000546001016000556000600060006000600073c47bcbf49dd735566cfde927821e938d5b33014c61c350f16001555a60025500"  # noqa: E501
+                    )
+                ),
+                Address("0xc47bcbf49dd735566cfde927821e938d5b33014c"): Account(
+                    code=bytes.fromhex("60005460010160005500")
+                ),
+            },
+        ),
+        (
+            136685,
+            {
+                Address("0x0707f29673f05e46feeb7c4766419a222010ae45"): Account(
+                    code=bytes.fromhex(
+                        "6000546001016000556000600060006000600073c47bcbf49dd735566cfde927821e938d5b33014c61c350f160015500"  # noqa: E501
+                    )
+                ),
+                Address("0x68ea09e164a8b66de117a2c306b3966e6d71ca93"): Account(
+                    code=bytes.fromhex(
+                        "60005460010160005560006000600060006000730707f29673f05e46feeb7c4766419a222010ae45620249f0f1600155600060006000600060007378ed2eb0809cd080c7837dc83afc388a2b98d200620249f0f160025500"  # noqa: E501
+                    )
+                ),
+                Address("0x78ed2eb0809cd080c7837dc83afc388a2b98d200"): Account(
+                    code=bytes.fromhex(
+                        "6000546001016000556000600060006000600073c47bcbf49dd735566cfde927821e938d5b33014c61c350f16001555a60025500"  # noqa: E501
+                    )
+                ),
+                Address("0xc47bcbf49dd735566cfde927821e938d5b33014c"): Account(
+                    code=bytes.fromhex("60005460010160005500")
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_revert_depth2(
@@ -58,41 +103,38 @@ def test_revert_depth2(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0)))
-        + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xc350, address=0xc47bcbf49dd735566cfde927821e938d5b33014c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000546001016000556000600060006000600073c47bcbf49dd735566cfde927821e938d"  # noqa: E501
+            "5b33014c61c350f160015500"
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0)))
-        + Op.SSTORE(key=0x1, value=Op.CALL(gas=0x249f0, address=0x707f29673f05e46feeb7c4766419a222010ae45, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x2, value=Op.CALL(gas=0x249f0, address=0x78ed2eb0809cd080c7837dc83afc388a2b98d200, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60005460010160005560006000600060006000730707f29673f05e46feeb7c4766419a22"  # noqa: E501
+            "2010ae45620249f0f1600155600060006000600060007378ed2eb0809cd080c7837dc83a"  # noqa: E501
+            "fc388a2b98d200620249f0f160025500"
+        ),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0)))
-        + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xc350, address=0xc47bcbf49dd735566cfde927821e938d5b33014c, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x2, value=Op.GAS) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000546001016000556000600060006000600073c47bcbf49dd735566cfde927821e938d"  # noqa: E501
+            "5b33014c61c350f16001555a60025500"
+        ),
     )
     pre[callee_2] = Account(
         balance=0,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.STOP,
+        code=bytes.fromhex("60005460010160005500"),
     )
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",

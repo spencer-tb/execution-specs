@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryStressTest/MLOAD_Bounds3Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -30,7 +31,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         35000000,
         250000000,
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_mload_bounds3(
@@ -52,12 +53,16 @@ def test_mload_bounds3(
         gas_limit=9223372036854775807,
     )
 
-    pre[contract] = Account(balance=0, nonce=0, code=Op.MLOAD(offset=0x400000) + Op.STOP)
-    pre[sender] = Account(balance=0x7ffffffffffffffffff, nonce=0)
+    pre[contract] = Account(
+        balance=0,
+        nonce=0,
+        code=bytes.fromhex("624000005100"),
+    )
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xfe5be118ad5955e30e0ffc4e1f1bbdcaa7f5a67cb1426c4ac19e32c80eccdc06"
+            "0xfe5be118ad5955e30e0ffc4e1f1bbdcaa7f5a67cb1426c4ac19e32c80eccdc06"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,7 +73,7 @@ def test_mload_bounds3(
     )
 
     post = {
-        contract: Account(code=Op.MLOAD(offset=0x400000) + Op.STOP),
+        contract: Account(code=bytes.fromhex("624000005100")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

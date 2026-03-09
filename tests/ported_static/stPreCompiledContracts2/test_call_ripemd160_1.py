@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stPreCompiledContracts2/CallRipemd160_1Filler.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stPreCompiledContracts2/CallRipemd160_1Filler.json"],
+    [
+        "tests/static/state_tests/stPreCompiledContracts2/CallRipemd160_1Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,18 +46,17 @@ def test_call_ripemd160_1(
     )
 
     pre[contract] = Account(
-        balance=0x1312d00,
+        balance=0x1312D00,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x2, value=Op.CALL(gas=0x258, address=0x3, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20))
-        + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "602060006000600060006003610258f160025560005160005500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,8 +68,13 @@ def test_call_ripemd160_1(
 
     post = {
         contract: Account(
-            storage={0: 0x9c1185a5c5e9fc54612808977ee8f548b2258d31, 2: 1},
-            code=Op.SSTORE(key=0x2, value=Op.CALL(gas=0x258, address=0x3, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20)) + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            storage={
+                0: 0x9C1185A5C5E9FC54612808977EE8F548B2258D31,
+                2: 1,
+            },
+            code=bytes.fromhex(
+                "602060006000600060006003610258f160025560005160005500"
+            ),
         ),
     }
 

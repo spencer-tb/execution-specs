@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stInitCodeTest/CallContractToCreateContractNoCashFiller.json
+tests/static/state_tests/stInitCodeTest
+CallContractToCreateContractNoCashFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stInitCodeTest/CallContractToCreateContractNoCashFiller.json"],
+    [
+        "tests/static/state_tests/stInitCodeTest/CallContractToCreateContractNoCashFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,17 +49,16 @@ def test_call_contract_to_create_contract_no_cash(
     pre[contract] = Account(
         balance=0x2710,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x600c60005566602060406000f060205260076039f3)
-        + Op.SSTORE(key=0x0, value=Op.CREATE(value=0x186a0, offset=0xb, size=0x15))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "74600c60005566602060406000f060205260076039f36000526015600b620186a0f06000"  # noqa: E501
+            "5500"
+        ),
     )
-    pre[sender] = Account(balance=0x3b9aca00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xf79127a3004abde26a4cbd80c428cb10f829fa11b54d36e7b326f4f4a5927acf"
+            "0xf79127a3004abde26a4cbd80c428cb10f829fa11b54d36e7b326f4f4a5927acf"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -67,7 +70,9 @@ def test_call_contract_to_create_contract_no_cash(
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x600c60005566602060406000f060205260076039f3) + Op.SSTORE(key=0x0, value=Op.CREATE(value=0x186a0, offset=0xb, size=0x15)) + Op.STOP,
+            code=bytes.fromhex(
+                "74600c60005566602060406000f060205260076039f36000526015600b620186a0f060005500"  # noqa: E501
+            ),
         ),
     }
 

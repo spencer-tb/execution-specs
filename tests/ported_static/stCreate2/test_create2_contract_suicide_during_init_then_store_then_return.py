@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCreate2/CREATE2_ContractSuicideDuringInit_ThenStoreThenReturnFiller.json
+tests/static/state_tests/stCreate2
+CREATE2_ContractSuicideDuringInit_ThenStoreThenReturnFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreate2/CREATE2_ContractSuicideDuringInit_ThenStoreThenReturnFiller.json"],
+    [
+        "tests/static/state_tests/stCreate2/CREATE2_ContractSuicideDuringInit_ThenStoreThenReturnFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -43,28 +47,27 @@ def test_create2_contract_suicide_during_init_then_store_then_return(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
-        balance=0xe8d4a51000,
+        balance=0xE8D4A51000,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=0x249f0, address=0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20))
-        + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6020600060006000600173c94f5374fce5edbc8e2a8697c15331677e6ebf0b620249f0f1"  # noqa: E501
+            "5060005160015500"
+        ),
     )
     pre[callee] = Account(
-        balance=0xe8d4a51000,
+        balance=0xE8D4A51000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x6d64600c6000556000526005601bf36000526001ff)
-        + Op.POP(Op.CREATE2(value=0x1, offset=0xb, size=0x15, salt=0x0))
-        + Op.SSTORE(key=0x0, value=0xb) + Op.RETURN(offset=0x12, size=0xe) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "746d64600c6000556000526005601bf36000526001ff60005260006015600b6001f55060"  # noqa: E501
+            "0b600055600e6012f300"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -76,12 +79,18 @@ def test_create2_contract_suicide_during_init_then_store_then_return(
 
     post = {
         contract: Account(
-            storage={1: 0x6000526005601bf36000526001ff000000000000000000000000000000000000},
-            code=Op.POP(Op.CALL(gas=0x249f0, address=0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x20)) + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+            storage={
+                1: 0x6000526005601BF36000526001FF000000000000000000000000000000000000,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "6020600060006000600173c94f5374fce5edbc8e2a8697c15331677e6ebf0b620249f0f15060005160015500"  # noqa: E501
+            ),
         ),
         callee: Account(
             storage={0: 11},
-            code=Op.MSTORE(offset=0x0, value=0x6d64600c6000556000526005601bf36000526001ff) + Op.POP(Op.CREATE2(value=0x1, offset=0xb, size=0x15, salt=0x0)) + Op.SSTORE(key=0x0, value=0xb) + Op.RETURN(offset=0x12, size=0xe) + Op.STOP,
+            code=bytes.fromhex(
+                "746d64600c6000556000526005601bf36000526001ff60005260006015600b6001f550600b600055600e6012f300"  # noqa: E501
+            ),
         ),
     }
 

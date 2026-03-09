@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCallCodes/callcodeEmptycontractFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,16 +46,16 @@ def test_callcode_emptycontract(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALLCODE(gas=0xc350, address=0x945304eb96065b2a98b57a48a06ae28d285a71b5, value=0x3e8, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "60406000604060006103e873945304eb96065b2a98b57a48a06ae28d285a71b561c350f2"  # noqa: E501
+            "60005500"
+        ),
     )
-    pre[sender] = Account(balance=0x5f5e100, nonce=0)
+    pre[sender] = Account(balance=0x5F5E100, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"
+            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,7 +68,9 @@ def test_callcode_emptycontract(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.SSTORE(key=0x0, value=Op.CALLCODE(gas=0xc350, address=0x945304eb96065b2a98b57a48a06ae28d285a71b5, value=0x3e8, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "60406000604060006103e873945304eb96065b2a98b57a48a06ae28d285a71b561c350f260005500"  # noqa: E501
+            ),
         ),
     }
 

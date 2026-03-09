@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRandom/randomStatetest362Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,38 +46,37 @@ def test_random_statetest362(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.PUSH32[0x945304eb96065b2a98b57a48a06ae28d285a71b5]
-        + Op.PUSH32[0xffffffffffffffffffffffffffffffffffffffff]
-        + Op.PUSH32[0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe]
-        + Op.PUSH32[0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe]
-        + Op.SSTORE(key=Op.MULMOD(Op.PUSH32[0x945304eb96065b2a98b57a48a06ae28d285a71b5], 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff), value=0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe)
-    ),
+        code=bytes.fromhex(
+            "7f000000000000000000000000945304eb96065b2a98b57a48a06ae28d285a71b57f0000"  # noqa: E501
+            "00000000000000000000ffffffffffffffffffffffffffffffffffffffff7fffffffffff"  # noqa: E501
+            "fffffffffffffffffffffffffffffffffffffffffffffffffffffe7fffffffffffffffff"  # noqa: E501
+            "fffffffffffffffffffffffffffffffffffffffffffffffe7fffffffffffffffffffffff"  # noqa: E501
+            "fffffffffffffffffffffffffffffffffffffffffe7fffffffffffffffffffffffffffff"  # noqa: E501
+            "ffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "fffffffffffffffffffffffffffffe7f000000000000000000000000945304eb96065b2a"  # noqa: E501
+            "98b57a48a06ae28d285a71b50955"
+        ),
     )
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=(
-        Op.JUMPI(pc=0x9, condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))))
-        + Op.STOP + Op.JUMPDEST
-        + Op.SSTORE(key=Op.CALLDATALOAD(offset=0x0), value=Op.CALLDATALOAD(offset=0x20))
-    ),
+        code=bytes.fromhex("6000355415600957005b60203560003555"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex(
-            "7f000000000000000000000000945304eb96065b2a98b57a48a06ae28d285a71b57f0000"
-            "00000000000000000000ffffffffffffffffffffffffffffffffffffffff7fffffffffff"
-            "fffffffffffffffffffffffffffffffffffffffffffffffffffffe7fffffffffffffffff"
-            "fffffffffffffffffffffffffffffffffffffffffffffffe7fffffffffffffffffffffff"
-            "fffffffffffffffffffffffffffffffffffffffffe7fffffffffffffffffffffffffffff"
-            "ffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffff"
-            "fffffffffffffffffffffffffffffe7f000000000000000000000000945304eb96065b2a"
+            "7f000000000000000000000000945304eb96065b2a98b57a48a06ae28d285a71b57f0000"  # noqa: E501
+            "00000000000000000000ffffffffffffffffffffffffffffffffffffffff7fffffffffff"  # noqa: E501
+            "fffffffffffffffffffffffffffffffffffffffffffffffffffffe7fffffffffffffffff"  # noqa: E501
+            "fffffffffffffffffffffffffffffffffffffffffffffffe7fffffffffffffffffffffff"  # noqa: E501
+            "fffffffffffffffffffffffffffffffffffffffffe7fffffffffffffffffffffffffffff"  # noqa: E501
+            "ffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffff"  # noqa: E501
+            "fffffffffffffffffffffffffffffe7f000000000000000000000000945304eb96065b2a"  # noqa: E501
             "98b57a48a06ae28d285a71b509"
         ),
         gas_limit=100000,
@@ -87,11 +87,15 @@ def test_random_statetest362(
 
     post = {
         contract: Account(
-            storage={0xffffffffffffffffffffffff6bacfb1469f9a4d5674a85b75f951d72d7a58e4a: 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe},
-            code=Op.PUSH32[0x945304eb96065b2a98b57a48a06ae28d285a71b5] + Op.PUSH32[0xffffffffffffffffffffffffffffffffffffffff] + Op.PUSH32[0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe] + Op.PUSH32[0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe] + Op.SSTORE(key=Op.MULMOD(Op.PUSH32[0x945304eb96065b2a98b57a48a06ae28d285a71b5], 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff), value=0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe),
+            storage={
+                0xFFFFFFFFFFFFFFFFFFFFFFFF6BACFB1469F9A4D5674A85B75F951D72D7A58E4A: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE,  # noqa: E501
+            },
+            code=bytes.fromhex(
+                "7f000000000000000000000000945304eb96065b2a98b57a48a06ae28d285a71b57f000000000000000000000000ffffffffffffffffffffffffffffffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7f000000000000000000000000945304eb96065b2a98b57a48a06ae28d285a71b50955"  # noqa: E501
+            ),
         ),
         coinbase: Account(
-            code=Op.JUMPI(pc=0x9, condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0)))) + Op.STOP + Op.JUMPDEST + Op.SSTORE(key=Op.CALLDATALOAD(offset=0x0), value=Op.CALLDATALOAD(offset=0x20)),
+            code=bytes.fromhex("6000355415600957005b60203560003555"),
         ),
     }
 

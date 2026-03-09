@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stChainId/chainIdFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,12 +43,16 @@ def test_chain_id(
         gas_limit=10000000000,
     )
 
-    pre[contract] = Account(balance=0, nonce=0, code=Op.SSTORE(key=0x1, value=Op.CHAINID) + Op.STOP)
-    pre[sender] = Account(balance=0x3635c9adc5dea00000, nonce=0)
+    pre[contract] = Account(
+        balance=0,
+        nonce=0,
+        code=bytes.fromhex("4660015500"),
+    )
+    pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x897b12d02d588d8a4fe16ff831cbd4459c6f62f8c845b0ccdd31caf068c84a26"
+            "0x897b12d02d588d8a4fe16ff831cbd4459c6f62f8c845b0ccdd31caf068c84a26"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -58,7 +63,7 @@ def test_chain_id(
     )
 
     post = {
-        contract: Account(storage={1: 1}, code=Op.SSTORE(key=0x1, value=Op.CHAINID) + Op.STOP),
+        contract: Account(storage={1: 1}, code=bytes.fromhex("4660015500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -1,5 +1,5 @@
 """
-recursive call
+recursive call.
 
 Ported from:
 tests/static/state_tests/stCallCreateCallCodeTest/CallLoseGasOOGFiller.json
@@ -15,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallCreateCallCodeTest/CallLoseGasOOGFiller.json"],
+    [
+        "tests/static/state_tests/stCallCreateCallCodeTest/CallLoseGasOOGFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -30,7 +31,7 @@ def test_call_lose_gas_oog(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """recursive call."""
+    """Recursive call."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     sender = Address("0x4768b5e50b0ebe91ae38d84a47e3179e615f9c40")
     contract = Address("0x180f2d7e0c9a56b7bb287e2f50101660110b641f")
@@ -48,19 +49,17 @@ def test_call_lose_gas_oog(
     pre[contract] = Account(
         balance=1024,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-        + Op.SSTORE(key=0x1, value=Op.CALL(gas=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x186a0)), address=0x180f2d7e0c9a56b7bb287e2f50101660110b641f, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x2, value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3e8)))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6001600054016000556000600060006000600073180f2d7e0c9a56b7bb287e2f50101660"  # noqa: E501
+            "110b641f620186a060005402600101f16001556103e86000540260010160025500"  # noqa: E501
+        ),
     )
-    pre[sender] = Account(balance=0xffffffffffffffffffffffffffffffff, nonce=0)
+    pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
     pre[callee] = Account(balance=7000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe7c72b378297589acee4e0ba3272841bcfc5e220f86de253f890274cfee9e474"
+            "0xe7c72b378297589acee4e0ba3272841bcfc5e220f86de253f890274cfee9e474"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -73,7 +72,9 @@ def test_call_lose_gas_oog(
     post = {
         contract: Account(
             storage={0: 1, 2: 1001},
-            code=Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)) + Op.SSTORE(key=0x1, value=Op.CALL(gas=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x186a0)), address=0x180f2d7e0c9a56b7bb287e2f50101660110b641f, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3e8))) + Op.STOP,
+            code=bytes.fromhex(
+                "6001600054016000556000600060006000600073180f2d7e0c9a56b7bb287e2f50101660110b641f620186a060005402600101f16001556103e86000540260010160025500"  # noqa: E501
+            ),
         ),
     }
 

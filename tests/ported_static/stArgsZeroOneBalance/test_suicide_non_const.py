@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stArgsZeroOneBalance/suicideNonConstFiller.yml
 """
@@ -13,23 +15,42 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stArgsZeroOneBalance/suicideNonConstFiller.yml"],
+    [
+        "tests/static/state_tests/stArgsZeroOneBalance/suicideNonConstFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (0, {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(code=Op.SELFDESTRUCT(address=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87)) + Op.STOP)}),
-        (1, {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(code=Op.SELFDESTRUCT(address=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87)) + Op.STOP)}),
+        (
+            0,
+            {
+                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+                    code=bytes.fromhex(
+                        "73095e7baea6a6c7c4c2dfeb977efac326af552d8731ff00"
+                    )
+                )
+            },
+        ),
+        (
+            1,
+            {
+                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+                    code=bytes.fromhex(
+                        "73095e7baea6a6c7c4c2dfeb977efac326af552d8731ff00"
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_suicide_non_const(
@@ -55,16 +76,13 @@ def test_suicide_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SELFDESTRUCT(address=Op.BALANCE(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87))
-        + Op.STOP
-    ),
+        code=bytes.fromhex("73095e7baea6a6c7c4c2dfeb977efac326af552d8731ff00"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",

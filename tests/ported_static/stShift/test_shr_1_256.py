@@ -1,5 +1,5 @@
 """
-Taken from https://github.com/ethereum/EIPs/blob/master/EIPS/eip-145.md
+Taken from https://github.com/ethereum/EIPs/blob/master/EIPS/eip-145.md.
 
 Ported from:
 tests/static/state_tests/stShift/shr_-1_256Filler.json
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -30,7 +29,7 @@ def test_shr_1_256(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """Taken from https://github.com/ethereum/EIPs/blob/master/EIPS/eip-145.md."""
+    """Taken from..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0x2e3d0156d2b99a6eacba540c55f423c8f5a33143")
     contract = Address("0xf703bf410c7f3337c04f281f6eb8e44d83323f55")
@@ -44,19 +43,20 @@ def test_shr_1_256(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.SHR(0x100, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff))
-    ),
+        code=bytes.fromhex(
+            "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff610100"  # noqa: E501
+            "1c600055"
+        ),
         storage={0x0: 0x3},
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,7 +68,9 @@ def test_shr_1_256(
 
     post = {
         contract: Account(
-            code=Op.SSTORE(key=0x0, value=Op.SHR(0x100, 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)),
+            code=bytes.fromhex(
+                "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6101001c600055"  # noqa: E501
+            ),
         ),
     }
 

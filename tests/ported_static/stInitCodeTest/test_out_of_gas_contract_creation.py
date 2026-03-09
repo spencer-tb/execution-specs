@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stInitCodeTest/OutOfGasContractCreationFiller.json
 """
@@ -19,7 +21,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stInitCodeTest/OutOfGasContractCreationFiller.json"],
+    [
+        "tests/static/state_tests/stInitCodeTest/OutOfGasContractCreationFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -27,10 +31,22 @@ REFERENCE_SPEC_VERSION = "N/A"
     [
         ("600a80600c6000396000f200600160008035811a8100", 56000, {}),
         ("600a80600c6000396000f200600160008035811a8100", 150000, {}),
-        ("600160015560026001556003600155600460015560056001556006600155", 56000, {}),
-        ("600160015560026001556003600155600460015560056001556006600155", 150000, {Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(storage={1: 6})}),
+        (
+            "600160015560026001556003600155600460015560056001556006600155",
+            56000,
+            {},
+        ),
+        (
+            "600160015560026001556003600155600460015560056001556006600155",
+            150000,
+            {
+                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
+                    storage={1: 6}
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1', 'case2', 'case3'],
+    ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_out_of_gas_contract_creation(
@@ -54,7 +70,7 @@ def test_out_of_gas_contract_creation(
     )
 
     pre[sender] = Account(
-        balance=0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,
+        balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
         nonce=0,
     )
 
@@ -62,7 +78,7 @@ def test_out_of_gas_contract_creation(
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=tx_data,

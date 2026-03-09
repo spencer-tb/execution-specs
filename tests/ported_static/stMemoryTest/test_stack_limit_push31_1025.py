@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stMemoryTest/stackLimitPush31_1025Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,20 +44,18 @@ def test_stack_limit_push31_1025(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x3ff) + Op.JUMPDEST
-        + Op.PUSH31[0x102030405060708090a0102030405060708090a0102030405060708090a01]
-        + Op.MSTORE(offset=0x0, value=Op.SUB(Op.MLOAD(offset=0x0), 0x1))
-        + Op.JUMPI(pc=0x6, condition=Op.MLOAD(offset=0x0)) + Op.STOP + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6103ff6000525b7e0102030405060708090a0102030405060708090a0102030405060708"  # noqa: E501
+            "090a016001600051036000526000516006570000"
+        ),
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -68,7 +67,9 @@ def test_stack_limit_push31_1025(
 
     post = {
         contract: Account(
-            code=Op.MSTORE(offset=0x0, value=0x3ff) + Op.JUMPDEST + Op.PUSH31[0x102030405060708090a0102030405060708090a0102030405060708090a01] + Op.MSTORE(offset=0x0, value=Op.SUB(Op.MLOAD(offset=0x0), 0x1)) + Op.JUMPI(pc=0x6, condition=Op.MLOAD(offset=0x0)) + Op.STOP + Op.STOP,
+            code=bytes.fromhex(
+                "6103ff6000525b7e0102030405060708090a0102030405060708090a0102030405060708090a016001600051036000526000516006570000"  # noqa: E501
+            ),
         ),
     }
 

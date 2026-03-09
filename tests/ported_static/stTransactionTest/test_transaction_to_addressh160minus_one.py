@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stTransactionTest/TransactionToAddressh160minusOneFiller.json
+tests/static/state_tests/stTransactionTest
+TransactionToAddressh160minusOneFiller.json
 """
 
 import pytest
@@ -19,7 +22,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/TransactionToAddressh160minusOneFiller.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/TransactionToAddressh160minusOneFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -41,11 +46,11 @@ def test_transaction_to_addressh160minus_one(
         gas_limit=100000,
     )
 
-    pre[sender] = Account(balance=0x3b9aca00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xf79127a3004abde26a4cbd80c428cb10f829fa11b54d36e7b326f4f4a5927acf"
+            "0xf79127a3004abde26a4cbd80c428cb10f829fa11b54d36e7b326f4f4a5927acf"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -55,6 +60,6 @@ def test_transaction_to_addressh160minus_one(
         value=100,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

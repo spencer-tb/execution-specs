@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRefundTest/refund_TxToSuicideFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,17 +44,17 @@ def test_refund_tx_to_suicide(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87) + Op.STOP,
+        code=bytes.fromhex("73095e7baea6a6c7c4c2dfeb977efac326af552d87ff00"),
         storage={0x1: 0x1},
     )
-    pre[sender] = Account(balance=0x5f5e100, nonce=0)
+    pre[sender] = Account(balance=0x5F5E100, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"
+            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,7 +67,9 @@ def test_refund_tx_to_suicide(
     post = {
         contract: Account(
             storage={1: 1},
-            code=Op.SELFDESTRUCT(address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87) + Op.STOP,
+            code=bytes.fromhex(
+                "73095e7baea6a6c7c4c2dfeb977efac326af552d87ff00"
+            ),
         ),
     }
 

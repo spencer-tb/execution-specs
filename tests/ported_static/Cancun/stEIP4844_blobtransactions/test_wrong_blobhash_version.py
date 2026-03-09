@@ -1,8 +1,9 @@
 """
-BLOB001
+BLOB001.
 
 Ported from:
-tests/static/state_tests/Cancun/stEIP4844_blobtransactions/wrongBlobhashVersionFiller.yml
+tests/static/state_tests/Cancun/stEIP4844_blobtransactions
+wrongBlobhashVersionFiller.yml
 """
 
 import pytest
@@ -17,14 +18,15 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/Cancun/stEIP4844_blobtransactions/wrongBlobhashVersionFiller.yml"],
+    [
+        "tests/static/state_tests/Cancun/stEIP4844_blobtransactions/wrongBlobhashVersionFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -47,16 +49,16 @@ def test_wrong_blobhash_version(
         gas_limit=68719476736,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0)) + Op.STOP,
+        code=bytes.fromhex("60004960005500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -64,15 +66,34 @@ def test_wrong_blobhash_version(
         max_fee_per_gas=5000000000,
         max_priority_fee_per_gas=2,
         max_fee_per_blob_gas=10,
-        blob_versioned_hashes=[Hash("0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"), Hash("0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8")],
+        blob_versioned_hashes=[
+            Hash(
+                "0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
+            ),
+            Hash(
+                "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
+            ),
+        ],
         nonce=0,
         value=100000,
-        access_list=[AccessList(address=Address("0xc4dcf66bd4cdefe4ce7fba4951be4e9f580122c5"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
+        access_list=[
+            AccessList(
+                address=Address("0xc4dcf66bd4cdefe4ce7fba4951be4e9f580122c5"),
+                storage_keys=[
+                    Hash(
+                        "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                    ),
+                    Hash(
+                        "0x0000000000000000000000000000000000000000000000000000000000000001"  # noqa: E501
+                    ),
+                ],
+            ),
+        ],
         error=TransactionException.TYPE_3_TX_INVALID_BLOB_VERSIONED_HASH,
     )
 
     post = {
-        contract: Account(code=Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0)) + Op.STOP),
+        contract: Account(code=bytes.fromhex("60004960005500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

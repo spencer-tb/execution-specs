@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stRandom/randomStatetest266Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,34 +46,31 @@ def test_random_statetest266(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.DIV(Op.COINBASE, Op.ADDRESS) + Op.PUSH32[0x0] + Op.PUSH32[0x0]
-        + Op.SSTORE(key=Op.PUSH32[0x0], value=0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe)
-        + Op.SSTORE + Op.SWAP5 + Op.JUMP + Op.PUSH8[0x793459633c993060] + Op.STOP
-        + Op.MLOAD + Op.SSTORE
-    ),
+        code=bytes.fromhex(
+            "3041047f0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+            "7f00000000000000000000000000000000000000000000000000000000000000007fffff"  # noqa: E501
+            "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7f0000000000"  # noqa: E501
+            "000000000000000000000000000000000000000000000000000000555594566779345963"  # noqa: E501
+            "3c993060005155"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=(
-        Op.JUMPI(pc=0x9, condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))))
-        + Op.STOP + Op.JUMPDEST
-        + Op.SSTORE(key=Op.CALLDATALOAD(offset=0x0), value=Op.CALLDATALOAD(offset=0x20))
-    ),
+        code=bytes.fromhex("6000355415600957005b60203560003555"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex(
-            "3041047f0000000000000000000000000000000000000000000000000000000000000000"
-            "7f00000000000000000000000000000000000000000000000000000000000000007fffff"
-            "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7f0000000000"
-            "000000000000000000000000000000000000000000000000000000555594566779345963"
+            "3041047f0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+            "7f00000000000000000000000000000000000000000000000000000000000000007fffff"  # noqa: E501
+            "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7f0000000000"  # noqa: E501
+            "000000000000000000000000000000000000000000000000000000555594566779345963"  # noqa: E501
             "3c9930"
         ),
         gas_limit=100000,
@@ -83,10 +81,12 @@ def test_random_statetest266(
 
     post = {
         contract: Account(
-            code=Op.DIV(Op.COINBASE, Op.ADDRESS) + Op.PUSH32[0x0] + Op.PUSH32[0x0] + Op.SSTORE(key=Op.PUSH32[0x0], value=0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe) + Op.SSTORE + Op.SWAP5 + Op.JUMP + Op.PUSH8[0x793459633c993060] + Op.STOP + Op.MLOAD + Op.SSTORE,
+            code=bytes.fromhex(
+                "3041047f00000000000000000000000000000000000000000000000000000000000000007f00000000000000000000000000000000000000000000000000000000000000007ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7f00000000000000000000000000000000000000000000000000000000000000005555945667793459633c993060005155"  # noqa: E501
+            ),
         ),
         coinbase: Account(
-            code=Op.JUMPI(pc=0x9, condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0)))) + Op.STOP + Op.JUMPDEST + Op.SSTORE(key=Op.CALLDATALOAD(offset=0x0), value=Op.CALLDATALOAD(offset=0x20)),
+            code=bytes.fromhex("6000355415600957005b60203560003555"),
         ),
     }
 

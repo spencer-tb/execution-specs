@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stCreateTest/CREATE_EmptyContractFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,20 +43,16 @@ def test_create_empty_contract(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.GAS)
-        + Op.SSTORE(key=0x1, value=Op.CREATE(value=0x0, offset=0x0, size=0x20))
-        + Op.SSTORE(key=0x64, value=Op.GAS) + Op.STOP
-    ),
+        code=bytes.fromhex("5a600055602060006000f06001555a60645500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -67,8 +64,12 @@ def test_create_empty_contract(
 
     post = {
         contract: Account(
-            storage={0: 0x8d5b6, 1: 0xf1ecf98489fa9ed60a664fc4998db699cfa39d40, 100: 0x7abf8},
-            code=Op.SSTORE(key=0x0, value=Op.GAS) + Op.SSTORE(key=0x1, value=Op.CREATE(value=0x0, offset=0x0, size=0x20)) + Op.SSTORE(key=0x64, value=Op.GAS) + Op.STOP,
+            storage={
+                0: 0x8D5B6,
+                1: 0xF1ECF98489FA9ED60A664FC4998DB699CFA39D40,
+                100: 0x7ABF8,
+            },
+            code=bytes.fromhex("5a600055602060006000f06001555a60645500"),
         ),
     }
 

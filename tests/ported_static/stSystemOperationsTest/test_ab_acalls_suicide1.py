@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSystemOperationsTest/ABAcallsSuicide1Filler.json
 """
@@ -13,23 +15,52 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stSystemOperationsTest/ABAcallsSuicide1Filler.json"],
+    [
+        "tests/static/state_tests/stSystemOperationsTest/ABAcallsSuicide1Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        ("00000000000000000000000000000000000000000000000000000000000186a0", {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(code=Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.SSTORE(key=Op.PC, value=Op.CALL(gas=Op.CALLDATALOAD(offset=0x0), address=0x945304eb96065b2a98b57a48a06ae28d285a71b5, value=0x18, args_offset=0x0, args_size=0x20, ret_offset=0x0, ret_size=0x0)) + Op.STOP), Address("0x945304eb96065b2a98b57a48a06ae28d285a71b5"): Account(code=Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.SSTORE(key=Op.PC, value=Op.ADD(0x1, Op.CALL(gas=Op.SUB(Op.CALLDATALOAD(offset=0x0), 0xc350), address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87, value=0x17, args_offset=0x0, args_size=0x20, ret_offset=0x0, ret_size=0x0))) + Op.SELFDESTRUCT(address=0xf572e5295c57f15886f9b263e2f6d2d6c7b5ec6) + Op.STOP)}),
-        ("00000000000000000000000000000000000000000000000000000000000486a0", {Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(code=Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.SSTORE(key=Op.PC, value=Op.CALL(gas=Op.CALLDATALOAD(offset=0x0), address=0x945304eb96065b2a98b57a48a06ae28d285a71b5, value=0x18, args_offset=0x0, args_size=0x20, ret_offset=0x0, ret_size=0x0)) + Op.STOP), Address("0x945304eb96065b2a98b57a48a06ae28d285a71b5"): Account(code=Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.SSTORE(key=Op.PC, value=Op.ADD(0x1, Op.CALL(gas=Op.SUB(Op.CALLDATALOAD(offset=0x0), 0xc350), address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87, value=0x17, args_offset=0x0, args_size=0x20, ret_offset=0x0, ret_size=0x0))) + Op.SELFDESTRUCT(address=0xf572e5295c57f15886f9b263e2f6d2d6c7b5ec6) + Op.STOP)}),
+        (
+            "00000000000000000000000000000000000000000000000000000000000186a0",
+            {
+                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+                    code=bytes.fromhex(
+                        "6000356000526000600060206000601873945304eb96065b2a98b57a48a06ae28d285a71b5600035f1585500"  # noqa: E501
+                    )
+                ),
+                Address("0x945304eb96065b2a98b57a48a06ae28d285a71b5"): Account(
+                    code=bytes.fromhex(
+                        "6000356000526000600060206000601773095e7baea6a6c7c4c2dfeb977efac326af552d8761c35060003503f16001015855730f572e5295c57f15886f9b263e2f6d2d6c7b5ec6ff00"  # noqa: E501
+                    )
+                ),
+            },
+        ),
+        (
+            "00000000000000000000000000000000000000000000000000000000000486a0",
+            {
+                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
+                    code=bytes.fromhex(
+                        "6000356000526000600060206000601873945304eb96065b2a98b57a48a06ae28d285a71b5600035f1585500"  # noqa: E501
+                    )
+                ),
+                Address("0x945304eb96065b2a98b57a48a06ae28d285a71b5"): Account(
+                    code=bytes.fromhex(
+                        "6000356000526000600060206000601773095e7baea6a6c7c4c2dfeb977efac326af552d8761c35060003503f16001015855730f572e5295c57f15886f9b263e2f6d2d6c7b5ec6ff00"  # noqa: E501
+                    )
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_ab_acalls_suicide1(
@@ -54,30 +85,29 @@ def test_ab_acalls_suicide1(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
-        + Op.SSTORE(key=Op.PC, value=Op.CALL(gas=Op.CALLDATALOAD(offset=0x0), address=0x945304eb96065b2a98b57a48a06ae28d285a71b5, value=0x18, args_offset=0x0, args_size=0x20, ret_offset=0x0, ret_size=0x0))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000356000526000600060206000601873945304eb96065b2a98b57a48a06ae28d285a71"  # noqa: E501
+            "b5600035f1585500"
+        ),
     )
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
-        + Op.SSTORE(key=Op.PC, value=Op.ADD(0x1, Op.CALL(gas=Op.SUB(Op.CALLDATALOAD(offset=0x0), 0xc350), address=0x95e7baea6a6c7c4c2dfeb977efac326af552d87, value=0x17, args_offset=0x0, args_size=0x20, ret_offset=0x0, ret_size=0x0)))
-        + Op.SELFDESTRUCT(address=0xf572e5295c57f15886f9b263e2f6d2d6c7b5ec6) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6000356000526000600060206000601773095e7baea6a6c7c4c2dfeb977efac326af552d"  # noqa: E501
+            "8761c35060003503f16001015855730f572e5295c57f15886f9b263e2f6d2d6c7b5ec6ff"  # noqa: E501
+            "00"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=tx_data,

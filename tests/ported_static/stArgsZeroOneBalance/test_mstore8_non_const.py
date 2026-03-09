@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stArgsZeroOneBalance/mstore8NonConstFiller.yml
 """
@@ -13,23 +15,42 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stArgsZeroOneBalance/mstore8NonConstFiller.yml"],
+    [
+        "tests/static/state_tests/stArgsZeroOneBalance/mstore8NonConstFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (0, {Address("0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276"): Account(code=Op.MSTORE8(offset=Op.BALANCE(address=0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276), value=Op.BALANCE(address=0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276)) + Op.STOP)}),
-        (1, {Address("0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276"): Account(code=Op.MSTORE8(offset=Op.BALANCE(address=0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276), value=Op.BALANCE(address=0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276)) + Op.STOP)}),
+        (
+            0,
+            {
+                Address("0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276"): Account(
+                    code=bytes.fromhex(
+                        "73f9bb7a1f4d45dd4f87d9c94a491ce7606ba412763173f9bb7a1f4d45dd4f87d9c94a491ce7606ba41276315300"  # noqa: E501
+                    )
+                )
+            },
+        ),
+        (
+            1,
+            {
+                Address("0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276"): Account(
+                    code=bytes.fromhex(
+                        "73f9bb7a1f4d45dd4f87d9c94a491ce7606ba412763173f9bb7a1f4d45dd4f87d9c94a491ce7606ba41276315300"  # noqa: E501
+                    )
+                )
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_mstore8_non_const(
@@ -52,19 +73,19 @@ def test_mstore8_non_const(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE8(offset=Op.BALANCE(address=0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276), value=Op.BALANCE(address=0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "73f9bb7a1f4d45dd4f87d9c94a491ce7606ba412763173f9bb7a1f4d45dd4f87d9c94a49"  # noqa: E501
+            "1ce7606ba41276315300"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",

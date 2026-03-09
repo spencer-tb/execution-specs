@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stEIP150Specific/Transaction64Rule_d64e0Filler.json
 """
@@ -13,14 +15,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stEIP150Specific/Transaction64Rule_d64e0Filler.json"],
+    [
+        "tests/static/state_tests/stEIP150Specific/Transaction64Rule_d64e0Filler.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,18 +49,21 @@ def test_transaction64_rule_d64e0(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.POP(Op.CALL(gas=0x27100, address=0x6b7466044211f090b767199794f6f7041829ba85, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x2, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "5a60005260006000600060006000736b7466044211f090b767199794f6f7041829ba8562"  # noqa: E501
+            "027100f1505a6000510360025500"
+        ),
     )
-    pre[callee] = Account(balance=0, nonce=0, code=Op.SSTORE(key=0x1, value=0xc) + Op.STOP)
-    pre[sender] = Account(balance=0xe8d4a51000, nonce=0)
+    pre[callee] = Account(
+        balance=0,
+        nonce=0,
+        code=bytes.fromhex("600c60015500"),
+    )
+    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"
+            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -70,9 +76,11 @@ def test_transaction64_rule_d64e0(
     post = {
         contract: Account(
             storage={2: 24740},
-            code=Op.MSTORE(offset=0x0, value=Op.GAS) + Op.POP(Op.CALL(gas=0x27100, address=0x6b7466044211f090b767199794f6f7041829ba85, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)) + Op.STOP,
+            code=bytes.fromhex(
+                "5a60005260006000600060006000736b7466044211f090b767199794f6f7041829ba8562027100f1505a6000510360025500"  # noqa: E501
+            ),
         ),
-        callee: Account(storage={1: 12}, code=Op.SSTORE(key=0x1, value=0xc) + Op.STOP),
+        callee: Account(storage={1: 12}, code=bytes.fromhex("600c60015500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

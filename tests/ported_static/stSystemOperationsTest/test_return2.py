@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSystemOperationsTest/return2Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,13 +46,13 @@ def test_return2(
     pre[contract] = Account(
         balance=23,
         nonce=0,
-        code=Op.MSTORE8(offset=0x0, value=0x37) + Op.RETURN(offset=0x0, size=0x21) + Op.STOP,
+        code=bytes.fromhex("603760005360216000f300"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -62,9 +63,7 @@ def test_return2(
     )
 
     post = {
-        contract: Account(
-            code=Op.MSTORE8(offset=0x0, value=0x37) + Op.RETURN(offset=0x0, size=0x21) + Op.STOP,
-        ),
+        contract: Account(code=bytes.fromhex("603760005360216000f300")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

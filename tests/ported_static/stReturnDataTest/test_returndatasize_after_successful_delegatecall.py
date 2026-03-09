@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stReturnDataTest/returndatasize_after_successful_delegatecallFiller.json
+tests/static/state_tests/stReturnDataTest
+returndatasize_after_successful_delegatecallFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stReturnDataTest/returndatasize_after_successful_delegatecallFiller.json"],
+    [
+        "tests/static/state_tests/stReturnDataTest/returndatasize_after_successful_delegatecallFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,25 +50,24 @@ def test_returndatasize_after_successful_delegatecall(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.POP(Op.DELEGATECALL(gas=0xea60, address=0x7c17dbbfa29dc8391bfa19022ecb4fda54fc826a, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
-        + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE) + Op.STOP
-    ),
-        storage={0x0: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff},
+        code=bytes.fromhex(
+            "6000600060006000737c17dbbfa29dc8391bfa19022ecb4fda54fc826a61ea60f4503d60"  # noqa: E501
+            "005500"
+        ),
+        storage={
+            0x0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+        },
     )
     pre[callee] = Account(
         balance=0x6400000000,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=Op.CALLER) + Op.RETURN(offset=0x0, size=0x14)
-        + Op.STOP
-    ),
+        code=bytes.fromhex("3360005260146000f300"),
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"
+            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -77,11 +80,11 @@ def test_returndatasize_after_successful_delegatecall(
     post = {
         contract: Account(
             storage={0: 20},
-            code=Op.POP(Op.DELEGATECALL(gas=0xea60, address=0x7c17dbbfa29dc8391bfa19022ecb4fda54fc826a, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE) + Op.STOP,
+            code=bytes.fromhex(
+                "6000600060006000737c17dbbfa29dc8391bfa19022ecb4fda54fc826a61ea60f4503d60005500"  # noqa: E501
+            ),
         ),
-        callee: Account(
-            code=Op.MSTORE(offset=0x0, value=Op.CALLER) + Op.RETURN(offset=0x0, size=0x14) + Op.STOP,
-        ),
+        callee: Account(code=bytes.fromhex("3360005260146000f300")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -1,7 +1,7 @@
 """
-The test check if the create transaction is reject if the origin's nonce is maximum value
-(and would overflow if increased by 1).
+The test check if the create transaction is reject if the origin's nonce is...
 
+(and would overflow if increased by 1).
 
 Ported from:
 tests/static/state_tests/stCreateTest/CreateTransactionHighNonceFiller.yml
@@ -24,7 +24,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCreateTest/CreateTransactionHighNonceFiller.yml"],
+    [
+        "tests/static/state_tests/stCreateTest/CreateTransactionHighNonceFiller.yml",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.parametrize(
@@ -33,7 +35,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         0,
         1,
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 @pytest.mark.exception_test
@@ -42,9 +44,7 @@ def test_create_transaction_high_nonce(
     pre: Alloc,
     tx_value: int,
 ) -> None:
-    """The test check if the create transaction is reject if the origin's nonce is maximum value
-(and would overflow if increased by 1).
-."""
+    """The test check if the create transaction is reject if the..."""
     coinbase = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
     sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
@@ -57,11 +57,11 @@ def test_create_transaction_high_nonce(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x5af3107a4000, nonce=18446744073709551615)
+    pre[sender] = Account(balance=0x5AF3107A4000, nonce=18446744073709551615)
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=None,
         data=bytes.fromhex("60016000f3"),
@@ -72,6 +72,6 @@ def test_create_transaction_high_nonce(
         error=TransactionException.NONCE_IS_MAX,
     )
 
-    post = {}
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

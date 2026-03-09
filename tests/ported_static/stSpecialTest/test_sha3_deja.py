@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSpecialTest/sha3_dejaFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,19 +43,16 @@ def test_sha3_deja(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.MSTORE8(offset=0x1f, value=0x42) + Op.SHA3(offset=0xffffffffff, size=0x0)
-        + Op.DUP1
-    ),
+        code=bytes.fromhex("6042601f53600064ffffffffff2080"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"
+            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -66,7 +64,7 @@ def test_sha3_deja(
 
     post = {
         contract: Account(
-            code=Op.MSTORE8(offset=0x1f, value=0x42) + Op.SHA3(offset=0xffffffffff, size=0x0) + Op.DUP1,
+            code=bytes.fromhex("6042601f53600064ffffffffff2080"),
         ),
     }
 

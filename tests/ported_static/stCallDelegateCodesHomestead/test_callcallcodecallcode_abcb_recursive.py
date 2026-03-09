@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stCallDelegateCodesHomestead/callcallcodecallcode_ABCB_RECURSIVEFiller.json
+tests/static/state_tests/stCallDelegateCodesHomestead
+callcallcodecallcode_ABCB_RECURSIVEFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stCallDelegateCodesHomestead/callcallcodecallcode_ABCB_RECURSIVEFiller.json"],
+    [
+        "tests/static/state_tests/stCallDelegateCodesHomestead/callcallcodecallcode_ABCB_RECURSIVEFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -45,34 +49,34 @@ def test_callcallcodecallcode_abcb_recursive(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.CALL(gas=0x17d7840, address=0xe0b280638526cecd3ec29969b517aeb3fcbb31fa, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6040600060406000600073e0b280638526cecd3ec29969b517aeb3fcbb31fa63017d7840"  # noqa: E501
+            "f160005500"
+        ),
     )
     pre[callee] = Account(
-        balance=0x2540be400,
+        balance=0x2540BE400,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x2, value=Op.DELEGATECALL(gas=0x7a120, address=0xe0b280638526cecd3ec29969b517aeb3fcbb31fa, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "604060006040600073e0b280638526cecd3ec29969b517aeb3fcbb31fa6207a120f46002"  # noqa: E501
+            "5500"
+        ),
     )
     pre[callee_1] = Account(
-        balance=0x2540be400,
+        balance=0x2540BE400,
         nonce=0,
-        code=(
-        Op.SSTORE(key=0x1, value=Op.DELEGATECALL(gas=0xf4240, address=0xa72f0e2f2fc5fd0878af9b8e4aaed09983670929, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "604060006040600073a72f0e2f2fc5fd0878af9b8e4aaed09983670929620f4240f46001"  # noqa: E501
+            "5500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -85,14 +89,20 @@ def test_callcallcodecallcode_abcb_recursive(
     post = {
         contract: Account(
             storage={0: 1},
-            code=Op.SSTORE(key=0x0, value=Op.CALL(gas=0x17d7840, address=0xe0b280638526cecd3ec29969b517aeb3fcbb31fa, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "6040600060406000600073e0b280638526cecd3ec29969b517aeb3fcbb31fa63017d7840f160005500"  # noqa: E501
+            ),
         ),
         callee: Account(
-            code=Op.SSTORE(key=0x2, value=Op.DELEGATECALL(gas=0x7a120, address=0xe0b280638526cecd3ec29969b517aeb3fcbb31fa, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "604060006040600073e0b280638526cecd3ec29969b517aeb3fcbb31fa6207a120f460025500"  # noqa: E501
+            ),
         ),
         callee_1: Account(
             storage={1: 1},
-            code=Op.SSTORE(key=0x1, value=Op.DELEGATECALL(gas=0xf4240, address=0xa72f0e2f2fc5fd0878af9b8e4aaed09983670929, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP,
+            code=bytes.fromhex(
+                "604060006040600073a72f0e2f2fc5fd0878af9b8e4aaed09983670929620f4240f460015500"  # noqa: E501
+            ),
         ),
     }
 

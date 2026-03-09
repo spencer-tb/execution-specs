@@ -1,6 +1,9 @@
 """
+Test ported from static filler.
+
 Ported from:
-tests/static/state_tests/stTransactionTest/SuicidesAndSendMoneyToItselfEtherDestroyedFiller.json
+tests/static/state_tests/stTransactionTest
+SuicidesAndSendMoneyToItselfEtherDestroyedFiller.json
 """
 
 import pytest
@@ -13,14 +16,15 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
 
 @pytest.mark.ported_from(
-    ["tests/static/state_tests/stTransactionTest/SuicidesAndSendMoneyToItselfEtherDestroyedFiller.json"],
+    [
+        "tests/static/state_tests/stTransactionTest/SuicidesAndSendMoneyToItselfEtherDestroyedFiller.json",  # noqa: E501
+    ],
 )
 @pytest.mark.valid_from("Prague")
 @pytest.mark.pre_alloc_mutable
@@ -46,13 +50,13 @@ def test_suicides_and_send_money_to_itself_ether_destroyed(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0xccbd97bed823989bf91c6ac4ceac020b2881f3a5) + Op.STOP,
+        code=bytes.fromhex("73ccbd97bed823989bf91c6ac4ceac020b2881f3a5ff00"),
     )
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xd066c5db28bda8940cfc5cbefd1556cbc89c69b19f6d1aaa9fac69aee4b4a1bf"
+            "0xd066c5db28bda8940cfc5cbefd1556cbc89c69b19f6d1aaa9fac69aee4b4a1bf"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -64,7 +68,9 @@ def test_suicides_and_send_money_to_itself_ether_destroyed(
 
     post = {
         contract: Account(
-            code=Op.SELFDESTRUCT(address=0xccbd97bed823989bf91c6ac4ceac020b2881f3a5) + Op.STOP,
+            code=bytes.fromhex(
+                "73ccbd97bed823989bf91c6ac4ceac020b2881f3a5ff00"
+            ),
         ),
     }
 

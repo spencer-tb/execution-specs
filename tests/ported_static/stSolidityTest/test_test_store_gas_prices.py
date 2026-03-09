@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stSolidityTest/TestStoreGasPricesFiller.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,35 +44,22 @@ def test_test_store_gas_prices(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0x746a528800, nonce=0)
+    pre[sender] = Account(balance=0x746A528800, nonce=0)
     pre[contract] = Account(
-        balance=0x186a0,
+        balance=0x186A0,
         nonce=0,
-        code=(
-        Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000)
-        + Op.JUMPI(pc=0x2d, condition=Op.EQ(Op.DUP2, 0xc0406226)) + Op.STOP
-        + Op.JUMPDEST + Op.PUSH1[0x33] + Op.JUMP(pc=0x3d) + Op.JUMPDEST
-        + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20)
-        + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.GAS
-        + Op.SSTORE(key=0x20, value=0x1) + Op.SWAP1 + Op.POP
-        + Op.SSTORE(key=0x0, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.GAS
-        + Op.SSTORE(key=0x20, value=0x2) + Op.SWAP1 + Op.POP
-        + Op.SSTORE(key=0x1, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.GAS
-        + Op.SSTORE(key=0x20, value=0x2) + Op.SWAP1 + Op.POP
-        + Op.SSTORE(key=0x2, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.GAS
-        + Op.SSTORE(key=0x20, value=0x168aa8d53fe6) + Op.SWAP1 + Op.POP
-        + Op.SSTORE(key=0x3, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.GAS
-        + Op.SSTORE(key=0x20, value=0x2) + Op.SWAP1 + Op.POP
-        + Op.SSTORE(key=0x4, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.GAS
-        + Op.SSTORE(key=0x20, value=0x0) + Op.SWAP1 + Op.POP
-        + Op.SSTORE(key=0x5, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.POP(Op.GAS)
-        + Op.PUSH1[0x1] + Op.SWAP3 + Op.SWAP2 + Op.POP + Op.POP + Op.JUMP
-    ),
+        code=bytes.fromhex(
+            "7c01000000000000000000000000000000000000000000000000000000006000350463c0"  # noqa: E501
+            "4062268114602d57005b6033603d565b8060005260206000f35b600060005a6001602055"  # noqa: E501
+            "90505a81036000555a600260205590505a81036001555a600260205590505a8103600255"  # noqa: E501
+            "5a65168aa8d53fe660205590505a81036003555a600260205590505a81036004555a6000"  # noqa: E501
+            "60205590505a81036005555a5060019291505056"
+        ),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x185fbea9f643c40e33475353b07fa51d0695ca94789492166b67d60fdb6ef7fb"
+            "0x185fbea9f643c40e33475353b07fa51d0695ca94789492166b67d60fdb6ef7fb"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("c0406226"),
@@ -84,7 +72,9 @@ def test_test_store_gas_prices(
     post = {
         contract: Account(
             storage={0: 22113, 1: 113, 2: 113, 3: 113, 4: 113, 5: 113},
-            code=Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000) + Op.JUMPI(pc=0x2d, condition=Op.EQ(Op.DUP2, 0xc0406226)) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x33] + Op.JUMP(pc=0x3d) + Op.JUMPDEST + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.GAS + Op.SSTORE(key=0x20, value=0x1) + Op.SWAP1 + Op.POP + Op.SSTORE(key=0x0, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.GAS + Op.SSTORE(key=0x20, value=0x2) + Op.SWAP1 + Op.POP + Op.SSTORE(key=0x1, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.GAS + Op.SSTORE(key=0x20, value=0x2) + Op.SWAP1 + Op.POP + Op.SSTORE(key=0x2, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.GAS + Op.SSTORE(key=0x20, value=0x168aa8d53fe6) + Op.SWAP1 + Op.POP + Op.SSTORE(key=0x3, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.GAS + Op.SSTORE(key=0x20, value=0x2) + Op.SWAP1 + Op.POP + Op.SSTORE(key=0x4, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.GAS + Op.SSTORE(key=0x20, value=0x0) + Op.SWAP1 + Op.POP + Op.SSTORE(key=0x5, value=Op.SUB(Op.DUP2, Op.GAS)) + Op.POP(Op.GAS) + Op.PUSH1[0x1] + Op.SWAP3 + Op.SWAP2 + Op.POP + Op.POP + Op.JUMP,
+            code=bytes.fromhex(
+                "7c01000000000000000000000000000000000000000000000000000000006000350463c04062268114602d57005b6033603d565b8060005260206000f35b600060005a600160205590505a81036000555a600260205590505a81036001555a600260205590505a81036002555a65168aa8d53fe660205590505a81036003555a600260205590505a81036004555a600060205590505a81036005555a5060019291505056"  # noqa: E501
+            ),
         ),
     }
 

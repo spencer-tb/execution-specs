@@ -1,4 +1,6 @@
 """
+Test ported from static filler.
+
 Ported from:
 tests/static/state_tests/stPreCompiledContracts/sec80Filler.json
 """
@@ -13,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,26 +44,22 @@ def test_sec80(
     )
 
     pre[contract] = Account(
-        balance=0x1312d00,
+        balance=0x1312D00,
         nonce=0,
-        code=(
-        Op.JUMP(pc=0x1b) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.SSTORE + Op.JUMPDEST
-        + Op.STOP + Op.JUMPDEST + Op.PUSH4[0xbadf00d] + Op.JUMP(pc=0x3) + Op.JUMPDEST
-        + Op.PUSH4[0xc001f00d] + Op.JUMP(pc=0x3) + Op.JUMPDEST
-        + Op.PUSH20[0x19e7e376e7c213b7e7e7e46cc70a5dd086daff2a]
-        + Op.MSTORE(offset=0x0, value=0x22ae6da6b482f9b1b19b0b897c3fd43884180a1c5ee361e1107a1bc635649dda)
-        + Op.MSTORE8(offset=0x3f, value=0x1b)
-        + Op.MSTORE(offset=0x40, value=0x16433dce375ce6dc8151d3f0a22728bc4a1d9fd6ed39dfd18b4609331937367f)
-        + Op.MSTORE(offset=0x60, value=0x306964c0cf5d74f04129fdc60b54d35b596dde1bf89ad92cb4123318f4c0e400)
-        + Op.JUMPI(pc=0x7, condition=Op.ISZERO(Op.CALLCODE(gas=0xffff, address=0x1, value=0x0, args_offset=0x0, args_size=0x7f, ret_offset=0x80, ret_size=0x20)))
-        + Op.MLOAD(offset=0x80) + Op.JUMPI(pc=0x12, condition=Op.EQ) + Op.JUMP(pc=0x9)
-    ),
+        code=bytes.fromhex(
+            "601b565b6000555b005b630badf00d6003565b63c001f00d6003565b7319e7e376e7c213"  # noqa: E501
+            "b7e7e7e46cc70a5dd086daff2a7f22ae6da6b482f9b1b19b0b897c3fd43884180a1c5ee3"  # noqa: E501
+            "61e1107a1bc635649dda600052601b603f537f16433dce375ce6dc8151d3f0a22728bc4a"  # noqa: E501
+            "1d9fd6ed39dfd18b4609331937367f6040527f306964c0cf5d74f04129fdc60b54d35b59"  # noqa: E501
+            "6dde1bf89ad92cb4123318f4c0e40060605260206080607f60006000600161fffff21560"  # noqa: E501
+            "075760805114601257600956"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -74,8 +71,10 @@ def test_sec80(
 
     post = {
         contract: Account(
-            storage={0: 0xc001f00d},
-            code=Op.JUMP(pc=0x1b) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.SSTORE + Op.JUMPDEST + Op.STOP + Op.JUMPDEST + Op.PUSH4[0xbadf00d] + Op.JUMP(pc=0x3) + Op.JUMPDEST + Op.PUSH4[0xc001f00d] + Op.JUMP(pc=0x3) + Op.JUMPDEST + Op.PUSH20[0x19e7e376e7c213b7e7e7e46cc70a5dd086daff2a] + Op.MSTORE(offset=0x0, value=0x22ae6da6b482f9b1b19b0b897c3fd43884180a1c5ee361e1107a1bc635649dda) + Op.MSTORE8(offset=0x3f, value=0x1b) + Op.MSTORE(offset=0x40, value=0x16433dce375ce6dc8151d3f0a22728bc4a1d9fd6ed39dfd18b4609331937367f) + Op.MSTORE(offset=0x60, value=0x306964c0cf5d74f04129fdc60b54d35b596dde1bf89ad92cb4123318f4c0e400) + Op.JUMPI(pc=0x7, condition=Op.ISZERO(Op.CALLCODE(gas=0xffff, address=0x1, value=0x0, args_offset=0x0, args_size=0x7f, ret_offset=0x80, ret_size=0x20))) + Op.MLOAD(offset=0x80) + Op.JUMPI(pc=0x12, condition=Op.EQ) + Op.JUMP(pc=0x9),
+            storage={0: 0xC001F00D},
+            code=bytes.fromhex(
+                "601b565b6000555b005b630badf00d6003565b63c001f00d6003565b7319e7e376e7c213b7e7e7e46cc70a5dd086daff2a7f22ae6da6b482f9b1b19b0b897c3fd43884180a1c5ee361e1107a1bc635649dda600052601b603f537f16433dce375ce6dc8151d3f0a22728bc4a1d9fd6ed39dfd18b4609331937367f6040527f306964c0cf5d74f04129fdc60b54d35b596dde1bf89ad92cb4123318f4c0e40060605260206080607f60006000600161fffff21560075760805114601257600956"  # noqa: E501
+            ),
         ),
     }
 

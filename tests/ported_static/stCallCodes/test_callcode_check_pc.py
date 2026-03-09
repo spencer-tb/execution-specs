@@ -1,5 +1,5 @@
 """
-check the PC after doing call to a contract
+check the PC after doing call to a contract.
 
 Ported from:
 tests/static/state_tests/stCallCodes/callcode_checkPCFiller.json
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -30,7 +29,7 @@ def test_callcode_check_pc(
     state_test: StateTestFiller,
     pre: Alloc,
 ) -> None:
-    """check the PC after doing call to a contract."""
+    """Check the PC after doing call to a contract."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
     sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
     contract = Address("0x6861b8d2ba9a24e77f63623e4a5e83e2bc6a30df")
@@ -46,23 +45,23 @@ def test_callcode_check_pc(
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=(
-        Op.POP(Op.CALL(gas=0xf4240, address=0xfa7fc61138ee12431f8693335fb2bf5af4051632, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
-        + Op.SSTORE(key=0x3, value=Op.PC) + Op.STOP
-    ),
+        code=bytes.fromhex(
+            "6040600060406000600073fa7fc61138ee12431f8693335fb2bf5af4051632620f4240f1"  # noqa: E501
+            "505860035500"
+        ),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[callee] = Account(
-        balance=0x2540be400,
+        balance=0x2540BE400,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP,
+        code=bytes.fromhex("600160005500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
         ),
         to=contract,
         data=b"",
@@ -75,9 +74,11 @@ def test_callcode_check_pc(
     post = {
         contract: Account(
             storage={3: 37},
-            code=Op.POP(Op.CALL(gas=0xf4240, address=0xfa7fc61138ee12431f8693335fb2bf5af4051632, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.SSTORE(key=0x3, value=Op.PC) + Op.STOP,
+            code=bytes.fromhex(
+                "6040600060406000600073fa7fc61138ee12431f8693335fb2bf5af4051632620f4240f1505860035500"  # noqa: E501
+            ),
         ),
-        callee: Account(storage={0: 1}, code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP),
+        callee: Account(storage={0: 1}, code=bytes.fromhex("600160005500")),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

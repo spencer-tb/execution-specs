@@ -1,5 +1,5 @@
 """
-CreateMessageReverted for CREATE2
+CreateMessageReverted for CREATE2.
 
 Ported from:
 tests/static/state_tests/stCreate2/CreateMessageRevertedFiller.json
@@ -15,7 +15,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -28,10 +27,31 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (80000, {Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.MSTORE(offset=0x0, value=0x600c600055600d600155) + Op.CREATE2(value=0x0, offset=0x16, size=0xa, salt=0x0) + Op.STOP)}),
-        (150000, {Address("0x244fe9a7867edcc140245e775071fbfe6ebedbae"): Account(storage={0: 12, 1: 13}), Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(code=Op.MSTORE(offset=0x0, value=0x600c600055600d600155) + Op.CREATE2(value=0x0, offset=0x16, size=0xa, salt=0x0) + Op.STOP)}),
+        (
+            80000,
+            {
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "69600c600055600d6001556000526000600a60166000f500"
+                    )
+                )
+            },
+        ),
+        (
+            150000,
+            {
+                Address("0x244fe9a7867edcc140245e775071fbfe6ebedbae"): Account(
+                    storage={0: 12, 1: 13}
+                ),
+                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
+                    code=bytes.fromhex(
+                        "69600c600055600d6001556000526000600a60166000f500"
+                    )
+                ),
+            },
+        ),
     ],
-    ids=['case0', 'case1'],
+    ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
 def test_create_message_reverted(
@@ -54,19 +74,16 @@ def test_create_message_reverted(
         gas_limit=1000000000000,
     )
 
-    pre[sender] = Account(balance=0x2dc6c0, nonce=0)
+    pre[sender] = Account(balance=0x2DC6C0, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=(
-        Op.MSTORE(offset=0x0, value=0x600c600055600d600155)
-        + Op.CREATE2(value=0x0, offset=0x16, size=0xa, salt=0x0) + Op.STOP
-    ),
+        code=bytes.fromhex("69600c600055600d6001556000526000600a60166000f500"),
     )
 
     tx = Transaction(
         secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
         ),
         to=contract,
         data=b"",

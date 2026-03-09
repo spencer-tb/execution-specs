@@ -1,5 +1,5 @@
 """
-Example of PoS merge state test
+Example of PoS merge state test.
 
 Ported from:
 tests/static/state_tests/stExample/mergeTestFiller.yml
@@ -16,7 +16,6 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -40,24 +39,21 @@ def test_merge_test(
         fee_recipient=coinbase,
         number=1,
         timestamp=1000,
-        prev_randao=0x1500000000000000000000000000000000000000000000000000000000000000,
+        prev_randao=0x1500000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
         base_fee_per_gas=1000,
         gas_limit=16777216,
     )
 
     pre[contract] = Account(
-        balance=0xde0b6b3a7640000,
+        balance=0xDE0B6B3A7640000,
         nonce=1,
-        code=(
-        Op.SSTORE(key=0x0, value=Op.GASPRICE) + Op.SSTORE(key=0x1, value=Op.BASEFEE)
-        + Op.SSTORE(key=0x2, value=Op.PREVRANDAO) + Op.STOP
-    ),
+        code=bytes.fromhex("3a600055486001554460025500"),
     )
-    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=1)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
 
     tx = Transaction(
         secret_key=Hash(
-            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"
+            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"  # noqa: E501
         ),
         to=contract,
         data=bytes.fromhex("00"),
@@ -66,13 +62,29 @@ def test_merge_test(
         max_priority_fee_per_gas=10,
         nonce=1,
         value=0,
-        access_list=[AccessList(address=Address("0x49a0fe79e28d1d65e16cdf53acafeae7baccac0e"), storage_keys=[Hash("0x0000000000000000000000000000000000000000000000000000000000000000"), Hash("0x0000000000000000000000000000000000000000000000000000000000000001")])],
+        access_list=[
+            AccessList(
+                address=Address("0x49a0fe79e28d1d65e16cdf53acafeae7baccac0e"),
+                storage_keys=[
+                    Hash(
+                        "0x0000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+                    ),
+                    Hash(
+                        "0x0000000000000000000000000000000000000000000000000000000000000001"  # noqa: E501
+                    ),
+                ],
+            ),
+        ],
     )
 
     post = {
         contract: Account(
-            storage={0: 1010, 1: 1000, 2: 0x1500000000000000000000000000000000000000000000000000000000000000},
-            code=Op.SSTORE(key=0x0, value=Op.GASPRICE) + Op.SSTORE(key=0x1, value=Op.BASEFEE) + Op.SSTORE(key=0x2, value=Op.PREVRANDAO) + Op.STOP,
+            storage={
+                0: 1010,
+                1: 1000,
+                2: 0x1500000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
+            },
+            code=bytes.fromhex("3a600055486001554460025500"),
         ),
     }
 
