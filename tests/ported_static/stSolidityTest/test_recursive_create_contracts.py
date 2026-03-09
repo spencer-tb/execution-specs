@@ -1,0 +1,137 @@
+"""
+Ported from:
+tests/static/state_tests/stSolidityTest/RecursiveCreateContractsFiller.json
+"""
+
+import pytest
+from execution_testing import (
+    Account,
+    Address,
+    Alloc,
+    Environment,
+    Hash,
+    StateTestFiller,
+    Transaction,
+)
+from execution_testing.vm import Op
+
+REFERENCE_SPEC_GIT_PATH = "N/A"
+REFERENCE_SPEC_VERSION = "N/A"
+
+
+@pytest.mark.ported_from(
+    ["tests/static/state_tests/stSolidityTest/RecursiveCreateContractsFiller.json"],
+)
+@pytest.mark.valid_from("Prague")
+@pytest.mark.pre_alloc_mutable
+def test_recursive_create_contracts(
+    state_test: StateTestFiller,
+    pre: Alloc,
+) -> None:
+    """Test ported from static filler."""
+    coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
+    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
+
+    env = Environment(
+        fee_recipient=coinbase,
+        number=1,
+        timestamp=1000,
+        prev_randao=0x20000,
+        base_fee_per_gas=10,
+        gas_limit=100000000,
+    )
+
+    pre[contract] = Account(
+        balance=0x314dc6448d9338c15b0a00000000,
+        nonce=0,
+        code=(
+        Op.CALLDATALOAD(offset=0x0) + Op.EXP(0x2, 0xe0) + Op.SWAP1 + Op.DIV
+        + Op.JUMPI(pc=Op.PUSH2[0x21], condition=Op.EQ(0x820b13f6, Op.DUP1))
+        + Op.JUMPI(pc=Op.PUSH2[0x32], condition=Op.EQ(0xa444f5e9, Op.DUP1)) + Op.STOP
+        + Op.JUMPDEST + Op.PUSH2[0x2c] + Op.CALLDATALOAD(offset=0x4)
+        + Op.JUMP(pc=Op.PUSH2[0x93]) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0)
+        + Op.JUMPDEST + Op.PUSH2[0x3d] + Op.CALLDATALOAD(offset=0x4)
+        + Op.JUMP(pc=Op.PUSH2[0x43]) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0)
+        + Op.JUMPDEST + Op.PUSH1[0x0]
+        + Op.PUSH20[0x95e7baea6a6c7c4c2dfeb977efac326af552d87] + Op.PUSH1[0x0]
+        + Op.DUP2 + Op.SWAP1 + Op.SSTORE + Op.POP + Op.DUP2 + Op.PUSH1[0x1] + Op.DUP2
+        + Op.SWAP1 + Op.SSTORE + Op.POP
+        + Op.CODECOPY(dest_offset=0x0, offset=0x1ad, size=0x6b) + Op.PUSH1[0x6b]
+        + Op.MSTORE(offset=Op.DUP2, value=Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.SLOAD(key=0x0)))
+        + Op.PUSH1[0x20] + Op.ADD + Op.MSTORE(offset=Op.DUP2, value=Op.DUP3)
+        + Op.PUSH1[0x20] + Op.CREATE(value=0x0, offset=0x0, size=Op.ADD) + Op.SWAP1
+        + Op.POP + Op.POP + Op.POP + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0]
+        + Op.CODECOPY(dest_offset=0x0, offset=Op.PUSH2[0xe5], size=0xc8)
+        + Op.PUSH1[0xc8]
+        + Op.MSTORE(offset=Op.DUP2, value=Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.SLOAD(key=0x0)))
+        + Op.PUSH1[0x20] + Op.ADD + Op.MSTORE(offset=Op.DUP2, value=Op.DUP3)
+        + Op.PUSH1[0x20] + Op.CREATE(value=0x0, offset=0x0, size=Op.ADD) + Op.SWAP1
+        + Op.POP + Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP1) + Op.PUSH1[0x0]
+        + Op.PUSH1[0x2]
+        + Op.JUMPI(pc=Op.PUSH2[0xdd], condition=Op.CALL(gas=Op.DUP8, address=Op.DUP8, value=Op.DUP5, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
+        + Op.STOP + Op.JUMPDEST + Op.POP + Op.POP + Op.POP + Op.POP + Op.POP + Op.JUMP
+        + Op.STOP + Op.CODECOPY(dest_offset=0x4, offset=0xc8, size=0x40)
+        + Op.MLOAD(offset=0x4) + Op.MLOAD(offset=0x24) + Op.PUSH1[0x0]
+        + Op.SUB(Op.DUP3, 0x1) + Op.SWAP2 + Op.POP + Op.DUP2 + Op.PUSH1[0x0] + Op.DUP2
+        + Op.SWAP1 + Op.SSTORE + Op.POP
+        + Op.JUMPI(pc=0x26, condition=Op.GT(Op.DUP3, 0x0)) + Op.JUMP(pc=0x4c)
+        + Op.JUMPDEST + Op.CODECOPY(dest_offset=0x0, offset=0x5d, size=0x6b)
+        + Op.PUSH1[0x6b]
+        + Op.MSTORE(offset=Op.DUP2, value=Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP4))
+        + Op.PUSH1[0x20] + Op.ADD + Op.MSTORE(offset=Op.DUP2, value=Op.DUP3)
+        + Op.PUSH1[0x20] + Op.CREATE(value=0x0, offset=0x0, size=Op.ADD) + Op.SWAP1
+        + Op.POP + Op.JUMPDEST + Op.POP + Op.POP + Op.POP + Op.PUSH1[0x1]
+        + Op.CODECOPY(dest_offset=0x0, offset=0x5c, size=Op.DUP1) + Op.PUSH1[0x0]
+        + Op.RETURN + Op.STOP + Op.STOP
+        + Op.CODECOPY(dest_offset=0x4, offset=0x6b, size=0x40) + Op.MLOAD(offset=0x4)
+        + Op.MLOAD(offset=0x24) + Op.SUB(Op.DUP2, 0x1) + Op.SWAP1 + Op.POP + Op.DUP1
+        + Op.PUSH1[0x0] + Op.DUP2 + Op.SWAP1 + Op.SSTORE + Op.POP
+        + Op.JUMPI(pc=0x24, condition=Op.GT(Op.DUP2, 0x0)) + Op.JUMP(pc=0x5b)
+        + Op.JUMPDEST + Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP2)
+        + Op.PUSH4[0x820b13f6] + Op.PUSH1[0x0] + Op.PUSH1[0x0]
+        + Op.MSTORE(offset=0x0, value=Op.MUL(Op.EXP(0x2, 0xe0), Op.DUP3))
+        + Op.PUSH1[0x4] + Op.MSTORE(offset=Op.DUP2, value=Op.DUP6) + Op.PUSH1[0x20]
+        + Op.ADD + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.DUP7 + Op.SUB(Op.GAS, 0x32)
+        + Op.JUMPI(pc=0x58, condition=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.POP
+        + Op.POP + Op.JUMPDEST + Op.POP + Op.POP + Op.PUSH1[0x1]
+        + Op.CODECOPY(dest_offset=0x0, offset=0x6a, size=Op.DUP1) + Op.PUSH1[0x0]
+        + Op.RETURN + Op.STOP + Op.STOP
+        + Op.CODECOPY(dest_offset=0x4, offset=0x6b, size=0x40) + Op.MLOAD(offset=0x4)
+        + Op.MLOAD(offset=0x24) + Op.SUB(Op.DUP2, 0x1) + Op.SWAP1 + Op.POP + Op.DUP1
+        + Op.PUSH1[0x0] + Op.DUP2 + Op.SWAP1 + Op.SSTORE + Op.POP
+        + Op.JUMPI(pc=0x24, condition=Op.GT(Op.DUP2, 0x0)) + Op.JUMP(pc=0x5b)
+        + Op.JUMPDEST + Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP2)
+        + Op.PUSH4[0x820b13f6] + Op.PUSH1[0x0] + Op.PUSH1[0x0]
+        + Op.MSTORE(offset=0x0, value=Op.MUL(Op.EXP(0x2, 0xe0), Op.DUP3))
+        + Op.PUSH1[0x4] + Op.MSTORE(offset=Op.DUP2, value=Op.DUP6) + Op.PUSH1[0x20]
+        + Op.ADD + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.DUP7 + Op.SUB(Op.GAS, 0x32)
+        + Op.JUMPI(pc=0x58, condition=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.POP
+        + Op.POP + Op.JUMPDEST + Op.POP + Op.POP + Op.PUSH1[0x1]
+        + Op.CODECOPY(dest_offset=0x0, offset=0x6a, size=Op.DUP1) + Op.PUSH1[0x0]
+        + Op.RETURN + Op.STOP + Op.STOP
+    ),
+    )
+    pre[sender] = Account(balance=0x1dcd6500, nonce=0)
+
+    tx = Transaction(
+        secret_key=Hash(
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+        ),
+        to=contract,
+        data=bytes.fromhex("a444f5e90000000000000000000000000000000000000000000000000000000000000304"),
+        gas_limit=300000,
+        gas_price=10,
+        nonce=0,
+        value=1,
+    )
+
+    post = {
+        contract: Account(
+            storage={0: 0x95e7baea6a6c7c4c2dfeb977efac326af552d87, 1: 772},
+            code=Op.CALLDATALOAD(offset=0x0) + Op.EXP(0x2, 0xe0) + Op.SWAP1 + Op.DIV + Op.JUMPI(pc=Op.PUSH2[0x21], condition=Op.EQ(0x820b13f6, Op.DUP1)) + Op.JUMPI(pc=Op.PUSH2[0x32], condition=Op.EQ(0xa444f5e9, Op.DUP1)) + Op.STOP + Op.JUMPDEST + Op.PUSH2[0x2c] + Op.CALLDATALOAD(offset=0x4) + Op.JUMP(pc=Op.PUSH2[0x93]) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH2[0x3d] + Op.CALLDATALOAD(offset=0x4) + Op.JUMP(pc=Op.PUSH2[0x43]) + Op.JUMPDEST + Op.RETURN(offset=0x0, size=0x0) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH20[0x95e7baea6a6c7c4c2dfeb977efac326af552d87] + Op.PUSH1[0x0] + Op.DUP2 + Op.SWAP1 + Op.SSTORE + Op.POP + Op.DUP2 + Op.PUSH1[0x1] + Op.DUP2 + Op.SWAP1 + Op.SSTORE + Op.POP + Op.CODECOPY(dest_offset=0x0, offset=0x1ad, size=0x6b) + Op.PUSH1[0x6b] + Op.MSTORE(offset=Op.DUP2, value=Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.SLOAD(key=0x0))) + Op.PUSH1[0x20] + Op.ADD + Op.MSTORE(offset=Op.DUP2, value=Op.DUP3) + Op.PUSH1[0x20] + Op.CREATE(value=0x0, offset=0x0, size=Op.ADD) + Op.SWAP1 + Op.POP + Op.POP + Op.POP + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.CODECOPY(dest_offset=0x0, offset=Op.PUSH2[0xe5], size=0xc8) + Op.PUSH1[0xc8] + Op.MSTORE(offset=Op.DUP2, value=Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.SLOAD(key=0x0))) + Op.PUSH1[0x20] + Op.ADD + Op.MSTORE(offset=Op.DUP2, value=Op.DUP3) + Op.PUSH1[0x20] + Op.CREATE(value=0x0, offset=0x0, size=Op.ADD) + Op.SWAP1 + Op.POP + Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP1) + Op.PUSH1[0x0] + Op.PUSH1[0x2] + Op.JUMPI(pc=Op.PUSH2[0xdd], condition=Op.CALL(gas=Op.DUP8, address=Op.DUP8, value=Op.DUP5, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP + Op.JUMPDEST + Op.POP + Op.POP + Op.POP + Op.POP + Op.POP + Op.JUMP + Op.STOP + Op.CODECOPY(dest_offset=0x4, offset=0xc8, size=0x40) + Op.MLOAD(offset=0x4) + Op.MLOAD(offset=0x24) + Op.PUSH1[0x0] + Op.SUB(Op.DUP3, 0x1) + Op.SWAP2 + Op.POP + Op.DUP2 + Op.PUSH1[0x0] + Op.DUP2 + Op.SWAP1 + Op.SSTORE + Op.POP + Op.JUMPI(pc=0x26, condition=Op.GT(Op.DUP3, 0x0)) + Op.JUMP(pc=0x4c) + Op.JUMPDEST + Op.CODECOPY(dest_offset=0x0, offset=0x5d, size=0x6b) + Op.PUSH1[0x6b] + Op.MSTORE(offset=Op.DUP2, value=Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP4)) + Op.PUSH1[0x20] + Op.ADD + Op.MSTORE(offset=Op.DUP2, value=Op.DUP3) + Op.PUSH1[0x20] + Op.CREATE(value=0x0, offset=0x0, size=Op.ADD) + Op.SWAP1 + Op.POP + Op.JUMPDEST + Op.POP + Op.POP + Op.POP + Op.PUSH1[0x1] + Op.CODECOPY(dest_offset=0x0, offset=0x5c, size=Op.DUP1) + Op.PUSH1[0x0] + Op.RETURN + Op.STOP + Op.STOP + Op.CODECOPY(dest_offset=0x4, offset=0x6b, size=0x40) + Op.MLOAD(offset=0x4) + Op.MLOAD(offset=0x24) + Op.SUB(Op.DUP2, 0x1) + Op.SWAP1 + Op.POP + Op.DUP1 + Op.PUSH1[0x0] + Op.DUP2 + Op.SWAP1 + Op.SSTORE + Op.POP + Op.JUMPI(pc=0x24, condition=Op.GT(Op.DUP2, 0x0)) + Op.JUMP(pc=0x5b) + Op.JUMPDEST + Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP2) + Op.PUSH4[0x820b13f6] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.MSTORE(offset=0x0, value=Op.MUL(Op.EXP(0x2, 0xe0), Op.DUP3)) + Op.PUSH1[0x4] + Op.MSTORE(offset=Op.DUP2, value=Op.DUP6) + Op.PUSH1[0x20] + Op.ADD + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.DUP7 + Op.SUB(Op.GAS, 0x32) + Op.JUMPI(pc=0x58, condition=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.POP + Op.POP + Op.JUMPDEST + Op.POP + Op.POP + Op.PUSH1[0x1] + Op.CODECOPY(dest_offset=0x0, offset=0x6a, size=Op.DUP1) + Op.PUSH1[0x0] + Op.RETURN + Op.STOP + Op.STOP + Op.CODECOPY(dest_offset=0x4, offset=0x6b, size=0x40) + Op.MLOAD(offset=0x4) + Op.MLOAD(offset=0x24) + Op.SUB(Op.DUP2, 0x1) + Op.SWAP1 + Op.POP + Op.DUP1 + Op.PUSH1[0x0] + Op.DUP2 + Op.SWAP1 + Op.SSTORE + Op.POP + Op.JUMPI(pc=0x24, condition=Op.GT(Op.DUP2, 0x0)) + Op.JUMP(pc=0x5b) + Op.JUMPDEST + Op.AND(Op.SUB(Op.EXP(0x2, 0xa0), 0x1), Op.DUP2) + Op.PUSH4[0x820b13f6] + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.MSTORE(offset=0x0, value=Op.MUL(Op.EXP(0x2, 0xe0), Op.DUP3)) + Op.PUSH1[0x4] + Op.MSTORE(offset=Op.DUP2, value=Op.DUP6) + Op.PUSH1[0x20] + Op.ADD + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.DUP7 + Op.SUB(Op.GAS, 0x32) + Op.JUMPI(pc=0x58, condition=Op.CALL) + Op.STOP + Op.JUMPDEST + Op.POP + Op.POP + Op.JUMPDEST + Op.POP + Op.POP + Op.PUSH1[0x1] + Op.CODECOPY(dest_offset=0x0, offset=0x6a, size=Op.DUP1) + Op.PUSH1[0x0] + Op.RETURN + Op.STOP + Op.STOP,
+        ),
+        Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(storage={0: 771}),
+    }
+
+    state_test(env=env, pre=pre, post=post, tx=tx)

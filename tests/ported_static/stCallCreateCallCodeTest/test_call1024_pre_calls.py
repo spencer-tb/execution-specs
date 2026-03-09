@@ -1,0 +1,91 @@
+"""
+calldepth with subcall
+
+Ported from:
+tests/static/state_tests/stCallCreateCallCodeTest/Call1024PreCallsFiller.json
+"""
+
+import pytest
+from execution_testing import (
+    Account,
+    Address,
+    Alloc,
+    Environment,
+    Hash,
+    StateTestFiller,
+    Transaction,
+)
+from execution_testing.vm import Op
+
+REFERENCE_SPEC_GIT_PATH = "N/A"
+REFERENCE_SPEC_VERSION = "N/A"
+
+
+@pytest.mark.ported_from(
+    ["tests/static/state_tests/stCallCreateCallCodeTest/Call1024PreCallsFiller.json"],
+)
+@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_until("Prague")
+@pytest.mark.parametrize(
+    "tx_gas_limit",
+    [
+        9214364837600034817,
+        11837600034817,
+    ],
+    ids=['case0', 'case1'],
+)
+@pytest.mark.pre_alloc_mutable
+def test_call1024_pre_calls(
+    state_test: StateTestFiller,
+    pre: Alloc,
+    tx_gas_limit: int,
+) -> None:
+    """calldepth with subcall."""
+    coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    sender = Address("0x3f13d7fc49b91cdc388f79f861c0f1a0e708dfbf")
+    contract = Address("0x48c20cd83ddbd3908712f4d31c51b3cdaae287ce")
+    callee = Address("0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0")
+
+    env = Environment(
+        fee_recipient=coinbase,
+        number=1,
+        timestamp=1000,
+        prev_randao=0x20000,
+        base_fee_per_gas=10,
+        gas_limit=9223372036854775807,
+    )
+
+    pre[sender] = Account(balance=0xfffffffffffffffffffffffffffffffff, nonce=0)
+    pre[contract] = Account(
+        balance=2024,
+        nonce=0,
+        code=(
+        Op.SSTORE(key=0x2, value=Op.CALL(gas=0xffff, address=0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
+        + Op.SSTORE(key=0x3, value=Op.CALL(gas=0xffff, address=0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
+        + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+        + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xfffffffffff, address=0x48c20cd83ddbd3908712f4d31c51b3cdaae287ce, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
+        + Op.STOP
+    ),
+    )
+    pre[callee] = Account(balance=7000, nonce=0)
+
+    tx = Transaction(
+        secret_key=Hash(
+            "0xcc381c83857b17ca629268ed418e2915a0287b84efe9cf2204c020302e83cda0"
+        ),
+        to=contract,
+        data=b"",
+        gas_limit=tx_gas_limit,
+        gas_price=10,
+        nonce=0,
+        value=10,
+    )
+
+    post = {
+        contract: Account(
+            storage={0: 1025, 1: 1},
+            code=Op.SSTORE(key=0x2, value=Op.CALL(gas=0xffff, address=0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x3, value=Op.CALL(gas=0xffff, address=0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0, value=0x1, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)) + Op.SSTORE(key=0x1, value=Op.CALL(gas=0xfffffffffff, address=0x48c20cd83ddbd3908712f4d31c51b3cdaae287ce, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.STOP,
+        ),
+    }
+
+    state_test(env=env, pre=pre, post=post, tx=tx)

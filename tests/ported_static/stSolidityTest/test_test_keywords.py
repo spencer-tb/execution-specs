@@ -1,0 +1,98 @@
+"""
+Ported from:
+tests/static/state_tests/stSolidityTest/TestKeywordsFiller.json
+"""
+
+import pytest
+from execution_testing import (
+    Account,
+    Address,
+    Alloc,
+    Environment,
+    Hash,
+    StateTestFiller,
+    Transaction,
+)
+from execution_testing.vm import Op
+
+REFERENCE_SPEC_GIT_PATH = "N/A"
+REFERENCE_SPEC_VERSION = "N/A"
+
+
+@pytest.mark.ported_from(
+    ["tests/static/state_tests/stSolidityTest/TestKeywordsFiller.json"],
+)
+@pytest.mark.valid_from("Prague")
+@pytest.mark.pre_alloc_mutable
+def test_test_keywords(
+    state_test: StateTestFiller,
+    pre: Alloc,
+) -> None:
+    """Test ported from static filler."""
+    coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
+    sender = Address("0x7f3f285918d9b5e764174551e10b7539b97bbb27")
+    contract = Address("0xe7dcb339943a6db535ffe618ec32d1e4e5a50f37")
+
+    env = Environment(
+        fee_recipient=coinbase,
+        number=1,
+        timestamp=1000,
+        prev_randao=0x20000,
+        base_fee_per_gas=10,
+        gas_limit=100000000,
+    )
+
+    pre[sender] = Account(balance=0x5f5e100, nonce=0)
+    pre[contract] = Account(
+        balance=0x186a0,
+        nonce=0,
+        code=(
+        Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000)
+        + Op.JUMPI(pc=0x37, condition=Op.EQ(Op.DUP2, 0x380e4396))
+        + Op.JUMPI(pc=0x47, condition=Op.EQ(0xc0406226, Op.DUP1)) + Op.STOP
+        + Op.JUMPDEST + Op.PUSH1[0x3d] + Op.JUMP(pc=0x84) + Op.JUMPDEST
+        + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20)
+        + Op.JUMPDEST + Op.PUSH1[0x4d] + Op.JUMP(pc=0x57) + Op.JUMPDEST
+        + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20)
+        + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x5f] + Op.JUMP(pc=0x84)
+        + Op.JUMPDEST + Op.PUSH1[0x0] + Op.EXP(0x100, 0x0)
+        + Op.AND(Op.NOT(Op.MUL(0xff, Op.DUP2)), Op.SLOAD(key=Op.DUP2)) + Op.SWAP1
+        + Op.OR(Op.MUL, Op.DUP4) + Op.SWAP1 + Op.SSTORE + Op.POP
+        + Op.AND(Op.DIV(Op.SLOAD(key=0x0), 0x1), 0xff) + Op.SWAP1 + Op.POP + Op.SWAP1
+        + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.DUP1 + Op.DUP2
+        + Op.JUMPI(pc=0xcd, condition=Op.ISZERO(0x1)) + Op.JUMPDEST
+        + Op.JUMPI(pc=0xa1, condition=Op.ISZERO(Op.SLT(Op.DUP3, 0xa))) + Op.PUSH1[0x1]
+        + Op.SWAP1 + Op.SWAP2 + Op.ADD + Op.SWAP1 + Op.JUMP(pc=0x8f) + Op.JUMPDEST
+        + Op.JUMPI(pc=0xac, condition=Op.EQ(0xa, Op.DUP2)) + Op.JUMP(pc=0xc9)
+        + Op.JUMPDEST + Op.POP + Op.PUSH1[0xa] + Op.JUMPDEST
+        + Op.JUMPI(pc=0xc8, condition=Op.ISZERO(Op.GT(Op.AND(0xff, Op.DUP2), 0x0)))
+        + Op.PUSH1[0x1] + Op.SWAP2 + Op.DUP3 + Op.SWAP1 + Op.SUB + Op.SWAP2 + Op.SWAP1
+        + Op.SUB + Op.JUMP(pc=0xb0) + Op.JUMPDEST + Op.JUMPDEST + Op.JUMP(pc=0xd5)
+        + Op.JUMPDEST + Op.PUSH1[0x0] + Op.SWAP3 + Op.POP + Op.JUMP(pc=0xed)
+        + Op.JUMPDEST + Op.JUMPI(pc=0xe0, condition=Op.EQ(0x0, Op.DUP2))
+        + Op.JUMP(pc=0xe8) + Op.JUMPDEST + Op.PUSH1[0x1] + Op.SWAP3 + Op.POP
+        + Op.JUMP(pc=0xed) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.SWAP3 + Op.POP
+        + Op.JUMPDEST + Op.POP + Op.POP + Op.SWAP1 + Op.JUMP
+    ),
+    )
+
+    tx = Transaction(
+        secret_key=Hash(
+            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"
+        ),
+        to=contract,
+        data=bytes.fromhex("c0406226"),
+        gas_limit=350000,
+        gas_price=10,
+        nonce=0,
+        value=1,
+    )
+
+    post = {
+        contract: Account(
+            storage={0: 1},
+            code=Op.DIV(Op.CALLDATALOAD(offset=0x0), 0x100000000000000000000000000000000000000000000000000000000) + Op.JUMPI(pc=0x37, condition=Op.EQ(Op.DUP2, 0x380e4396)) + Op.JUMPI(pc=0x47, condition=Op.EQ(0xc0406226, Op.DUP1)) + Op.STOP + Op.JUMPDEST + Op.PUSH1[0x3d] + Op.JUMP(pc=0x84) + Op.JUMPDEST + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20) + Op.JUMPDEST + Op.PUSH1[0x4d] + Op.JUMP(pc=0x57) + Op.JUMPDEST + Op.MSTORE(offset=0x0, value=Op.DUP1) + Op.RETURN(offset=0x0, size=0x20) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.PUSH1[0x5f] + Op.JUMP(pc=0x84) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.EXP(0x100, 0x0) + Op.AND(Op.NOT(Op.MUL(0xff, Op.DUP2)), Op.SLOAD(key=Op.DUP2)) + Op.SWAP1 + Op.OR(Op.MUL, Op.DUP4) + Op.SWAP1 + Op.SSTORE + Op.POP + Op.AND(Op.DIV(Op.SLOAD(key=0x0), 0x1), 0xff) + Op.SWAP1 + Op.POP + Op.SWAP1 + Op.JUMP + Op.JUMPDEST + Op.PUSH1[0x0] + Op.DUP1 + Op.DUP2 + Op.JUMPI(pc=0xcd, condition=Op.ISZERO(0x1)) + Op.JUMPDEST + Op.JUMPI(pc=0xa1, condition=Op.ISZERO(Op.SLT(Op.DUP3, 0xa))) + Op.PUSH1[0x1] + Op.SWAP1 + Op.SWAP2 + Op.ADD + Op.SWAP1 + Op.JUMP(pc=0x8f) + Op.JUMPDEST + Op.JUMPI(pc=0xac, condition=Op.EQ(0xa, Op.DUP2)) + Op.JUMP(pc=0xc9) + Op.JUMPDEST + Op.POP + Op.PUSH1[0xa] + Op.JUMPDEST + Op.JUMPI(pc=0xc8, condition=Op.ISZERO(Op.GT(Op.AND(0xff, Op.DUP2), 0x0))) + Op.PUSH1[0x1] + Op.SWAP2 + Op.DUP3 + Op.SWAP1 + Op.SUB + Op.SWAP2 + Op.SWAP1 + Op.SUB + Op.JUMP(pc=0xb0) + Op.JUMPDEST + Op.JUMPDEST + Op.JUMP(pc=0xd5) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.SWAP3 + Op.POP + Op.JUMP(pc=0xed) + Op.JUMPDEST + Op.JUMPI(pc=0xe0, condition=Op.EQ(0x0, Op.DUP2)) + Op.JUMP(pc=0xe8) + Op.JUMPDEST + Op.PUSH1[0x1] + Op.SWAP3 + Op.POP + Op.JUMP(pc=0xed) + Op.JUMPDEST + Op.PUSH1[0x0] + Op.SWAP3 + Op.POP + Op.JUMPDEST + Op.POP + Op.POP + Op.SWAP1 + Op.JUMP,
+        ),
+    }
+
+    state_test(env=env, pre=pre, post=post, tx=tx)

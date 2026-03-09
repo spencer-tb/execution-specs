@@ -1,0 +1,110 @@
+"""
+callcode happen to a contract that is dynamically created from within the contract (to itself)
+
+Ported from:
+tests/static/state_tests/stCallCodes/callcodeDynamicCode2SelfCallFiller.json
+"""
+
+import pytest
+from execution_testing import (
+    Account,
+    Address,
+    Alloc,
+    Environment,
+    Hash,
+    StateTestFiller,
+    Transaction,
+)
+from execution_testing.vm import Op
+
+REFERENCE_SPEC_GIT_PATH = "N/A"
+REFERENCE_SPEC_VERSION = "N/A"
+
+
+@pytest.mark.ported_from(
+    ["tests/static/state_tests/stCallCodes/callcodeDynamicCode2SelfCallFiller.json"],
+)
+@pytest.mark.valid_from("Prague")
+@pytest.mark.parametrize(
+    "tx_data_hex, expected_post",
+    [
+        ("000000000000000000000000a000000000000000000000000000000000000000", {Address("0x1000000000000000000000000000000000000000"): Account(code=Op.PUSH1[0x46] + Op.CODECOPY(dest_offset=0x0, offset=0x27, size=Op.DUP1) + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.SSTORE(key=0xa, value=Op.CREATE) + Op.SSTORE(key=0xb, value=Op.CALLCODE(gas=0x186a0, address=Op.SLOAD(key=0xa), value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP + Op.INVALID + Op.SSTORE(key=0x7a, value=Op.CALLCODE(gas=0x186a0, address=0x13136008b64ff592819b2fa6d43f2835c452020e, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.PUSH1[0x12] + Op.CODECOPY(dest_offset=0x0, offset=0x34, size=Op.DUP1) + Op.PUSH1[0x0] + Op.RETURN + Op.STOP + Op.INVALID + Op.SSTORE(key=0x0, value=0x1) + Op.SSTORE(key=0x14, value=Op.ADDRESS) + Op.SSTORE(key=0x15, value=Op.ORIGIN) + Op.SSTORE(key=0x16, value=Op.CALLER) + Op.STOP), Address("0x1100000000000000000000000000000000000000"): Account(code=Op.CALL(gas=0xc3500, address=Op.CALLDATALOAD(offset=0x0), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP), Address("0x7db299e0885c85039f56fa504a13dd8ce8a56aa7"): Account(storage={11: 1, 12: 0xa000000000000000000000000000000000000000}), Address("0xa000000000000000000000000000000000000000"): Account(code=Op.MSTORE(offset=0x0, value=0x604060006040600060007313136008b64ff592819b2fa6d43f2835c452020e62) + Op.MSTORE(offset=0x20, value=0x186a0f2600b5533600c55000000000000000000000000000000000000000000) + Op.CREATE(value=0x1, offset=0x0, size=0x40) + Op.STOP)}),
+        ("0000000000000000000000001000000000000000000000000000000000000000", {Address("0x1000000000000000000000000000000000000000"): Account(storage={0: 1, 10: 0x13136008b64ff592819b2fa6d43f2835c452020e, 11: 1, 20: 0x1000000000000000000000000000000000000000, 21: 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b, 22: 0x1000000000000000000000000000000000000000}, code=Op.PUSH1[0x46] + Op.CODECOPY(dest_offset=0x0, offset=0x27, size=Op.DUP1) + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.SSTORE(key=0xa, value=Op.CREATE) + Op.SSTORE(key=0xb, value=Op.CALLCODE(gas=0x186a0, address=Op.SLOAD(key=0xa), value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.STOP + Op.INVALID + Op.SSTORE(key=0x7a, value=Op.CALLCODE(gas=0x186a0, address=0x13136008b64ff592819b2fa6d43f2835c452020e, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40)) + Op.PUSH1[0x12] + Op.CODECOPY(dest_offset=0x0, offset=0x34, size=Op.DUP1) + Op.PUSH1[0x0] + Op.RETURN + Op.STOP + Op.INVALID + Op.SSTORE(key=0x0, value=0x1) + Op.SSTORE(key=0x14, value=Op.ADDRESS) + Op.SSTORE(key=0x15, value=Op.ORIGIN) + Op.SSTORE(key=0x16, value=Op.CALLER) + Op.STOP), Address("0x1100000000000000000000000000000000000000"): Account(code=Op.CALL(gas=0xc3500, address=Op.CALLDATALOAD(offset=0x0), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0) + Op.STOP), Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(storage={122: 1}, code=Op.SSTORE(key=0x0, value=0x1) + Op.SSTORE(key=0x14, value=Op.ADDRESS) + Op.SSTORE(key=0x15, value=Op.ORIGIN) + Op.SSTORE(key=0x16, value=Op.CALLER) + Op.STOP), Address("0xa000000000000000000000000000000000000000"): Account(code=Op.MSTORE(offset=0x0, value=0x604060006040600060007313136008b64ff592819b2fa6d43f2835c452020e62) + Op.MSTORE(offset=0x20, value=0x186a0f2600b5533600c55000000000000000000000000000000000000000000) + Op.CREATE(value=0x1, offset=0x0, size=0x40) + Op.STOP)}),
+    ],
+    ids=['case0', 'case1'],
+)
+@pytest.mark.pre_alloc_mutable
+def test_callcode_dynamic_code2_self_call(
+    state_test: StateTestFiller,
+    pre: Alloc,
+    tx_data_hex: str,
+    expected_post: dict,
+) -> None:
+    """callcode happen to a contract that is dynamically created from within the contract (to itself)."""
+    coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
+    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    contract = Address("0x1100000000000000000000000000000000000000")
+    callee = Address("0x1000000000000000000000000000000000000000")
+    callee_1 = Address("0xa000000000000000000000000000000000000000")
+
+    env = Environment(
+        fee_recipient=coinbase,
+        number=1,
+        timestamp=1000,
+        prev_randao=0x20000,
+        base_fee_per_gas=10,
+        gas_limit=10000000,
+    )
+
+    pre[callee] = Account(
+        balance=0x2710,
+        nonce=0,
+        code=(
+        Op.PUSH1[0x46] + Op.CODECOPY(dest_offset=0x0, offset=0x27, size=Op.DUP1)
+        + Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.SSTORE(key=0xa, value=Op.CREATE)
+        + Op.SSTORE(key=0xb, value=Op.CALLCODE(gas=0x186a0, address=Op.SLOAD(key=0xa), value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
+        + Op.STOP + Op.INVALID
+        + Op.SSTORE(key=0x7a, value=Op.CALLCODE(gas=0x186a0, address=0x13136008b64ff592819b2fa6d43f2835c452020e, value=0x0, args_offset=0x0, args_size=0x40, ret_offset=0x0, ret_size=0x40))
+        + Op.PUSH1[0x12] + Op.CODECOPY(dest_offset=0x0, offset=0x34, size=Op.DUP1)
+        + Op.PUSH1[0x0] + Op.RETURN + Op.STOP + Op.INVALID
+        + Op.SSTORE(key=0x0, value=0x1) + Op.SSTORE(key=0x14, value=Op.ADDRESS)
+        + Op.SSTORE(key=0x15, value=Op.ORIGIN) + Op.SSTORE(key=0x16, value=Op.CALLER)
+        + Op.STOP
+    ),
+    )
+    pre[contract] = Account(
+        balance=0,
+        nonce=0,
+        code=(
+        Op.CALL(gas=0xc3500, address=Op.CALLDATALOAD(offset=0x0), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)
+        + Op.STOP
+    ),
+    )
+    pre[callee_1] = Account(
+        balance=0x2710,
+        nonce=0,
+        code=(
+        Op.MSTORE(offset=0x0, value=0x604060006040600060007313136008b64ff592819b2fa6d43f2835c452020e62)
+        + Op.MSTORE(offset=0x20, value=0x186a0f2600b5533600c55000000000000000000000000000000000000000000)
+        + Op.CREATE(value=0x1, offset=0x0, size=0x40) + Op.STOP
+    ),
+    )
+    pre[sender] = Account(balance=0x2386f26fc10000, nonce=0)
+
+    tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
+
+    tx = Transaction(
+        secret_key=Hash(
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+        ),
+        to=contract,
+        data=tx_data,
+        gas_limit=1453081,
+        gas_price=10,
+        nonce=0,
+        value=0,
+    )
+
+    post = expected_post
+
+    state_test(env=env, pre=pre, post=post, tx=tx)

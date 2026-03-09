@@ -1,0 +1,76 @@
+"""
+Legacy Test from Christoph. J
+
+Ported from:
+tests/static/state_tests/stCallCreateCallCodeTest/createNameRegistratorendowmentTooHighFiller.json
+"""
+
+import pytest
+from execution_testing import (
+    Account,
+    Address,
+    Alloc,
+    Environment,
+    Hash,
+    StateTestFiller,
+    Transaction,
+)
+from execution_testing.vm import Op
+
+REFERENCE_SPEC_GIT_PATH = "N/A"
+REFERENCE_SPEC_VERSION = "N/A"
+
+
+@pytest.mark.ported_from(
+    ["tests/static/state_tests/stCallCreateCallCodeTest/createNameRegistratorendowmentTooHighFiller.json"],
+)
+@pytest.mark.valid_from("Prague")
+@pytest.mark.pre_alloc_mutable
+def test_create_name_registratorendowment_too_high(
+    state_test: StateTestFiller,
+    pre: Alloc,
+) -> None:
+    """Legacy Test from Christoph. J."""
+    coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
+    sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
+    contract = Address("0x84d56fc4fefc05a5bce6c569883a47ee499ee0da")
+
+    env = Environment(
+        fee_recipient=coinbase,
+        number=1,
+        timestamp=1000,
+        prev_randao=0x20000,
+        base_fee_per_gas=10,
+        gas_limit=1000000,
+    )
+
+    pre[contract] = Account(
+        balance=0xde0b6b3a7640000,
+        nonce=0,
+        code=(
+        Op.MSTORE(offset=0x0, value=0x601080600c6000396000f3006000355415600957005b60203560003555)
+        + Op.SSTORE(key=0x0, value=Op.CREATE(value=0xde0b6b3a7640001, offset=0x3, size=0x1d))
+        + Op.STOP
+    ),
+    )
+    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+
+    tx = Transaction(
+        secret_key=Hash(
+            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"
+        ),
+        to=contract,
+        data=b"",
+        gas_limit=300000,
+        gas_price=10,
+        nonce=0,
+        value=0,
+    )
+
+    post = {
+        contract: Account(
+            code=Op.MSTORE(offset=0x0, value=0x601080600c6000396000f3006000355415600957005b60203560003555) + Op.SSTORE(key=0x0, value=Op.CREATE(value=0xde0b6b3a7640001, offset=0x3, size=0x1d)) + Op.STOP,
+        ),
+    }
+
+    state_test(env=env, pre=pre, post=post, tx=tx)

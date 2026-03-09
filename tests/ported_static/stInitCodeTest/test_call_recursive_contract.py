@@ -1,0 +1,90 @@
+"""
+Ported from:
+tests/static/state_tests/stInitCodeTest/CallRecursiveContractFiller.json
+"""
+
+import pytest
+from execution_testing import (
+    Account,
+    Address,
+    Alloc,
+    Environment,
+    Hash,
+    StateTestFiller,
+    Transaction,
+)
+from execution_testing.vm import Op
+
+REFERENCE_SPEC_GIT_PATH = "N/A"
+REFERENCE_SPEC_VERSION = "N/A"
+
+
+@pytest.mark.ported_from(
+    ["tests/static/state_tests/stInitCodeTest/CallRecursiveContractFiller.json"],
+)
+@pytest.mark.valid_from("Prague")
+@pytest.mark.pre_alloc_mutable
+def test_call_recursive_contract(
+    state_test: StateTestFiller,
+    pre: Alloc,
+) -> None:
+    """Test ported from static filler."""
+    coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
+    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
+
+    env = Environment(
+        fee_recipient=coinbase,
+        number=1,
+        timestamp=1000,
+        prev_randao=0x20000,
+        base_fee_per_gas=10,
+        gas_limit=100000000,
+    )
+
+    pre[contract] = Account(
+        balance=0,
+        nonce=40,
+        code=(
+        Op.SSTORE(key=0x2, value=Op.ADDRESS)
+        + Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20)
+        + Op.CREATE(value=0x0, offset=0x0, size=0x20) + Op.STOP
+    ),
+    )
+    pre[sender] = Account(balance=0x989680, nonce=0)
+
+    tx = Transaction(
+        secret_key=Hash(
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+        ),
+        to=contract,
+        data=bytes.fromhex("00"),
+        gas_limit=400000,
+        gas_price=10,
+        nonce=0,
+        value=1,
+    )
+
+    post = {
+        contract: Account(
+            storage={2: 0x95e7baea6a6c7c4c2dfeb977efac326af552d87},
+            code=Op.SSTORE(key=0x2, value=Op.ADDRESS) + Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20) + Op.CREATE(value=0x0, offset=0x0, size=0x20) + Op.STOP,
+        ),
+        Address("0x4b0b4b3c7fd3dd5cea1d04dcf027dea29f84acb1"): Account(
+            storage={2: 0x4b0b4b3c7fd3dd5cea1d04dcf027dea29f84acb1},
+        ),
+        Address("0x60f971aa65f7e520dcb750823e2c239e61c3736b"): Account(
+            storage={2: 0x60f971aa65f7e520dcb750823e2c239e61c3736b},
+        ),
+        Address("0x6fc9df08d2206eff4f4c378aeb2a1f8c570952b9"): Account(
+            storage={2: 0x6fc9df08d2206eff4f4c378aeb2a1f8c570952b9},
+        ),
+        Address("0x74a77e95f3228f0b4d116d5a12e09aaf99ce54ae"): Account(
+            storage={2: 0x74a77e95f3228f0b4d116d5a12e09aaf99ce54ae},
+        ),
+        Address("0xf0064be0919341a45680ec0d592eaee47df671ac"): Account(
+            storage={2: 0xf0064be0919341a45680ec0d592eaee47df671ac},
+        ),
+    }
+
+    state_test(env=env, pre=pre, post=post, tx=tx)

@@ -1,0 +1,100 @@
+"""
+EXTCODEHASH/EXTCODESIZE of an account created then deleted in a CALL, checking results after the CALL returns
+
+Ported from:
+tests/static/state_tests/stExtCodeHash/extCodeHashCreatedAndDeletedAccountRecheckInOuterCallFiller.json
+"""
+
+import pytest
+from execution_testing import (
+    Account,
+    Address,
+    Alloc,
+    Environment,
+    Hash,
+    StateTestFiller,
+    Transaction,
+)
+from execution_testing.vm import Op
+
+REFERENCE_SPEC_GIT_PATH = "N/A"
+REFERENCE_SPEC_VERSION = "N/A"
+
+
+@pytest.mark.ported_from(
+    ["tests/static/state_tests/stExtCodeHash/extCodeHashCreatedAndDeletedAccountRecheckInOuterCallFiller.json"],
+)
+@pytest.mark.valid_from("Prague")
+@pytest.mark.pre_alloc_mutable
+def test_ext_code_hash_created_and_deleted_account_recheck_in_outer_call(
+    state_test: StateTestFiller,
+    pre: Alloc,
+) -> None:
+    """EXTCODEHASH/EXTCODESIZE of an account created then deleted in a CALL, checking results after the CALL returns."""
+    coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
+    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    contract = Address("0xdeadbeef00000000000000000000000000000001")
+    callee = Address("0xdeadbeef00000000000000000000000000000000")
+
+    env = Environment(
+        fee_recipient=coinbase,
+        number=1,
+        timestamp=1000,
+        prev_randao=0x20000,
+        base_fee_per_gas=10,
+        gas_limit=1000000,
+    )
+
+    pre[sender] = Account(balance=0xde0b6b3a7640000, nonce=0)
+    pre[callee] = Account(
+        balance=0xde0b6b3a7640000,
+        nonce=0,
+        code=(
+        Op.PUSH1[0x10] + Op.PUSH1[0x11]
+        + Op.CODECOPY(dest_offset=0x80, offset=0x44, size=Op.DUP1) + Op.PUSH1[0x80]
+        + Op.PUSH1[0x0] + Op.MSTORE(offset=0x0, value=Op.CREATE2)
+        + Op.SSTORE(key=0x0, value=Op.EXTCODEHASH(address=Op.MLOAD(offset=0x0)))
+        + Op.SSTORE(key=0x1, value=Op.EXTCODESIZE(address=Op.MLOAD(offset=0x0)))
+        + Op.POP(Op.CALL(gas=0x10000, address=Op.MLOAD(offset=0x0), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
+        + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH(address=Op.MLOAD(offset=0x0)))
+        + Op.SSTORE(key=0x3, value=Op.EXTCODESIZE(address=Op.MLOAD(offset=0x0)))
+        + Op.STOP + Op.STOP + Op.INVALID + Op.PUSH1[0x4]
+        + Op.CODECOPY(dest_offset=0x0, offset=0xd, size=Op.DUP1) + Op.PUSH1[0x0]
+        + Op.RETURN + Op.STOP + Op.INVALID + Op.SELFDESTRUCT(address=0x0) + Op.STOP
+    ),
+    )
+    pre[contract] = Account(
+        balance=0xde0b6b3a7640000,
+        nonce=0,
+        code=(
+        Op.POP(Op.CALL(gas=0x20000, address=0xdeadbeef00000000000000000000000000000000, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0))
+        + Op.SSTORE(key=0x0, value=Op.EXTCODEHASH(address=0x123f4c415171383dcf6f3ac6c3b70fe321e11b5e))
+        + Op.SSTORE(key=0x1, value=Op.EXTCODESIZE(address=0x123f4c415171383dcf6f3ac6c3b70fe321e11b5e))
+        + Op.STOP + Op.STOP
+    ),
+    )
+
+    tx = Transaction(
+        secret_key=Hash(
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+        ),
+        to=contract,
+        data=b"",
+        gas_limit=400000,
+        gas_price=10,
+        nonce=0,
+        value=1,
+    )
+
+    post = {
+        callee: Account(
+            storage={0: 0x73c5f15b1290fd9e66722596c2fa1e1c9341f7acb185530dce0bf0e0fec7dfc6, 1: 4, 2: 0x73c5f15b1290fd9e66722596c2fa1e1c9341f7acb185530dce0bf0e0fec7dfc6, 3: 4},
+            code=Op.PUSH1[0x10] + Op.PUSH1[0x11] + Op.CODECOPY(dest_offset=0x80, offset=0x44, size=Op.DUP1) + Op.PUSH1[0x80] + Op.PUSH1[0x0] + Op.MSTORE(offset=0x0, value=Op.CREATE2) + Op.SSTORE(key=0x0, value=Op.EXTCODEHASH(address=Op.MLOAD(offset=0x0))) + Op.SSTORE(key=0x1, value=Op.EXTCODESIZE(address=Op.MLOAD(offset=0x0))) + Op.POP(Op.CALL(gas=0x10000, address=Op.MLOAD(offset=0x0), value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH(address=Op.MLOAD(offset=0x0))) + Op.SSTORE(key=0x3, value=Op.EXTCODESIZE(address=Op.MLOAD(offset=0x0))) + Op.STOP + Op.STOP + Op.INVALID + Op.PUSH1[0x4] + Op.CODECOPY(dest_offset=0x0, offset=0xd, size=Op.DUP1) + Op.PUSH1[0x0] + Op.RETURN + Op.STOP + Op.INVALID + Op.SELFDESTRUCT(address=0x0) + Op.STOP,
+        ),
+        contract: Account(
+            storage={0: 0x73c5f15b1290fd9e66722596c2fa1e1c9341f7acb185530dce0bf0e0fec7dfc6, 1: 4},
+            code=Op.POP(Op.CALL(gas=0x20000, address=0xdeadbeef00000000000000000000000000000000, value=0x0, args_offset=0x0, args_size=0x0, ret_offset=0x0, ret_size=0x0)) + Op.SSTORE(key=0x0, value=Op.EXTCODEHASH(address=0x123f4c415171383dcf6f3ac6c3b70fe321e11b5e)) + Op.SSTORE(key=0x1, value=Op.EXTCODESIZE(address=0x123f4c415171383dcf6f3ac6c3b70fe321e11b5e)) + Op.STOP + Op.STOP,
+        ),
+    }
+
+    state_test(env=env, pre=pre, post=post, tx=tx)

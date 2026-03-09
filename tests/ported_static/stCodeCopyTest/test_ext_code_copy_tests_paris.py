@@ -1,0 +1,95 @@
+"""
+Ported from:
+tests/static/state_tests/stCodeCopyTest/ExtCodeCopyTestsParisFiller.json
+"""
+
+import pytest
+from execution_testing import (
+    Account,
+    Address,
+    Alloc,
+    Environment,
+    Hash,
+    StateTestFiller,
+    Transaction,
+)
+from execution_testing.vm import Op
+
+REFERENCE_SPEC_GIT_PATH = "N/A"
+REFERENCE_SPEC_VERSION = "N/A"
+
+
+@pytest.mark.ported_from(
+    ["tests/static/state_tests/stCodeCopyTest/ExtCodeCopyTestsParisFiller.json"],
+)
+@pytest.mark.valid_from("Prague")
+@pytest.mark.pre_alloc_mutable
+def test_ext_code_copy_tests_paris(
+    state_test: StateTestFiller,
+    pre: Alloc,
+) -> None:
+    """Test ported from static filler."""
+    coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
+    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    contract = Address("0xaaaf5374fce5edbc8e2a8697c15331677e6ebf0b")
+    callee = Address("0xcccf5374fce5edbc8e2a8697c15331677e6ebf0b")
+    callee_1 = Address("0xdddf5374fce5edbc8e2a8697c15331677e6ebf0b")
+    callee_2 = Address("0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b")
+
+    env = Environment(
+        fee_recipient=coinbase,
+        number=1,
+        timestamp=1000,
+        prev_randao=0x20000,
+        base_fee_per_gas=10,
+        gas_limit=9223372036854775807,
+    )
+
+    pre[sender] = Account(balance=0xffffffffffffffffffffffffffffffff, nonce=0)
+    pre[contract] = Account(
+        balance=7000,
+        nonce=0,
+        code=(
+        Op.EXTCODECOPY(address=0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2)
+        + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+        + Op.EXTCODECOPY(address=0xcccf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2)
+        + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x0))
+        + Op.EXTCODECOPY(address=0xdddf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2)
+        + Op.SSTORE(key=0x4, value=Op.MLOAD(offset=0x0))
+        + Op.EXTCODECOPY(address=0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2)
+        + Op.SSTORE(key=0x5, value=Op.MLOAD(offset=0x0))
+        + Op.EXTCODECOPY(address=0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0xc8)
+        + Op.SSTORE(key=0x6, value=Op.MLOAD(offset=0x0)) + Op.STOP
+    ),
+    )
+    pre[callee] = Account(balance=10, nonce=0)
+    pre[callee_1] = Account(balance=0, nonce=1)
+    pre[callee_2] = Account(
+        balance=0,
+        nonce=1,
+        code=bytes.fromhex("1122334455667788991011121314151617181920212223242526272829303132"),
+    )
+
+    tx = Transaction(
+        secret_key=Hash(
+            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"
+        ),
+        to=contract,
+        data=b"",
+        gas_limit=400000,
+        gas_price=10,
+        nonce=0,
+        value=0,
+    )
+
+    post = {
+        contract: Account(
+            storage={5: 0x11120000000000000000000000000000000000000000000000000000000000, 6: 0x11121314151617181920212223242526272829303132000000000000000000},
+            code=Op.EXTCODECOPY(address=0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2) + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0)) + Op.EXTCODECOPY(address=0xcccf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2) + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x0)) + Op.EXTCODECOPY(address=0xdddf5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2) + Op.SSTORE(key=0x4, value=Op.MLOAD(offset=0x0)) + Op.EXTCODECOPY(address=0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0x2) + Op.SSTORE(key=0x5, value=Op.MLOAD(offset=0x0)) + Op.EXTCODECOPY(address=0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b, dest_offset=0x1, offset=0xa, size=0xc8) + Op.SSTORE(key=0x6, value=Op.MLOAD(offset=0x0)) + Op.STOP,
+        ),
+        callee_2: Account(
+            code=bytes.fromhex("1122334455667788991011121314151617181920212223242526272829303132"),
+        ),
+    }
+
+    state_test(env=env, pre=pre, post=post, tx=tx)
