@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -32,15 +33,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f000000000000000000000000000000000000000000000000000000000000000f3000000000000000000000000000000000000000000000000000000000000c000",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 0x4B1649D},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -48,9 +86,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f000000000000000000000000000000000000000000000000000000000000000f30000000000000000000000000000000000000000000000000000000000006000",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0x553e6c30af61e7a3576f31311ea8a620f80d047e"): Account(
                     code=bytes.fromhex(
@@ -63,9 +101,46 @@ REFERENCE_SPEC_VERSION = "N/A"
                         1: 0x4BBCE4,
                         2: 0xDCBCC213F0C91B71D38DEDD06C95CCB99467B9B05F275BED536DE1044F5F18FA,  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -73,15 +148,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f000000000000000000000000000000000000000000000000000000000000000f30000000000000000000000000000000000000000000000000000000000006001",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 0x4B16491},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -89,14 +201,267 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f000000000000000000000000000000000000000000000000000000000000000f30000000000000000000000000000000000000000000000000000000000000100",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0x553e6c30af61e7a3576f31311ea8a620f80d047e"): Account(
-                    code=bytes.fromhex(
-                        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
-                    )
+                    code=Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={
@@ -104,9 +469,46 @@ REFERENCE_SPEC_VERSION = "N/A"
                         1: 0x1777F,
                         2: 0xD956C0ABD597440481902014A37B733358EE7685461EB1B5916EEFD83381E6D9,  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -114,15 +516,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f000000000000000000000000000000000000000000000000000000000000000fd000000000000000000000000000000000000000000000000000000000000c000",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 54116},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -130,15 +569,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f000000000000000000000000000000000000000000000000000000000000000fd0000000000000000000000000000000000000000000000000000000000006000",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 48356},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -146,15 +622,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f000000000000000000000000000000000000000000000000000000000000000fd0000000000000000000000000000000000000000000000000000000000006001",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 48362},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -162,15 +675,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f000000000000000000000000000000000000000000000000000000000000000fd0000000000000000000000000000000000000000000000000000000000000100",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 44927},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -178,15 +728,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f500000000000000000000000000000000000000000000000000000000000000f3000000000000000000000000000000000000000000000000000000000000c000",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 0x4B1649E},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -194,9 +781,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f500000000000000000000000000000000000000000000000000000000000000f30000000000000000000000000000000000000000000000000000000000006000",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xa5dc71d47d0d8dcf5990e81c74e981baf24a8fa2"): Account(
                     code=bytes.fromhex(
@@ -209,9 +796,46 @@ REFERENCE_SPEC_VERSION = "N/A"
                         1: 0x4BBD2E,
                         2: 0xDCBCC213F0C91B71D38DEDD06C95CCB99467B9B05F275BED536DE1044F5F18FA,  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -219,15 +843,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f500000000000000000000000000000000000000000000000000000000000000f30000000000000000000000000000000000000000000000000000000000006001",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 0x4B16492},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -235,14 +896,267 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f500000000000000000000000000000000000000000000000000000000000000f30000000000000000000000000000000000000000000000000000000000000100",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0x0595c5d0c272757cff0b3dca4ed60d60cd6e9f58"): Account(
-                    code=bytes.fromhex(
-                        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
-                    )
+                    code=Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.SELFDESTRUCT
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={
@@ -250,9 +1164,46 @@ REFERENCE_SPEC_VERSION = "N/A"
                         1: 0x177C9,
                         2: 0xD956C0ABD597440481902014A37B733358EE7685461EB1B5916EEFD83381E6D9,  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -260,15 +1211,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f500000000000000000000000000000000000000000000000000000000000000fd000000000000000000000000000000000000000000000000000000000000c000",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 54190},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -276,15 +1264,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f500000000000000000000000000000000000000000000000000000000000000fd0000000000000000000000000000000000000000000000000000000000006000",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 48430},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -292,15 +1317,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f500000000000000000000000000000000000000000000000000000000000000fd0000000000000000000000000000000000000000000000000000000000006001",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 48436},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -308,15 +1370,52 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000f500000000000000000000000000000000000000000000000000000000000000fd0000000000000000000000000000000000000000000000000000000000000100",  # noqa: E501
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "60001960005260206101008039610100516000f3"
-                    )
+                    code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+                    + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+                    + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={1: 45001},
-                    code=bytes.fromhex(
-                        "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a17610120600080f56032565b5050610120600080f0603256"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0x1, value=Op.GAS)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x44)
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.EXTCODESIZE(address=0xC0DE)
+                    + Op.EXTCODECOPY(
+                        address=0xC0DE,
+                        dest_offset=Op.DUP1,
+                        offset=0x0,
+                        size=Op.DUP1,
+                    )
+                    + Op.SUB
+                    + Op.MSTORE8
+                    + Op.PUSH2[0x100]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+                    + Op.PUSH1[0xF5]
+                    + Op.JUMPI(pc=0x44, condition=Op.EQ)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SSTORE(
+                        key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS)
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.CREATE2(
+                        value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17
+                    )
+                    + Op.JUMP(pc=0x32)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+                    + Op.JUMP(pc=0x32),
                 ),
             },
         ),
@@ -365,16 +1464,53 @@ def test_create_large_result(
     pre[callee] = Account(
         balance=0,
         nonce=1,
-        code=bytes.fromhex("60001960005260206101008039610100516000f3"),
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
+            + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
+            + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100))
+        ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
-        code=bytes.fromhex(
-            "5a60015560043560243560443590600161c0de3b8060008061c0de3c0353610100526000"  # noqa: E501
-            "908060f01460535760f5146044575b806000555a600154036001553f600255005b50615a"  # noqa: E501
-            "17610120600080f56032565b5050610120600080f0603256"
+        code=(
+            Op.SSTORE(key=0x1, value=Op.GAS)
+            + Op.CALLDATALOAD(offset=0x4)
+            + Op.CALLDATALOAD(offset=0x24)
+            + Op.CALLDATALOAD(offset=0x44)
+            + Op.SWAP1
+            + Op.PUSH1[0x1]
+            + Op.EXTCODESIZE(address=0xC0DE)
+            + Op.EXTCODECOPY(
+                address=0xC0DE,
+                dest_offset=Op.DUP1,
+                offset=0x0,
+                size=Op.DUP1,
+            )
+            + Op.SUB
+            + Op.MSTORE8
+            + Op.PUSH2[0x100]
+            + Op.MSTORE
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
+            + Op.PUSH1[0xF5]
+            + Op.JUMPI(pc=0x44, condition=Op.EQ)
+            + Op.JUMPDEST
+            + Op.SSTORE(key=0x0, value=Op.DUP1)
+            + Op.SSTORE(key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS))
+            + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.POP
+            + Op.CREATE2(value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17)
+            + Op.JUMP(pc=0x32)
+            + Op.JUMPDEST
+            + Op.POP
+            + Op.POP
+            + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
+            + Op.JUMP(pc=0x32)
         ),
         storage={0x0: 0x60A7, 0x1: 0x60A7, 0x2: 0x60A7},
     )

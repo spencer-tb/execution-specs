@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -52,9 +53,21 @@ def test_callcode1024_balance_too_low(
     pre[contract] = Account(
         balance=1024,
         nonce=0,
-        code=bytes.fromhex(
-            "60016000540160005560006000600060006000547363e310ada77469a7a18b4cbf231fcc"  # noqa: E501
-            "efb6f18267650ffffffffffff260015500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALLCODE(
+                    gas=0xFFFFFFFFFFF,
+                    address=0x63E310ADA77469A7A18B4CBF231FCCEFB6F18267,
+                    value=Op.SLOAD(key=0x0),
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(balance=7000, nonce=0)
@@ -74,8 +87,21 @@ def test_callcode1024_balance_too_low(
     post = {
         contract: Account(
             storage={0: 1025, 1: 1},
-            code=bytes.fromhex(
-                "60016000540160005560006000600060006000547363e310ada77469a7a18b4cbf231fccefb6f18267650ffffffffffff260015500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALLCODE(
+                        gas=0xFFFFFFFFFFF,
+                        address=0x63E310ADA77469A7A18B4CBF231FCCEFB6F18267,
+                        value=Op.SLOAD(key=0x0),
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

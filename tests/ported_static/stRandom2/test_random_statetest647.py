@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,7 +47,12 @@ def test_random_statetest647(
     pre[contract] = Account(
         balance=0,
         nonce=7,
-        code=bytes.fromhex("6001600160000360003e00"),
+        code=(
+            Op.RETURNDATACOPY(
+                dest_offset=0x0, offset=Op.SUB(0x0, 0x1), size=0x1
+            )
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0x174876E800, nonce=0)
 
@@ -63,7 +69,16 @@ def test_random_statetest647(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("6001600160000360003e00")),
+        contract: Account(
+            code=(
+                Op.RETURNDATACOPY(
+                    dest_offset=0x0,
+                    offset=Op.SUB(0x0, 0x1),
+                    size=0x1,
+                )
+                + Op.STOP
+            ),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,18 @@ def test_test_name_registrator(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
 
     tx = Transaction(
@@ -72,7 +84,20 @@ def test_test_name_registrator(
             storage={
                 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA,  # noqa: E501
             },
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
     }
 

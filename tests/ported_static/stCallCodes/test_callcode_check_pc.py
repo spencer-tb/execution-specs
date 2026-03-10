@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,16 +48,27 @@ def test_callcode_check_pc(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6040600060406000600073fa7fc61138ee12431f8693335fb2bf5af4051632620f4240f1"  # noqa: E501
-            "505860035500"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0xF4240,
+                    address=0xFA7FC61138EE12431F8693335FB2BF5AF4051632,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.SSTORE(key=0x3, value=Op.PC)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[callee] = Account(
         balance=0x2540BE400,
         nonce=0,
-        code=bytes.fromhex("600160005500"),
+        code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP,
     )
 
     tx = Transaction(
@@ -74,11 +86,26 @@ def test_callcode_check_pc(
     post = {
         contract: Account(
             storage={3: 37},
-            code=bytes.fromhex(
-                "6040600060406000600073fa7fc61138ee12431f8693335fb2bf5af4051632620f4240f1505860035500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0xF4240,
+                        address=0xFA7FC61138EE12431F8693335FB2BF5AF4051632,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.SSTORE(key=0x3, value=Op.PC)
+                + Op.STOP
             ),
         ),
-        callee: Account(storage={0: 1}, code=bytes.fromhex("600160005500")),
+        callee: Account(
+            storage={0: 1},
+            code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP,
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

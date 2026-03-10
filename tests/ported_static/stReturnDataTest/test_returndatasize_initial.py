@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,7 +49,7 @@ def test_returndatasize_initial(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("3d60005500"),
+        code=Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE) + Op.STOP,
         storage={0x0: 0x1},
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
@@ -66,7 +67,9 @@ def test_returndatasize_initial(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("3d60005500")),
+        contract: Account(
+            code=Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE) + Op.STOP,
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

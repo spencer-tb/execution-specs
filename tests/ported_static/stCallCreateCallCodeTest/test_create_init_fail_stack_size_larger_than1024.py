@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,10 +50,19 @@ def test_create_init_fail_stack_size_larger_than1024(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7f6103ff6000525b7f0102030405060708090a0102030405060708090a01020304600052"  # noqa: E501
-            "7f05060708090a0102600160005103600052600051600657000000000000000000602052"  # noqa: E501
-            "604060006001f0ff00"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x6103FF6000525B7F0102030405060708090A0102030405060708090A01020304,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x20,
+                value=0x5060708090A0102600160005103600052600051600657000000000000000000,  # noqa: E501
+            )
+            + Op.SELFDESTRUCT(
+                address=Op.CREATE(value=0x1, offset=0x0, size=0x40)
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -71,8 +81,19 @@ def test_create_init_fail_stack_size_larger_than1024(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "7f6103ff6000525b7f0102030405060708090a0102030405060708090a010203046000527f05060708090a0102600160005103600052600051600657000000000000000000602052604060006001f0ff00"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x6103FF6000525B7F0102030405060708090A0102030405060708090A01020304,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x20,
+                    value=0x5060708090A0102600160005103600052600051600657000000000000000000,  # noqa: E501
+                )
+                + Op.SELFDESTRUCT(
+                    address=Op.CREATE(value=0x1, offset=0x0, size=0x40),
+                )
+                + Op.STOP
             ),
         ),
     }

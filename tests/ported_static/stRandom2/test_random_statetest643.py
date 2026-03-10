@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,24 +49,47 @@ def test_random_statetest643(
     pre[contract] = Account(
         balance=0x3F91B25C1601534B,
         nonce=210,
-        code=bytes.fromhex(
-            "79ecfecf2ab84463f738fc85b069590fcff0334fb1a7108861a44465a26237bc83297ff8"  # noqa: E501
-            "93a1a95c84afbecc79e1ee4acc8fca826df1ab268bdfd9e712ad0d261f5ede0b6545e6a7"  # noqa: E501
-            "d462826d39eb0ac5b4c3ef35f0b4e6d9e05f0773fc63be0c082847f6f9f7728764e142fc"  # noqa: E501
-            "d95702c36d65c1e55ec0e2128768030e4eb0de74b57969caa2f2493998537ad0ecba9400"  # noqa: E501
-            "ebae911dad6f98bd15da63a8614aa455dc593fa70386a260c66270f1d7527b75f1bf8a68"  # noqa: E501
-            "3b5d1721f7dd57755bd6a9bed9f874e3876cfcac6762ea51"
+        code=(
+            Op.PUSH26[0xECFECF2AB84463F738FC85B069590FCFF0334FB1A7108861A444]
+            + Op.SIGNEXTEND(
+                0xF893A1A95C84AFBECC79E1EE4ACC8FCA826DF1AB268BDFD9E712AD0D261F5EDE,  # noqa: E501
+                0xA26237BC8329,
+            )
+            + Op.SMOD(0x39EB0AC5B4C3EF35F0B4E6D9E05F, 0x45E6A7D46282)
+            + Op.LOG2(
+                offset=0x98BD15DA63A8614AA455DC593FA70386,
+                size=0xB57969CAA2F2493998537AD0ECBA9400EBAE911DAD,
+                topic_1=0x65C1E55EC0E2128768030E4EB0DE,
+                topic_2=0xFC63BE0C082847F6F9F7728764E142FCD95702C3,
+            )
+            + Op.MSTORE(offset=0x70F1D7, value=0xC6)
+            + Op.MLOAD(
+                offset=0x75F1BF8A683B5D1721F7DD57755BD6A9BED9F874E3876CFCAC6762EA,  # noqa: E501
+            )
         ),
     )
     pre[callee_1] = Account(
         balance=0x262E8DE142312A2D,
         nonce=243,
-        code=bytes.fromhex(
-            "436debc3912504eded08f73b9ff9490d73fc4f820a0890b7e8417fa97940713aeb870e59"  # noqa: E501
-            "a790607f6b3d5649e57458ea8692da323253735967657e3fc6e02f6de1c0ff6cc18e051b"  # noqa: E501
-            "dd52ad7b1eb441440620426b3485ab683d44ff8d5544eb7f7fb3e1f4c30063640b5a626f"  # noqa: E501
-            "341b6271dd59621208476208431973971ab94b9c20484b37b157476a9f106f639779ed63"  # noqa: E501
-            "38f86b9af4"
+        code=(
+            Op.NUMBER
+            + Op.PUSH14[0xEBC3912504EDED08F73B9FF9490D]
+            + Op.PUSH20[0xFC4F820A0890B7E8417FA97940713AEB870E59A7]
+            + Op.SWAP1
+            + Op.MSTORE8(offset=0x3D5649E57458EA8692DA3232, value=0x7F)
+            + Op.SIGNEXTEND(
+                0x1EB441440620426B3485AB683D44FF8D5544EB7F7FB3E1F4C3006364,
+                0x5967657E3FC6E02F6DE1C0FF6CC18E051BDD52AD,
+            )
+            + Op.GAS
+            + Op.DELEGATECALL(
+                gas=0x38F86B9A,
+                address=0x971AB94B9C20484B37B157476A9F106F639779ED,
+                args_offset=0x84319,
+                args_size=0x120847,
+                ret_offset=0x71DD59,
+                ret_size=0x6F341B,
+            )
         ),
     )
 
@@ -94,13 +118,47 @@ def test_random_statetest643(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "79ecfecf2ab84463f738fc85b069590fcff0334fb1a7108861a44465a26237bc83297ff893a1a95c84afbecc79e1ee4acc8fca826df1ab268bdfd9e712ad0d261f5ede0b6545e6a7d462826d39eb0ac5b4c3ef35f0b4e6d9e05f0773fc63be0c082847f6f9f7728764e142fcd95702c36d65c1e55ec0e2128768030e4eb0de74b57969caa2f2493998537ad0ecba9400ebae911dad6f98bd15da63a8614aa455dc593fa70386a260c66270f1d7527b75f1bf8a683b5d1721f7dd57755bd6a9bed9f874e3876cfcac6762ea51"  # noqa: E501
+            code=(
+                Op.PUSH26[
+                    0xECFECF2AB84463F738FC85B069590FCFF0334FB1A7108861A444
+                ]
+                + Op.SIGNEXTEND(
+                    0xF893A1A95C84AFBECC79E1EE4ACC8FCA826DF1AB268BDFD9E712AD0D261F5EDE,  # noqa: E501
+                    0xA26237BC8329,
+                )
+                + Op.SMOD(0x39EB0AC5B4C3EF35F0B4E6D9E05F, 0x45E6A7D46282)
+                + Op.LOG2(
+                    offset=0x98BD15DA63A8614AA455DC593FA70386,
+                    size=0xB57969CAA2F2493998537AD0ECBA9400EBAE911DAD,
+                    topic_1=0x65C1E55EC0E2128768030E4EB0DE,
+                    topic_2=0xFC63BE0C082847F6F9F7728764E142FCD95702C3,
+                )
+                + Op.MSTORE(offset=0x70F1D7, value=0xC6)
+                + Op.MLOAD(
+                    offset=0x75F1BF8A683B5D1721F7DD57755BD6A9BED9F874E3876CFCAC6762EA,  # noqa: E501
+                )
             ),
         ),
         callee_1: Account(
-            code=bytes.fromhex(
-                "436debc3912504eded08f73b9ff9490d73fc4f820a0890b7e8417fa97940713aeb870e59a790607f6b3d5649e57458ea8692da323253735967657e3fc6e02f6de1c0ff6cc18e051bdd52ad7b1eb441440620426b3485ab683d44ff8d5544eb7f7fb3e1f4c30063640b5a626f341b6271dd59621208476208431973971ab94b9c20484b37b157476a9f106f639779ed6338f86b9af4"  # noqa: E501
+            code=(
+                Op.NUMBER
+                + Op.PUSH14[0xEBC3912504EDED08F73B9FF9490D]
+                + Op.PUSH20[0xFC4F820A0890B7E8417FA97940713AEB870E59A7]
+                + Op.SWAP1
+                + Op.MSTORE8(offset=0x3D5649E57458EA8692DA3232, value=0x7F)
+                + Op.SIGNEXTEND(
+                    0x1EB441440620426B3485AB683D44FF8D5544EB7F7FB3E1F4C3006364,
+                    0x5967657E3FC6E02F6DE1C0FF6CC18E051BDD52AD,
+                )
+                + Op.GAS
+                + Op.DELEGATECALL(
+                    gas=0x38F86B9A,
+                    address=0x971AB94B9C20484B37B157476A9F106F639779ED,
+                    args_offset=0x84319,
+                    args_size=0x120847,
+                    ret_offset=0x71DD59,
+                    ret_size=0x6F341B,
+                )
             ),
         ),
     }

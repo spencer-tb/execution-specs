@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,18 +51,44 @@ def test_call_outsize_then_create2_successful_then_returndatasize(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7d111122223333444455556666777788889999aaaabbbbccccddddeeeeffff6000526020"  # noqa: E501
-            "6000f300"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
+            )
+            + Op.RETURN(offset=0x0, size=0x20)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "60206000600060006000730aabbccdd5c57f15886f9b263e2f6d2d6c7b5ec66409000000"  # noqa: E501
-            "00f1506000600e80603e60003960006000f5503d6000550000fe62112233600052602060"  # noqa: E501
-            "00f30000"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x900000000,
+                    address=0xAABBCCDD5C57F15886F9B263E2F6D2D6C7B5EC6,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0xE]
+            + Op.CODECOPY(dest_offset=0x0, offset=0x3E, size=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x0]
+            + Op.POP(Op.CREATE2)
+            + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+            + Op.STOP
+            + Op.STOP
+            + Op.INVALID
+            + Op.MSTORE(offset=0x0, value=0x112233)
+            + Op.RETURN(offset=0x0, size=0x20)
+            + Op.STOP
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
@@ -81,13 +108,42 @@ def test_call_outsize_then_create2_successful_then_returndatasize(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "7d111122223333444455556666777788889999aaaabbbbccccddddeeeeffff60005260206000f300"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
+                )
+                + Op.RETURN(offset=0x0, size=0x20)
+                + Op.STOP
             ),
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "60206000600060006000730aabbccdd5c57f15886f9b263e2f6d2d6c7b5ec6640900000000f1506000600e80603e60003960006000f5503d6000550000fe6211223360005260206000f30000"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x900000000,
+                        address=0xAABBCCDD5C57F15886F9B263E2F6D2D6C7B5EC6,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0xE]
+                + Op.CODECOPY(dest_offset=0x0, offset=0x3E, size=Op.DUP1)
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0x0]
+                + Op.POP(Op.CREATE2)
+                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+                + Op.STOP
+                + Op.STOP
+                + Op.INVALID
+                + Op.MSTORE(offset=0x0, value=0x112233)
+                + Op.RETURN(offset=0x0, size=0x20)
+                + Op.STOP
+                + Op.STOP
             ),
         ),
         Address("0xc0c06666fad9e52251740536e21fc0f3db0e0fa0"): Account(

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,8 +47,13 @@ def test_refund50_1(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600155600060025560006003556000600455600060055500"
+        code=(
+            Op.SSTORE(key=0x1, value=0x0)
+            + Op.SSTORE(key=0x2, value=0x0)
+            + Op.SSTORE(key=0x3, value=0x0)
+            + Op.SSTORE(key=0x4, value=0x0)
+            + Op.SSTORE(key=0x5, value=0x0)
+            + Op.STOP
         ),
         storage={0x1: 0x1, 0x2: 0x1, 0x3: 0x1, 0x4: 0x1, 0x5: 0x1},
     )
@@ -68,8 +74,13 @@ def test_refund50_1(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "6000600155600060025560006003556000600455600060055500"
+            code=(
+                Op.SSTORE(key=0x1, value=0x0)
+                + Op.SSTORE(key=0x2, value=0x0)
+                + Op.SSTORE(key=0x3, value=0x0)
+                + Op.SSTORE(key=0x4, value=0x0)
+                + Op.SSTORE(key=0x5, value=0x0)
+                + Op.STOP
             ),
         ),
     }

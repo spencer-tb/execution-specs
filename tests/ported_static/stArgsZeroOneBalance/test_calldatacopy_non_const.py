@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,9 +35,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(
-                    code=bytes.fromhex(
-                        "73444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a0313700"  # noqa: E501
+                    code=Op.CALLDATACOPY(
+                        dest_offset=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
+                        offset=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
+                        size=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -45,9 +55,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(
-                    code=bytes.fromhex(
-                        "73444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a0313700"  # noqa: E501
+                    code=Op.CALLDATACOPY(
+                        dest_offset=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
+                        offset=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
+                        size=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -56,9 +75,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(
-                    code=bytes.fromhex(
-                        "73444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a0313700"  # noqa: E501
+                    code=Op.CALLDATACOPY(
+                        dest_offset=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
+                        offset=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
+                        size=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -67,9 +95,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x444c2681920e1105c9104fb32249ddbb41cba4a0"): Account(
-                    code=bytes.fromhex(
-                        "73444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a0313700"  # noqa: E501
+                    code=Op.CALLDATACOPY(
+                        dest_offset=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
+                        offset=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
+                        size=Op.BALANCE(
+                            address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -102,9 +139,19 @@ def test_calldatacopy_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73444c2681920e1105c9104fb32249ddbb41cba4a03173444c2681920e1105c9104fb322"  # noqa: E501
-            "49ddbb41cba4a03173444c2681920e1105c9104fb32249ddbb41cba4a0313700"
+        code=(
+            Op.CALLDATACOPY(
+                dest_offset=Op.BALANCE(
+                    address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0,
+                ),
+                offset=Op.BALANCE(
+                    address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0,
+                ),
+                size=Op.BALANCE(
+                    address=0x444C2681920E1105C9104FB32249DDBB41CBA4A0,
+                ),
+            )
+            + Op.STOP
         ),
     )
 

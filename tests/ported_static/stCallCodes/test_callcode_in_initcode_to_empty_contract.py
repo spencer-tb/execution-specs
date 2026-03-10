@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,22 +35,66 @@ REFERENCE_SPEC_VERSION = "N/A"
             "0000000000000000000000001000000000000000000000000000000000000000",
             {
                 Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "602d80600f60003960006000f000fe600060006000600060017310000000000000000000000000000000000000016207a120f2600155600160025500"  # noqa: E501
+                    code=Op.PUSH1[0x2D]
+                    + Op.CODECOPY(dest_offset=0x0, offset=0xF, size=Op.DUP1)
+                    + Op.PUSH1[0x0]
+                    + Op.PUSH1[0x0]
+                    + Op.CREATE
+                    + Op.STOP
+                    + Op.INVALID
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALLCODE(
+                            gas=0x7A120,
+                            address=0x1000000000000000000000000000000000000001,
+                            value=0x1,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=0x1)
+                    + Op.STOP
                 ),
                 Address("0x1100000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "60006000600060006000600035620493e0f100"
+                    code=Op.CALL(
+                        gas=0x493E0,
+                        address=Op.CALLDATALOAD(offset=0x0),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
                     )
+                    + Op.STOP
                 ),
                 Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(
                     storage={2: 1}
                 ),
                 Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "6000602d80601160003960006000f500fe600060006000600060017310000000000000000000000000000000000000016207a120f2600155600160025500"  # noqa: E501
+                    code=Op.PUSH1[0x0]
+                    + Op.PUSH1[0x2D]
+                    + Op.CODECOPY(dest_offset=0x0, offset=0x11, size=Op.DUP1)
+                    + Op.PUSH1[0x0]
+                    + Op.PUSH1[0x0]
+                    + Op.CREATE2
+                    + Op.STOP
+                    + Op.INVALID
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALLCODE(
+                            gas=0x7A120,
+                            address=0x1000000000000000000000000000000000000001,
+                            value=0x1,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=0x1)
+                    + Op.STOP
                 ),
             },
         ),
@@ -57,19 +102,63 @@ REFERENCE_SPEC_VERSION = "N/A"
             "0000000000000000000000002000000000000000000000000000000000000000",
             {
                 Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "602d80600f60003960006000f000fe600060006000600060017310000000000000000000000000000000000000016207a120f2600155600160025500"  # noqa: E501
+                    code=Op.PUSH1[0x2D]
+                    + Op.CODECOPY(dest_offset=0x0, offset=0xF, size=Op.DUP1)
+                    + Op.PUSH1[0x0]
+                    + Op.PUSH1[0x0]
+                    + Op.CREATE
+                    + Op.STOP
+                    + Op.INVALID
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALLCODE(
+                            gas=0x7A120,
+                            address=0x1000000000000000000000000000000000000001,
+                            value=0x1,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=0x1)
+                    + Op.STOP
                 ),
                 Address("0x1100000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "60006000600060006000600035620493e0f100"
+                    code=Op.CALL(
+                        gas=0x493E0,
+                        address=Op.CALLDATALOAD(offset=0x0),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
                     )
+                    + Op.STOP
                 ),
                 Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "6000602d80601160003960006000f500fe600060006000600060017310000000000000000000000000000000000000016207a120f2600155600160025500"  # noqa: E501
+                    code=Op.PUSH1[0x0]
+                    + Op.PUSH1[0x2D]
+                    + Op.CODECOPY(dest_offset=0x0, offset=0x11, size=Op.DUP1)
+                    + Op.PUSH1[0x0]
+                    + Op.PUSH1[0x0]
+                    + Op.CREATE2
+                    + Op.STOP
+                    + Op.INVALID
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALLCODE(
+                            gas=0x7A120,
+                            address=0x1000000000000000000000000000000000000001,
+                            value=0x1,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=0x1)
+                    + Op.STOP
                 ),
                 Address("0x9f9f2f99f78bfedcd1f32d936203bd1c0cb00853"): Account(
                     storage={2: 1}
@@ -105,22 +194,72 @@ def test_callcode_in_initcode_to_empty_contract(
     pre[callee] = Account(
         balance=0x2710,
         nonce=0,
-        code=bytes.fromhex(
-            "602d80600f60003960006000f000fe600060006000600060017310000000000000000000"  # noqa: E501
-            "000000000000000000016207a120f2600155600160025500"
+        code=(
+            Op.PUSH1[0x2D]
+            + Op.CODECOPY(dest_offset=0x0, offset=0xF, size=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x0]
+            + Op.CREATE
+            + Op.STOP
+            + Op.INVALID
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALLCODE(
+                    gas=0x7A120,
+                    address=0x1000000000000000000000000000000000000001,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x2, value=0x1)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("60006000600060006000600035620493e0f100"),
+        code=(
+            Op.CALL(
+                gas=0x493E0,
+                address=Op.CALLDATALOAD(offset=0x0),
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
+        ),
     )
     pre[callee_1] = Account(
         balance=0x2710,
         nonce=0,
-        code=bytes.fromhex(
-            "6000602d80601160003960006000f500fe60006000600060006001731000000000000000"  # noqa: E501
-            "0000000000000000000000016207a120f2600155600160025500"
+        code=(
+            Op.PUSH1[0x0]
+            + Op.PUSH1[0x2D]
+            + Op.CODECOPY(dest_offset=0x0, offset=0x11, size=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x0]
+            + Op.CREATE2
+            + Op.STOP
+            + Op.INVALID
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALLCODE(
+                    gas=0x7A120,
+                    address=0x1000000000000000000000000000000000000001,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x2, value=0x1)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x2386F26FC10000, nonce=0)

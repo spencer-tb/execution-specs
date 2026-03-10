@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,7 +51,7 @@ def test_create_empty000_createin_init_code_transaction(
     pre[contract] = Account(
         balance=0xE8D4A51000,
         nonce=0,
-        code=bytes.fromhex("600c60015500"),
+        code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP,
     )
 
     tx = Transaction(
@@ -69,7 +70,10 @@ def test_create_empty000_createin_init_code_transaction(
     )
 
     post = {
-        contract: Account(storage={1: 12}, code=bytes.fromhex("600c60015500")),
+        contract: Account(
+            storage={1: 12},
+            code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP,
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,10 @@ def test_suicide_not_existing_account(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("73aa1722f3947def4cf144679da39c4c32bdc35681ff00"),
+        code=(
+            Op.SELFDESTRUCT(address=0xAA1722F3947DEF4CF144679DA39C4C32BDC35681)
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -67,8 +71,11 @@ def test_suicide_not_existing_account(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "73aa1722f3947def4cf144679da39c4c32bdc35681ff00"
+            code=(
+                Op.SELFDESTRUCT(
+                    address=0xAA1722F3947DEF4CF144679DA39C4C32BDC35681,
+                )
+                + Op.STOP
             ),
         ),
     }

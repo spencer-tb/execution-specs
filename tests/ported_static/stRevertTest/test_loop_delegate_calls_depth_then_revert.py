@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,17 +51,33 @@ def test_loop_delegate_calls_depth_then_revert(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600160005401600055600060006000600073f798cb78490da31dfacdcd1f2b3fb1948bb2"  # noqa: E501
-            "b2285af400"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.DELEGATECALL(
+                gas=Op.GAS,
+                address=0xF798CB78490DA31DFACDCD1F2B3FB1948BB2B228,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600160005401600055600060006000600073b0923c4a632de291fcdac653e6c6cc2b4e4c"  # noqa: E501
-            "dfa85af400"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.DELEGATECALL(
+                gas=Op.GAS,
+                address=0xB0923C4A632DE291FCDAC653E6C6CC2B4E4CDFA8,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -80,13 +97,31 @@ def test_loop_delegate_calls_depth_then_revert(
     post = {
         contract: Account(
             storage={0: 386},
-            code=bytes.fromhex(
-                "600160005401600055600060006000600073f798cb78490da31dfacdcd1f2b3fb1948bb2b2285af400"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.DELEGATECALL(
+                    gas=Op.GAS,
+                    address=0xF798CB78490DA31DFACDCD1F2B3FB1948BB2B228,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
         callee: Account(
-            code=bytes.fromhex(
-                "600160005401600055600060006000600073b0923c4a632de291fcdac653e6c6cc2b4e4cdfa85af400"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.DELEGATECALL(
+                    gas=Op.GAS,
+                    address=0xB0923C4A632DE291FCDAC653E6C6CC2B4E4CDFA8,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
     }

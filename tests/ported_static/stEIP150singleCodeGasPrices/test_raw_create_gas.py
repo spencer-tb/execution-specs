@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,12 @@ def test_raw_create_gas(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("5a600052600060006000f0505a6000510360015500"),
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.POP(Op.CREATE(value=0x0, offset=0x0, size=0x0))
+            + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -67,7 +73,14 @@ def test_raw_create_gas(
     post = {
         contract: Account(
             storage={1: 32022},
-            code=bytes.fromhex("5a600052600060006000f0505a6000510360015500"),
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.POP(Op.CREATE(value=0x0, offset=0x0, size=0x0))
+                + Op.SSTORE(
+                    key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.STOP
+            ),
         ),
     }
 

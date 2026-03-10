@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,13 +32,20 @@ REFERENCE_SPEC_VERSION = "N/A"
             4074160023,
             {
                 Address("0x322c72dedad1a81092ab9ba908fbec8779ce1c32"): Account(
-                    code=bytes.fromhex(
-                        "58679b8e24022d8c28f3620b55a06384bc2f83136515b61916f0f579ea3e9d28799d45aa77bf1fc1a84edf0193dea2d610209eaaf9c814"  # noqa: E501
+                    code=Op.PC
+                    + Op.PUSH8[0x9B8E24022D8C28F3]
+                    + Op.SGT(0x84BC2F83, 0xB55A0)
+                    + Op.EQ(
+                        0xEA3E9D28799D45AA77BF1FC1A84EDF0193DEA2D610209EAAF9C8,
+                        0x15B61916F0F5,
                     )
                 ),
                 Address("0xaa0103980a7c3113d3a8f81478b0281492eb3d38"): Account(
-                    code=bytes.fromhex(
-                        "63cbb01282621d72de5268022948f746c938a0cb7c01ef17f23ed237d9f3262c4eb1b95112820595b127c516074df06223db7e0c396eb18074f148d96fd766dda35b6cc250661b5f83f0ed625ba68a5ff49aa1"  # noqa: E501
+                    code=Op.MSTORE(offset=0x1D72DE, value=0xCBB01282)
+                    + Op.LOG1(
+                        offset=0xC396EB18074F148D96FD766DDA35B6CC250661B5F83F0ED625BA68A5FF49A,  # noqa: E501
+                        size=0x1EF17F23ED237D9F3262C4EB1B95112820595B127C516074DF06223DB,  # noqa: E501
+                        topic_1=0x22948F746C938A0CB,
                     )
                 ),
             },
@@ -46,13 +54,20 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x322c72dedad1a81092ab9ba908fbec8779ce1c32"): Account(
-                    code=bytes.fromhex(
-                        "58679b8e24022d8c28f3620b55a06384bc2f83136515b61916f0f579ea3e9d28799d45aa77bf1fc1a84edf0193dea2d610209eaaf9c814"  # noqa: E501
+                    code=Op.PC
+                    + Op.PUSH8[0x9B8E24022D8C28F3]
+                    + Op.SGT(0x84BC2F83, 0xB55A0)
+                    + Op.EQ(
+                        0xEA3E9D28799D45AA77BF1FC1A84EDF0193DEA2D610209EAAF9C8,
+                        0x15B61916F0F5,
                     )
                 ),
                 Address("0xaa0103980a7c3113d3a8f81478b0281492eb3d38"): Account(
-                    code=bytes.fromhex(
-                        "63cbb01282621d72de5268022948f746c938a0cb7c01ef17f23ed237d9f3262c4eb1b95112820595b127c516074df06223db7e0c396eb18074f148d96fd766dda35b6cc250661b5f83f0ed625ba68a5ff49aa1"  # noqa: E501
+                    code=Op.MSTORE(offset=0x1D72DE, value=0xCBB01282)
+                    + Op.LOG1(
+                        offset=0xC396EB18074F148D96FD766DDA35B6CC250661B5F83F0ED625BA68A5FF49A,  # noqa: E501
+                        size=0x1EF17F23ED237D9F3262C4EB1B95112820595B127C516074DF06223DB,  # noqa: E501
+                        topic_1=0x22948F746C938A0CB,
                     )
                 ),
             },
@@ -86,19 +101,27 @@ def test_random_statetest645(
     pre[callee] = Account(
         balance=0xBCBAF5A33577F162,
         nonce=29,
-        code=bytes.fromhex(
-            "58679b8e24022d8c28f3620b55a06384bc2f83136515b61916f0f579ea3e9d28799d45aa"  # noqa: E501
-            "77bf1fc1a84edf0193dea2d610209eaaf9c814"
+        code=(
+            Op.PC
+            + Op.PUSH8[0x9B8E24022D8C28F3]
+            + Op.SGT(0x84BC2F83, 0xB55A0)
+            + Op.EQ(
+                0xEA3E9D28799D45AA77BF1FC1A84EDF0193DEA2D610209EAAF9C8,
+                0x15B61916F0F5,
+            )
         ),
     )
     pre[callee_1] = Account(balance=0xB3508C0F8A22F8A1, nonce=28)
     pre[coinbase] = Account(
         balance=0x2BE1CFD5D6D6B0B7,
         nonce=175,
-        code=bytes.fromhex(
-            "63cbb01282621d72de5268022948f746c938a0cb7c01ef17f23ed237d9f3262c4eb1b951"  # noqa: E501
-            "12820595b127c516074df06223db7e0c396eb18074f148d96fd766dda35b6cc250661b5f"  # noqa: E501
-            "83f0ed625ba68a5ff49aa1"
+        code=(
+            Op.MSTORE(offset=0x1D72DE, value=0xCBB01282)
+            + Op.LOG1(
+                offset=0xC396EB18074F148D96FD766DDA35B6CC250661B5F83F0ED625BA68A5FF49A,  # noqa: E501
+                size=0x1EF17F23ED237D9F3262C4EB1B95112820595B127C516074DF06223DB,  # noqa: E501
+                topic_1=0x22948F746C938A0CB,
+            )
         ),
     )
     pre[sender] = Account(balance=0x6F1F70FEA641F30A, nonce=0)

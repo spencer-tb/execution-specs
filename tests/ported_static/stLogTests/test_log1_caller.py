@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,15 +48,30 @@ def test_log1_caller(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000601773488e90e8584a9b411fd53cfbb85544de674bb24f6103e8f160"  # noqa: E501
-            "005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x3E8,
+                    address=0x488E90E8584A9B411FD53CFBB85544DE674BB24F,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60ff6000533360206000a100"),
+        code=(
+            Op.MSTORE8(offset=0x0, value=0xFF)
+            + Op.LOG1(offset=0x0, size=0x20, topic_1=Op.CALLER)
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -74,11 +90,29 @@ def test_log1_caller(
     post = {
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "6000600060006000601773488e90e8584a9b411fd53cfbb85544de674bb24f6103e8f160005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x3E8,
+                        address=0x488E90E8584A9B411FD53CFBB85544DE674BB24F,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
-        callee: Account(code=bytes.fromhex("60ff6000533360206000a100")),
+        callee: Account(
+            code=(
+                Op.MSTORE8(offset=0x0, value=0xFF)
+                + Op.LOG1(offset=0x0, size=0x20, topic_1=Op.CALLER)
+                + Op.STOP
+            ),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

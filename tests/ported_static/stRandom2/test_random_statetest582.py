@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,19 +48,38 @@ def test_random_statetest582(
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7f0000000000000000000000004f3f701464972e74606d6ea82d4d3080599a0e79417f00"  # noqa: E501
-            "000000000000000000000000000000000000000000000000000000000000007fffffffff"  # noqa: E501
-            "fffffffffffffffffffffffffffffffffffffffffffffffffffffffe7fffffffffffffff"  # noqa: E501
-            "fffffffffffffffffffffffffffffffffffffffffffffffffe7f00000000000000000000"  # noqa: E501
-            "0000000000000000000000000000000000000000c3507f00000000000000000000000000"  # noqa: E501
-            "000000000000000000000000000000000000007f00000000000000000000000000000000"  # noqa: E501
-            "0000000000000000000000000000000045086201771880f35560005155"
+        code=(
+            Op.PUSH32[0x4F3F701464972E74606D6EA82D4D3080599A0E79]
+            + Op.COINBASE
+            + Op.PUSH32[0x0]
+            + Op.PUSH32[
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+            ]
+            + Op.PUSH32[
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+            ]
+            + Op.PUSH32[0xC350]
+            + Op.ADDMOD(Op.GASLIMIT, Op.PUSH32[0x0], Op.PUSH32[0x0])
+            + Op.RETURN(offset=Op.DUP1, size=0x17718)
+            + Op.SSTORE
+            + Op.MLOAD(offset=0x0)
+            + Op.SSTORE
         ),
     )
 
@@ -85,11 +105,38 @@ def test_random_statetest582(
 
     post = {
         coinbase: Account(
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "7f0000000000000000000000004f3f701464972e74606d6ea82d4d3080599a0e79417f00000000000000000000000000000000000000000000000000000000000000007ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7f000000000000000000000000000000000000000000000000000000000000c3507f00000000000000000000000000000000000000000000000000000000000000007f000000000000000000000000000000000000000000000000000000000000000045086201771880f35560005155"  # noqa: E501
+            code=(
+                Op.PUSH32[0x4F3F701464972E74606D6EA82D4D3080599A0E79]
+                + Op.COINBASE
+                + Op.PUSH32[0x0]
+                + Op.PUSH32[
+                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+                ]
+                + Op.PUSH32[
+                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+                ]
+                + Op.PUSH32[0xC350]
+                + Op.ADDMOD(Op.GASLIMIT, Op.PUSH32[0x0], Op.PUSH32[0x0])
+                + Op.RETURN(offset=Op.DUP1, size=0x17718)
+                + Op.SSTORE
+                + Op.MLOAD(offset=0x0)
+                + Op.SSTORE
             ),
         ),
     }

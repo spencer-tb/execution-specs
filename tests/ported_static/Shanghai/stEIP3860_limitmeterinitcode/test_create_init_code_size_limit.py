@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,15 +35,44 @@ REFERENCE_SPEC_VERSION = "N/A"
             "000000000000000000000000000000000000000000000000000000000000c001",
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "69600a80600080396000f360b01b6000908152355a90600080f0905a9003600a5560005500"  # noqa: E501
-                    )
+                    code=Op.SHL(0xB0, 0x600A80600080396000F3)
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.DUP2
+                    + Op.MSTORE
+                    + Op.CALLDATALOAD
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.CREATE
+                    + Op.SWAP1
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.SSTORE(key=0xA, value=Op.SUB)
+                    + Op.PUSH1[0x0]
+                    + Op.SSTORE
+                    + Op.STOP
                 ),
                 Address("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"): Account(
                     storage={1: 1},
-                    code=bytes.fromhex(
-                        "60003560005260008036818061c0de62989680f16000556001805500"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
+                    )
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=0x989680,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=Op.CALLDATASIZE,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        ),
+                    )
+                    + Op.SSTORE(key=Op.DUP1, value=0x1)
+                    + Op.STOP,
                 ),
             },
         ),
@@ -54,18 +84,52 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 0x5F6BAAEB5B7C97725F84D1569C4ABC85135F4716,
                         10: 46323,
                     },
-                    code=bytes.fromhex(
-                        "69600a80600080396000f360b01b6000908152355a90600080f0905a9003600a5560005500"  # noqa: E501
-                    ),
+                    code=Op.SHL(0xB0, 0x600A80600080396000F3)
+                    + Op.PUSH1[0x0]
+                    + Op.SWAP1
+                    + Op.DUP2
+                    + Op.MSTORE
+                    + Op.CALLDATALOAD
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.CREATE
+                    + Op.SWAP1
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.SSTORE(key=0xA, value=Op.SUB)
+                    + Op.PUSH1[0x0]
+                    + Op.SSTORE
+                    + Op.STOP,
                 ),
                 Address("0x5f6baaeb5b7c97725f84d1569c4abc85135f4716"): Account(
-                    code=bytes.fromhex("600a80600080396000f3")
+                    code=Op.PUSH1[0xA]
+                    + Op.CODECOPY(
+                        dest_offset=Op.DUP1, offset=0x0, size=Op.DUP1
+                    )
+                    + Op.PUSH1[0x0]
+                    + Op.RETURN
                 ),
                 Address("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"): Account(
                     storage={0: 1, 1: 1},
-                    code=bytes.fromhex(
-                        "60003560005260008036818061c0de62989680f16000556001805500"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
+                    )
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=0x989680,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=Op.CALLDATASIZE,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        ),
+                    )
+                    + Op.SSTORE(key=Op.DUP1, value=0x1)
+                    + Op.STOP,
                 ),
             },
         ),
@@ -97,17 +161,47 @@ def test_create_init_code_size_limit(
     pre[callee] = Account(
         balance=0,
         nonce=1,
-        code=bytes.fromhex(
-            "69600a80600080396000f360b01b6000908152355a90600080f0905a9003600a55600055"  # noqa: E501
-            "00"
+        code=(
+            Op.SHL(0xB0, 0x600A80600080396000F3)
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.DUP2
+            + Op.MSTORE
+            + Op.CALLDATALOAD
+            + Op.GAS
+            + Op.SWAP1
+            + Op.PUSH1[0x0]
+            + Op.DUP1
+            + Op.CREATE
+            + Op.SWAP1
+            + Op.GAS
+            + Op.SWAP1
+            + Op.SSTORE(key=0xA, value=Op.SUB)
+            + Op.PUSH1[0x0]
+            + Op.SSTORE
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xBEBC200, nonce=1)
     pre[contract] = Account(
         balance=0,
         nonce=1,
-        code=bytes.fromhex(
-            "60003560005260008036818061c0de62989680f16000556001805500"
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x989680,
+                    address=0xC0DE,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=Op.CALLDATASIZE,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=Op.DUP1, value=0x1)
+            + Op.STOP
         ),
     )
 

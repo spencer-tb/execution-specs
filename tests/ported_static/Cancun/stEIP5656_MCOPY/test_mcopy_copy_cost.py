@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -35,9 +36,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -47,9 +63,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -59,9 +90,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -71,9 +117,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -83,9 +144,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -95,9 +171,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -107,9 +198,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -119,9 +225,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -131,9 +252,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -143,9 +279,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -155,9 +306,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -167,9 +333,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -179,9 +360,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -191,9 +387,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -203,9 +414,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -215,9 +441,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -227,9 +468,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -239,9 +495,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -251,9 +522,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -263,9 +549,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -275,9 +576,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -287,9 +603,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -299,9 +630,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -311,9 +657,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -323,9 +684,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -335,9 +711,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -347,9 +738,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -358,9 +764,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             55697,
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
                     )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST
                 )
             },
         ),
@@ -370,9 +791,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -381,9 +817,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             55697,
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
                     )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST
                 )
             },
         ),
@@ -393,9 +844,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -404,9 +870,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             55697,
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
                     )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST
                 )
             },
         ),
@@ -416,9 +897,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -428,9 +924,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -440,9 +951,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -452,9 +978,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -464,9 +1005,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -476,9 +1032,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -488,9 +1059,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -500,9 +1086,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -512,9 +1113,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -524,9 +1140,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -536,9 +1167,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -547,9 +1193,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             55697,
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
                     )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST
                 )
             },
         ),
@@ -559,9 +1220,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -570,9 +1246,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             55697,
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
                     )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST
                 )
             },
         ),
@@ -582,9 +1273,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -593,9 +1299,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             55697,
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
                     )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST
                 )
             },
         ),
@@ -605,9 +1326,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -617,9 +1353,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -629,9 +1380,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -641,9 +1407,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -653,9 +1434,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -665,9 +1461,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -677,9 +1488,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -689,9 +1515,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -701,9 +1542,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -713,9 +1569,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -725,9 +1596,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -736,9 +1622,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             55697,
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
                     )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST
                 )
             },
         ),
@@ -748,9 +1649,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -759,9 +1675,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             55697,
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
                     )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST
                 )
             },
         ),
@@ -771,9 +1702,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
-                    ),
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -782,9 +1728,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             55697,
             {
                 Address("0x9f1a7b52bb2d016223285964cb0876dff8c9c9f8"): Account(
-                    code=bytes.fromhex(
-                        "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
+                    code=Op.JUMP(pc=0xC)
+                    + Op.JUMPDEST
+                    + Op.MCOPY(
+                        dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3
                     )
+                    + Op.POP
+                    + Op.POP
+                    + Op.POP
+                    + Op.JUMP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.PUSH0, value=0x1)
+                    + Op.MSTORE(offset=0xAF00, value=0x1)
+                    + Op.PUSH1[0x22]
+                    + Op.CALLDATALOAD(offset=0x20)
+                    + Op.CALLDATALOAD(offset=Op.PUSH0)
+                    + Op.PUSH0
+                    + Op.JUMP(pc=0x3)
+                    + Op.JUMPDEST
                 )
             },
         ),
@@ -881,8 +1842,23 @@ def test_mcopy_copy_cost(
     pre[contract] = Account(
         balance=0,
         nonce=1,
-        code=bytes.fromhex(
-            "600c565b8282825e505050565b60015f55600161af005260226020355f355f6003565b"  # noqa: E501
+        code=(
+            Op.JUMP(pc=0xC)
+            + Op.JUMPDEST
+            + Op.MCOPY(dest_offset=Op.DUP3, offset=Op.DUP3, size=Op.DUP3)
+            + Op.POP
+            + Op.POP
+            + Op.POP
+            + Op.JUMP
+            + Op.JUMPDEST
+            + Op.SSTORE(key=Op.PUSH0, value=0x1)
+            + Op.MSTORE(offset=0xAF00, value=0x1)
+            + Op.PUSH1[0x22]
+            + Op.CALLDATALOAD(offset=0x20)
+            + Op.CALLDATALOAD(offset=Op.PUSH0)
+            + Op.PUSH0
+            + Op.JUMP(pc=0x3)
+            + Op.JUMPDEST
         ),
     )
     pre[sender] = Account(balance=0x3B9ACA00, nonce=0)

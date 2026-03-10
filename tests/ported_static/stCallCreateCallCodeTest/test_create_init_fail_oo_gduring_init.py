@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,13 @@ def test_create_init_fail_oo_gduring_init(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("605a600053600160006001f0ff00"),
+        code=(
+            Op.MSTORE8(offset=0x0, value=0x5A)
+            + Op.SELFDESTRUCT(
+                address=Op.CREATE(value=0x1, offset=0x0, size=0x1)
+            )
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -66,7 +73,15 @@ def test_create_init_fail_oo_gduring_init(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("605a600053600160006001f0ff00")),
+        contract: Account(
+            code=(
+                Op.MSTORE8(offset=0x0, value=0x5A)
+                + Op.SELFDESTRUCT(
+                    address=Op.CREATE(value=0x1, offset=0x0, size=0x1),
+                )
+                + Op.STOP
+            ),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -39,15 +40,154 @@ REFERENCE_SPEC_VERSION = "N/A"
                         5: 0x610100610100610100395861026052600060006020610260600061DA7A62FFFF,  # noqa: E501
                         7: 184,
                     },
-                    code=bytes.fromhex("6000356000545560016000540160005500"),
+                    code=Op.SSTORE(
+                        key=Op.SLOAD(key=0x0),
+                        value=Op.CALLDATALOAD(offset=0x0),
+                    )
+                    + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                    + Op.STOP,
                 ),
                 Address("0x8af6a7af30d840ba137e8f3f34d54cfb8beba6e2"): Account(
-                    code=bytes.fromhex("000000000000")
+                    code=Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=bytes.fromhex(
-                        "60068061004c610100396102005260db8061005260003961022052600160043514603757615a17610200516101000160006000f56045565b610200516101000160006000f05b6102405200fe60ff60005500610100610100610100395861026052600060006020610260600061da7a62fffffff1503061026052600060006020610260600061da7a62fffffff1503861026052600060006020610260600061da7a62fffffff150303b61026052600060006020610260600061da7a62fffffff15060206000610100396101005161026052600060006020610260600061da7a62fffffff15060206000610100303c6101005161026052600060006020610260600061da7a62fffffff1505861026052600060006020610260600061da7a62fffffff1506101003803610100f300"  # noqa: E501
+                    code=Op.PUSH1[0x6]
+                    + Op.CODECOPY(
+                        dest_offset=0x100, offset=Op.PUSH2[0x4C], size=Op.DUP1
                     )
+                    + Op.PUSH2[0x200]
+                    + Op.MSTORE
+                    + Op.PUSH1[0xDB]
+                    + Op.CODECOPY(
+                        dest_offset=0x0, offset=Op.PUSH2[0x52], size=Op.DUP1
+                    )
+                    + Op.PUSH2[0x220]
+                    + Op.MSTORE
+                    + Op.JUMPI(
+                        pc=0x37,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x1),
+                    )
+                    + Op.CREATE2(
+                        value=0x0,
+                        offset=0x0,
+                        size=Op.ADD(0x100, Op.MLOAD(offset=0x200)),
+                        salt=0x5A17,
+                    )
+                    + Op.JUMP(pc=0x45)
+                    + Op.JUMPDEST
+                    + Op.CREATE(
+                        value=0x0,
+                        offset=0x0,
+                        size=Op.ADD(0x100, Op.MLOAD(offset=0x200)),
+                    )
+                    + Op.JUMPDEST
+                    + Op.PUSH2[0x240]
+                    + Op.MSTORE
+                    + Op.STOP
+                    + Op.INVALID
+                    + Op.SSTORE(key=0x0, value=0xFF)
+                    + Op.STOP
+                    + Op.CODECOPY(dest_offset=0x100, offset=0x100, size=0x100)
+                    + Op.MSTORE(offset=0x260, value=Op.PC)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(offset=0x260, value=Op.ADDRESS)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(offset=0x260, value=Op.CODESIZE)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(
+                        offset=0x260, value=Op.EXTCODESIZE(address=Op.ADDRESS)
+                    )
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.CODECOPY(dest_offset=0x100, offset=0x0, size=0x20)
+                    + Op.MSTORE(offset=0x260, value=Op.MLOAD(offset=0x100))
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.EXTCODECOPY(
+                        address=Op.ADDRESS,
+                        dest_offset=0x100,
+                        offset=0x0,
+                        size=0x20,
+                    )
+                    + Op.MSTORE(offset=0x260, value=Op.MLOAD(offset=0x100))
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(offset=0x260, value=Op.PC)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.RETURN(offset=0x100, size=Op.SUB(Op.CODESIZE, 0x100))
+                    + Op.STOP
                 ),
             },
         ),
@@ -63,15 +203,154 @@ REFERENCE_SPEC_VERSION = "N/A"
                         5: 0x610100610100610100395861026052600060006020610260600061DA7A62FFFF,  # noqa: E501
                         7: 184,
                     },
-                    code=bytes.fromhex("6000356000545560016000540160005500"),
+                    code=Op.SSTORE(
+                        key=Op.SLOAD(key=0x0),
+                        value=Op.CALLDATALOAD(offset=0x0),
+                    )
+                    + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                    + Op.STOP,
                 ),
                 Address("0x33c409678a4289f0184c95c627ba09da2daeaa46"): Account(
-                    code=bytes.fromhex("000000000000")
+                    code=Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
+                    + Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=bytes.fromhex(
-                        "60068061004c610100396102005260db8061005260003961022052600160043514603757615a17610200516101000160006000f56045565b610200516101000160006000f05b6102405200fe60ff60005500610100610100610100395861026052600060006020610260600061da7a62fffffff1503061026052600060006020610260600061da7a62fffffff1503861026052600060006020610260600061da7a62fffffff150303b61026052600060006020610260600061da7a62fffffff15060206000610100396101005161026052600060006020610260600061da7a62fffffff15060206000610100303c6101005161026052600060006020610260600061da7a62fffffff1505861026052600060006020610260600061da7a62fffffff1506101003803610100f300"  # noqa: E501
+                    code=Op.PUSH1[0x6]
+                    + Op.CODECOPY(
+                        dest_offset=0x100, offset=Op.PUSH2[0x4C], size=Op.DUP1
                     )
+                    + Op.PUSH2[0x200]
+                    + Op.MSTORE
+                    + Op.PUSH1[0xDB]
+                    + Op.CODECOPY(
+                        dest_offset=0x0, offset=Op.PUSH2[0x52], size=Op.DUP1
+                    )
+                    + Op.PUSH2[0x220]
+                    + Op.MSTORE
+                    + Op.JUMPI(
+                        pc=0x37,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x1),
+                    )
+                    + Op.CREATE2(
+                        value=0x0,
+                        offset=0x0,
+                        size=Op.ADD(0x100, Op.MLOAD(offset=0x200)),
+                        salt=0x5A17,
+                    )
+                    + Op.JUMP(pc=0x45)
+                    + Op.JUMPDEST
+                    + Op.CREATE(
+                        value=0x0,
+                        offset=0x0,
+                        size=Op.ADD(0x100, Op.MLOAD(offset=0x200)),
+                    )
+                    + Op.JUMPDEST
+                    + Op.PUSH2[0x240]
+                    + Op.MSTORE
+                    + Op.STOP
+                    + Op.INVALID
+                    + Op.SSTORE(key=0x0, value=0xFF)
+                    + Op.STOP
+                    + Op.CODECOPY(dest_offset=0x100, offset=0x100, size=0x100)
+                    + Op.MSTORE(offset=0x260, value=Op.PC)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(offset=0x260, value=Op.ADDRESS)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(offset=0x260, value=Op.CODESIZE)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(
+                        offset=0x260, value=Op.EXTCODESIZE(address=Op.ADDRESS)
+                    )
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.CODECOPY(dest_offset=0x100, offset=0x0, size=0x20)
+                    + Op.MSTORE(offset=0x260, value=Op.MLOAD(offset=0x100))
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.EXTCODECOPY(
+                        address=Op.ADDRESS,
+                        dest_offset=0x100,
+                        offset=0x0,
+                        size=0x20,
+                    )
+                    + Op.MSTORE(offset=0x260, value=Op.MLOAD(offset=0x100))
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(offset=0x260, value=Op.PC)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0xFFFFFF,
+                            address=0xDA7A,
+                            value=0x0,
+                            args_offset=0x260,
+                            args_size=0x20,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.RETURN(offset=0x100, size=Op.SUB(Op.CODESIZE, 0x100))
+                    + Op.STOP
                 ),
             },
         ),
@@ -103,23 +382,145 @@ def test_code_in_constructor(
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("6000356000545560016000540160005500"),
+        code=(
+            Op.SSTORE(key=Op.SLOAD(key=0x0), value=Op.CALLDATALOAD(offset=0x0))
+            + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.STOP
+        ),
         storage={0x0: 0x1},
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex(
-            "60068061004c610100396102005260db8061005260003961022052600160043514603757"  # noqa: E501
-            "615a17610200516101000160006000f56045565b610200516101000160006000f05b6102"  # noqa: E501
-            "405200fe60ff600055006101006101006101003958610260526000600060206102606000"  # noqa: E501
-            "61da7a62fffffff1503061026052600060006020610260600061da7a62fffffff1503861"  # noqa: E501
-            "026052600060006020610260600061da7a62fffffff150303b6102605260006000602061"  # noqa: E501
-            "0260600061da7a62fffffff1506020600061010039610100516102605260006000602061"  # noqa: E501
-            "0260600061da7a62fffffff15060206000610100303c6101005161026052600060006020"  # noqa: E501
-            "610260600061da7a62fffffff1505861026052600060006020610260600061da7a62ffff"  # noqa: E501
-            "fff1506101003803610100f300"
+        code=(
+            Op.PUSH1[0x6]
+            + Op.CODECOPY(
+                dest_offset=0x100, offset=Op.PUSH2[0x4C], size=Op.DUP1
+            )
+            + Op.PUSH2[0x200]
+            + Op.MSTORE
+            + Op.PUSH1[0xDB]
+            + Op.CODECOPY(dest_offset=0x0, offset=Op.PUSH2[0x52], size=Op.DUP1)
+            + Op.PUSH2[0x220]
+            + Op.MSTORE
+            + Op.JUMPI(
+                pc=0x37, condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x1)
+            )
+            + Op.CREATE2(
+                value=0x0,
+                offset=0x0,
+                size=Op.ADD(0x100, Op.MLOAD(offset=0x200)),
+                salt=0x5A17,
+            )
+            + Op.JUMP(pc=0x45)
+            + Op.JUMPDEST
+            + Op.CREATE(
+                value=0x0,
+                offset=0x0,
+                size=Op.ADD(0x100, Op.MLOAD(offset=0x200)),
+            )
+            + Op.JUMPDEST
+            + Op.PUSH2[0x240]
+            + Op.MSTORE
+            + Op.STOP
+            + Op.INVALID
+            + Op.SSTORE(key=0x0, value=0xFF)
+            + Op.STOP
+            + Op.CODECOPY(dest_offset=0x100, offset=0x100, size=0x100)
+            + Op.MSTORE(offset=0x260, value=Op.PC)
+            + Op.POP(
+                Op.CALL(
+                    gas=0xFFFFFF,
+                    address=0xDA7A,
+                    value=0x0,
+                    args_offset=0x260,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x260, value=Op.ADDRESS)
+            + Op.POP(
+                Op.CALL(
+                    gas=0xFFFFFF,
+                    address=0xDA7A,
+                    value=0x0,
+                    args_offset=0x260,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x260, value=Op.CODESIZE)
+            + Op.POP(
+                Op.CALL(
+                    gas=0xFFFFFF,
+                    address=0xDA7A,
+                    value=0x0,
+                    args_offset=0x260,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x260, value=Op.EXTCODESIZE(address=Op.ADDRESS))
+            + Op.POP(
+                Op.CALL(
+                    gas=0xFFFFFF,
+                    address=0xDA7A,
+                    value=0x0,
+                    args_offset=0x260,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.CODECOPY(dest_offset=0x100, offset=0x0, size=0x20)
+            + Op.MSTORE(offset=0x260, value=Op.MLOAD(offset=0x100))
+            + Op.POP(
+                Op.CALL(
+                    gas=0xFFFFFF,
+                    address=0xDA7A,
+                    value=0x0,
+                    args_offset=0x260,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.EXTCODECOPY(
+                address=Op.ADDRESS,
+                dest_offset=0x100,
+                offset=0x0,
+                size=0x20,
+            )
+            + Op.MSTORE(offset=0x260, value=Op.MLOAD(offset=0x100))
+            + Op.POP(
+                Op.CALL(
+                    gas=0xFFFFFF,
+                    address=0xDA7A,
+                    value=0x0,
+                    args_offset=0x260,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x260, value=Op.PC)
+            + Op.POP(
+                Op.CALL(
+                    gas=0xFFFFFF,
+                    address=0xDA7A,
+                    value=0x0,
+                    args_offset=0x260,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.RETURN(offset=0x100, size=Op.SUB(Op.CODESIZE, 0x100))
+            + Op.STOP
         ),
     )
 

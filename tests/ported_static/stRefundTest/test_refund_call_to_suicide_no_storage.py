@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,15 +34,26 @@ REFERENCE_SPEC_VERSION = "N/A"
             "00000000000000000000000000000000000000000000000000000000000001f4",
             {
                 Address("0x4ff65047ce9c85f968689e4369c10003026a41a9"): Account(
-                    code=bytes.fromhex(
-                        "735be4b33890f720eff72be0019b122e0ff75cb937ff00"
+                    code=Op.SELFDESTRUCT(
+                        address=0x5BE4B33890F720EFF72BE0019B122E0FF75CB937
                     )
+                    + Op.STOP
                 ),
                 Address("0x5be4b33890f720eff72be0019b122e0ff75cb937"): Account(
                     storage={1: 1},
-                    code=bytes.fromhex(
-                        "60006000600060006000734ff65047ce9c85f968689e4369c10003026a41a9600035f160005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=Op.CALLDATALOAD(offset=0x0),
+                            address=0x4FF65047CE9C85F968689E4369C10003026A41A9,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
+                    )
+                    + Op.STOP,
                 ),
             },
         ),
@@ -49,15 +61,26 @@ REFERENCE_SPEC_VERSION = "N/A"
             "0000000000000000000000000000000000000000000000000000000000010000",
             {
                 Address("0x4ff65047ce9c85f968689e4369c10003026a41a9"): Account(
-                    code=bytes.fromhex(
-                        "735be4b33890f720eff72be0019b122e0ff75cb937ff00"
+                    code=Op.SELFDESTRUCT(
+                        address=0x5BE4B33890F720EFF72BE0019B122E0FF75CB937
                     )
+                    + Op.STOP
                 ),
                 Address("0x5be4b33890f720eff72be0019b122e0ff75cb937"): Account(
                     storage={0: 1, 1: 1},
-                    code=bytes.fromhex(
-                        "60006000600060006000734ff65047ce9c85f968689e4369c10003026a41a9600035f160005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=Op.CALLDATALOAD(offset=0x0),
+                            address=0x4FF65047CE9C85F968689E4369C10003026A41A9,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
+                    )
+                    + Op.STOP,
                 ),
             },
         ),
@@ -89,14 +112,28 @@ def test_refund_call_to_suicide_no_storage(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("735be4b33890f720eff72be0019b122e0ff75cb937ff00"),
+        code=(
+            Op.SELFDESTRUCT(address=0x5BE4B33890F720EFF72BE0019B122E0FF75CB937)
+            + Op.STOP
+        ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000600060006000734ff65047ce9c85f968689e4369c10003026a41a9600035f160"  # noqa: E501
-            "005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=Op.CALLDATALOAD(offset=0x0),
+                    address=0x4FF65047CE9C85F968689E4369C10003026A41A9,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
         storage={0x1: 0x1},
     )

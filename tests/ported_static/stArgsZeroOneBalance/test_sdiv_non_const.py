@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0xa652fe2c234233d6eb3d62b283d56f67c76635bd"): Account(
-                    code=bytes.fromhex(
-                        "73a652fe2c234233d6eb3d62b283d56f67c76635bd3173a652fe2c234233d6eb3d62b283d56f67c76635bd310560005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(
+                            Op.BALANCE(
+                                address=0xA652FE2C234233D6EB3D62B283D56F67C76635BD  # noqa: E501
+                            ),
+                            Op.BALANCE(
+                                address=0xA652FE2C234233D6EB3D62B283D56F67C76635BD  # noqa: E501
+                            ),
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -42,9 +52,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xa652fe2c234233d6eb3d62b283d56f67c76635bd"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "73a652fe2c234233d6eb3d62b283d56f67c76635bd3173a652fe2c234233d6eb3d62b283d56f67c76635bd310560005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(
+                            Op.BALANCE(
+                                address=0xA652FE2C234233D6EB3D62B283D56F67C76635BD  # noqa: E501
+                            ),
+                            Op.BALANCE(
+                                address=0xA652FE2C234233D6EB3D62B283D56F67C76635BD  # noqa: E501
+                            ),
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -76,9 +95,19 @@ def test_sdiv_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73a652fe2c234233d6eb3d62b283d56f67c76635bd3173a652fe2c234233d6eb3d62b283"  # noqa: E501
-            "d56f67c76635bd310560005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.SDIV(
+                    Op.BALANCE(
+                        address=0xA652FE2C234233D6EB3D62B283D56F67C76635BD
+                    ),
+                    Op.BALANCE(
+                        address=0xA652FE2C234233D6EB3D62B283D56F67C76635BD
+                    ),
+                ),
+            )
+            + Op.STOP
         ),
     )
 

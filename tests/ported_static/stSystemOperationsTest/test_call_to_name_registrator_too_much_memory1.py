@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,16 +51,44 @@ def test_call_to_name_registrator_too_much_memory1(
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7feeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00600052"  # noqa: E501
-            "7faaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaa602052"  # noqa: E501
-            "60006040629688d8600060177315eb18969e0925c8e4a76fd7cbce36a2b056b27e6101f4"  # noqa: E501
-            "f160005500"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0xEEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x20,
+                value=0xAAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAA,  # noqa: E501
+            )
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x1F4,
+                    address=0x15EB18969E0925C8E4A76FD7CBCE36A2B056B27E,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x9688D8,
+                    ret_offset=0x40,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -78,11 +107,44 @@ def test_call_to_name_registrator_too_much_memory1(
 
     post = {
         callee: Account(
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "7feeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff006000527faaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaa60205260006040629688d8600060177315eb18969e0925c8e4a76fd7cbce36a2b056b27e6101f4f160005500"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0xEEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x20,
+                    value=0xAAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAA,  # noqa: E501
+                )
+                + Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x1F4,
+                        address=0x15EB18969E0925C8E4A76FD7CBCE36A2B056B27E,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x9688D8,
+                        ret_offset=0x40,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,10 +34,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060006000600073fce41d047b4a1d4450382dcc29ec7e5fedc5f9a361c350f1506b620102036000526003601df36000526000600c60146000f500",  # noqa: E501
             {
                 Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779"): Account(
-                    code=bytes.fromhex("6010ff")
+                    code=Op.SELFDESTRUCT(address=0x10)
                 ),
                 Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"): Account(
-                    code=bytes.fromhex("6010ff00")
+                    code=Op.SELFDESTRUCT(address=0x10) + Op.STOP
                 ),
             },
         ),
@@ -44,10 +45,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060006000600073cff64f4c5df8f436c4f2c1af4b2e3f9e3004c77961c350f1506b626010ff6000526003601df36000526000600c60146000f500",  # noqa: E501
             {
                 Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779"): Account(
-                    code=bytes.fromhex("6010ff")
+                    code=Op.SELFDESTRUCT(address=0x10)
                 ),
                 Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"): Account(
-                    code=bytes.fromhex("6010ff00")
+                    code=Op.SELFDESTRUCT(address=0x10) + Op.STOP
                 ),
             },
         ),
@@ -77,8 +78,16 @@ def test_create2collision_selfdestructed2(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    pre[contract] = Account(balance=1, nonce=1, code=bytes.fromhex("6010ff"))
-    pre[callee_1] = Account(balance=1, nonce=0, code=bytes.fromhex("6010ff00"))
+    pre[contract] = Account(
+        balance=1,
+        nonce=1,
+        code=Op.SELFDESTRUCT(address=0x10),
+    )
+    pre[callee_1] = Account(
+        balance=1,
+        nonce=0,
+        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
+    )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 

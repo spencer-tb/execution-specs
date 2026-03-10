@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,24 @@ def test_call_ecrecover_invalid_signature(
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,
-        code=bytes.fromhex(
-            "7f1122334455667788991011121314151617181920212223242526272829303132608052"  # noqa: E501
-            "602060806080600060006001620493e0f15060805160005500"
+        code=(
+            Op.MSTORE(
+                offset=0x80,
+                value=0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0x493E0,
+                    address=0x1,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x80,
+                    ret_offset=0x80,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x80))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -73,8 +89,24 @@ def test_call_ecrecover_invalid_signature(
             storage={
                 0: 0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "7f1122334455667788991011121314151617181920212223242526272829303132608052602060806080600060006001620493e0f15060805160005500"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x80,
+                    value=0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x493E0,
+                        address=0x1,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x80,
+                        ret_offset=0x80,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x80))
+                + Op.STOP
             ),
         ),
     }

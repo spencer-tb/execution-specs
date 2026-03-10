@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -35,9 +36,131 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xa4a48fc5f3526a9bc06a0136ab0ba1d9574d15ba"): Account(
                     storage={0: 100},
-                    code=bytes.fromhex(
-                        "416004356000811560cc578160011460ba57508060021460ad578060031460a05780600414608a578060051460745780600614605f57600714604057600080fd5b600b60008080805a95612710fa915a905b030360005560005260206000f35b50600b60008080805a95612710f4915a906051565b50600b6000808080805a96612710f2915a906051565b50600b6000808080805a96612710f1915a906051565b5060085a9131915a906051565b5060085a913f915a906051565b9160059150600080805a933c5a906051565b505060085a913b915a90605156"  # noqa: E501
-                    ),
+                    code=Op.COINBASE
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.PUSH1[0x0]
+                    + Op.JUMPI(pc=0xCC, condition=Op.ISZERO(Op.DUP2))
+                    + Op.JUMPI(pc=0xBA, condition=Op.EQ(0x1, Op.DUP2))
+                    + Op.POP
+                    + Op.JUMPI(pc=0xAD, condition=Op.EQ(0x2, Op.DUP1))
+                    + Op.JUMPI(pc=0xA0, condition=Op.EQ(0x3, Op.DUP1))
+                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
+                    + Op.JUMPI(pc=0x74, condition=Op.EQ(0x5, Op.DUP1))
+                    + Op.JUMPI(pc=0x5F, condition=Op.EQ(0x6, Op.DUP1))
+                    + Op.PUSH1[0x7]
+                    + Op.JUMPI(pc=0x40, condition=Op.EQ)
+                    + Op.REVERT(offset=Op.DUP1, size=0x0)
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.STATICCALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMPDEST
+                    + Op.SUB
+                    + Op.SSTORE(key=0x0, value=Op.SUB)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=0x0, size=0x20)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.DELEGATECALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALLCODE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.BALANCE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODEHASH
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.SWAP2
+                    + Op.PUSH1[0x5]
+                    + Op.SWAP2
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP4
+                    + Op.EXTCODECOPY
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODESIZE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51),
                 )
             },
         ),
@@ -46,9 +169,131 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xa4a48fc5f3526a9bc06a0136ab0ba1d9574d15ba"): Account(
                     storage={0: 100},
-                    code=bytes.fromhex(
-                        "416004356000811560cc578160011460ba57508060021460ad578060031460a05780600414608a578060051460745780600614605f57600714604057600080fd5b600b60008080805a95612710fa915a905b030360005560005260206000f35b50600b60008080805a95612710f4915a906051565b50600b6000808080805a96612710f2915a906051565b50600b6000808080805a96612710f1915a906051565b5060085a9131915a906051565b5060085a913f915a906051565b9160059150600080805a933c5a906051565b505060085a913b915a90605156"  # noqa: E501
-                    ),
+                    code=Op.COINBASE
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.PUSH1[0x0]
+                    + Op.JUMPI(pc=0xCC, condition=Op.ISZERO(Op.DUP2))
+                    + Op.JUMPI(pc=0xBA, condition=Op.EQ(0x1, Op.DUP2))
+                    + Op.POP
+                    + Op.JUMPI(pc=0xAD, condition=Op.EQ(0x2, Op.DUP1))
+                    + Op.JUMPI(pc=0xA0, condition=Op.EQ(0x3, Op.DUP1))
+                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
+                    + Op.JUMPI(pc=0x74, condition=Op.EQ(0x5, Op.DUP1))
+                    + Op.JUMPI(pc=0x5F, condition=Op.EQ(0x6, Op.DUP1))
+                    + Op.PUSH1[0x7]
+                    + Op.JUMPI(pc=0x40, condition=Op.EQ)
+                    + Op.REVERT(offset=Op.DUP1, size=0x0)
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.STATICCALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMPDEST
+                    + Op.SUB
+                    + Op.SSTORE(key=0x0, value=Op.SUB)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=0x0, size=0x20)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.DELEGATECALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALLCODE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.BALANCE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODEHASH
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.SWAP2
+                    + Op.PUSH1[0x5]
+                    + Op.SWAP2
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP4
+                    + Op.EXTCODECOPY
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODESIZE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51),
                 )
             },
         ),
@@ -57,9 +302,131 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xa4a48fc5f3526a9bc06a0136ab0ba1d9574d15ba"): Account(
                     storage={0: 100},
-                    code=bytes.fromhex(
-                        "416004356000811560cc578160011460ba57508060021460ad578060031460a05780600414608a578060051460745780600614605f57600714604057600080fd5b600b60008080805a95612710fa915a905b030360005560005260206000f35b50600b60008080805a95612710f4915a906051565b50600b6000808080805a96612710f2915a906051565b50600b6000808080805a96612710f1915a906051565b5060085a9131915a906051565b5060085a913f915a906051565b9160059150600080805a933c5a906051565b505060085a913b915a90605156"  # noqa: E501
-                    ),
+                    code=Op.COINBASE
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.PUSH1[0x0]
+                    + Op.JUMPI(pc=0xCC, condition=Op.ISZERO(Op.DUP2))
+                    + Op.JUMPI(pc=0xBA, condition=Op.EQ(0x1, Op.DUP2))
+                    + Op.POP
+                    + Op.JUMPI(pc=0xAD, condition=Op.EQ(0x2, Op.DUP1))
+                    + Op.JUMPI(pc=0xA0, condition=Op.EQ(0x3, Op.DUP1))
+                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
+                    + Op.JUMPI(pc=0x74, condition=Op.EQ(0x5, Op.DUP1))
+                    + Op.JUMPI(pc=0x5F, condition=Op.EQ(0x6, Op.DUP1))
+                    + Op.PUSH1[0x7]
+                    + Op.JUMPI(pc=0x40, condition=Op.EQ)
+                    + Op.REVERT(offset=Op.DUP1, size=0x0)
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.STATICCALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMPDEST
+                    + Op.SUB
+                    + Op.SSTORE(key=0x0, value=Op.SUB)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=0x0, size=0x20)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.DELEGATECALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALLCODE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.BALANCE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODEHASH
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.SWAP2
+                    + Op.PUSH1[0x5]
+                    + Op.SWAP2
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP4
+                    + Op.EXTCODECOPY
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODESIZE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51),
                 )
             },
         ),
@@ -68,9 +435,131 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xa4a48fc5f3526a9bc06a0136ab0ba1d9574d15ba"): Account(
                     storage={0: 100},
-                    code=bytes.fromhex(
-                        "416004356000811560cc578160011460ba57508060021460ad578060031460a05780600414608a578060051460745780600614605f57600714604057600080fd5b600b60008080805a95612710fa915a905b030360005560005260206000f35b50600b60008080805a95612710f4915a906051565b50600b6000808080805a96612710f2915a906051565b50600b6000808080805a96612710f1915a906051565b5060085a9131915a906051565b5060085a913f915a906051565b9160059150600080805a933c5a906051565b505060085a913b915a90605156"  # noqa: E501
-                    ),
+                    code=Op.COINBASE
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.PUSH1[0x0]
+                    + Op.JUMPI(pc=0xCC, condition=Op.ISZERO(Op.DUP2))
+                    + Op.JUMPI(pc=0xBA, condition=Op.EQ(0x1, Op.DUP2))
+                    + Op.POP
+                    + Op.JUMPI(pc=0xAD, condition=Op.EQ(0x2, Op.DUP1))
+                    + Op.JUMPI(pc=0xA0, condition=Op.EQ(0x3, Op.DUP1))
+                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
+                    + Op.JUMPI(pc=0x74, condition=Op.EQ(0x5, Op.DUP1))
+                    + Op.JUMPI(pc=0x5F, condition=Op.EQ(0x6, Op.DUP1))
+                    + Op.PUSH1[0x7]
+                    + Op.JUMPI(pc=0x40, condition=Op.EQ)
+                    + Op.REVERT(offset=Op.DUP1, size=0x0)
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.STATICCALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMPDEST
+                    + Op.SUB
+                    + Op.SSTORE(key=0x0, value=Op.SUB)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=0x0, size=0x20)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.DELEGATECALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALLCODE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.BALANCE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODEHASH
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.SWAP2
+                    + Op.PUSH1[0x5]
+                    + Op.SWAP2
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP4
+                    + Op.EXTCODECOPY
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODESIZE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51),
                 )
             },
         ),
@@ -79,9 +568,131 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xa4a48fc5f3526a9bc06a0136ab0ba1d9574d15ba"): Account(
                     storage={0: 100},
-                    code=bytes.fromhex(
-                        "416004356000811560cc578160011460ba57508060021460ad578060031460a05780600414608a578060051460745780600614605f57600714604057600080fd5b600b60008080805a95612710fa915a905b030360005560005260206000f35b50600b60008080805a95612710f4915a906051565b50600b6000808080805a96612710f2915a906051565b50600b6000808080805a96612710f1915a906051565b5060085a9131915a906051565b5060085a913f915a906051565b9160059150600080805a933c5a906051565b505060085a913b915a90605156"  # noqa: E501
-                    ),
+                    code=Op.COINBASE
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.PUSH1[0x0]
+                    + Op.JUMPI(pc=0xCC, condition=Op.ISZERO(Op.DUP2))
+                    + Op.JUMPI(pc=0xBA, condition=Op.EQ(0x1, Op.DUP2))
+                    + Op.POP
+                    + Op.JUMPI(pc=0xAD, condition=Op.EQ(0x2, Op.DUP1))
+                    + Op.JUMPI(pc=0xA0, condition=Op.EQ(0x3, Op.DUP1))
+                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
+                    + Op.JUMPI(pc=0x74, condition=Op.EQ(0x5, Op.DUP1))
+                    + Op.JUMPI(pc=0x5F, condition=Op.EQ(0x6, Op.DUP1))
+                    + Op.PUSH1[0x7]
+                    + Op.JUMPI(pc=0x40, condition=Op.EQ)
+                    + Op.REVERT(offset=Op.DUP1, size=0x0)
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.STATICCALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMPDEST
+                    + Op.SUB
+                    + Op.SSTORE(key=0x0, value=Op.SUB)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=0x0, size=0x20)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.DELEGATECALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALLCODE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.BALANCE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODEHASH
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.SWAP2
+                    + Op.PUSH1[0x5]
+                    + Op.SWAP2
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP4
+                    + Op.EXTCODECOPY
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODESIZE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51),
                 )
             },
         ),
@@ -90,9 +701,131 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xa4a48fc5f3526a9bc06a0136ab0ba1d9574d15ba"): Account(
                     storage={0: 100},
-                    code=bytes.fromhex(
-                        "416004356000811560cc578160011460ba57508060021460ad578060031460a05780600414608a578060051460745780600614605f57600714604057600080fd5b600b60008080805a95612710fa915a905b030360005560005260206000f35b50600b60008080805a95612710f4915a906051565b50600b6000808080805a96612710f2915a906051565b50600b6000808080805a96612710f1915a906051565b5060085a9131915a906051565b5060085a913f915a906051565b9160059150600080805a933c5a906051565b505060085a913b915a90605156"  # noqa: E501
-                    ),
+                    code=Op.COINBASE
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.PUSH1[0x0]
+                    + Op.JUMPI(pc=0xCC, condition=Op.ISZERO(Op.DUP2))
+                    + Op.JUMPI(pc=0xBA, condition=Op.EQ(0x1, Op.DUP2))
+                    + Op.POP
+                    + Op.JUMPI(pc=0xAD, condition=Op.EQ(0x2, Op.DUP1))
+                    + Op.JUMPI(pc=0xA0, condition=Op.EQ(0x3, Op.DUP1))
+                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
+                    + Op.JUMPI(pc=0x74, condition=Op.EQ(0x5, Op.DUP1))
+                    + Op.JUMPI(pc=0x5F, condition=Op.EQ(0x6, Op.DUP1))
+                    + Op.PUSH1[0x7]
+                    + Op.JUMPI(pc=0x40, condition=Op.EQ)
+                    + Op.REVERT(offset=Op.DUP1, size=0x0)
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.STATICCALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMPDEST
+                    + Op.SUB
+                    + Op.SSTORE(key=0x0, value=Op.SUB)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=0x0, size=0x20)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.DELEGATECALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALLCODE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.BALANCE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODEHASH
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.SWAP2
+                    + Op.PUSH1[0x5]
+                    + Op.SWAP2
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP4
+                    + Op.EXTCODECOPY
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODESIZE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51),
                 )
             },
         ),
@@ -101,9 +834,131 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xa4a48fc5f3526a9bc06a0136ab0ba1d9574d15ba"): Account(
                     storage={0: 100},
-                    code=bytes.fromhex(
-                        "416004356000811560cc578160011460ba57508060021460ad578060031460a05780600414608a578060051460745780600614605f57600714604057600080fd5b600b60008080805a95612710fa915a905b030360005560005260206000f35b50600b60008080805a95612710f4915a906051565b50600b6000808080805a96612710f2915a906051565b50600b6000808080805a96612710f1915a906051565b5060085a9131915a906051565b5060085a913f915a906051565b9160059150600080805a933c5a906051565b505060085a913b915a90605156"  # noqa: E501
-                    ),
+                    code=Op.COINBASE
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.PUSH1[0x0]
+                    + Op.JUMPI(pc=0xCC, condition=Op.ISZERO(Op.DUP2))
+                    + Op.JUMPI(pc=0xBA, condition=Op.EQ(0x1, Op.DUP2))
+                    + Op.POP
+                    + Op.JUMPI(pc=0xAD, condition=Op.EQ(0x2, Op.DUP1))
+                    + Op.JUMPI(pc=0xA0, condition=Op.EQ(0x3, Op.DUP1))
+                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
+                    + Op.JUMPI(pc=0x74, condition=Op.EQ(0x5, Op.DUP1))
+                    + Op.JUMPI(pc=0x5F, condition=Op.EQ(0x6, Op.DUP1))
+                    + Op.PUSH1[0x7]
+                    + Op.JUMPI(pc=0x40, condition=Op.EQ)
+                    + Op.REVERT(offset=Op.DUP1, size=0x0)
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.STATICCALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMPDEST
+                    + Op.SUB
+                    + Op.SSTORE(key=0x0, value=Op.SUB)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=0x0, size=0x20)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.DELEGATECALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALLCODE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.BALANCE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODEHASH
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.SWAP2
+                    + Op.PUSH1[0x5]
+                    + Op.SWAP2
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP4
+                    + Op.EXTCODECOPY
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODESIZE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51),
                 )
             },
         ),
@@ -112,9 +967,131 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xa4a48fc5f3526a9bc06a0136ab0ba1d9574d15ba"): Account(
                     storage={0: 100},
-                    code=bytes.fromhex(
-                        "416004356000811560cc578160011460ba57508060021460ad578060031460a05780600414608a578060051460745780600614605f57600714604057600080fd5b600b60008080805a95612710fa915a905b030360005560005260206000f35b50600b60008080805a95612710f4915a906051565b50600b6000808080805a96612710f2915a906051565b50600b6000808080805a96612710f1915a906051565b5060085a9131915a906051565b5060085a913f915a906051565b9160059150600080805a933c5a906051565b505060085a913b915a90605156"  # noqa: E501
-                    ),
+                    code=Op.COINBASE
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.PUSH1[0x0]
+                    + Op.JUMPI(pc=0xCC, condition=Op.ISZERO(Op.DUP2))
+                    + Op.JUMPI(pc=0xBA, condition=Op.EQ(0x1, Op.DUP2))
+                    + Op.POP
+                    + Op.JUMPI(pc=0xAD, condition=Op.EQ(0x2, Op.DUP1))
+                    + Op.JUMPI(pc=0xA0, condition=Op.EQ(0x3, Op.DUP1))
+                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
+                    + Op.JUMPI(pc=0x74, condition=Op.EQ(0x5, Op.DUP1))
+                    + Op.JUMPI(pc=0x5F, condition=Op.EQ(0x6, Op.DUP1))
+                    + Op.PUSH1[0x7]
+                    + Op.JUMPI(pc=0x40, condition=Op.EQ)
+                    + Op.REVERT(offset=Op.DUP1, size=0x0)
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.STATICCALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMPDEST
+                    + Op.SUB
+                    + Op.SSTORE(key=0x0, value=Op.SUB)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=0x0, size=0x20)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP6
+                    + Op.PUSH2[0x2710]
+                    + Op.DELEGATECALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALLCODE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0xB]
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP7
+                    + Op.PUSH2[0x2710]
+                    + Op.CALL
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.BALANCE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODEHASH
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.SWAP2
+                    + Op.PUSH1[0x5]
+                    + Op.SWAP2
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.GAS
+                    + Op.SWAP4
+                    + Op.EXTCODECOPY
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51)
+                    + Op.JUMPDEST
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH1[0x8]
+                    + Op.GAS
+                    + Op.SWAP2
+                    + Op.EXTCODESIZE
+                    + Op.SWAP2
+                    + Op.GAS
+                    + Op.SWAP1
+                    + Op.JUMP(pc=0x51),
                 )
             },
         ),
@@ -156,14 +1133,132 @@ def test_coinbase_warm_account_call_gas(
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
-        code=bytes.fromhex(
-            "416004356000811560cc578160011460ba57508060021460ad578060031460a057806004"  # noqa: E501
-            "14608a578060051460745780600614605f57600714604057600080fd5b600b6000808080"  # noqa: E501
-            "5a95612710fa915a905b030360005560005260206000f35b50600b60008080805a956127"  # noqa: E501
-            "10f4915a906051565b50600b6000808080805a96612710f2915a906051565b50600b6000"  # noqa: E501
-            "808080805a96612710f1915a906051565b5060085a9131915a906051565b5060085a913f"  # noqa: E501
-            "915a906051565b9160059150600080805a933c5a906051565b505060085a913b915a9060"  # noqa: E501
-            "5156"
+        code=(
+            Op.COINBASE
+            + Op.CALLDATALOAD(offset=0x4)
+            + Op.PUSH1[0x0]
+            + Op.JUMPI(pc=0xCC, condition=Op.ISZERO(Op.DUP2))
+            + Op.JUMPI(pc=0xBA, condition=Op.EQ(0x1, Op.DUP2))
+            + Op.POP
+            + Op.JUMPI(pc=0xAD, condition=Op.EQ(0x2, Op.DUP1))
+            + Op.JUMPI(pc=0xA0, condition=Op.EQ(0x3, Op.DUP1))
+            + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
+            + Op.JUMPI(pc=0x74, condition=Op.EQ(0x5, Op.DUP1))
+            + Op.JUMPI(pc=0x5F, condition=Op.EQ(0x6, Op.DUP1))
+            + Op.PUSH1[0x7]
+            + Op.JUMPI(pc=0x40, condition=Op.EQ)
+            + Op.REVERT(offset=Op.DUP1, size=0x0)
+            + Op.JUMPDEST
+            + Op.PUSH1[0xB]
+            + Op.PUSH1[0x0]
+            + Op.DUP1
+            + Op.DUP1
+            + Op.DUP1
+            + Op.GAS
+            + Op.SWAP6
+            + Op.PUSH2[0x2710]
+            + Op.STATICCALL
+            + Op.SWAP2
+            + Op.GAS
+            + Op.SWAP1
+            + Op.JUMPDEST
+            + Op.SUB
+            + Op.SSTORE(key=0x0, value=Op.SUB)
+            + Op.PUSH1[0x0]
+            + Op.MSTORE
+            + Op.RETURN(offset=0x0, size=0x20)
+            + Op.JUMPDEST
+            + Op.POP
+            + Op.PUSH1[0xB]
+            + Op.PUSH1[0x0]
+            + Op.DUP1
+            + Op.DUP1
+            + Op.DUP1
+            + Op.GAS
+            + Op.SWAP6
+            + Op.PUSH2[0x2710]
+            + Op.DELEGATECALL
+            + Op.SWAP2
+            + Op.GAS
+            + Op.SWAP1
+            + Op.JUMP(pc=0x51)
+            + Op.JUMPDEST
+            + Op.POP
+            + Op.PUSH1[0xB]
+            + Op.PUSH1[0x0]
+            + Op.DUP1
+            + Op.DUP1
+            + Op.DUP1
+            + Op.DUP1
+            + Op.GAS
+            + Op.SWAP7
+            + Op.PUSH2[0x2710]
+            + Op.CALLCODE
+            + Op.SWAP2
+            + Op.GAS
+            + Op.SWAP1
+            + Op.JUMP(pc=0x51)
+            + Op.JUMPDEST
+            + Op.POP
+            + Op.PUSH1[0xB]
+            + Op.PUSH1[0x0]
+            + Op.DUP1
+            + Op.DUP1
+            + Op.DUP1
+            + Op.DUP1
+            + Op.GAS
+            + Op.SWAP7
+            + Op.PUSH2[0x2710]
+            + Op.CALL
+            + Op.SWAP2
+            + Op.GAS
+            + Op.SWAP1
+            + Op.JUMP(pc=0x51)
+            + Op.JUMPDEST
+            + Op.POP
+            + Op.PUSH1[0x8]
+            + Op.GAS
+            + Op.SWAP2
+            + Op.BALANCE
+            + Op.SWAP2
+            + Op.GAS
+            + Op.SWAP1
+            + Op.JUMP(pc=0x51)
+            + Op.JUMPDEST
+            + Op.POP
+            + Op.PUSH1[0x8]
+            + Op.GAS
+            + Op.SWAP2
+            + Op.EXTCODEHASH
+            + Op.SWAP2
+            + Op.GAS
+            + Op.SWAP1
+            + Op.JUMP(pc=0x51)
+            + Op.JUMPDEST
+            + Op.SWAP2
+            + Op.PUSH1[0x5]
+            + Op.SWAP2
+            + Op.POP
+            + Op.PUSH1[0x0]
+            + Op.DUP1
+            + Op.DUP1
+            + Op.GAS
+            + Op.SWAP4
+            + Op.EXTCODECOPY
+            + Op.GAS
+            + Op.SWAP1
+            + Op.JUMP(pc=0x51)
+            + Op.JUMPDEST
+            + Op.POP
+            + Op.POP
+            + Op.PUSH1[0x8]
+            + Op.GAS
+            + Op.SWAP2
+            + Op.EXTCODESIZE
+            + Op.SWAP2
+            + Op.GAS
+            + Op.SWAP1
+            + Op.JUMP(pc=0x51)
         ),
     )
 

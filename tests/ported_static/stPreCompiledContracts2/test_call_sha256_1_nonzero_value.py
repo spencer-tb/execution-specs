@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,8 +50,21 @@ def test_call_sha256_1_nonzero_value(
     pre[contract] = Account(
         balance=0xBEBC200,
         nonce=0,
-        code=bytes.fromhex(
-            "60206000600060006013600262030d40f160025560005160005500"
+        code=(
+            Op.SSTORE(
+                key=0x2,
+                value=Op.CALL(
+                    gas=0x30D40,
+                    address=0x2,
+                    value=0x13,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -73,8 +87,21 @@ def test_call_sha256_1_nonzero_value(
                 0: 0xE3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855,  # noqa: E501
                 2: 1,
             },
-            code=bytes.fromhex(
-                "60206000600060006013600262030d40f160025560005160005500"
+            code=(
+                Op.SSTORE(
+                    key=0x2,
+                    value=Op.CALL(
+                        gas=0x30D40,
+                        address=0x2,
+                        value=0x13,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

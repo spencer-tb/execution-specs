@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,14 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0xb581f1a0f5810ad50a1f96713df63eb8cb0ebf8a"): Account(
-                    code=bytes.fromhex(
-                        "67ffffffffffffffff51506fffffffffffffffffffffffffffffffff51507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5100"  # noqa: E501
+                    code=Op.POP(Op.MLOAD(offset=0xFFFFFFFFFFFFFFFF))
+                    + Op.POP(
+                        Op.MLOAD(offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
                     )
+                    + Op.MLOAD(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
+                    )
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +47,14 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0xb581f1a0f5810ad50a1f96713df63eb8cb0ebf8a"): Account(
-                    code=bytes.fromhex(
-                        "67ffffffffffffffff51506fffffffffffffffffffffffffffffffff51507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5100"  # noqa: E501
+                    code=Op.POP(Op.MLOAD(offset=0xFFFFFFFFFFFFFFFF))
+                    + Op.POP(
+                        Op.MLOAD(offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
                     )
+                    + Op.MLOAD(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
+                    )
+                    + Op.STOP
                 )
             },
         ),
@@ -74,9 +85,13 @@ def test_mload_bounds2(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "67ffffffffffffffff51506fffffffffffffffffffffffffffffffff51507fffffffffff"  # noqa: E501
-            "ffffffffffffffffffffffffffffffffffffffffffffffffffffff5100"
+        code=(
+            Op.POP(Op.MLOAD(offset=0xFFFFFFFFFFFFFFFF))
+            + Op.POP(Op.MLOAD(offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF))
+            + Op.MLOAD(
+                offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)

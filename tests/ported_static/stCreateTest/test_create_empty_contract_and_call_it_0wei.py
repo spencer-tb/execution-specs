@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,9 +51,26 @@ def test_create_empty_contract_and_call_it_0wei(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a600055602060006000f06001555a6002556000600060006000600060015461ea60f160"  # noqa: E501
-            "03555a60645500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x1, value=Op.CREATE(value=0x0, offset=0x0, size=0x20)
+            )
+            + Op.SSTORE(key=0x2, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x3,
+                value=Op.CALL(
+                    gas=0xEA60,
+                    address=Op.SLOAD(key=0x1),
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x64, value=Op.GAS)
+            + Op.STOP
         ),
     )
 
@@ -77,8 +95,27 @@ def test_create_empty_contract_and_call_it_0wei(
                 3: 1,
                 100: 0x6FE6B,
             },
-            code=bytes.fromhex(
-                "5a600055602060006000f06001555a6002556000600060006000600060015461ea60f16003555a60645500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CREATE(value=0x0, offset=0x0, size=0x20),
+                )
+                + Op.SSTORE(key=0x2, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x3,
+                    value=Op.CALL(
+                        gas=0xEA60,
+                        address=Op.SLOAD(key=0x1),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x64, value=Op.GAS)
+                + Op.STOP
             ),
         ),
     }

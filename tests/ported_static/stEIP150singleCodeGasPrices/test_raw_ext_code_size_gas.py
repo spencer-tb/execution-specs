@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -57,8 +58,15 @@ def test_raw_ext_code_size_gas(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a600052734a84c43fba78ae75cbc15c5b63caa15da55f44643b505a6000510360015500"  # noqa: E501
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.POP(
+                Op.EXTCODESIZE(
+                    address=0x4A84C43FBA78AE75CBC15C5B63CAA15DA55F4464
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -83,8 +91,17 @@ def test_raw_ext_code_size_gas(
         ),
         contract: Account(
             storage={1: 2616},
-            code=bytes.fromhex(
-                "5a600052734a84c43fba78ae75cbc15c5b63caa15da55f44643b505a6000510360015500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.POP(
+                    Op.EXTCODESIZE(
+                        address=0x4A84C43FBA78AE75CBC15C5B63CAA15DA55F4464,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.STOP
             ),
         ),
     }

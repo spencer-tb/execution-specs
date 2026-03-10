@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -52,12 +53,43 @@ def test_ext_code_copy_tests_paris(
     pre[contract] = Account(
         balance=7000,
         nonce=0,
-        code=bytes.fromhex(
-            "6002600a600173bbbf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516002556002"  # noqa: E501
-            "600a600173cccf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516003556002600a"  # noqa: E501
-            "600173dddf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516004556002600a6001"  # noqa: E501
-            "73eeef5374fce5edbc8e2a8697c15331677e6ebf0b3c60005160055560c8600a600173ee"  # noqa: E501
-            "ef5374fce5edbc8e2a8697c15331677e6ebf0b3c60005160065500"
+        code=(
+            Op.EXTCODECOPY(
+                address=0xBBBF5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                dest_offset=0x1,
+                offset=0xA,
+                size=0x2,
+            )
+            + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+            + Op.EXTCODECOPY(
+                address=0xCCCF5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                dest_offset=0x1,
+                offset=0xA,
+                size=0x2,
+            )
+            + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x0))
+            + Op.EXTCODECOPY(
+                address=0xDDDF5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                dest_offset=0x1,
+                offset=0xA,
+                size=0x2,
+            )
+            + Op.SSTORE(key=0x4, value=Op.MLOAD(offset=0x0))
+            + Op.EXTCODECOPY(
+                address=0xEEEF5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                dest_offset=0x1,
+                offset=0xA,
+                size=0x2,
+            )
+            + Op.SSTORE(key=0x5, value=Op.MLOAD(offset=0x0))
+            + Op.EXTCODECOPY(
+                address=0xEEEF5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                dest_offset=0x1,
+                offset=0xA,
+                size=0xC8,
+            )
+            + Op.SSTORE(key=0x6, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
     )
     pre[callee] = Account(balance=10, nonce=0)
@@ -88,8 +120,43 @@ def test_ext_code_copy_tests_paris(
                 5: 0x11120000000000000000000000000000000000000000000000000000000000,  # noqa: E501
                 6: 0x11121314151617181920212223242526272829303132000000000000000000,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "6002600a600173bbbf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516002556002600a600173cccf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516003556002600a600173dddf5374fce5edbc8e2a8697c15331677e6ebf0b3c6000516004556002600a600173eeef5374fce5edbc8e2a8697c15331677e6ebf0b3c60005160055560c8600a600173eeef5374fce5edbc8e2a8697c15331677e6ebf0b3c60005160065500"  # noqa: E501
+            code=(
+                Op.EXTCODECOPY(
+                    address=0xBBBF5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    dest_offset=0x1,
+                    offset=0xA,
+                    size=0x2,
+                )
+                + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                + Op.EXTCODECOPY(
+                    address=0xCCCF5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    dest_offset=0x1,
+                    offset=0xA,
+                    size=0x2,
+                )
+                + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x0))
+                + Op.EXTCODECOPY(
+                    address=0xDDDF5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    dest_offset=0x1,
+                    offset=0xA,
+                    size=0x2,
+                )
+                + Op.SSTORE(key=0x4, value=Op.MLOAD(offset=0x0))
+                + Op.EXTCODECOPY(
+                    address=0xEEEF5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    dest_offset=0x1,
+                    offset=0xA,
+                    size=0x2,
+                )
+                + Op.SSTORE(key=0x5, value=Op.MLOAD(offset=0x0))
+                + Op.EXTCODECOPY(
+                    address=0xEEEF5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    dest_offset=0x1,
+                    offset=0xA,
+                    size=0xC8,
+                )
+                + Op.SSTORE(key=0x6, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
         callee_2: Account(

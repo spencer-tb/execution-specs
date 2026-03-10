@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,19 @@ def test_delegatecall_emptycontract(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=bytes.fromhex(
-            "604060006040600073945304eb96065b2a98b57a48a06ae28d285a71b561c350f4600055"  # noqa: E501
-            "00"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0x945304EB96065B2A98B57A48A06AE28D285A71B5,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x10C8E0, nonce=0)
@@ -71,8 +82,19 @@ def test_delegatecall_emptycontract(
     post = {
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "604060006040600073945304eb96065b2a98b57a48a06ae28d285a71b561c350f460005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0x945304EB96065B2A98B57A48A06AE28D285A71B5,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

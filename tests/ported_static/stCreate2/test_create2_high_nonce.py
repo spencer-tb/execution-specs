@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,8 +48,18 @@ def test_create2_high_nonce(
     pre[contract] = Account(
         balance=0,
         nonce=18446744073709551615,
-        code=bytes.fromhex(
-            "6460016000f360d81b600090815260058180f56000556001805500"
+        code=(
+            Op.SHL(0xD8, 0x60016000F3)
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.DUP2
+            + Op.MSTORE
+            + Op.PUSH1[0x5]
+            + Op.DUP2
+            + Op.DUP1
+            + Op.SSTORE(key=0x0, value=Op.CREATE2)
+            + Op.SSTORE(key=Op.DUP1, value=0x1)
+            + Op.STOP
         ),
     )
 
@@ -67,8 +78,18 @@ def test_create2_high_nonce(
     post = {
         contract: Account(
             storage={1: 1},
-            code=bytes.fromhex(
-                "6460016000f360d81b600090815260058180f56000556001805500"
+            code=(
+                Op.SHL(0xD8, 0x60016000F3)
+                + Op.PUSH1[0x0]
+                + Op.SWAP1
+                + Op.DUP2
+                + Op.MSTORE
+                + Op.PUSH1[0x5]
+                + Op.DUP2
+                + Op.DUP1
+                + Op.SSTORE(key=0x0, value=Op.CREATE2)
+                + Op.SSTORE(key=Op.DUP1, value=0x1)
+                + Op.STOP
             ),
         ),
     }

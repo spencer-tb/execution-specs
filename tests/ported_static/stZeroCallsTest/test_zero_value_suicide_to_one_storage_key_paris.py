@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,7 +52,10 @@ def test_zero_value_suicide_to_one_storage_key_paris(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("734757608f18b70777ae788dd4056eeed52f7aa68fff00"),
+        code=(
+            Op.SELFDESTRUCT(address=0x4757608F18B70777AE788DD4056EEED52F7AA68F)
+            + Op.STOP
+        ),
         storage={0x0: 0x1},
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -72,8 +76,11 @@ def test_zero_value_suicide_to_one_storage_key_paris(
         callee: Account(storage={0: 1}),
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "734757608f18b70777ae788dd4056eeed52f7aa68fff00"
+            code=(
+                Op.SELFDESTRUCT(
+                    address=0x4757608F18B70777AE788DD4056EEED52F7AA68F,
+                )
+                + Op.STOP
             ),
         ),
     }

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,12 +48,30 @@ def test_suicides_and_internal_call_suicides_bonus_gas_at_call(
         gas_limit=1000000,
     )
 
-    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("6001ff00"))
+    pre[callee] = Account(
+        balance=0,
+        nonce=0,
+        code=Op.SELFDESTRUCT(address=0x1) + Op.STOP,
+    )
     pre[sender] = Account(balance=0x5F5E100, nonce=0)
     pre[contract] = Account(
         balance=10,
         nonce=0,
-        code=bytes.fromhex("6000600060006000600160006000f1506000ff00"),
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x0,
+                    address=0x0,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SELFDESTRUCT(address=0x0)
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -68,9 +87,23 @@ def test_suicides_and_internal_call_suicides_bonus_gas_at_call(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("6001ff00")),
+        callee: Account(code=Op.SELFDESTRUCT(address=0x1) + Op.STOP),
         contract: Account(
-            code=bytes.fromhex("6000600060006000600160006000f1506000ff00"),
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x0,
+                        address=0x0,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SELFDESTRUCT(address=0x0)
+                + Op.STOP
+            ),
         ),
     }
 

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,7 +51,7 @@ def test_new_gas_price_for_codes(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("601160645500"),
+        code=Op.SSTORE(key=0x64, value=0x11) + Op.STOP,
     )
     pre[callee_1] = Account(
         balance=111,
@@ -63,15 +64,77 @@ def test_new_gas_price_for_codes(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a6103e75273c572a70afaab9d01d0a2afb855bfbafb47c8211b3b600155601460006000"  # noqa: E501
-            "73c572a70afaab9d01d0a2afb855bfbafb47c8211b3c6000516002556000546004556000"  # noqa: E501
-            "600060006000600173ad9d325b811cb0701839c07c6f139f3799476798617530f1600555"  # noqa: E501
-            "6000600060006000600173ad9d325b811cb0701839c07c6f139f3799476798617530f260"  # noqa: E501
-            "0655600060006000600073ad9d325b811cb0701839c07c6f139f3799476798617530f460"  # noqa: E501
-            "075560006000600060006000731000000000000000000000000000000000000013617530"  # noqa: E501
-            "f160085573faa10b404ab607779993c016cd5da73ae1f29d7e316003555a6103e7510360"  # noqa: E501
-            "0a5500"
+        code=(
+            Op.MSTORE(offset=0x3E7, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.EXTCODESIZE(
+                    address=0xC572A70AFAAB9D01D0A2AFB855BFBAFB47C8211B,
+                ),
+            )
+            + Op.EXTCODECOPY(
+                address=0xC572A70AFAAB9D01D0A2AFB855BFBAFB47C8211B,
+                dest_offset=0x0,
+                offset=0x0,
+                size=0x14,
+            )
+            + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+            + Op.SSTORE(key=0x4, value=Op.SLOAD(key=0x0))
+            + Op.SSTORE(
+                key=0x5,
+                value=Op.CALL(
+                    gas=0x7530,
+                    address=0xAD9D325B811CB0701839C07C6F139F3799476798,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x6,
+                value=Op.CALLCODE(
+                    gas=0x7530,
+                    address=0xAD9D325B811CB0701839C07C6F139F3799476798,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x7,
+                value=Op.DELEGATECALL(
+                    gas=0x7530,
+                    address=0xAD9D325B811CB0701839C07C6F139F3799476798,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x8,
+                value=Op.CALL(
+                    gas=0x7530,
+                    address=0x1000000000000000000000000000000000000013,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x3,
+                value=Op.BALANCE(
+                    address=0xFAA10B404AB607779993C016CD5DA73AE1F29D7E,
+                ),
+            )
+            + Op.SSTORE(key=0xA, value=Op.SUB(Op.MLOAD(offset=0x3E7), Op.GAS))
+            + Op.STOP
         ),
         storage={0x0: 0x12},
     )
@@ -89,7 +152,7 @@ def test_new_gas_price_for_codes(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("601160645500")),
+        callee: Account(code=Op.SSTORE(key=0x64, value=0x11) + Op.STOP),
         callee_1: Account(
             code=bytes.fromhex(
                 "1122334455667788991011121314151617181920212223242526272829303132"  # noqa: E501
@@ -107,8 +170,79 @@ def test_new_gas_price_for_codes(
                 10: 0x2CB0A,
                 100: 17,
             },
-            code=bytes.fromhex(
-                "5a6103e75273c572a70afaab9d01d0a2afb855bfbafb47c8211b3b60015560146000600073c572a70afaab9d01d0a2afb855bfbafb47c8211b3c6000516002556000546004556000600060006000600173ad9d325b811cb0701839c07c6f139f3799476798617530f16005556000600060006000600173ad9d325b811cb0701839c07c6f139f3799476798617530f2600655600060006000600073ad9d325b811cb0701839c07c6f139f3799476798617530f460075560006000600060006000731000000000000000000000000000000000000013617530f160085573faa10b404ab607779993c016cd5da73ae1f29d7e316003555a6103e75103600a5500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x3E7, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.EXTCODESIZE(
+                        address=0xC572A70AFAAB9D01D0A2AFB855BFBAFB47C8211B,
+                    ),
+                )
+                + Op.EXTCODECOPY(
+                    address=0xC572A70AFAAB9D01D0A2AFB855BFBAFB47C8211B,
+                    dest_offset=0x0,
+                    offset=0x0,
+                    size=0x14,
+                )
+                + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                + Op.SSTORE(key=0x4, value=Op.SLOAD(key=0x0))
+                + Op.SSTORE(
+                    key=0x5,
+                    value=Op.CALL(
+                        gas=0x7530,
+                        address=0xAD9D325B811CB0701839C07C6F139F3799476798,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x6,
+                    value=Op.CALLCODE(
+                        gas=0x7530,
+                        address=0xAD9D325B811CB0701839C07C6F139F3799476798,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x7,
+                    value=Op.DELEGATECALL(
+                        gas=0x7530,
+                        address=0xAD9D325B811CB0701839C07C6F139F3799476798,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x8,
+                    value=Op.CALL(
+                        gas=0x7530,
+                        address=0x1000000000000000000000000000000000000013,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x3,
+                    value=Op.BALANCE(
+                        address=0xFAA10B404AB607779993C016CD5DA73AE1F29D7E,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0xA, value=Op.SUB(Op.MLOAD(offset=0x3E7), Op.GAS)
+                )
+                + Op.STOP
             ),
         ),
     }

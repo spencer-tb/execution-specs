@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "7f6001600155601080600c6000396000f3006000355415600957005b602035600060005260356020536055602153600060006001f050630fffffff60006001f000"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
                     )
+                    + Op.MSTORE8(offset=0x20, value=0x35)
+                    + Op.MSTORE8(offset=0x21, value=0x55)
+                    + Op.POP(Op.CREATE(value=0x1, offset=0x0, size=0x0))
+                    + Op.CREATE(value=0x1, offset=0x0, size=0xFFFFFFF)
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +48,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "7f6001600155601080600c6000396000f3006000355415600957005b602035600060005260356020536055602153600060006001f050630fffffff60006001f000"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
                     )
+                    + Op.MSTORE8(offset=0x20, value=0x35)
+                    + Op.MSTORE8(offset=0x21, value=0x55)
+                    + Op.POP(Op.CREATE(value=0x1, offset=0x0, size=0x0))
+                    + Op.CREATE(value=0x1, offset=0x0, size=0xFFFFFFF)
+                    + Op.STOP
                 )
             },
         ),
@@ -74,9 +87,16 @@ def test_create_bounds(
     pre[contract] = Account(
         balance=100,
         nonce=0,
-        code=bytes.fromhex(
-            "7f6001600155601080600c6000396000f3006000355415600957005b6020356000600052"  # noqa: E501
-            "60356020536055602153600060006001f050630fffffff60006001f000"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
+            )
+            + Op.MSTORE8(offset=0x20, value=0x35)
+            + Op.MSTORE8(offset=0x21, value=0x55)
+            + Op.POP(Op.CREATE(value=0x1, offset=0x0, size=0x0))
+            + Op.CREATE(value=0x1, offset=0x0, size=0xFFFFFFF)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(

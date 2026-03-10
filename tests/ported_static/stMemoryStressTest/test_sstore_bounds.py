@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,25 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0x1f2aee312c3c47bdeb27ff5275fddb33c543e394"): Account(
-                    code=bytes.fromhex(
-                        "600163ffffffff55600167ffffffffffffffff5560016fffffffffffffffffffffffffffffffff5560017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5563ffffffff60205567ffffffffffffffff6040556fffffffffffffffffffffffffffffffff6080557fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6101005500"  # noqa: E501
+                    code=Op.SSTORE(key=0xFFFFFFFF, value=0x1)
+                    + Op.SSTORE(key=0xFFFFFFFFFFFFFFFF, value=0x1)
+                    + Op.SSTORE(
+                        key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, value=0x1
                     )
+                    + Op.SSTORE(
+                        key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        value=0x1,
+                    )
+                    + Op.SSTORE(key=0x20, value=0xFFFFFFFF)
+                    + Op.SSTORE(key=0x40, value=0xFFFFFFFFFFFFFFFF)
+                    + Op.SSTORE(
+                        key=0x80, value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.SSTORE(
+                        key=0x100,
+                        value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    )
+                    + Op.STOP
                 )
             },
         ),
@@ -51,9 +68,25 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: 1,
                         0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: 1,  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "600163ffffffff55600167ffffffffffffffff5560016fffffffffffffffffffffffffffffffff5560017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5563ffffffff60205567ffffffffffffffff6040556fffffffffffffffffffffffffffffffff6080557fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6101005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(key=0xFFFFFFFF, value=0x1)
+                    + Op.SSTORE(key=0xFFFFFFFFFFFFFFFF, value=0x1)
+                    + Op.SSTORE(
+                        key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, value=0x1
+                    )
+                    + Op.SSTORE(
+                        key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        value=0x1,
+                    )
+                    + Op.SSTORE(key=0x20, value=0xFFFFFFFF)
+                    + Op.SSTORE(key=0x40, value=0xFFFFFFFFFFFFFFFF)
+                    + Op.SSTORE(
+                        key=0x80, value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.SSTORE(
+                        key=0x100,
+                        value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -84,12 +117,22 @@ def test_sstore_bounds(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600163ffffffff55600167ffffffffffffffff5560016fffffffffffffffffffffffffff"  # noqa: E501
-            "ffffff5560017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffff5563ffffffff60205567ffffffffffffffff6040556fffffffffffffffffffffff"  # noqa: E501
-            "ffffffffff6080557fffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffffffff6101005500"
+        code=(
+            Op.SSTORE(key=0xFFFFFFFF, value=0x1)
+            + Op.SSTORE(key=0xFFFFFFFFFFFFFFFF, value=0x1)
+            + Op.SSTORE(key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, value=0x1)
+            + Op.SSTORE(
+                key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                value=0x1,
+            )
+            + Op.SSTORE(key=0x20, value=0xFFFFFFFF)
+            + Op.SSTORE(key=0x40, value=0xFFFFFFFFFFFFFFFF)
+            + Op.SSTORE(key=0x80, value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+            + Op.SSTORE(
+                key=0x100,
+                value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)

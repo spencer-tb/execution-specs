@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,10 +35,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             160000,
             {
                 Address("0x64e2ebd6405af8cb348aec519084d3fff42ebba6"): Account(
-                    code=bytes.fromhex("600c600055")
+                    code=Op.SSTORE(key=0x0, value=0xC)
                 ),
                 Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={1: 12}, code=bytes.fromhex("600c60015500")
+                    storage={1: 12},
+                    code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP,
                 ),
             },
         ),
@@ -45,7 +47,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             60000,
             {
                 Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600c60015500")
+                    code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP
                 )
             },
         ),
@@ -77,7 +79,7 @@ def test_create_e_contract_create_ne_contract_in_init_oog_tr(
     pre[contract] = Account(
         balance=0xE8D4A51000,
         nonce=0,
-        code=bytes.fromhex("600c60015500"),
+        code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP,
     )
 
     tx = Transaction(

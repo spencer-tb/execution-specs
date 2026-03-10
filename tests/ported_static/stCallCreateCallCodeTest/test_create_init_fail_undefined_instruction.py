@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,20 +52,55 @@ def test_create_init_fail_undefined_instruction(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60f96000536000600160006001f5ff00"),
+        code=(
+            Op.MSTORE8(offset=0x0, value=0xF9)
+            + Op.SELFDESTRUCT(
+                address=Op.CREATE2(value=0x1, offset=0x0, size=0x1, salt=0x0),
+            )
+            + Op.STOP
+        ),
     )
     pre[callee_1] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60f9600053600160006001f0ff00"),
+        code=(
+            Op.MSTORE8(offset=0x0, value=0xF9)
+            + Op.SELFDESTRUCT(
+                address=Op.CREATE(value=0x1, offset=0x0, size=0x1)
+            )
+            + Op.STOP
+        ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000600073552f200b75457440ee6df9159d6b188e9d18c22262061a80f1"  # noqa: E501
-            "60005560006000600060006000730183feb7335d767d4d6ae41bbdea7afb272278606206"  # noqa: E501
-            "1a80f1600155600160025500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x61A80,
+                    address=0x552F200B75457440EE6DF9159D6B188E9D18C222,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=0x61A80,
+                    address=0x183FEB7335D767D4D6AE41BBDEA7AFB27227860,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x2, value=0x1)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -83,13 +119,54 @@ def test_create_init_fail_undefined_instruction(
 
     post = {
         callee: Account(
-            code=bytes.fromhex("60f96000536000600160006001f5ff00"),
+            code=(
+                Op.MSTORE8(offset=0x0, value=0xF9)
+                + Op.SELFDESTRUCT(
+                    address=Op.CREATE2(
+                        value=0x1, offset=0x0, size=0x1, salt=0x0
+                    ),
+                )
+                + Op.STOP
+            ),
         ),
-        callee_1: Account(code=bytes.fromhex("60f9600053600160006001f0ff00")),
+        callee_1: Account(
+            code=(
+                Op.MSTORE8(offset=0x0, value=0xF9)
+                + Op.SELFDESTRUCT(
+                    address=Op.CREATE(value=0x1, offset=0x0, size=0x1),
+                )
+                + Op.STOP
+            ),
+        ),
         contract: Account(
             storage={2: 1},
-            code=bytes.fromhex(
-                "6000600060006000600073552f200b75457440ee6df9159d6b188e9d18c22262061a80f160005560006000600060006000730183feb7335d767d4d6ae41bbdea7afb2722786062061a80f1600155600160025500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x61A80,
+                        address=0x552F200B75457440EE6DF9159D6B188E9D18C222,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=0x61A80,
+                        address=0x183FEB7335D767D4D6AE41BBDEA7AFB27227860,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x2, value=0x1)
+                + Op.STOP
             ),
         ),
     }

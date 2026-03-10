@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,16 +50,23 @@ def test_create_hash_collision(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7c601080600c6000396000f3006000355415600957005b60203560003555600052601d60"  # noqa: E501
-            "036017f060005500"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x601080600C6000396000F3006000355415600957005B60203560003555,  # noqa: E501
+            )
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.CREATE(value=0x17, offset=0x3, size=0x1D),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[callee] = Account(
         balance=42,
         nonce=0,
-        code=bytes.fromhex("60016001016055"),
+        code=Op.ADD(0x1, 0x1) + Op.PUSH1[0x55],
     )
 
     tx = Transaction(
@@ -75,11 +83,19 @@ def test_create_hash_collision(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "7c601080600c6000396000f3006000355415600957005b60203560003555600052601d60036017f060005500"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x601080600C6000396000F3006000355415600957005B60203560003555,  # noqa: E501
+                )
+                + Op.SSTORE(
+                    key=0x0,
+                    value=Op.CREATE(value=0x17, offset=0x3, size=0x1D),
+                )
+                + Op.STOP
             ),
         ),
-        callee: Account(code=bytes.fromhex("60016001016055")),
+        callee: Account(code=Op.ADD(0x1, 0x1) + Op.PUSH1[0x55]),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

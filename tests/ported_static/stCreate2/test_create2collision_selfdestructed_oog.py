@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -58,9 +59,21 @@ def test_create2collision_selfdestructed_oog(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    pre[contract] = Account(balance=1, nonce=0, code=bytes.fromhex("6010ff00"))
-    pre[callee_1] = Account(balance=1, nonce=0, code=bytes.fromhex("6010ff00"))
-    pre[callee_2] = Account(balance=1, nonce=0, code=bytes.fromhex("6010ff00"))
+    pre[contract] = Account(
+        balance=1,
+        nonce=0,
+        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
+    )
+    pre[callee_1] = Account(
+        balance=1,
+        nonce=0,
+        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
+    )
+    pre[callee_2] = Account(
+        balance=1,
+        nonce=0,
+        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
+    )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -77,9 +90,9 @@ def test_create2collision_selfdestructed_oog(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("6010ff00")),
-        callee_1: Account(code=bytes.fromhex("6010ff00")),
-        callee_2: Account(code=bytes.fromhex("6010ff00")),
+        contract: Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP),
+        callee_1: Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP),
+        callee_2: Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

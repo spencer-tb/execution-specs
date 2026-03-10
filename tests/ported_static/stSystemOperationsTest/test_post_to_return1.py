@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,16 +50,39 @@ def test_post_to_return1(
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=bytes.fromhex("603760005360026000f2"),
+        code=(
+            Op.MSTORE8(offset=0x0, value=0x37)
+            + Op.PUSH1[0x2]
+            + Op.PUSH1[0x0]
+            + Op.CALLCODE
+        ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600052"  # noqa: E501
-            "7faaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaa602052"  # noqa: E501
-            "60006000604060006017731ec76f80449bf4d3edf503813e06c0d4373fdf3d617530f160"  # noqa: E501
-            "0155600160025500"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x20,
+                value=0xAAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAA,  # noqa: E501
+            )
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=0x7530,
+                    address=0x1EC76F80449BF4D3EDF503813E06C0D4373FDF3D,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x2, value=0x1)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -76,11 +100,39 @@ def test_post_to_return1(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("603760005360026000f2")),
+        callee: Account(
+            code=(
+                Op.MSTORE8(offset=0x0, value=0x37)
+                + Op.PUSH1[0x2]
+                + Op.PUSH1[0x0]
+                + Op.CALLCODE
+            ),
+        ),
         contract: Account(
             storage={2: 1},
-            code=bytes.fromhex(
-                "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6000527faaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaa60205260006000604060006017731ec76f80449bf4d3edf503813e06c0d4373fdf3d617530f1600155600160025500"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x20,
+                    value=0xAAFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAA,  # noqa: E501
+                )
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=0x7530,
+                        address=0x1EC76F80449BF4D3EDF503813E06C0D4373FDF3D,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x2, value=0x1)
+                + Op.STOP
             ),
         ),
     }

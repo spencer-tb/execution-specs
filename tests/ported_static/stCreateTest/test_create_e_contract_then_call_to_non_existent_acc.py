@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,9 +51,26 @@ def test_create_e_contract_then_call_to_non_existent_acc(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a600055602060006000f06001555a6002556000600060006000600073e1ecf98489fa9e"  # noqa: E501
-            "d60a664fc4998db699cfa39d4061ea60f16003555a60645500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x1, value=Op.CREATE(value=0x0, offset=0x0, size=0x20)
+            )
+            + Op.SSTORE(key=0x2, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x3,
+                value=Op.CALL(
+                    gas=0xEA60,
+                    address=0xE1ECF98489FA9ED60A664FC4998DB699CFA39D40,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x64, value=Op.GAS)
+            + Op.STOP
         ),
     )
 
@@ -77,8 +95,27 @@ def test_create_e_contract_then_call_to_non_existent_acc(
                 3: 1,
                 100: 0x6F50B,
             },
-            code=bytes.fromhex(
-                "5a600055602060006000f06001555a6002556000600060006000600073e1ecf98489fa9ed60a664fc4998db699cfa39d4061ea60f16003555a60645500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CREATE(value=0x0, offset=0x0, size=0x20),
+                )
+                + Op.SSTORE(key=0x2, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x3,
+                    value=Op.CALL(
+                        gas=0xEA60,
+                        address=0xE1ECF98489FA9ED60A664FC4998DB699CFA39D40,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x64, value=Op.GAS)
+                + Op.STOP
             ),
         ),
     }

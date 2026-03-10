@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,13 +48,24 @@ def test_not(
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("670123456789abcdef1960005500"),
+        code=Op.SSTORE(key=0x0, value=Op.NOT(0x123456789ABCDEF)) + Op.STOP,
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("600060006000600060006004356110000162fffffff100"),
+        code=(
+            Op.CALL(
+                gas=0xFFFFFF,
+                address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -75,11 +87,20 @@ def test_not(
             storage={
                 0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEDCBA9876543210,  # noqa: E501
             },
-            code=bytes.fromhex("670123456789abcdef1960005500"),
+            code=Op.SSTORE(key=0x0, value=Op.NOT(0x123456789ABCDEF)) + Op.STOP,
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "600060006000600060006004356110000162fffffff100"
+            code=(
+                Op.CALL(
+                    gas=0xFFFFFF,
+                    address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
     }

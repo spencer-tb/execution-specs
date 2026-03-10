@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,12 +48,32 @@ def test_random_statetest244(
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("4542074343424141315155"),
+        code=(
+            Op.SMOD(Op.TIMESTAMP, Op.GASLIMIT)
+            + Op.NUMBER
+            + Op.NUMBER
+            + Op.TIMESTAMP
+            + Op.SSTORE(
+                key=Op.MLOAD(offset=Op.BALANCE(address=Op.COINBASE)),
+                value=Op.COINBASE,
+            )
+        ),
     )
 
     tx = Transaction(
@@ -69,11 +90,33 @@ def test_random_statetest244(
 
     post = {
         coinbase: Account(
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
         contract: Account(
             storage={0: 0x4F3F701464972E74606D6EA82D4D3080599A0E79},
-            code=bytes.fromhex("4542074343424141315155"),
+            code=(
+                Op.SMOD(Op.TIMESTAMP, Op.GASLIMIT)
+                + Op.NUMBER
+                + Op.NUMBER
+                + Op.TIMESTAMP
+                + Op.SSTORE(
+                    key=Op.MLOAD(offset=Op.BALANCE(address=Op.COINBASE)),
+                    value=Op.COINBASE,
+                )
+            ),
         ),
     }
 

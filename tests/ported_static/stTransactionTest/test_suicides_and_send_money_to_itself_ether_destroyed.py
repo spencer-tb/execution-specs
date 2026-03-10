@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,7 +51,10 @@ def test_suicides_and_send_money_to_itself_ether_destroyed(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=bytes.fromhex("73ccbd97bed823989bf91c6ac4ceac020b2881f3a5ff00"),
+        code=(
+            Op.SELFDESTRUCT(address=0xCCBD97BED823989BF91C6AC4CEAC020B2881F3A5)
+            + Op.STOP
+        ),
     )
     pre[coinbase] = Account(balance=0, nonce=1)
 
@@ -68,8 +72,11 @@ def test_suicides_and_send_money_to_itself_ether_destroyed(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "73ccbd97bed823989bf91c6ac4ceac020b2881f3a5ff00"
+            code=(
+                Op.SELFDESTRUCT(
+                    address=0xCCBD97BED823989BF91C6AC4CEAC020B2881F3A5,
+                )
+                + Op.STOP
             ),
         ),
     }

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -56,7 +57,7 @@ def test_mload_bounds3(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("624000005100"),
+        code=Op.MLOAD(offset=0x400000) + Op.STOP,
     )
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
 
@@ -73,7 +74,7 @@ def test_mload_bounds3(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("624000005100")),
+        contract: Account(code=Op.MLOAD(offset=0x400000) + Op.STOP),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

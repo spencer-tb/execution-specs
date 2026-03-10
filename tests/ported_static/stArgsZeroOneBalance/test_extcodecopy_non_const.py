@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,9 +34,21 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0xf7a7fbf01dbcfefdfd9ae65e4892c576994f31bf"): Account(
-                    code=bytes.fromhex(
-                        "73f7a7fbf01dbcfefdfd9ae65e4892c576994f31bf3173f7a7fbf01dbcfefdfd9ae65e4892c576994f31bf3173f7a7fbf01dbcfefdfd9ae65e4892c576994f31bf3173f7a7fbf01dbcfefdfd9ae65e4892c576994f31bf313c00"  # noqa: E501
+                    code=Op.EXTCODECOPY(
+                        address=Op.BALANCE(
+                            address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF
+                        ),
+                        dest_offset=Op.BALANCE(
+                            address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF
+                        ),
+                        offset=Op.BALANCE(
+                            address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF
+                        ),
+                        size=Op.BALANCE(
+                            address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -43,9 +56,21 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0xf7a7fbf01dbcfefdfd9ae65e4892c576994f31bf"): Account(
-                    code=bytes.fromhex(
-                        "73f7a7fbf01dbcfefdfd9ae65e4892c576994f31bf3173f7a7fbf01dbcfefdfd9ae65e4892c576994f31bf3173f7a7fbf01dbcfefdfd9ae65e4892c576994f31bf3173f7a7fbf01dbcfefdfd9ae65e4892c576994f31bf313c00"  # noqa: E501
+                    code=Op.EXTCODECOPY(
+                        address=Op.BALANCE(
+                            address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF
+                        ),
+                        dest_offset=Op.BALANCE(
+                            address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF
+                        ),
+                        offset=Op.BALANCE(
+                            address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF
+                        ),
+                        size=Op.BALANCE(
+                            address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -77,10 +102,22 @@ def test_extcodecopy_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73f7a7fbf01dbcfefdfd9ae65e4892c576994f31bf3173f7a7fbf01dbcfefdfd9ae65e48"  # noqa: E501
-            "92c576994f31bf3173f7a7fbf01dbcfefdfd9ae65e4892c576994f31bf3173f7a7fbf01d"  # noqa: E501
-            "bcfefdfd9ae65e4892c576994f31bf313c00"
+        code=(
+            Op.EXTCODECOPY(
+                address=Op.BALANCE(
+                    address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF,
+                ),
+                dest_offset=Op.BALANCE(
+                    address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF,
+                ),
+                offset=Op.BALANCE(
+                    address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF,
+                ),
+                size=Op.BALANCE(
+                    address=0xF7A7FBF01DBCFEFDFD9AE65E4892C576994F31BF,
+                ),
+            )
+            + Op.STOP
         ),
     )
 

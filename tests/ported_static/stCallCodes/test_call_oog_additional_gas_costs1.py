@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,15 +50,24 @@ def test_call_oog_additional_gas_costs1(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("6000"),
+        code=Op.PUSH1[0x0],
     )
     pre[coinbase] = Account(balance=0, nonce=1)
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6040600060406000600073d0735f094c16e509e8d76999d9ee2e4fd5166c2e611770f100"  # noqa: E501
+        code=(
+            Op.CALL(
+                gas=0x1770,
+                address=0xD0735F094C16E509E8D76999D9EE2E4FD5166C2E,
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x40,
+                ret_offset=0x0,
+                ret_size=0x40,
+            )
+            + Op.STOP
         ),
     )
 
@@ -74,10 +84,19 @@ def test_call_oog_additional_gas_costs1(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("6000")),
+        callee: Account(code=Op.PUSH1[0x0]),
         contract: Account(
-            code=bytes.fromhex(
-                "6040600060406000600073d0735f094c16e509e8d76999d9ee2e4fd5166c2e611770f100"  # noqa: E501
+            code=(
+                Op.CALL(
+                    gas=0x1770,
+                    address=0xD0735F094C16E509E8D76999D9EE2E4FD5166C2E,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                )
+                + Op.STOP
             ),
         ),
     }

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -56,7 +57,14 @@ def test_jump_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("73a82ae24d0d34b26fcb664dacd3e18371c9315e79315600"),
+        code=(
+            Op.JUMP(
+                pc=Op.BALANCE(
+                    address=0xA82AE24D0D34B26FCB664DACD3E18371C9315E79
+                ),
+            )
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -73,8 +81,13 @@ def test_jump_non_const(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "73a82ae24d0d34b26fcb664dacd3e18371c9315e79315600"
+            code=(
+                Op.JUMP(
+                    pc=Op.BALANCE(
+                        address=0xA82AE24D0D34B26FCB664DACD3E18371C9315E79,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

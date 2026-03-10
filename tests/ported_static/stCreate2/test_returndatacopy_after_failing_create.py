@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,13 @@ def test_returndatacopy_after_failing_create(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "69600260005260206000fd6000526000600a60166000f5503d6000556020600060003e60"  # noqa: E501
-            "005160015500"
+        code=(
+            Op.MSTORE(offset=0x0, value=0x600260005260206000FD)
+            + Op.POP(Op.CREATE2(value=0x0, offset=0x16, size=0xA, salt=0x0))
+            + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+            + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
@@ -72,8 +77,15 @@ def test_returndatacopy_after_failing_create(
     post = {
         contract: Account(
             storage={0: 32, 1: 2},
-            code=bytes.fromhex(
-                "69600260005260206000fd6000526000600a60166000f5503d6000556020600060003e60005160015500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=0x600260005260206000FD)
+                + Op.POP(
+                    Op.CREATE2(value=0x0, offset=0x16, size=0xA, salt=0x0)
+                )
+                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,8 +51,13 @@ def test_create_oo_gafter_init_code_returndata_size(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "726960016001556001600255600052600a6016f36000526013600d6000f0503d60020a00"  # noqa: E501
+        code=(
+            Op.MSTORE(
+                offset=0x0, value=0x6960016001556001600255600052600A6016F3
+            )
+            + Op.POP(Op.CREATE(value=0x0, offset=0xD, size=0x13))
+            + Op.EXP(0x2, Op.RETURNDATASIZE)
+            + Op.STOP
         ),
     )
 
@@ -69,8 +75,14 @@ def test_create_oo_gafter_init_code_returndata_size(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "726960016001556001600255600052600a6016f36000526013600d6000f0503d60020a00"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x6960016001556001600255600052600A6016F3,
+                )
+                + Op.POP(Op.CREATE(value=0x0, offset=0xD, size=0x13))
+                + Op.EXP(0x2, Op.RETURNDATASIZE)
+                + Op.STOP
             ),
         ),
     }

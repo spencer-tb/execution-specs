@@ -21,6 +21,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -39,9 +40,83 @@ REFERENCE_SPEC_VERSION = "N/A"
             "f210011002",
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "6002361160175760003560f01c36600214601557005bff5b60003560f81c60fa61ffff60003560e81c169160ff61ffff60003560d81c16818160081c166000531660015360f181146090575b60f28114607f575b60f48114606f575b14606157ff5b60008060028161c0de5afa50ff5b60008060028161c0de5af450605b565b6000806002818061c0de5af2506053565b6000806002818061c0de5af150604b56"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0x17, condition=Op.GT(Op.CALLDATASIZE, 0x2)
                     )
+                    + Op.SHR(0xF0, Op.CALLDATALOAD(offset=0x0))
+                    + Op.JUMPI(pc=0x15, condition=Op.EQ(0x2, Op.CALLDATASIZE))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
+                    + Op.PUSH1[0xFA]
+                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.SWAP2
+                    + Op.PUSH1[0xFF]
+                    + Op.AND(Op.SHR(0xD8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.MSTORE8(
+                        offset=0x0, value=Op.AND(Op.SHR(0x8, Op.DUP2), Op.DUP2)
+                    )
+                    + Op.MSTORE8(offset=0x1, value=Op.AND)
+                    + Op.JUMPI(pc=0x90, condition=Op.EQ(Op.DUP2, 0xF1))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x7F, condition=Op.EQ(Op.DUP2, 0xF2))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x6F, condition=Op.EQ(Op.DUP2, 0xF4))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x61, condition=Op.EQ)
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.DELEGATECALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x5B)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x53)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x4B)
                 )
             },
         ),
@@ -49,9 +124,83 @@ REFERENCE_SPEC_VERSION = "N/A"
             "f410011002",
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "6002361160175760003560f01c36600214601557005bff5b60003560f81c60fa61ffff60003560e81c169160ff61ffff60003560d81c16818160081c166000531660015360f181146090575b60f28114607f575b60f48114606f575b14606157ff5b60008060028161c0de5afa50ff5b60008060028161c0de5af450605b565b6000806002818061c0de5af2506053565b6000806002818061c0de5af150604b56"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0x17, condition=Op.GT(Op.CALLDATASIZE, 0x2)
                     )
+                    + Op.SHR(0xF0, Op.CALLDATALOAD(offset=0x0))
+                    + Op.JUMPI(pc=0x15, condition=Op.EQ(0x2, Op.CALLDATASIZE))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
+                    + Op.PUSH1[0xFA]
+                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.SWAP2
+                    + Op.PUSH1[0xFF]
+                    + Op.AND(Op.SHR(0xD8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.MSTORE8(
+                        offset=0x0, value=Op.AND(Op.SHR(0x8, Op.DUP2), Op.DUP2)
+                    )
+                    + Op.MSTORE8(offset=0x1, value=Op.AND)
+                    + Op.JUMPI(pc=0x90, condition=Op.EQ(Op.DUP2, 0xF1))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x7F, condition=Op.EQ(Op.DUP2, 0xF2))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x6F, condition=Op.EQ(Op.DUP2, 0xF4))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x61, condition=Op.EQ)
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.DELEGATECALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x5B)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x53)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x4B)
                 )
             },
         ),
@@ -59,9 +208,83 @@ REFERENCE_SPEC_VERSION = "N/A"
             "f110011002",
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "6002361160175760003560f01c36600214601557005bff5b60003560f81c60fa61ffff60003560e81c169160ff61ffff60003560d81c16818160081c166000531660015360f181146090575b60f28114607f575b60f48114606f575b14606157ff5b60008060028161c0de5afa50ff5b60008060028161c0de5af450605b565b6000806002818061c0de5af2506053565b6000806002818061c0de5af150604b56"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0x17, condition=Op.GT(Op.CALLDATASIZE, 0x2)
                     )
+                    + Op.SHR(0xF0, Op.CALLDATALOAD(offset=0x0))
+                    + Op.JUMPI(pc=0x15, condition=Op.EQ(0x2, Op.CALLDATASIZE))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
+                    + Op.PUSH1[0xFA]
+                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.SWAP2
+                    + Op.PUSH1[0xFF]
+                    + Op.AND(Op.SHR(0xD8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.MSTORE8(
+                        offset=0x0, value=Op.AND(Op.SHR(0x8, Op.DUP2), Op.DUP2)
+                    )
+                    + Op.MSTORE8(offset=0x1, value=Op.AND)
+                    + Op.JUMPI(pc=0x90, condition=Op.EQ(Op.DUP2, 0xF1))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x7F, condition=Op.EQ(Op.DUP2, 0xF2))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x6F, condition=Op.EQ(Op.DUP2, 0xF4))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x61, condition=Op.EQ)
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.DELEGATECALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x5B)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x53)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x4B)
                 )
             },
         ),
@@ -69,9 +292,83 @@ REFERENCE_SPEC_VERSION = "N/A"
             "fa1001c0de",
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "6002361160175760003560f01c36600214601557005bff5b60003560f81c60fa61ffff60003560e81c169160ff61ffff60003560d81c16818160081c166000531660015360f181146090575b60f28114607f575b60f48114606f575b14606157ff5b60008060028161c0de5afa50ff5b60008060028161c0de5af450605b565b6000806002818061c0de5af2506053565b6000806002818061c0de5af150604b56"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0x17, condition=Op.GT(Op.CALLDATASIZE, 0x2)
                     )
+                    + Op.SHR(0xF0, Op.CALLDATALOAD(offset=0x0))
+                    + Op.JUMPI(pc=0x15, condition=Op.EQ(0x2, Op.CALLDATASIZE))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
+                    + Op.PUSH1[0xFA]
+                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.SWAP2
+                    + Op.PUSH1[0xFF]
+                    + Op.AND(Op.SHR(0xD8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.MSTORE8(
+                        offset=0x0, value=Op.AND(Op.SHR(0x8, Op.DUP2), Op.DUP2)
+                    )
+                    + Op.MSTORE8(offset=0x1, value=Op.AND)
+                    + Op.JUMPI(pc=0x90, condition=Op.EQ(Op.DUP2, 0xF1))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x7F, condition=Op.EQ(Op.DUP2, 0xF2))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x6F, condition=Op.EQ(Op.DUP2, 0xF4))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x61, condition=Op.EQ)
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.DELEGATECALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x5B)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x53)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x4B)
                 )
             },
         ),
@@ -79,9 +376,83 @@ REFERENCE_SPEC_VERSION = "N/A"
             "fa10011002",
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "6002361160175760003560f01c36600214601557005bff5b60003560f81c60fa61ffff60003560e81c169160ff61ffff60003560d81c16818160081c166000531660015360f181146090575b60f28114607f575b60f48114606f575b14606157ff5b60008060028161c0de5afa50ff5b60008060028161c0de5af450605b565b6000806002818061c0de5af2506053565b6000806002818061c0de5af150604b56"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0x17, condition=Op.GT(Op.CALLDATASIZE, 0x2)
                     )
+                    + Op.SHR(0xF0, Op.CALLDATALOAD(offset=0x0))
+                    + Op.JUMPI(pc=0x15, condition=Op.EQ(0x2, Op.CALLDATASIZE))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
+                    + Op.PUSH1[0xFA]
+                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.SWAP2
+                    + Op.PUSH1[0xFF]
+                    + Op.AND(Op.SHR(0xD8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.MSTORE8(
+                        offset=0x0, value=Op.AND(Op.SHR(0x8, Op.DUP2), Op.DUP2)
+                    )
+                    + Op.MSTORE8(offset=0x1, value=Op.AND)
+                    + Op.JUMPI(pc=0x90, condition=Op.EQ(Op.DUP2, 0xF1))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x7F, condition=Op.EQ(Op.DUP2, 0xF2))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x6F, condition=Op.EQ(Op.DUP2, 0xF4))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x61, condition=Op.EQ)
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.DELEGATECALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x5B)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x53)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x4B)
                 )
             },
         ),
@@ -89,9 +460,83 @@ REFERENCE_SPEC_VERSION = "N/A"
             "f21001c0de",
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "6002361160175760003560f01c36600214601557005bff5b60003560f81c60fa61ffff60003560e81c169160ff61ffff60003560d81c16818160081c166000531660015360f181146090575b60f28114607f575b60f48114606f575b14606157ff5b60008060028161c0de5afa50ff5b60008060028161c0de5af450605b565b6000806002818061c0de5af2506053565b6000806002818061c0de5af150604b56"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0x17, condition=Op.GT(Op.CALLDATASIZE, 0x2)
                     )
+                    + Op.SHR(0xF0, Op.CALLDATALOAD(offset=0x0))
+                    + Op.JUMPI(pc=0x15, condition=Op.EQ(0x2, Op.CALLDATASIZE))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
+                    + Op.PUSH1[0xFA]
+                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.SWAP2
+                    + Op.PUSH1[0xFF]
+                    + Op.AND(Op.SHR(0xD8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.MSTORE8(
+                        offset=0x0, value=Op.AND(Op.SHR(0x8, Op.DUP2), Op.DUP2)
+                    )
+                    + Op.MSTORE8(offset=0x1, value=Op.AND)
+                    + Op.JUMPI(pc=0x90, condition=Op.EQ(Op.DUP2, 0xF1))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x7F, condition=Op.EQ(Op.DUP2, 0xF2))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x6F, condition=Op.EQ(Op.DUP2, 0xF4))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x61, condition=Op.EQ)
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.DELEGATECALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x5B)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x53)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x4B)
                 )
             },
         ),
@@ -99,9 +544,83 @@ REFERENCE_SPEC_VERSION = "N/A"
             "f41001c0de",
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "6002361160175760003560f01c36600214601557005bff5b60003560f81c60fa61ffff60003560e81c169160ff61ffff60003560d81c16818160081c166000531660015360f181146090575b60f28114607f575b60f48114606f575b14606157ff5b60008060028161c0de5afa50ff5b60008060028161c0de5af450605b565b6000806002818061c0de5af2506053565b6000806002818061c0de5af150604b56"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0x17, condition=Op.GT(Op.CALLDATASIZE, 0x2)
                     )
+                    + Op.SHR(0xF0, Op.CALLDATALOAD(offset=0x0))
+                    + Op.JUMPI(pc=0x15, condition=Op.EQ(0x2, Op.CALLDATASIZE))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
+                    + Op.PUSH1[0xFA]
+                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.SWAP2
+                    + Op.PUSH1[0xFF]
+                    + Op.AND(Op.SHR(0xD8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.MSTORE8(
+                        offset=0x0, value=Op.AND(Op.SHR(0x8, Op.DUP2), Op.DUP2)
+                    )
+                    + Op.MSTORE8(offset=0x1, value=Op.AND)
+                    + Op.JUMPI(pc=0x90, condition=Op.EQ(Op.DUP2, 0xF1))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x7F, condition=Op.EQ(Op.DUP2, 0xF2))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x6F, condition=Op.EQ(Op.DUP2, 0xF4))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x61, condition=Op.EQ)
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.DELEGATECALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x5B)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x53)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x4B)
                 )
             },
         ),
@@ -109,9 +628,83 @@ REFERENCE_SPEC_VERSION = "N/A"
             "f11001c0de",
             {
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=bytes.fromhex(
-                        "6002361160175760003560f01c36600214601557005bff5b60003560f81c60fa61ffff60003560e81c169160ff61ffff60003560d81c16818160081c166000531660015360f181146090575b60f28114607f575b60f48114606f575b14606157ff5b60008060028161c0de5afa50ff5b60008060028161c0de5af450605b565b6000806002818061c0de5af2506053565b6000806002818061c0de5af150604b56"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0x17, condition=Op.GT(Op.CALLDATASIZE, 0x2)
                     )
+                    + Op.SHR(0xF0, Op.CALLDATALOAD(offset=0x0))
+                    + Op.JUMPI(pc=0x15, condition=Op.EQ(0x2, Op.CALLDATASIZE))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
+                    + Op.PUSH1[0xFA]
+                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.SWAP2
+                    + Op.PUSH1[0xFF]
+                    + Op.AND(Op.SHR(0xD8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+                    + Op.MSTORE8(
+                        offset=0x0, value=Op.AND(Op.SHR(0x8, Op.DUP2), Op.DUP2)
+                    )
+                    + Op.MSTORE8(offset=0x1, value=Op.AND)
+                    + Op.JUMPI(pc=0x90, condition=Op.EQ(Op.DUP2, 0xF1))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x7F, condition=Op.EQ(Op.DUP2, 0xF2))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x6F, condition=Op.EQ(Op.DUP2, 0xF4))
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x61, condition=Op.EQ)
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.SELFDESTRUCT
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.DELEGATECALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x5B)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x53)
+                    + Op.JUMPDEST
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0xC0DE,
+                            value=Op.DUP1,
+                            args_offset=Op.DUP2,
+                            args_size=0x2,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.JUMP(pc=0x4B)
                 )
             },
         ),
@@ -151,12 +744,82 @@ def test_double_selfdestruct_test(
     pre[contract] = Account(
         balance=0xF4240,
         nonce=1,
-        code=bytes.fromhex(
-            "6002361160175760003560f01c36600214601557005bff5b60003560f81c60fa61ffff60"  # noqa: E501
-            "003560e81c169160ff61ffff60003560d81c16818160081c166000531660015360f18114"  # noqa: E501
-            "6090575b60f28114607f575b60f48114606f575b14606157ff5b60008060028161c0de5a"  # noqa: E501
-            "fa50ff5b60008060028161c0de5af450605b565b6000806002818061c0de5af250605356"  # noqa: E501
-            "5b6000806002818061c0de5af150604b56"
+        code=(
+            Op.JUMPI(pc=0x17, condition=Op.GT(Op.CALLDATASIZE, 0x2))
+            + Op.SHR(0xF0, Op.CALLDATALOAD(offset=0x0))
+            + Op.JUMPI(pc=0x15, condition=Op.EQ(0x2, Op.CALLDATASIZE))
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SELFDESTRUCT
+            + Op.JUMPDEST
+            + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
+            + Op.PUSH1[0xFA]
+            + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+            + Op.SWAP2
+            + Op.PUSH1[0xFF]
+            + Op.AND(Op.SHR(0xD8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
+            + Op.MSTORE8(
+                offset=0x0, value=Op.AND(Op.SHR(0x8, Op.DUP2), Op.DUP2)
+            )
+            + Op.MSTORE8(offset=0x1, value=Op.AND)
+            + Op.JUMPI(pc=0x90, condition=Op.EQ(Op.DUP2, 0xF1))
+            + Op.JUMPDEST
+            + Op.JUMPI(pc=0x7F, condition=Op.EQ(Op.DUP2, 0xF2))
+            + Op.JUMPDEST
+            + Op.JUMPI(pc=0x6F, condition=Op.EQ(Op.DUP2, 0xF4))
+            + Op.JUMPDEST
+            + Op.JUMPI(pc=0x61, condition=Op.EQ)
+            + Op.SELFDESTRUCT
+            + Op.JUMPDEST
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=Op.GAS,
+                    address=0xC0DE,
+                    args_offset=Op.DUP2,
+                    args_size=0x2,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SELFDESTRUCT
+            + Op.JUMPDEST
+            + Op.POP(
+                Op.DELEGATECALL(
+                    gas=Op.GAS,
+                    address=0xC0DE,
+                    args_offset=Op.DUP2,
+                    args_size=0x2,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.JUMP(pc=0x5B)
+            + Op.JUMPDEST
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0xC0DE,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x2,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.JUMP(pc=0x53)
+            + Op.JUMPDEST
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xC0DE,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x2,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.JUMP(pc=0x4B)
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)

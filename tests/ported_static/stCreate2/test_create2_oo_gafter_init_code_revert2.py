@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,16 +51,30 @@ def test_create2_oo_gafter_init_code_revert2(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6d6460016001556000526005601bf36000526000600e60126000f55060206000fd00"  # noqa: E501
+        code=(
+            Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
+            + Op.POP(Op.CREATE2(value=0x0, offset=0x12, size=0xE, salt=0x0))
+            + Op.REVERT(offset=0x0, size=0x20)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b6180e8f150"  # noqa: E501
-            "60005160015500"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x80E8,
+                    address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
         storage={0x1: 0x1},
     )
@@ -78,14 +93,31 @@ def test_create2_oo_gafter_init_code_revert2(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "6d6460016001556000526005601bf36000526000600e60126000f55060206000fd00"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
+                + Op.POP(
+                    Op.CREATE2(value=0x0, offset=0x12, size=0xE, salt=0x0)
+                )
+                + Op.REVERT(offset=0x0, size=0x20)
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={1: 0x6460016001556000526005601BF3},
-            code=bytes.fromhex(
-                "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b6180e8f15060005160015500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x80E8,
+                        address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

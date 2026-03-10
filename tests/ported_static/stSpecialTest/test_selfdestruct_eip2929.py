@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -52,24 +53,209 @@ def test_selfdestruct_eip2929(
     pre[contract] = Account(
         balance=1,
         nonce=1,
-        code=bytes.fromhex(
-            "6000600060006000600060cc6000f1506000600060006000600060dd6000f15060006000"  # noqa: E501
-            "60006000600060036000f15060aa6000526000600060206000600061dead5af15060aa60"  # noqa: E501
-            "00526000600060206000600061dead5af15060bb6000526000600060206000600061dead"  # noqa: E501
-            "5af15060bb6000526000600060206000600061dead5af15060cc60005260006000602060"  # noqa: E501
-            "00600061dead5af15060cc6000526000600060206000600061dead5af15060dd60005260"  # noqa: E501
-            "00600060206000600061dead5af15060dd6000526000600060206000600061dead5af150"  # noqa: E501
-            "60016000526000600060206000600061dead5af150600160005260006000602060006000"  # noqa: E501
-            "61dead5af15060026000526000600060206000600061dead5af150600260005260006000"  # noqa: E501
-            "60206000600061dead5af15060036000526000600060206000600061dead5af150600160"  # noqa: E501
-            "0155"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x0,
+                    address=0xCC,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0x0,
+                    address=0xDD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0x0,
+                    address=0x3,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0xAA)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0xAA)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0xBB)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0xBB)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0xCC)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0xCC)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0xDD)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0xDD)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0x1)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0x1)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0x2)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0x2)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x0, value=0x3)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=0x1)
         ),
     )
     pre[callee_2] = Account(
         balance=1,
         nonce=1,
-        code=bytes.fromhex(
-            "60003574ffffffffffffffffffffffffffffffffffffffffff16ff"
+        code=(
+            Op.SELFDESTRUCT(
+                address=Op.AND(
+                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                    Op.CALLDATALOAD(offset=0x0),
+                ),
+            )
         ),
     )
 
@@ -88,13 +274,207 @@ def test_selfdestruct_eip2929(
     post = {
         contract: Account(
             storage={1: 1},
-            code=bytes.fromhex(
-                "6000600060006000600060cc6000f1506000600060006000600060dd6000f1506000600060006000600060036000f15060aa6000526000600060206000600061dead5af15060aa6000526000600060206000600061dead5af15060bb6000526000600060206000600061dead5af15060bb6000526000600060206000600061dead5af15060cc6000526000600060206000600061dead5af15060cc6000526000600060206000600061dead5af15060dd6000526000600060206000600061dead5af15060dd6000526000600060206000600061dead5af15060016000526000600060206000600061dead5af15060016000526000600060206000600061dead5af15060026000526000600060206000600061dead5af15060026000526000600060206000600061dead5af15060036000526000600060206000600061dead5af1506001600155"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x0,
+                        address=0xCC,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x0,
+                        address=0xDD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x0,
+                        address=0x3,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0xAA)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0xAA)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0xBB)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0xBB)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0xCC)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0xCC)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0xDD)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0xDD)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0x1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0x1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0x2)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0x2)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(offset=0x0, value=0x3)
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xDEAD,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=0x1)
             ),
         ),
         callee_2: Account(
-            code=bytes.fromhex(
-                "60003574ffffffffffffffffffffffffffffffffffffffffff16ff"
+            code=(
+                Op.SELFDESTRUCT(
+                    address=Op.AND(
+                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        Op.CALLDATALOAD(offset=0x0),
+                    ),
+                )
             ),
         ),
     }

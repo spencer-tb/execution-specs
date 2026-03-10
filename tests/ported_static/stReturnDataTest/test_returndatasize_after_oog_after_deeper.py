@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -52,9 +53,22 @@ def test_returndatasize_after_oog_after_deeper(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6020600060006000600073cb33b9a773995316746a40201081d054635d02da620186a0f1"  # noqa: E501
-            "6002553d60005560005160015500"
+        code=(
+            Op.SSTORE(
+                key=0x2,
+                value=Op.CALL(
+                    gas=0x186A0,
+                    address=0xCB33B9A773995316746A40201081D054635D02DA,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+            + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
         storage={
             0x0: 0xFFFFFFFF,
@@ -66,15 +80,34 @@ def test_returndatasize_after_oog_after_deeper(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("60ff60005260206000f300"),
+        code=(
+            Op.MSTORE(offset=0x0, value=0xFF)
+            + Op.RETURN(offset=0x0, size=0x20)
+            + Op.STOP
+        ),
     )
     pre[callee_1] = Account(balance=0x1000000000, nonce=0)
     pre[callee_2] = Account(
         balance=0x6400000000,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000600060006000738e0c75135225713d8c9acbb889abba5a5f598920620186a0f1"  # noqa: E501
-            "505b60011560345760016000556025565b00"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x186A0,
+                    address=0x8E0C75135225713D8C9ACBB889ABBA5A5F598920,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.JUMPDEST
+            + Op.JUMPI(pc=0x34, condition=Op.ISZERO(0x1))
+            + Op.SSTORE(key=0x0, value=0x1)
+            + Op.JUMP(pc=0x25)
+            + Op.JUMPDEST
+            + Op.STOP
         ),
     )
 
@@ -92,14 +125,50 @@ def test_returndatasize_after_oog_after_deeper(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "6020600060006000600073cb33b9a773995316746a40201081d054635d02da620186a0f16002553d60005560005160015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x2,
+                    value=Op.CALL(
+                        gas=0x186A0,
+                        address=0xCB33B9A773995316746A40201081D054635D02DA,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
-        callee: Account(code=bytes.fromhex("60ff60005260206000f300")),
+        callee: Account(
+            code=(
+                Op.MSTORE(offset=0x0, value=0xFF)
+                + Op.RETURN(offset=0x0, size=0x20)
+                + Op.STOP
+            ),
+        ),
         callee_2: Account(
-            code=bytes.fromhex(
-                "60006000600060006000738e0c75135225713d8c9acbb889abba5a5f598920620186a0f1505b60011560345760016000556025565b00"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x186A0,
+                        address=0x8E0C75135225713D8C9ACBB889ABBA5A5F598920,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.JUMPDEST
+                + Op.JUMPI(pc=0x34, condition=Op.ISZERO(0x1))
+                + Op.SSTORE(key=0x0, value=0x1)
+                + Op.JUMP(pc=0x25)
+                + Op.JUMPDEST
+                + Op.STOP
             ),
         ),
     }

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,14 +50,25 @@ def test_call_with_high_value(
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=bytes.fromhex("600160025500"),
+        code=Op.SSTORE(key=0x2, value=0x1) + Op.STOP,
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6002600060406000670de0b6b3a7640001739d8c3fed067968360493f6deb5b169a720da"  # noqa: E501
-            "c8a2620249f0f160005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x249F0,
+                    address=0x9D8C3FED067968360493F6DEB5B169A720DAC8A2,
+                    value=0xDE0B6B3A7640001,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x2,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -74,10 +86,22 @@ def test_call_with_high_value(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("600160025500")),
+        callee: Account(code=Op.SSTORE(key=0x2, value=0x1) + Op.STOP),
         contract: Account(
-            code=bytes.fromhex(
-                "6002600060406000670de0b6b3a7640001739d8c3fed067968360493f6deb5b169a720dac8a2620249f0f160005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x249F0,
+                        address=0x9D8C3FED067968360493F6DEB5B169A720DAC8A2,
+                        value=0xDE0B6B3A7640001,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x2,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

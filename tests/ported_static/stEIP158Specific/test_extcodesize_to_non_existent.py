@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,16 @@ def test_extcodesize_to_non_existent(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a60005273c94f5374fce5edbc8e2a8697c15331677e6ebf0b3b6001555a600051036064"  # noqa: E501
-            "5500"
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.EXTCODESIZE(
+                    address=0xC94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                ),
+            )
+            + Op.SSTORE(key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.STOP
         ),
     )
 
@@ -70,8 +78,18 @@ def test_extcodesize_to_non_existent(
     post = {
         contract: Account(
             storage={100: 4817},
-            code=bytes.fromhex(
-                "5a60005273c94f5374fce5edbc8e2a8697c15331677e6ebf0b3b6001555a6000510360645500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.EXTCODESIZE(
+                        address=0xC94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.STOP
             ),
         ),
     }

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,10 +50,25 @@ def test_returndatacopy_following_revert_in_create(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000602980602060003960006000f5506020600060003e6000516000550000fe7d111122"  # noqa: E501
-            "223333444455556666777788889999aaaabbbbccccddddeeeeffff60005260206000fd00"  # noqa: E501
-            "00"
+        code=(
+            Op.PUSH1[0x0]
+            + Op.PUSH1[0x29]
+            + Op.CODECOPY(dest_offset=0x0, offset=0x20, size=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x0]
+            + Op.POP(Op.CREATE2)
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
+            + Op.STOP
+            + Op.INVALID
+            + Op.MSTORE(
+                offset=0x0,
+                value=0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
+            )
+            + Op.REVERT(offset=0x0, size=0x20)
+            + Op.STOP
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
@@ -75,8 +91,25 @@ def test_returndatacopy_following_revert_in_create(
             storage={
                 0: 0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "6000602980602060003960006000f5506020600060003e6000516000550000fe7d111122223333444455556666777788889999aaaabbbbccccddddeeeeffff60005260206000fd0000"  # noqa: E501
+            code=(
+                Op.PUSH1[0x0]
+                + Op.PUSH1[0x29]
+                + Op.CODECOPY(dest_offset=0x0, offset=0x20, size=Op.DUP1)
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0x0]
+                + Op.POP(Op.CREATE2)
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
+                + Op.STOP
+                + Op.INVALID
+                + Op.MSTORE(
+                    offset=0x0,
+                    value=0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
+                )
+                + Op.REVERT(offset=0x0, size=0x20)
+                + Op.STOP
+                + Op.STOP
             ),
         ),
     }

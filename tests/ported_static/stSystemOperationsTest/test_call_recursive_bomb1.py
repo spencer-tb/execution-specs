@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,8 +50,21 @@ def test_call_recursive_bomb1(
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,
-        code=bytes.fromhex(
-            "6001600054016000556000600060006000600030613a985a03f160015500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=Op.SUB(Op.GAS, 0x3A98),
+                    address=Op.ADDRESS,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -70,8 +84,21 @@ def test_call_recursive_bomb1(
     post = {
         contract: Account(
             storage={0: 256, 1: 1},
-            code=bytes.fromhex(
-                "6001600054016000556000600060006000600030613a985a03f160015500"
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=Op.SUB(Op.GAS, 0x3A98),
+                        address=Op.ADDRESS,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

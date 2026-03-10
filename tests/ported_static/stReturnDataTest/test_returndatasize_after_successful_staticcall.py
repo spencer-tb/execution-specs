@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,17 +51,31 @@ def test_returndatasize_after_successful_staticcall(
     pre[callee] = Account(
         balance=0x6400000000,
         nonce=0,
-        code=bytes.fromhex(
-            "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600052"  # noqa: E501
-            "60066000f300"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            )
+            + Op.RETURN(offset=0x0, size=0x6)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000730c6426ee9b84ce08176d8d295613a7d10c48576b61ea60fa503d60"  # noqa: E501
-            "005500"
+        code=(
+            Op.POP(
+                Op.STATICCALL(
+                    gas=0xEA60,
+                    address=0xC6426EE9B84CE08176D8D295613A7D10C48576B,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+            + Op.STOP
         ),
         storage={
             0x0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
@@ -82,14 +97,30 @@ def test_returndatasize_after_successful_staticcall(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60005260066000f300"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                )
+                + Op.RETURN(offset=0x0, size=0x6)
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={0: 6},
-            code=bytes.fromhex(
-                "6000600060006000730c6426ee9b84ce08176d8d295613a7d10c48576b61ea60fa503d60005500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.STATICCALL(
+                        gas=0xEA60,
+                        address=0xC6426EE9B84CE08176D8D295613A7D10C48576B,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+                + Op.STOP
             ),
         ),
     }

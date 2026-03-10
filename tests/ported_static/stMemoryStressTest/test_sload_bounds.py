@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -55,10 +56,15 @@ def test_sload_bounds(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000545063ffffffff545067ffffffffffffffff54506fffffffffffffffffffffffffff"  # noqa: E501
-            "ffffff54507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffff5400"
+        code=(
+            Op.POP(Op.SLOAD(key=0x0))
+            + Op.POP(Op.SLOAD(key=0xFFFFFFFF))
+            + Op.POP(Op.SLOAD(key=0xFFFFFFFFFFFFFFFF))
+            + Op.POP(Op.SLOAD(key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF))
+            + Op.SLOAD(
+                key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
@@ -77,8 +83,15 @@ def test_sload_bounds(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "6000545063ffffffff545067ffffffffffffffff54506fffffffffffffffffffffffffffffffff54507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5400"  # noqa: E501
+            code=(
+                Op.POP(Op.SLOAD(key=0x0))
+                + Op.POP(Op.SLOAD(key=0xFFFFFFFF))
+                + Op.POP(Op.SLOAD(key=0xFFFFFFFFFFFFFFFF))
+                + Op.POP(Op.SLOAD(key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF))
+                + Op.SLOAD(
+                    key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                )
+                + Op.STOP
             ),
         ),
     }

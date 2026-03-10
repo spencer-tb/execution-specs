@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,17 +51,44 @@ def test_create_callprecompile_returndatasize(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7d111122223333444455556666777788889999aaaabbbbccccddddeeeeffff6000526020"  # noqa: E501
-            "6000f300"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
+            )
+            + Op.RETURN(offset=0x0, size=0x20)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "602380601560003960006000f0503d6000550000fe621122336000526020600060206000"  # noqa: E501
-            "60006004619000f1503d60005560206000f30000"
+        code=(
+            Op.PUSH1[0x23]
+            + Op.CODECOPY(dest_offset=0x0, offset=0x15, size=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x0]
+            + Op.POP(Op.CREATE)
+            + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+            + Op.STOP
+            + Op.STOP
+            + Op.INVALID
+            + Op.MSTORE(offset=0x0, value=0x112233)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x9000,
+                    address=0x4,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+            + Op.RETURN(offset=0x0, size=0x20)
+            + Op.STOP
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
@@ -80,13 +108,42 @@ def test_create_callprecompile_returndatasize(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "7d111122223333444455556666777788889999aaaabbbbccccddddeeeeffff60005260206000f300"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
+                )
+                + Op.RETURN(offset=0x0, size=0x20)
+                + Op.STOP
             ),
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "602380601560003960006000f0503d6000550000fe62112233600052602060006020600060006004619000f1503d60005560206000f30000"  # noqa: E501
+            code=(
+                Op.PUSH1[0x23]
+                + Op.CODECOPY(dest_offset=0x0, offset=0x15, size=Op.DUP1)
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0x0]
+                + Op.POP(Op.CREATE)
+                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+                + Op.STOP
+                + Op.STOP
+                + Op.INVALID
+                + Op.MSTORE(offset=0x0, value=0x112233)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x9000,
+                        address=0x4,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+                + Op.RETURN(offset=0x0, size=0x20)
+                + Op.STOP
+                + Op.STOP
             ),
         ),
         Address("0xf234137fe508cc371f3da359ab482e4138d0b0c9"): Account(

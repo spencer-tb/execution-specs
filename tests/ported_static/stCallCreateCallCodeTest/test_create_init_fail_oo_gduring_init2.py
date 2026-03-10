@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,8 +50,17 @@ def test_create_init_fail_oo_gduring_init2(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "600d80600f60003960006001f000fe6001600155622fffff60002000"
+        code=(
+            Op.PUSH1[0xD]
+            + Op.CODECOPY(dest_offset=0x0, offset=0xF, size=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x1]
+            + Op.CREATE
+            + Op.STOP
+            + Op.INVALID
+            + Op.SSTORE(key=0x1, value=0x1)
+            + Op.SHA3(offset=0x0, size=0x2FFFFF)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -69,8 +79,17 @@ def test_create_init_fail_oo_gduring_init2(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "600d80600f60003960006001f000fe6001600155622fffff60002000"
+            code=(
+                Op.PUSH1[0xD]
+                + Op.CODECOPY(dest_offset=0x0, offset=0xF, size=Op.DUP1)
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0x1]
+                + Op.CREATE
+                + Op.STOP
+                + Op.INVALID
+                + Op.SSTORE(key=0x1, value=0x1)
+                + Op.SHA3(offset=0x0, size=0x2FFFFF)
+                + Op.STOP
             ),
         ),
     }

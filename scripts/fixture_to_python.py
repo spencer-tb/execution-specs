@@ -229,11 +229,12 @@ def bytecode_to_op_string(hex_code: str) -> str | None:
     raw = hex_code[2:] if hex_code.startswith("0x") else hex_code
 
     try:
+        from execution_testing import Op
         from execution_testing.cli.evm_bytes import process_evm_bytes_string
 
         op_str = process_evm_bytes_string(raw, assembly=False)
         # Verify roundtrip: compile Op back to hex and compare
-        compiled = eval(op_str)  # noqa: S307
+        compiled = eval(op_str, {"Op": Op})  # noqa: S307
         if compiled.hex() != raw.lower():
             return None  # Roundtrip mismatch — fall back to bytes.fromhex
         return op_str

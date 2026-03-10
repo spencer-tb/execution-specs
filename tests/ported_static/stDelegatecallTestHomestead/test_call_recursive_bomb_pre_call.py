@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,18 +52,47 @@ def test_call_recursive_bomb_pre_call(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "60016000540160005560006000600060006000733046257c307a51f1a8ae73f6f6360937"  # noqa: E501
-            "dd21138e62036b005a03f160015500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=Op.SUB(Op.GAS, 0x36B00),
+                    address=0x3046257C307A51F1A8AE73F6F6360937DD21138E,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000601773bad304eb96065b2a98b57a48a06ae28d285a71b5620186a0f1"  # noqa: E501
-            "506000600060006000733046257c307a51f1a8ae73f6f6360937dd21138e6707ffffffff"  # noqa: E501
-            "fffffff400"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x186A0,
+                    address=0xBAD304EB96065B2A98B57A48A06AE28D285A71B5,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.DELEGATECALL(
+                gas=0x7FFFFFFFFFFFFFF,
+                address=0x3046257C307A51F1A8AE73F6F6360937DD21138E,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
@@ -82,14 +112,46 @@ def test_call_recursive_bomb_pre_call(
     post = {
         callee: Account(
             storage={0: 1023, 1: 1},
-            code=bytes.fromhex(
-                "60016000540160005560006000600060006000733046257c307a51f1a8ae73f6f6360937dd21138e62036b005a03f160015500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=Op.SUB(Op.GAS, 0x36B00),
+                        address=0x3046257C307A51F1A8AE73F6F6360937DD21138E,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={0: 1, 1: 1},
-            code=bytes.fromhex(
-                "6000600060006000601773bad304eb96065b2a98b57a48a06ae28d285a71b5620186a0f1506000600060006000733046257c307a51f1a8ae73f6f6360937dd21138e6707fffffffffffffff400"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x186A0,
+                        address=0xBAD304EB96065B2A98B57A48A06AE28D285A71B5,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.DELEGATECALL(
+                    gas=0x7FFFFFFFFFFFFFF,
+                    address=0x3046257C307A51F1A8AE73F6F6360937DD21138E,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
     }

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,8 +47,18 @@ def test_create2_call_data(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000601080601183398180f560005500fe600035600055604060008037596000f3"  # noqa: E501
+        code=(
+            Op.PUSH1[0x0]
+            + Op.PUSH1[0x10]
+            + Op.CODECOPY(dest_offset=Op.DUP4, offset=0x11, size=Op.DUP1)
+            + Op.DUP2
+            + Op.DUP1
+            + Op.SSTORE(key=0x0, value=Op.CREATE2)
+            + Op.STOP
+            + Op.INVALID
+            + Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+            + Op.CALLDATACOPY(dest_offset=Op.DUP1, offset=0x0, size=0x40)
+            + Op.RETURN(offset=0x0, size=Op.MSIZE)
         ),
     )
     pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
@@ -67,13 +78,86 @@ def test_create2_call_data(
     post = {
         contract: Account(
             storage={0: 0x7F8330AD7BC2AFE0DFFB2FDC76BBAD8BC326296A},
-            code=bytes.fromhex(
-                "6000601080601183398180f560005500fe600035600055604060008037596000f3"  # noqa: E501
+            code=(
+                Op.PUSH1[0x0]
+                + Op.PUSH1[0x10]
+                + Op.CODECOPY(dest_offset=Op.DUP4, offset=0x11, size=Op.DUP1)
+                + Op.DUP2
+                + Op.DUP1
+                + Op.SSTORE(key=0x0, value=Op.CREATE2)
+                + Op.STOP
+                + Op.INVALID
+                + Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                + Op.CALLDATACOPY(dest_offset=Op.DUP1, offset=0x0, size=0x40)
+                + Op.RETURN(offset=0x0, size=Op.MSIZE)
             ),
         ),
         Address("0x7f8330ad7bc2afe0dffb2fdc76bbad8bc326296a"): Account(
-            code=bytes.fromhex(
-                "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501
+            code=(
+                Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
+                + Op.STOP
             ),
         ),
     }

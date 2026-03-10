@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,14 +51,32 @@ def test_call_with_high_value_oo_gin_call(
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=bytes.fromhex("6001600155603760005360026000f3"),
+        code=(
+            Op.SSTORE(key=0x1, value=0x1)
+            + Op.MSTORE8(offset=0x0, value=0x37)
+            + Op.RETURN(offset=0x0, size=0x2)
+        ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640001,
         nonce=0,
-        code=bytes.fromhex(
-            "60016000600060006000670de0b6b3a7640000730896f13e800125c0ccec44f3c434335f"  # noqa: E501
-            "0a97bc1b612710f10160005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.ADD(
+                    Op.CALL(
+                        gas=0x2710,
+                        address=0x896F13E800125C0CCEC44F3C434335F0A97BC1B,
+                        value=0xDE0B6B3A7640000,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                    0x1,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -75,11 +94,32 @@ def test_call_with_high_value_oo_gin_call(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("6001600155603760005360026000f3")),
+        callee: Account(
+            code=(
+                Op.SSTORE(key=0x1, value=0x1)
+                + Op.MSTORE8(offset=0x0, value=0x37)
+                + Op.RETURN(offset=0x0, size=0x2)
+            ),
+        ),
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "60016000600060006000670de0b6b3a7640000730896f13e800125c0ccec44f3c434335f0a97bc1b612710f10160005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.ADD(
+                        Op.CALL(
+                            gas=0x2710,
+                            address=0x896F13E800125C0CCEC44F3C434335F0A97BC1B,
+                            value=0xDE0B6B3A7640000,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
+                        0x1,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

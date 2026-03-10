@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,12 +50,53 @@ def test_ecrecover_short_buff(
     pre[contract] = Account(
         balance=0,
         nonce=1,
-        code=bytes.fromhex(
-            "60a060005b818110608a575060008052601b6020527f184870a8e4faa6065ddf65c87393"  # noqa: E501
-            "5d3e48e3d1c7b7853f25cd79b8247f7719106040527f226140b6b66554c7fcfa38589e43"  # noqa: E501
-            "3cc148ebe5c8482eb3093ab1d9a932c96f5860605260005b818110606757005b80602061"  # noqa: E501
-            "0100600193600080865af182900381556101005161100082015501605f565b63dead60a7"  # noqa: E501
-            "808255611000820155600101600456"
+        code=(
+            Op.PUSH1[0xA0]
+            + Op.PUSH1[0x0]
+            + Op.JUMPDEST
+            + Op.JUMPI(pc=0x8A, condition=Op.LT(Op.DUP2, Op.DUP2))
+            + Op.POP
+            + Op.MSTORE(offset=Op.DUP1, value=0x0)
+            + Op.MSTORE(offset=0x20, value=0x1B)
+            + Op.MSTORE(
+                offset=0x40,
+                value=0x184870A8E4FAA6065DDF65C873935D3E48E3D1C7B7853F25CD79B8247F771910,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x60,
+                value=0x226140B6B66554C7FCFA38589E433CC148EBE5C8482EB3093AB1D9A932C96F58,  # noqa: E501
+            )
+            + Op.PUSH1[0x0]
+            + Op.JUMPDEST
+            + Op.JUMPI(pc=0x67, condition=Op.LT(Op.DUP2, Op.DUP2))
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.DUP1
+            + Op.PUSH1[0x20]
+            + Op.PUSH2[0x100]
+            + Op.PUSH1[0x1]
+            + Op.SWAP4
+            + Op.PUSH1[0x0]
+            + Op.DUP1
+            + Op.DUP7
+            + Op.GAS
+            + Op.CALL
+            + Op.DUP3
+            + Op.SWAP1
+            + Op.SSTORE(key=Op.DUP2, value=Op.SUB)
+            + Op.SSTORE(
+                key=Op.ADD(Op.DUP3, 0x1000), value=Op.MLOAD(offset=0x100)
+            )
+            + Op.ADD
+            + Op.JUMP(pc=0x5F)
+            + Op.JUMPDEST
+            + Op.PUSH4[0xDEAD60A7]
+            + Op.SSTORE(key=Op.DUP3, value=Op.DUP1)
+            + Op.ADD(Op.DUP3, 0x1000)
+            + Op.SSTORE
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.JUMP(pc=0x4)
         ),
         storage={
             0x0: 0x60A7,
@@ -159,8 +201,54 @@ def test_ecrecover_short_buff(
                 4254: 0x3F9ECB7B25FA567AFB2A4C7B633749BDA578B593,
                 4255: 0x3F9ECB7B25FA567AFB2A4C7B633749BDA578B593,
             },
-            code=bytes.fromhex(
-                "60a060005b818110608a575060008052601b6020527f184870a8e4faa6065ddf65c873935d3e48e3d1c7b7853f25cd79b8247f7719106040527f226140b6b66554c7fcfa38589e433cc148ebe5c8482eb3093ab1d9a932c96f5860605260005b818110606757005b806020610100600193600080865af182900381556101005161100082015501605f565b63dead60a7808255611000820155600101600456"  # noqa: E501
+            code=(
+                Op.PUSH1[0xA0]
+                + Op.PUSH1[0x0]
+                + Op.JUMPDEST
+                + Op.JUMPI(pc=0x8A, condition=Op.LT(Op.DUP2, Op.DUP2))
+                + Op.POP
+                + Op.MSTORE(offset=Op.DUP1, value=0x0)
+                + Op.MSTORE(offset=0x20, value=0x1B)
+                + Op.MSTORE(
+                    offset=0x40,
+                    value=0x184870A8E4FAA6065DDF65C873935D3E48E3D1C7B7853F25CD79B8247F771910,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x60,
+                    value=0x226140B6B66554C7FCFA38589E433CC148EBE5C8482EB3093AB1D9A932C96F58,  # noqa: E501
+                )
+                + Op.PUSH1[0x0]
+                + Op.JUMPDEST
+                + Op.JUMPI(pc=0x67, condition=Op.LT(Op.DUP2, Op.DUP2))
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.DUP1
+                + Op.PUSH1[0x20]
+                + Op.PUSH2[0x100]
+                + Op.PUSH1[0x1]
+                + Op.SWAP4
+                + Op.PUSH1[0x0]
+                + Op.DUP1
+                + Op.DUP7
+                + Op.GAS
+                + Op.CALL
+                + Op.DUP3
+                + Op.SWAP1
+                + Op.SSTORE(key=Op.DUP2, value=Op.SUB)
+                + Op.SSTORE(
+                    key=Op.ADD(Op.DUP3, 0x1000),
+                    value=Op.MLOAD(offset=0x100),
+                )
+                + Op.ADD
+                + Op.JUMP(pc=0x5F)
+                + Op.JUMPDEST
+                + Op.PUSH4[0xDEAD60A7]
+                + Op.SSTORE(key=Op.DUP3, value=Op.DUP1)
+                + Op.ADD(Op.DUP3, 0x1000)
+                + Op.SSTORE
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.JUMP(pc=0x4)
             ),
         ),
     }

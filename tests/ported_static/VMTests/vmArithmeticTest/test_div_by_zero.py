@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +120,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -51,9 +208,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -61,9 +296,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -71,9 +384,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -81,9 +472,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -91,9 +560,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -101,9 +648,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -111,9 +736,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -121,9 +824,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -131,9 +912,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -141,9 +1000,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -151,9 +1088,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -161,9 +1176,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -171,9 +1264,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -181,9 +1352,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -191,9 +1440,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -201,9 +1528,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -211,9 +1616,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -221,9 +1704,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -231,9 +1792,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000002fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -241,9 +1880,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -251,9 +1968,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -261,9 +2056,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -271,9 +2144,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -281,9 +2232,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -291,9 +2320,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -301,9 +2408,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -311,9 +2496,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -321,9 +2584,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -331,9 +2672,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -341,9 +2760,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -351,9 +2848,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -361,9 +2936,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -371,9 +3024,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000008fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -381,9 +3112,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -391,9 +3200,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -401,9 +3288,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -411,9 +3376,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000047fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -421,9 +3464,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000048000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -431,9 +3552,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e60000000000000000000000000000000000000000000000000000000000000004ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -441,9 +3640,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e60000000000000000000000000000000000000000000000000000000000000004fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -451,9 +3728,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -461,9 +3816,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -471,9 +3904,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -481,9 +3992,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000067fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -491,9 +4080,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000068000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -501,9 +4168,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e60000000000000000000000000000000000000000000000000000000000000006ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -511,9 +4256,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e60000000000000000000000000000000000000000000000000000000000000006fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -521,9 +4344,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -531,9 +4432,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -541,9 +4520,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -551,9 +4608,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -561,9 +4696,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -571,9 +4784,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000090000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -581,9 +4872,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000090000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -591,9 +4960,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000090000000000000000000000000000000000000000000000000000000000000000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -601,9 +5048,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000090000000000000000000000000000000000000000000000000000000000000000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -611,9 +5136,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -621,9 +5224,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -631,9 +5312,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -641,9 +5400,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -651,9 +5488,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -661,9 +5576,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000090000000000000000000000000000000000000000000000000000000000000001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -671,9 +5664,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000090000000000000000000000000000000000000000000000000000000000000001ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -681,9 +5752,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000090000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -691,9 +5840,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -701,9 +5928,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -711,9 +6016,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d3000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -721,9 +6104,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d300000000000000000000000000000000000000000000000000000000000000090000000000000000000000000000000000000000000000000000000000000002fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -731,9 +6192,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -741,9 +6280,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -751,9 +6368,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -761,9 +6456,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -771,9 +6544,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -781,9 +6632,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -791,9 +6720,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -801,9 +6808,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -811,9 +6896,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -821,9 +6984,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -831,9 +7072,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -841,9 +7160,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -851,9 +7248,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -861,9 +7336,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "048071d30000000000000000000000000000000000000000000000000000000000000009fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -871,9 +7424,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -881,9 +7512,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -891,9 +7600,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -901,9 +7688,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000057fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -911,9 +7776,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000058000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -921,9 +7864,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e60000000000000000000000000000000000000000000000000000000000000005ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -931,9 +7952,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e60000000000000000000000000000000000000000000000000000000000000005fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -941,9 +8040,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000070000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -951,9 +8128,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000070000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -961,9 +8216,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000070000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -971,9 +8304,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000077fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -981,9 +8392,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000078000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -991,9 +8480,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e60000000000000000000000000000000000000000000000000000000000000007ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -1001,9 +8568,87 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e60000000000000000000000000000000000000000000000000000000000000007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe",  # noqa: E501
             {
                 Address("0x935e36ee6cd0f1602d1abca9a391c696cfa4c04d"): Account(
-                    code=bytes.fromhex(
-                        "600460043514600f576000506019565b6000602435046000555b6005600435146029576000506033565b6000602435056000555b600660043514604357600050604d565b6000602435066000555b600760043514605d576000506067565b6000602435076000555b6008600435146077576000506084565b6000604435602435086000555b60096004351460945760005060a1565b6000604435602435096000555b00"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=0xF,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4),
                     )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x19)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x29,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x33)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x43,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x4D)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x5D,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x67)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x77,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0x84)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.ADDMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.JUMPI(
+                        pc=0x94,
+                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9),
+                    )
+                    + Op.POP(0x0)
+                    + Op.JUMP(pc=0xA1)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.MULMOD(
+                            Op.CALLDATALOAD(offset=0x24),
+                            Op.CALLDATALOAD(offset=0x44),
+                            0x0,
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.STOP
                 )
             },
         ),
@@ -1134,12 +8779,76 @@ def test_div_by_zero(
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex(
-            "600460043514600f576000506019565b6000602435046000555b60056004351460295760"  # noqa: E501
-            "00506033565b6000602435056000555b600660043514604357600050604d565b60006024"  # noqa: E501
-            "35066000555b600760043514605d576000506067565b6000602435076000555b60086004"  # noqa: E501
-            "35146077576000506084565b6000604435602435086000555b6009600435146094576000"  # noqa: E501
-            "5060a1565b6000604435602435096000555b00"
+        code=(
+            Op.JUMPI(pc=0xF, condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x4))
+            + Op.POP(0x0)
+            + Op.JUMP(pc=0x19)
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=0x0, value=Op.DIV(Op.CALLDATALOAD(offset=0x24), 0x0)
+            )
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x29, condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x5)
+            )
+            + Op.POP(0x0)
+            + Op.JUMP(pc=0x33)
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=0x0, value=Op.SDIV(Op.CALLDATALOAD(offset=0x24), 0x0)
+            )
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x43, condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x6)
+            )
+            + Op.POP(0x0)
+            + Op.JUMP(pc=0x4D)
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=0x0, value=Op.MOD(Op.CALLDATALOAD(offset=0x24), 0x0)
+            )
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x5D, condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x7)
+            )
+            + Op.POP(0x0)
+            + Op.JUMP(pc=0x67)
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=0x0, value=Op.SMOD(Op.CALLDATALOAD(offset=0x24), 0x0)
+            )
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x77, condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x8)
+            )
+            + Op.POP(0x0)
+            + Op.JUMP(pc=0x84)
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.ADDMOD(
+                    Op.CALLDATALOAD(offset=0x24),
+                    Op.CALLDATALOAD(offset=0x44),
+                    0x0,
+                ),
+            )
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x94, condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x9)
+            )
+            + Op.POP(0x0)
+            + Op.JUMP(pc=0xA1)
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.MULMOD(
+                    Op.CALLDATALOAD(offset=0x24),
+                    Op.CALLDATALOAD(offset=0x44),
+                    0x0,
+                ),
+            )
+            + Op.JUMPDEST
+            + Op.STOP
         ),
     )
 

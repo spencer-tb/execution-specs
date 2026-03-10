@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,11 @@ def test_call_contract_to_create_contract_which_would_create_contract_in_init_co
     pre[contract] = Account(
         balance=1,
         nonce=0,
-        code=bytes.fromhex("6b600c600055602060406000f0600052600c60146000f000"),
+        code=(
+            Op.MSTORE(offset=0x0, value=0x600C600055602060406000F0)
+            + Op.CREATE(value=0x0, offset=0x14, size=0xC)
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
 
@@ -67,8 +72,10 @@ def test_call_contract_to_create_contract_which_would_create_contract_in_init_co
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "6b600c600055602060406000f0600052600c60146000f000"
+            code=(
+                Op.MSTORE(offset=0x0, value=0x600C600055602060406000F0)
+                + Op.CREATE(value=0x0, offset=0x14, size=0xC)
+                + Op.STOP
             ),
         ),
         Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(

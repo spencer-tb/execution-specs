@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,7 +51,14 @@ def test_create_empty_contract_with_balance(
     pre[contract] = Account(
         balance=1,
         nonce=0,
-        code=bytes.fromhex("5a600055602060006001f06001555a60645500"),
+        code=(
+            Op.SSTORE(key=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x1, value=Op.CREATE(value=0x1, offset=0x0, size=0x20)
+            )
+            + Op.SSTORE(key=0x64, value=Op.GAS)
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -72,7 +80,15 @@ def test_create_empty_contract_with_balance(
                 1: 0xF1ECF98489FA9ED60A664FC4998DB699CFA39D40,
                 100: 0x7ABF8,
             },
-            code=bytes.fromhex("5a600055602060006001f06001555a60645500"),
+            code=(
+                Op.SSTORE(key=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CREATE(value=0x1, offset=0x0, size=0x20),
+                )
+                + Op.SSTORE(key=0x64, value=Op.GAS)
+                + Op.STOP
+            ),
         ),
     }
 

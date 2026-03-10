@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -45,11 +46,26 @@ def test_random_statetest648(
     )
 
     pre[sender] = Account(balance=0xFFFFFFFF, nonce=0)
-    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("600050"))
+    pre[callee] = Account(balance=0, nonce=0, code=Op.POP(0x0))
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("600060006000600060f15af450600060005060f5fffd"),
+        code=(
+            Op.POP(
+                Op.DELEGATECALL(
+                    gas=Op.GAS,
+                    address=0xF1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x0]
+            + Op.POP(0x0)
+            + Op.SELFDESTRUCT(address=0xF5)
+            + Op.REVERT
+        ),
     )
 
     tx = Transaction(
@@ -69,9 +85,24 @@ def test_random_statetest648(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("600050")),
+        callee: Account(code=Op.POP(0x0)),
         contract: Account(
-            code=bytes.fromhex("600060006000600060f15af450600060005060f5fffd"),
+            code=(
+                Op.POP(
+                    Op.DELEGATECALL(
+                        gas=Op.GAS,
+                        address=0xF1,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x0]
+                + Op.POP(0x0)
+                + Op.SELFDESTRUCT(address=0xF5)
+                + Op.REVERT
+            ),
         ),
     }
 

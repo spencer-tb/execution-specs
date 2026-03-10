@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -32,9 +33,12 @@ REFERENCE_SPEC_VERSION = "N/A"
             9151314442816847871,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex(
-                        "7d606460006000396103e85a10601b576000606460006000f5601d565b5a5b6000526000601e60026000f500"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x606460006000396103E85A10601B576000606460006000F5601D565B5A5B,  # noqa: E501
                     )
+                    + Op.CREATE2(value=0x0, offset=0x2, size=0x1E, salt=0x0)
+                    + Op.STOP
                 )
             },
         ),
@@ -42,9 +46,12 @@ REFERENCE_SPEC_VERSION = "N/A"
             20070000000000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex(
-                        "7d606460006000396103e85a10601b576000606460006000f5601d565b5a5b6000526000601e60026000f500"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x606460006000396103E85A10601B576000606460006000F5601D565B5A5B,  # noqa: E501
                     )
+                    + Op.CREATE2(value=0x0, offset=0x2, size=0x1E, salt=0x0)
+                    + Op.STOP
                 )
             },
         ),
@@ -52,9 +59,12 @@ REFERENCE_SPEC_VERSION = "N/A"
             20080000000000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex(
-                        "7d606460006000396103e85a10601b576000606460006000f5601d565b5a5b6000526000601e60026000f500"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x606460006000396103E85A10601B576000606460006000F5601D565B5A5B,  # noqa: E501
                     )
+                    + Op.CREATE2(value=0x0, offset=0x2, size=0x1E, salt=0x0)
+                    + Op.STOP
                 )
             },
         ),
@@ -89,9 +99,13 @@ def test_create2_recursive(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7d606460006000396103e85a10601b576000606460006000f5601d565b5a5b6000526000"  # noqa: E501
-            "601e60026000f500"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x606460006000396103E85A10601B576000606460006000F5601D565B5A5B,  # noqa: E501
+            )
+            + Op.CREATE2(value=0x0, offset=0x2, size=0x1E, salt=0x0)
+            + Op.STOP
         ),
     )
 

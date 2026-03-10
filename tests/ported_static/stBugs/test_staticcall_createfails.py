@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -58,18 +59,37 @@ def test_staticcall_createfails(
     pre[contract] = Account(
         balance=0,
         nonce=63,
-        code=bytes.fromhex("600060006000600060003562011170fa60015500"),
+        code=(
+            Op.SSTORE(
+                key=0x1,
+                value=Op.STATICCALL(
+                    gas=0x11170,
+                    address=Op.CALLDATALOAD(offset=0x0),
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
+        ),
         storage={0x1: 0x1},
     )
     pre[callee] = Account(
         balance=0,
         nonce=63,
-        code=bytes.fromhex("6001600152600160016001f060025500"),
+        code=(
+            Op.MSTORE(offset=0x1, value=0x1)
+            + Op.SSTORE(
+                key=0x2, value=Op.CREATE(value=0x1, offset=0x1, size=0x1)
+            )
+            + Op.STOP
+        ),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=63,
-        code=bytes.fromhex("60006000f0"),
+        code=Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CREATE,
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -88,12 +108,32 @@ def test_staticcall_createfails(
 
     post = {
         contract: Account(
-            code=bytes.fromhex("600060006000600060003562011170fa60015500"),
+            code=(
+                Op.SSTORE(
+                    key=0x1,
+                    value=Op.STATICCALL(
+                        gas=0x11170,
+                        address=Op.CALLDATALOAD(offset=0x0),
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
+            ),
         ),
         callee: Account(
-            code=bytes.fromhex("6001600152600160016001f060025500"),
+            code=(
+                Op.MSTORE(offset=0x1, value=0x1)
+                + Op.SSTORE(
+                    key=0x2,
+                    value=Op.CREATE(value=0x1, offset=0x1, size=0x1),
+                )
+                + Op.STOP
+            ),
         ),
-        callee_1: Account(code=bytes.fromhex("60006000f0")),
+        callee_1: Account(code=Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CREATE),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

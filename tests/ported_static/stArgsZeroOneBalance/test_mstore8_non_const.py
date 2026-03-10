@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,9 +34,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276"): Account(
-                    code=bytes.fromhex(
-                        "73f9bb7a1f4d45dd4f87d9c94a491ce7606ba412763173f9bb7a1f4d45dd4f87d9c94a491ce7606ba41276315300"  # noqa: E501
+                    code=Op.MSTORE8(
+                        offset=Op.BALANCE(
+                            address=0xF9BB7A1F4D45DD4F87D9C94A491CE7606BA41276
+                        ),
+                        value=Op.BALANCE(
+                            address=0xF9BB7A1F4D45DD4F87D9C94A491CE7606BA41276
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -43,9 +50,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0xf9bb7a1f4d45dd4f87d9c94a491ce7606ba41276"): Account(
-                    code=bytes.fromhex(
-                        "73f9bb7a1f4d45dd4f87d9c94a491ce7606ba412763173f9bb7a1f4d45dd4f87d9c94a491ce7606ba41276315300"  # noqa: E501
+                    code=Op.MSTORE8(
+                        offset=Op.BALANCE(
+                            address=0xF9BB7A1F4D45DD4F87D9C94A491CE7606BA41276
+                        ),
+                        value=Op.BALANCE(
+                            address=0xF9BB7A1F4D45DD4F87D9C94A491CE7606BA41276
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -77,9 +90,16 @@ def test_mstore8_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73f9bb7a1f4d45dd4f87d9c94a491ce7606ba412763173f9bb7a1f4d45dd4f87d9c94a49"  # noqa: E501
-            "1ce7606ba41276315300"
+        code=(
+            Op.MSTORE8(
+                offset=Op.BALANCE(
+                    address=0xF9BB7A1F4D45DD4F87D9C94A491CE7606BA41276,
+                ),
+                value=Op.BALANCE(
+                    address=0xF9BB7A1F4D45DD4F87D9C94A491CE7606BA41276,
+                ),
+            )
+            + Op.STOP
         ),
     )
 

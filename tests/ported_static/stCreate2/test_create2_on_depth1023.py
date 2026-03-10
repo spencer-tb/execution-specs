@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -52,18 +53,47 @@ def test_create2_on_depth1023(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600035600052600051600201600052610400600051146043576000600060206000610400"  # noqa: E501
-            "6000511473c94f5374fce5edbc8e2a8697c15331677e6ebf0b5af1506060565b6b600060"  # noqa: E501
-            "0060006000f56001556020526000600c60346000f56001555b00"
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
+            + Op.MSTORE(offset=0x0, value=Op.ADD(0x2, Op.MLOAD(offset=0x0)))
+            + Op.JUMPI(pc=0x43, condition=Op.EQ(Op.MLOAD(offset=0x0), 0x400))
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xC94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    value=Op.EQ(Op.MLOAD(offset=0x0), 0x400),
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.JUMP(pc=0x60)
+            + Op.JUMPDEST
+            + Op.MSTORE(offset=0x20, value=0x6000600060006000F5600155)
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CREATE2(value=0x0, offset=0x34, size=0xC, salt=0x0),
+            )
+            + Op.JUMPDEST
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000356000526000600060206000600073b94f5374fce5edbc8e2a8697c15331677e6ebf"  # noqa: E501
-            "0b5af100"
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
+            + Op.CALL(
+                gas=Op.GAS,
+                address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x20,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
     )
 
@@ -85,13 +115,51 @@ def test_create2_on_depth1023(
         ),
         contract: Account(
             storage={1: 0xA3DA9580897E90044FA0DE6969815406B3172E3A},
-            code=bytes.fromhex(
-                "6000356000526000516002016000526104006000511460435760006000602060006104006000511473c94f5374fce5edbc8e2a8697c15331677e6ebf0b5af1506060565b6b6000600060006000f56001556020526000600c60346000f56001555b00"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                + Op.MSTORE(
+                    offset=0x0, value=Op.ADD(0x2, Op.MLOAD(offset=0x0))
+                )
+                + Op.JUMPI(
+                    pc=0x43, condition=Op.EQ(Op.MLOAD(offset=0x0), 0x400)
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xC94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                        value=Op.EQ(Op.MLOAD(offset=0x0), 0x400),
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.JUMP(pc=0x60)
+                + Op.JUMPDEST
+                + Op.MSTORE(offset=0x20, value=0x6000600060006000F5600155)
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CREATE2(
+                        value=0x0, offset=0x34, size=0xC, salt=0x0
+                    ),
+                )
+                + Op.JUMPDEST
+                + Op.STOP
             ),
         ),
         callee: Account(
-            code=bytes.fromhex(
-                "6000356000526000600060206000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b5af100"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                + Op.CALL(
+                    gas=Op.GAS,
+                    address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
     }

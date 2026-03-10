@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,33 +49,96 @@ def test_random_statetest306(
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "60d36e84517b3285b0867cd4144ff5f688d60b6a07592395d95e37246c06736c78c9fa9e"  # noqa: E501
-            "4b5e5db5a4b6ac4ced6dd169cda4fc3c11e9a6f0b4cec2f56019617df7a363788c155473"  # noqa: E501
-            "412582d556f06c6d5864cf4be6a2d1318b8e40ba1377454cc8d0510823591dee680d7ddd"  # noqa: E501
-            "c8c149bfcc24c65c69e66c2b9d3e28f05faf2587c446509405759901ec0946bf3d786827"  # noqa: E501
-            "225faf5da81e158cd9b2b4666f71a29fbe89f77c340dcbd7d67aedf852136b6c76affb38"  # noqa: E501
-            "beb802e0af269e65c22f52807c677b5e2c7d8c473aff18fe912c7ed21ab60fe5d4916a76"  # noqa: E501
-            "c93539332c6ab16b3f81b990f4b34b0228c7f5b1656bdd21d458717330e4be7d7bb91cc9"  # noqa: E501
-            "5818140eef086cd82d2d6f0d66c92a7ffb27125a625c77a8967268f212339508d6f60d9c"  # noqa: E501
-            "93a9e201f2ae883cb9752460ec0dcb4ba3b84a4db899c29f08ef1b0f506b4f3c05601f60"  # noqa: E501
-            "01601060116328b0eb5f73ce8d3e84f685b2eed55366547289ac4d314de277630a4eb375"  # noqa: E501
-            "f17df238e15d7d51240301521f173d628e7a68d01354faaf406ce541f753db89671f6aed"  # noqa: E501
-            "cf261f632e6244e8c3799a2de002f15ba4681fd3c609c0f522dfd964f95def9926f81232"  # noqa: E501
-            "7781b2de33196cc22776e9b26d8a0d65c57bdac987d0b3e0db66c0f1232c7add3365f209"  # noqa: E501
-            "cc53592f73502d0c5889b1bbf131f8bb6a6b5e2e067b9ef676768d48b3f5790c3304e046"  # noqa: E501
-            "f0a9c8a838a0596583d6258f196dcf982a9de5cec4f871470e7a6c9289615e1e7d140fdc"  # noqa: E501
-            "038972916223fb8012e29350295f3919cb28a36411845930d5e91b68510faac5e0677953"  # noqa: E501
-            "467cedb653f73818749e8cbaf15a5d64ba7ee5cabc98137167b924a2aac9147f159713d1"  # noqa: E501
-            "15e0225a84a54d6471dc7a01a7e4e814145305c9d04d2880c5be42fc6c52ced3e983d91a"  # noqa: E501
-            "580a4142021b73e99c3180117914b9ad03c580a8dac862be9b599a73ccfcfb230bcffc42"  # noqa: E501
-            "5c13c265f3b06b8c9f104c10752740765567374c211601a5f51501d18c48081998ff7b7a"  # noqa: E501
-            "8bfdf0bec9eb4385b554870a996e0cab662d991d0e5f9357f2f99f98"
+        code=(
+            Op.SIGNEXTEND(0x84517B3285B0867CD4144FF5F688D6, 0xD3)
+            + Op.LOG3(
+                offset=0x7DF7,
+                size=0x19,
+                topic_1=0xD169CDA4FC3C11E9A6F0B4CEC2F5,
+                topic_2=0x78C9FA9E4B5E5DB5A4B6AC4CED,
+                topic_3=0x7592395D95E37246C0673,
+            )
+            + Op.SGT(0x412582D556F06C6D5864CF4BE6A2D1318B8E40BA, 0x788C1554)
+            + Op.SDIV(
+                0x2B9D3E28F05FAF2587C4465094,
+                0x454CC8D0510823591DEE680D7DDDC8C149BFCC24C65C69E6,
+            )
+            + Op.SGT(
+                0x71A29FBE89F77C340DCBD7D67AEDF852,
+                0x9901EC0946BF3D786827225FAF5DA81E158CD9B2B466,
+            )
+            + Op.PUSH12[0x6C76AFFB38BEB802E0AF269E]
+            + Op.PUSH6[0xC22F52807C67]
+            + Op.PUSH28[
+                0x5E2C7D8C473AFF18FE912C7ED21AB60FE5D4916A76C93539332C6AB1
+            ]
+            + Op.PUSH12[0x3F81B990F4B34B0228C7F5B1]
+            + Op.PUSH6[0x6BDD21D45871]
+            + Op.PUSH20[0x30E4BE7D7BB91CC95818140EEF086CD82D2D6F0D]
+            + Op.PUSH7[0xC92A7FFB27125A]
+            + Op.PUSH3[0x5C77A8]
+            + Op.SWAP7
+            + Op.SDIV(
+                0x2460EC0DCB4BA3B84A4DB899C29F08EF1B0F506B4F3C,
+                0x68F212339508D6F60D9C93A9E201F2AE883CB9,
+            )
+            + Op.CALL(
+                gas=0xA4EB375,
+                address=0xCE8D3E84F685B2EED55366547289AC4D314DE277,
+                value=0x28B0EB5F,
+                args_offset=0x11,
+                args_size=0x10,
+                ret_offset=0x1,
+                ret_size=0x1F,
+            )
+            + Op.PUSH30[
+                0xF238E15D7D51240301521F173D628E7A68D01354FAAF406CE541F753DB89
+            ]
+            + Op.PUSH8[0x1F6AEDCF261F632E]
+            + Op.PUSH3[0x44E8C3]
+            + Op.PUSH26[0x9A2DE002F15BA4681FD3C609C0F522DFD964F95DEF9926F81232]
+            + Op.PUSH24[0x81B2DE33196CC22776E9B26D8A0D65C57BDAC987D0B3E0DB]
+            + Op.PUSH7[0xC0F1232C7ADD33]
+            + Op.PUSH6[0xF209CC53592F]
+            + Op.PUSH20[0x502D0C5889B1BBF131F8BB6A6B5E2E067B9EF676]
+            + Op.PUSH23[0x8D48B3F5790C3304E046F0A9C8A838A0596583D6258F19]
+            + Op.PUSH14[0xCF982A9DE5CEC4F871470E7A6C92]
+            + Op.DUP10
+            + Op.PUSH2[0x5E1E]
+            + Op.PUSH30[
+                0x140FDC038972916223FB8012E29350295F3919CB28A36411845930D5E91B
+            ]
+            + Op.PUSH9[0x510FAAC5E067795346]
+            + Op.PUSH29[
+                0xEDB653F73818749E8CBAF15A5D64BA7EE5CABC98137167B924A2AAC914
+            ]
+            + Op.PUSH32[
+                0x159713D115E0225A84A54D6471DC7A01A7E4E814145305C9D04D2880C5BE42FC  # noqa: E501
+            ]
+            + Op.PUSH13[0x52CED3E983D91A580A4142021B]
+            + Op.PUSH20[0xE99C3180117914B9AD03C580A8DAC862BE9B599A]
+            + Op.PUSH20[0xCCFCFB230BCFFC425C13C265F3B06B8C9F104C10]
+            + Op.PUSH22[0x2740765567374C211601A5F51501D18C48081998FF7B]
+            + Op.PUSH27[
+                0x8BFDF0BEC9EB4385B554870A996E0CAB662D991D0E5F9357F2F99F
+            ]
+            + Op.SWAP9
         ),
     )
 
@@ -124,11 +188,100 @@ def test_random_statetest306(
 
     post = {
         coinbase: Account(
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "60d36e84517b3285b0867cd4144ff5f688d60b6a07592395d95e37246c06736c78c9fa9e4b5e5db5a4b6ac4ced6dd169cda4fc3c11e9a6f0b4cec2f56019617df7a363788c155473412582d556f06c6d5864cf4be6a2d1318b8e40ba1377454cc8d0510823591dee680d7dddc8c149bfcc24c65c69e66c2b9d3e28f05faf2587c446509405759901ec0946bf3d786827225faf5da81e158cd9b2b4666f71a29fbe89f77c340dcbd7d67aedf852136b6c76affb38beb802e0af269e65c22f52807c677b5e2c7d8c473aff18fe912c7ed21ab60fe5d4916a76c93539332c6ab16b3f81b990f4b34b0228c7f5b1656bdd21d458717330e4be7d7bb91cc95818140eef086cd82d2d6f0d66c92a7ffb27125a625c77a8967268f212339508d6f60d9c93a9e201f2ae883cb9752460ec0dcb4ba3b84a4db899c29f08ef1b0f506b4f3c05601f6001601060116328b0eb5f73ce8d3e84f685b2eed55366547289ac4d314de277630a4eb375f17df238e15d7d51240301521f173d628e7a68d01354faaf406ce541f753db89671f6aedcf261f632e6244e8c3799a2de002f15ba4681fd3c609c0f522dfd964f95def9926f812327781b2de33196cc22776e9b26d8a0d65c57bdac987d0b3e0db66c0f1232c7add3365f209cc53592f73502d0c5889b1bbf131f8bb6a6b5e2e067b9ef676768d48b3f5790c3304e046f0a9c8a838a0596583d6258f196dcf982a9de5cec4f871470e7a6c9289615e1e7d140fdc038972916223fb8012e29350295f3919cb28a36411845930d5e91b68510faac5e0677953467cedb653f73818749e8cbaf15a5d64ba7ee5cabc98137167b924a2aac9147f159713d115e0225a84a54d6471dc7a01a7e4e814145305c9d04d2880c5be42fc6c52ced3e983d91a580a4142021b73e99c3180117914b9ad03c580a8dac862be9b599a73ccfcfb230bcffc425c13c265f3b06b8c9f104c10752740765567374c211601a5f51501d18c48081998ff7b7a8bfdf0bec9eb4385b554870a996e0cab662d991d0e5f9357f2f99f98"  # noqa: E501
+            code=(
+                Op.SIGNEXTEND(0x84517B3285B0867CD4144FF5F688D6, 0xD3)
+                + Op.LOG3(
+                    offset=0x7DF7,
+                    size=0x19,
+                    topic_1=0xD169CDA4FC3C11E9A6F0B4CEC2F5,
+                    topic_2=0x78C9FA9E4B5E5DB5A4B6AC4CED,
+                    topic_3=0x7592395D95E37246C0673,
+                )
+                + Op.SGT(
+                    0x412582D556F06C6D5864CF4BE6A2D1318B8E40BA, 0x788C1554
+                )
+                + Op.SDIV(
+                    0x2B9D3E28F05FAF2587C4465094,
+                    0x454CC8D0510823591DEE680D7DDDC8C149BFCC24C65C69E6,
+                )
+                + Op.SGT(
+                    0x71A29FBE89F77C340DCBD7D67AEDF852,
+                    0x9901EC0946BF3D786827225FAF5DA81E158CD9B2B466,
+                )
+                + Op.PUSH12[0x6C76AFFB38BEB802E0AF269E]
+                + Op.PUSH6[0xC22F52807C67]
+                + Op.PUSH28[
+                    0x5E2C7D8C473AFF18FE912C7ED21AB60FE5D4916A76C93539332C6AB1
+                ]
+                + Op.PUSH12[0x3F81B990F4B34B0228C7F5B1]
+                + Op.PUSH6[0x6BDD21D45871]
+                + Op.PUSH20[0x30E4BE7D7BB91CC95818140EEF086CD82D2D6F0D]
+                + Op.PUSH7[0xC92A7FFB27125A]
+                + Op.PUSH3[0x5C77A8]
+                + Op.SWAP7
+                + Op.SDIV(
+                    0x2460EC0DCB4BA3B84A4DB899C29F08EF1B0F506B4F3C,
+                    0x68F212339508D6F60D9C93A9E201F2AE883CB9,
+                )
+                + Op.CALL(
+                    gas=0xA4EB375,
+                    address=0xCE8D3E84F685B2EED55366547289AC4D314DE277,
+                    value=0x28B0EB5F,
+                    args_offset=0x11,
+                    args_size=0x10,
+                    ret_offset=0x1,
+                    ret_size=0x1F,
+                )
+                + Op.PUSH30[
+                    0xF238E15D7D51240301521F173D628E7A68D01354FAAF406CE541F753DB89  # noqa: E501
+                ]
+                + Op.PUSH8[0x1F6AEDCF261F632E]
+                + Op.PUSH3[0x44E8C3]
+                + Op.PUSH26[
+                    0x9A2DE002F15BA4681FD3C609C0F522DFD964F95DEF9926F81232
+                ]
+                + Op.PUSH24[0x81B2DE33196CC22776E9B26D8A0D65C57BDAC987D0B3E0DB]
+                + Op.PUSH7[0xC0F1232C7ADD33]
+                + Op.PUSH6[0xF209CC53592F]
+                + Op.PUSH20[0x502D0C5889B1BBF131F8BB6A6B5E2E067B9EF676]
+                + Op.PUSH23[0x8D48B3F5790C3304E046F0A9C8A838A0596583D6258F19]
+                + Op.PUSH14[0xCF982A9DE5CEC4F871470E7A6C92]
+                + Op.DUP10
+                + Op.PUSH2[0x5E1E]
+                + Op.PUSH30[
+                    0x140FDC038972916223FB8012E29350295F3919CB28A36411845930D5E91B  # noqa: E501
+                ]
+                + Op.PUSH9[0x510FAAC5E067795346]
+                + Op.PUSH29[
+                    0xEDB653F73818749E8CBAF15A5D64BA7EE5CABC98137167B924A2AAC914  # noqa: E501
+                ]
+                + Op.PUSH32[
+                    0x159713D115E0225A84A54D6471DC7A01A7E4E814145305C9D04D2880C5BE42FC  # noqa: E501
+                ]
+                + Op.PUSH13[0x52CED3E983D91A580A4142021B]
+                + Op.PUSH20[0xE99C3180117914B9AD03C580A8DAC862BE9B599A]
+                + Op.PUSH20[0xCCFCFB230BCFFC425C13C265F3B06B8C9F104C10]
+                + Op.PUSH22[0x2740765567374C211601A5F51501D18C48081998FF7B]
+                + Op.PUSH27[
+                    0x8BFDF0BEC9EB4385B554870A996E0CAB662D991D0E5F9357F2F99F
+                ]
+                + Op.SWAP9
             ),
         ),
     }

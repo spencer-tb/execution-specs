@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,16 +52,30 @@ def test_create_oo_gafter_init_code_returndata3(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6d6460016001556000526005601bf3600052600e60126000f000"
+        code=(
+            Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
+            + Op.CREATE(value=0x0, offset=0x12, size=0xE)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b5af2506020"  # noqa: E501
-            "600060003e60005160015500"
+        code=(
+            Op.POP(
+                Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+            + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
     )
 
@@ -78,13 +93,28 @@ def test_create_oo_gafter_init_code_returndata3(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "6d6460016001556000526005601bf3600052600e60126000f000"
+            code=(
+                Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
+                + Op.CREATE(value=0x0, offset=0x12, size=0xE)
+                + Op.STOP
             ),
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b5af2506020600060003e60005160015500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

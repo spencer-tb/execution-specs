@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,18 +35,46 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("4040459143404144809759886d608f")
                 ),
                 Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
-                    code=bytes.fromhex("4041")
+                    code=Op.BLOCKHASH + Op.COINBASE
                 ),
                 Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
-                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                    code=Op.BLOCKHASH
+                    + Op.BLOCKHASH(block_number=Op.GASLIMIT)
+                    + Op.COINBASE
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.CODECOPY(
+                        dest_offset=Op.CALLVALUE,
+                        offset=Op.COINBASE,
+                        size=Op.PREVRANDAO,
+                    )
+                    + Op.SELFDESTRUCT(address=Op.DUP8)
+                    + Op.CALLDATACOPY
+                    + Op.CALLDATALOAD
+                    + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)
                 ),
                 Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
-                    code=bytes.fromhex("434342444244454597")
+                    code=Op.NUMBER
+                    + Op.NUMBER
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.SWAP8
                 ),
                 Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
-                    code=bytes.fromhex(
-                        "60006000600060006000600435611000015af100"
+                    code=Op.CALL(
+                        gas=Op.GAS,
+                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
                     )
+                    + Op.STOP
                 ),
                 Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
                     code=bytes.fromhex("65424555")
@@ -62,18 +91,46 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("4040459143404144809759886d608f")
                 ),
                 Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
-                    code=bytes.fromhex("4041")
+                    code=Op.BLOCKHASH + Op.COINBASE
                 ),
                 Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
-                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                    code=Op.BLOCKHASH
+                    + Op.BLOCKHASH(block_number=Op.GASLIMIT)
+                    + Op.COINBASE
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.CODECOPY(
+                        dest_offset=Op.CALLVALUE,
+                        offset=Op.COINBASE,
+                        size=Op.PREVRANDAO,
+                    )
+                    + Op.SELFDESTRUCT(address=Op.DUP8)
+                    + Op.CALLDATACOPY
+                    + Op.CALLDATALOAD
+                    + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)
                 ),
                 Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
-                    code=bytes.fromhex("434342444244454597")
+                    code=Op.NUMBER
+                    + Op.NUMBER
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.SWAP8
                 ),
                 Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
-                    code=bytes.fromhex(
-                        "60006000600060006000600435611000015af100"
+                    code=Op.CALL(
+                        gas=Op.GAS,
+                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
                     )
+                    + Op.STOP
                 ),
                 Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
                     code=bytes.fromhex("65424555")
@@ -90,18 +147,46 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("4040459143404144809759886d608f")
                 ),
                 Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
-                    code=bytes.fromhex("4041")
+                    code=Op.BLOCKHASH + Op.COINBASE
                 ),
                 Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
-                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                    code=Op.BLOCKHASH
+                    + Op.BLOCKHASH(block_number=Op.GASLIMIT)
+                    + Op.COINBASE
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.CODECOPY(
+                        dest_offset=Op.CALLVALUE,
+                        offset=Op.COINBASE,
+                        size=Op.PREVRANDAO,
+                    )
+                    + Op.SELFDESTRUCT(address=Op.DUP8)
+                    + Op.CALLDATACOPY
+                    + Op.CALLDATALOAD
+                    + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)
                 ),
                 Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
-                    code=bytes.fromhex("434342444244454597")
+                    code=Op.NUMBER
+                    + Op.NUMBER
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.SWAP8
                 ),
                 Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
-                    code=bytes.fromhex(
-                        "60006000600060006000600435611000015af100"
+                    code=Op.CALL(
+                        gas=Op.GAS,
+                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
                     )
+                    + Op.STOP
                 ),
                 Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
                     code=bytes.fromhex("65424555")
@@ -118,18 +203,46 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("4040459143404144809759886d608f")
                 ),
                 Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
-                    code=bytes.fromhex("4041")
+                    code=Op.BLOCKHASH + Op.COINBASE
                 ),
                 Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
-                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                    code=Op.BLOCKHASH
+                    + Op.BLOCKHASH(block_number=Op.GASLIMIT)
+                    + Op.COINBASE
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.CODECOPY(
+                        dest_offset=Op.CALLVALUE,
+                        offset=Op.COINBASE,
+                        size=Op.PREVRANDAO,
+                    )
+                    + Op.SELFDESTRUCT(address=Op.DUP8)
+                    + Op.CALLDATACOPY
+                    + Op.CALLDATALOAD
+                    + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)
                 ),
                 Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
-                    code=bytes.fromhex("434342444244454597")
+                    code=Op.NUMBER
+                    + Op.NUMBER
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.SWAP8
                 ),
                 Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
-                    code=bytes.fromhex(
-                        "60006000600060006000600435611000015af100"
+                    code=Op.CALL(
+                        gas=Op.GAS,
+                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
                     )
+                    + Op.STOP
                 ),
                 Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
                     code=bytes.fromhex("65424555")
@@ -146,18 +259,46 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("4040459143404144809759886d608f")
                 ),
                 Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
-                    code=bytes.fromhex("4041")
+                    code=Op.BLOCKHASH + Op.COINBASE
                 ),
                 Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
-                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                    code=Op.BLOCKHASH
+                    + Op.BLOCKHASH(block_number=Op.GASLIMIT)
+                    + Op.COINBASE
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.CODECOPY(
+                        dest_offset=Op.CALLVALUE,
+                        offset=Op.COINBASE,
+                        size=Op.PREVRANDAO,
+                    )
+                    + Op.SELFDESTRUCT(address=Op.DUP8)
+                    + Op.CALLDATACOPY
+                    + Op.CALLDATALOAD
+                    + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)
                 ),
                 Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
-                    code=bytes.fromhex("434342444244454597")
+                    code=Op.NUMBER
+                    + Op.NUMBER
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.SWAP8
                 ),
                 Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
-                    code=bytes.fromhex(
-                        "60006000600060006000600435611000015af100"
+                    code=Op.CALL(
+                        gas=Op.GAS,
+                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
                     )
+                    + Op.STOP
                 ),
                 Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
                     code=bytes.fromhex("65424555")
@@ -174,18 +315,46 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("4040459143404144809759886d608f")
                 ),
                 Address("0x2e3b99613a2e74ebb0cd62d7b9eb38bad240cec6"): Account(
-                    code=bytes.fromhex("4041")
+                    code=Op.BLOCKHASH + Op.COINBASE
                 ),
                 Address("0x3412d3ebac3fcacfb451708aef7cc8e5bf1e5261"): Account(
-                    code=bytes.fromhex("4045404145454441343987ff3735043055")
+                    code=Op.BLOCKHASH
+                    + Op.BLOCKHASH(block_number=Op.GASLIMIT)
+                    + Op.COINBASE
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.CODECOPY(
+                        dest_offset=Op.CALLVALUE,
+                        offset=Op.COINBASE,
+                        size=Op.PREVRANDAO,
+                    )
+                    + Op.SELFDESTRUCT(address=Op.DUP8)
+                    + Op.CALLDATACOPY
+                    + Op.CALLDATALOAD
+                    + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)
                 ),
                 Address("0x66b8dba513dc25f967ef7e84306616c0071cccae"): Account(
-                    code=bytes.fromhex("434342444244454597")
+                    code=Op.NUMBER
+                    + Op.NUMBER
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.TIMESTAMP
+                    + Op.PREVRANDAO
+                    + Op.GASLIMIT
+                    + Op.GASLIMIT
+                    + Op.SWAP8
                 ),
                 Address("0xa83db56c7ce68c06129b80c7be0d0f5e0869d536"): Account(
-                    code=bytes.fromhex(
-                        "60006000600060006000600435611000015af100"
+                    code=Op.CALL(
+                        gas=Op.GAS,
+                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
                     )
+                    + Op.STOP
                 ),
                 Address("0xacd000f275b1a28d0c3b7dee7f114c4d28fb1636"): Account(
                     code=bytes.fromhex("65424555")
@@ -233,23 +402,59 @@ def test_random(
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("4041"),
+        code=Op.BLOCKHASH + Op.COINBASE,
     )
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("4045404145454441343987ff3735043055"),
+        code=(
+            Op.BLOCKHASH
+            + Op.BLOCKHASH(block_number=Op.GASLIMIT)
+            + Op.COINBASE
+            + Op.GASLIMIT
+            + Op.GASLIMIT
+            + Op.CODECOPY(
+                dest_offset=Op.CALLVALUE,
+                offset=Op.COINBASE,
+                size=Op.PREVRANDAO,
+            )
+            + Op.SELFDESTRUCT(address=Op.DUP8)
+            + Op.CALLDATACOPY
+            + Op.CALLDATALOAD
+            + Op.SSTORE(key=Op.ADDRESS, value=Op.DIV)
+        ),
     )
     pre[sender] = Account(balance=0x10000000000000, nonce=0)
     pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("434342444244454597"),
+        code=(
+            Op.NUMBER
+            + Op.NUMBER
+            + Op.TIMESTAMP
+            + Op.PREVRANDAO
+            + Op.TIMESTAMP
+            + Op.PREVRANDAO
+            + Op.GASLIMIT
+            + Op.GASLIMIT
+            + Op.SWAP8
+        ),
     )
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("60006000600060006000600435611000015af100"),
+        code=(
+            Op.CALL(
+                gas=Op.GAS,
+                address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
+        ),
     )
     pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,

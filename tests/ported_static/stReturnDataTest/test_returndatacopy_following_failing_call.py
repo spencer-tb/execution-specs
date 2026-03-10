@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,13 +48,25 @@ def test_returndatacopy_following_failing_call(
         gas_limit=111669149696,
     )
 
-    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("fd"))
+    pre[callee] = Account(balance=0, nonce=0, code=Op.REVERT)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000600060006000733141bb954e8294e47a14ebd08229f30e6294ba836409000000"  # noqa: E501
-            "00f1506020600160003e60005160005500"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x900000000,
+                    address=0x3141BB954E8294E47A14EBD08229F30E6294BA83,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x1, size=0x20)
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
@@ -72,11 +85,24 @@ def test_returndatacopy_following_failing_call(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("fd")),
+        callee: Account(code=Op.REVERT),
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "60006000600060006000733141bb954e8294e47a14ebd08229f30e6294ba83640900000000f1506020600160003e60005160005500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x900000000,
+                        address=0x3141BB954E8294E47A14EBD08229F30E6294BA83,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x1, size=0x20)
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,15 +48,34 @@ def test_create2_refund_ef(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("6000805500"),
+        code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP,
         storage={0x0: 0x1},
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000601980601183398180f560005500fe600080808080625ef94d61c350f15060ef6000"  # noqa: E501
-            "5360016000f3"
+        code=(
+            Op.PUSH1[0x0]
+            + Op.PUSH1[0x19]
+            + Op.CODECOPY(dest_offset=Op.DUP4, offset=0x11, size=Op.DUP1)
+            + Op.DUP2
+            + Op.DUP1
+            + Op.SSTORE(key=0x0, value=Op.CREATE2)
+            + Op.STOP
+            + Op.INVALID
+            + Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x5EF94D,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP1,
+                    args_size=Op.DUP1,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE8(offset=0x0, value=0xEF)
+            + Op.RETURN(offset=0x0, size=0x1)
         ),
     )
     pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
@@ -73,10 +93,33 @@ def test_create2_refund_ef(
     )
 
     post = {
-        callee: Account(storage={0: 1}, code=bytes.fromhex("6000805500")),
+        callee: Account(
+            storage={0: 1},
+            code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP,
+        ),
         contract: Account(
-            code=bytes.fromhex(
-                "6000601980601183398180f560005500fe600080808080625ef94d61c350f15060ef60005360016000f3"  # noqa: E501
+            code=(
+                Op.PUSH1[0x0]
+                + Op.PUSH1[0x19]
+                + Op.CODECOPY(dest_offset=Op.DUP4, offset=0x11, size=Op.DUP1)
+                + Op.DUP2
+                + Op.DUP1
+                + Op.SSTORE(key=0x0, value=Op.CREATE2)
+                + Op.STOP
+                + Op.INVALID
+                + Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x5EF94D,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP1,
+                        args_size=Op.DUP1,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE8(offset=0x0, value=0xEF)
+                + Op.RETURN(offset=0x0, size=0x1)
             ),
         ),
     }

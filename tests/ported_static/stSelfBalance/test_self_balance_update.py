@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,8 +48,25 @@ def test_self_balance_update(
     pre[contract] = Account(
         balance=500,
         nonce=0,
-        code=bytes.fromhex(
-            "47806001556000600060006000600160006000f1504780600255900360035500"
+        code=(
+            Op.SELFBALANCE
+            + Op.SSTORE(key=0x1, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x0,
+                    address=0x0,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SELFBALANCE
+            + Op.SSTORE(key=0x2, value=Op.DUP1)
+            + Op.SWAP1
+            + Op.SSTORE(key=0x3, value=Op.SUB)
+            + Op.STOP
         ),
     )
 
@@ -67,8 +85,25 @@ def test_self_balance_update(
     post = {
         contract: Account(
             storage={1: 500, 2: 499, 3: 1},
-            code=bytes.fromhex(
-                "47806001556000600060006000600160006000f1504780600255900360035500"  # noqa: E501
+            code=(
+                Op.SELFBALANCE
+                + Op.SSTORE(key=0x1, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x0,
+                        address=0x0,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SELFBALANCE
+                + Op.SSTORE(key=0x2, value=Op.DUP1)
+                + Op.SWAP1
+                + Op.SSTORE(key=0x3, value=Op.SUB)
+                + Op.STOP
             ),
         ),
     }

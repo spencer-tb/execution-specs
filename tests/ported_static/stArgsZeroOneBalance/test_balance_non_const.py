@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,9 +34,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0xee6a324b2ece5eacdf881abfdcc62b5361d0fb50"): Account(
-                    code=bytes.fromhex(
-                        "73ee6a324b2ece5eacdf881abfdcc62b5361d0fb50313160005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.BALANCE(
+                            address=Op.BALANCE(
+                                address=0xEE6A324B2ECE5EACDF881ABFDCC62B5361D0FB50  # noqa: E501
+                            )
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -43,9 +50,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0xee6a324b2ece5eacdf881abfdcc62b5361d0fb50"): Account(
-                    code=bytes.fromhex(
-                        "73ee6a324b2ece5eacdf881abfdcc62b5361d0fb50313160005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.BALANCE(
+                            address=Op.BALANCE(
+                                address=0xEE6A324B2ECE5EACDF881ABFDCC62B5361D0FB50  # noqa: E501
+                            )
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -77,8 +90,16 @@ def test_balance_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73ee6a324b2ece5eacdf881abfdcc62b5361d0fb50313160005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.BALANCE(
+                    address=Op.BALANCE(
+                        address=0xEE6A324B2ECE5EACDF881ABFDCC62B5361D0FB50,
+                    ),
+                ),
+            )
+            + Op.STOP
         ),
     )
 

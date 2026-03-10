@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,37 +32,67 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ef",  # noqa: E501
             {
                 Address("0x013e3ddba3f657af0f05dc30dd5842b055baebf5"): Account(
-                    code=bytes.fromhex("02")
+                    code=Op.MUL
                 ),
                 Address("0x0224b54589bcb13c7cfac521cbef4c5915cc0166"): Account(
-                    code=bytes.fromhex("3f")
+                    code=Op.EXTCODEHASH
                 ),
                 Address("0x02bb7e260960530deb147e3f71e57639ac7cc96b"): Account(
                     code=bytes.fromhex("ec")
                 ),
                 Address("0x03a7a3e49083d4720b6ce4daa03b9cbc0807baf5"): Account(
-                    code=bytes.fromhex("82")
+                    code=Op.DUP3
                 ),
                 Address("0x043b81490ad7333e4990ded04d8a74d5d359a30f"): Account(
-                    code=bytes.fromhex("13")
+                    code=Op.SGT
                 ),
                 Address("0x0690089e309e4998a8a5b05201fcf9d7b230e857"): Account(
                     code=bytes.fromhex("a7")
                 ),
                 Address("0x0886289bc893311a1c210d60dc6de0aca85ab7e4"): Account(
-                    code=bytes.fromhex("44")
+                    code=Op.PREVRANDAO
                 ),
                 Address("0x094cf14d701f37438ee7ecb2f46a1ec73593da8c"): Account(
-                    code=bytes.fromhex("97")
+                    code=Op.SWAP8
                 ),
                 Address("0x0999024c399f7c477d7820473cf4d1012d7391ac"): Account(
                     code=bytes.fromhex("7f")
                 ),
                 Address("0x09fdd11d68be787a4c43f692a0778befc011cd35"): Account(
                     storage={256: 1},
-                    code=bytes.fromhex(
-                        "7f600060005360016000f3000000000000000000000000000000000000000000006000526024356004355b818110603857600161010055005b8060019182536000600a8180f515604f575b01602a565b818155604a56"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x600060005360016000F300000000000000000000000000000000000000000000,  # noqa: E501
+                    )
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x38, condition=Op.LT(Op.DUP2, Op.DUP2))
+                    + Op.SSTORE(key=0x100, value=0x1)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.DUP1
+                    + Op.PUSH1[0x1]
+                    + Op.SWAP2
+                    + Op.DUP3
+                    + Op.MSTORE8
+                    + Op.JUMPI(
+                        pc=0x4F,
+                        condition=Op.ISZERO(
+                            Op.CREATE2(
+                                value=Op.DUP1,
+                                offset=Op.DUP2,
+                                size=0xA,
+                                salt=0x0,
+                            )
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.ADD
+                    + Op.JUMP(pc=0x2A)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=Op.DUP2)
+                    + Op.JUMP(pc=0x4A),
                 ),
                 Address("0x0baad227bd545396f0c965bf0bb6983d1ded75eb"): Account(
                     code=bytes.fromhex("28")
@@ -82,7 +113,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("c3")
                 ),
                 Address("0x0fa2c4df612f32c40c744602205a02a197442b29"): Account(
-                    code=bytes.fromhex("94")
+                    code=Op.SWAP5
                 ),
                 Address("0x0fb3bb43a0e31556ca58331eee49b642a1062823"): Account(
                     code=bytes.fromhex("0f")
@@ -97,37 +128,37 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("c9")
                 ),
                 Address("0x16bcc946d2cce77042c7cd5615eb4ac8bb394128"): Account(
-                    code=bytes.fromhex("8b")
+                    code=Op.DUP12
                 ),
                 Address("0x16cadb0677c9f15b6cae111f82db032027701a12"): Account(
-                    code=bytes.fromhex("40")
+                    code=Op.BLOCKHASH
                 ),
                 Address("0x16ff81957b8445c1962967b2c352a93ebd09a5ac"): Account(
                     code=bytes.fromhex("2d")
                 ),
                 Address("0x18b8cdcf5d71bca5bef2408eac496ddc9adb3961"): Account(
-                    code=bytes.fromhex("90")
+                    code=Op.SWAP1
                 ),
                 Address("0x19158da48e5fd23c53beea08ff3588078ff1a673"): Account(
                     code=bytes.fromhex("68")
                 ),
                 Address("0x1a5d69053e8fdbd0d3eb5369d85fc1f0f59107d3"): Account(
-                    code=bytes.fromhex("a0")
+                    code=Op.LOG0
                 ),
                 Address("0x1bd700e26df035a257cbd6ec1477b7a104834f64"): Account(
-                    code=bytes.fromhex("15")
+                    code=Op.ISZERO
                 ),
                 Address("0x1c017528a05b9a163ae452d8a2f92e9ef0cc15ad"): Account(
                     code=bytes.fromhex("72")
                 ),
                 Address("0x1d6b687e84941d346b33d7a7808b1bd705ab8d09"): Account(
-                    code=bytes.fromhex("5a")
+                    code=Op.GAS
                 ),
                 Address("0x1d77a28c2c9ee76a12baaf00925e4edd859cc677"): Account(
-                    code=bytes.fromhex("8d")
+                    code=Op.DUP14
                 ),
                 Address("0x1f3d2bc2d11e9d6dc1b7f9e7725f7d41c8b7c832"): Account(
-                    code=bytes.fromhex("5f")
+                    code=Op.PUSH0
                 ),
                 Address("0x1fe9a1e61ee627e28dfec818025a678d2f48854d"): Account(
                     code=bytes.fromhex("eb")
@@ -142,10 +173,10 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("c0")
                 ),
                 Address("0x26dd18220015b3f1caa012d35fda436f8880855d"): Account(
-                    code=bytes.fromhex("1c")
+                    code=Op.SHR
                 ),
                 Address("0x29259d452eb70e85288045a19577c2a7faa702dc"): Account(
-                    code=bytes.fromhex("88")
+                    code=Op.DUP9
                 ),
                 Address("0x2982c55510e54bf363e8dc3b87c4228e98c9e90b"): Account(
                     code=bytes.fromhex("be")
@@ -160,7 +191,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("22")
                 ),
                 Address("0x3244566d9457d38f7bddb4917303b8e738b2a67b"): Account(
-                    code=bytes.fromhex("3c")
+                    code=Op.EXTCODECOPY
                 ),
                 Address("0x32c13e6ae8e2cf57813bdf6c825df21ef08f959e"): Account(
                     code=bytes.fromhex("de")
@@ -169,10 +200,10 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("2c")
                 ),
                 Address("0x336257577321373ce4befa4c4aa9c9c539d67e55"): Account(
-                    code=bytes.fromhex("a1")
+                    code=Op.LOG1
                 ),
                 Address("0x35eb14e52556459b38d8a4f7eb054f15a58b4ab5"): Account(
-                    code=bytes.fromhex("87")
+                    code=Op.DUP8
                 ),
                 Address("0x368fd13e67530b7e30b4d6ba6b04f9aefdb87238"): Account(
                     code=bytes.fromhex("66")
@@ -184,10 +215,10 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("cb")
                 ),
                 Address("0x38e44fdcc9d06ad187ccf981904a1ab52bbdb971"): Account(
-                    code=bytes.fromhex("3d")
+                    code=Op.RETURNDATASIZE
                 ),
                 Address("0x3a3bacc1f4963401637d608f5a1581a530e27101"): Account(
-                    code=bytes.fromhex("41")
+                    code=Op.COINBASE
                 ),
                 Address("0x3b67cc221a6e832c4e3bf7d411bdf33bdebbf9e3"): Account(
                     code=bytes.fromhex("e1")
@@ -199,16 +230,16 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("0e")
                 ),
                 Address("0x3e54306e45333000efa8e215a951535b55a6b4e0"): Account(
-                    code=bytes.fromhex("95")
+                    code=Op.SWAP6
                 ),
                 Address("0x3e6017158de20472a938fda3ff84256b5ae89867"): Account(
                     code=bytes.fromhex("cf")
                 ),
                 Address("0x4018be476b6c82c3786c7bf154e1444a9453b225"): Account(
-                    code=bytes.fromhex("91")
+                    code=Op.SWAP2
                 ),
                 Address("0x40336ce4d9455d6270c0c4e1f5971a67db7bfad5"): Account(
-                    code=bytes.fromhex("08")
+                    code=Op.ADDMOD
                 ),
                 Address("0x422bc31c05340e16d1afbc9f4b0f4482216e4ef7"): Account(
                     code=bytes.fromhex("1f")
@@ -217,19 +248,19 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("6e")
                 ),
                 Address("0x485a2441041adb043bd510aa8d66c904de65b9dd"): Account(
-                    code=bytes.fromhex("92")
+                    code=Op.SWAP3
                 ),
                 Address("0x4a9bcaac65525c44054cc89b7da486234abda46a"): Account(
-                    code=bytes.fromhex("54")
+                    code=Op.SLOAD
                 ),
                 Address("0x4bdfaee3d4a52bbcfd775f047a3ba922a28a9878"): Account(
-                    code=bytes.fromhex("3b")
+                    code=Op.EXTCODESIZE
                 ),
                 Address("0x4c5c1e0f58fe34edaa24db427d6004e3c00d12e3"): Account(
-                    code=bytes.fromhex("5b")
+                    code=Op.JUMPDEST
                 ),
                 Address("0x4cf62ccf8679f1a9ec8dd7d13412a02cdd2bf6cc"): Account(
-                    code=bytes.fromhex("80")
+                    code=Op.DUP1
                 ),
                 Address("0x4df182ba48c74d495eb6d3ff7b017d0e42f7b2c8"): Account(
                     code=bytes.fromhex("b4")
@@ -244,7 +275,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("bb")
                 ),
                 Address("0x51e15a587c79d847a67fc67b681d22c01b0baf59"): Account(
-                    code=bytes.fromhex("03")
+                    code=Op.SUB
                 ),
                 Address("0x5261518665caac666b102b68a9516b31d409f6a5"): Account(
                     code=bytes.fromhex("ea")
@@ -256,7 +287,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("af")
                 ),
                 Address("0x59bcbed1b83b852a3f3e1bcb57a54e54a2ff2687"): Account(
-                    code=bytes.fromhex("93")
+                    code=Op.SWAP4
                 ),
                 Address("0x5aaadb34a96f978117a9a1b44e5554478b1bb64c"): Account(
                     code=bytes.fromhex("e3")
@@ -271,22 +302,22 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("bf")
                 ),
                 Address("0x5d00b86dee0a592ec379469fe5da1d887ea3942f"): Account(
-                    code=bytes.fromhex("07")
+                    code=Op.SMOD
                 ),
                 Address("0x5f947d0736feeaebd5444743bea53466e1082736"): Account(
-                    code=bytes.fromhex("33")
+                    code=Op.CALLER
                 ),
                 Address("0x606b39e2f69430e73abebfd0132eb90de5b29192"): Account(
-                    code=bytes.fromhex("32")
+                    code=Op.ORIGIN
                 ),
                 Address("0x60eafc0c8b3d6976f2fb94498fb5b04d050477cc"): Account(
-                    code=bytes.fromhex("a3")
+                    code=Op.LOG3
                 ),
                 Address("0x61b01ea840a2e1fad7b4c48fc0d2a25b9dd7ba68"): Account(
-                    code=bytes.fromhex("83")
+                    code=Op.DUP4
                 ),
                 Address("0x61b8e57ab6fd44a1a22802e68f2322c81a1fd160"): Account(
-                    code=bytes.fromhex("42")
+                    code=Op.TIMESTAMP
                 ),
                 Address("0x61d667c994d66b12595b017eeda60d34fe0e7436"): Account(
                     code=bytes.fromhex("d7")
@@ -295,25 +326,25 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("da")
                 ),
                 Address("0x6317561ecf1ecb9ce29dd076e707dc58fd0fd5d4"): Account(
-                    code=bytes.fromhex("8c")
+                    code=Op.DUP13
                 ),
                 Address("0x652ba05ebddb57658a948442ade80776cec4ce15"): Account(
                     code=bytes.fromhex("ca")
                 ),
                 Address("0x67df325ac2d12548956118b35dc39a8266c1565c"): Account(
-                    code=bytes.fromhex("8f")
+                    code=Op.DUP16
                 ),
                 Address("0x68670b15312fbf04b740320cd34798855f892193"): Account(
-                    code=bytes.fromhex("3e")
+                    code=Op.RETURNDATACOPY
                 ),
                 Address("0x6a093a8494efe94babc770f0a7b9b0d6ec89a523"): Account(
-                    code=bytes.fromhex("0b")
+                    code=Op.SIGNEXTEND
                 ),
                 Address("0x6d053eae87ed83c0be0809e859a361d27d5db2c1"): Account(
-                    code=bytes.fromhex("14")
+                    code=Op.EQ
                 ),
                 Address("0x6d50e2263974029587d595b00808a4ddecf6cfb1"): Account(
-                    code=bytes.fromhex("17")
+                    code=Op.OR
                 ),
                 Address("0x6e88b27fbe193d61466f92e14f98af521f050400"): Account(
                     code=bytes.fromhex("e7")
@@ -322,22 +353,22 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("7d")
                 ),
                 Address("0x6ef37fdcaaec0ff0399ee701afb6f62eaa18b5fc"): Account(
-                    code=bytes.fromhex("81")
+                    code=Op.DUP2
                 ),
                 Address("0x6f111b56cf8654292ecc2cb0378356e2ae5da6b5"): Account(
-                    code=bytes.fromhex("06")
+                    code=Op.MOD
                 ),
                 Address("0x714d01c385f52867373472476c91a0ae10eb631b"): Account(
                     code=bytes.fromhex("b2")
                 ),
                 Address("0x734d18813c77791b1e0c5114469d1c61016fcb66"): Account(
-                    code=bytes.fromhex("34")
+                    code=Op.CALLVALUE
                 ),
                 Address("0x754e4e2ca49d1731dc306f7eb83132bfe582e7f2"): Account(
                     code=bytes.fromhex("d6")
                 ),
                 Address("0x75b7967088840cec2f6f65bd7ab5a57a9acf8316"): Account(
-                    code=bytes.fromhex("86")
+                    code=Op.DUP7
                 ),
                 Address("0x75dd378b38db6ee28c74becfcec44a78c1a0441a"): Account(
                     code=bytes.fromhex("cc")
@@ -349,40 +380,40 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("d9")
                 ),
                 Address("0x7b844a2fc5c4d57e3c85ed73821f361cd00ad30d"): Account(
-                    code=bytes.fromhex("46")
+                    code=Op.CHAINID
                 ),
                 Address("0x7c1b3ca4d2d114e7051f88e92e5473cf75e7b381"): Account(
-                    code=bytes.fromhex("96")
+                    code=Op.SWAP7
                 ),
                 Address("0x7dcba477ced3c74bedf83b542f31cae8b2b53a45"): Account(
                     code=bytes.fromhex("d8")
                 ),
                 Address("0x7f2ddb532124b2e635cc15610196715b0be1c217"): Account(
-                    code=bytes.fromhex("59")
+                    code=Op.MSIZE
                 ),
                 Address("0x80d670e32d0ee84d4ebeffbada83073ebbba1eeb"): Account(
-                    code=bytes.fromhex("52")
+                    code=Op.MSTORE
                 ),
                 Address("0x819e0c753d0add87c4b0964348fcd71ee60b5e4f"): Account(
-                    code=bytes.fromhex("43")
+                    code=Op.NUMBER
                 ),
                 Address("0x82a688e4e2a0e407048032ece2dec2735c150b30"): Account(
                     code=bytes.fromhex("d0")
                 ),
                 Address("0x8323b623970ecd53b515dbdf7d2257965dc1501a"): Account(
-                    code=bytes.fromhex("8a")
+                    code=Op.DUP11
                 ),
                 Address("0x849a6f9eb90c0d1f5b40c0fba7f6ddb2db9f4d96"): Account(
                     code=bytes.fromhex("25")
                 ),
                 Address("0x851b8ab5c765621b86ab09dd0a72fbdb71de2b26"): Account(
-                    code=bytes.fromhex("85")
+                    code=Op.DUP6
                 ),
                 Address("0x864b5484609ec4ab3320bc7aebf489ff45462d9d"): Account(
                     code=bytes.fromhex("d2")
                 ),
                 Address("0x89df3db713157de983ed0836a8c6990ea8628332"): Account(
-                    code=bytes.fromhex("84")
+                    code=Op.DUP5
                 ),
                 Address("0x89eb5b23f979049ddc01459894ee321be6e3d6fe"): Account(
                     code=bytes.fromhex("6f")
@@ -391,7 +422,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("c1")
                 ),
                 Address("0x8bf88bff285f142fe61d2542621fd143cf12f4c1"): Account(
-                    code=bytes.fromhex("04")
+                    code=Op.DIV
                 ),
                 Address("0x8e1dbcf64a6a613208eb1ae70604198e91156f96"): Account(
                     code=bytes.fromhex("76")
@@ -403,10 +434,10 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("ba")
                 ),
                 Address("0x90c2e9c746d28cffdc6bc6e64eb2d84848da2979"): Account(
-                    code=bytes.fromhex("19")
+                    code=Op.NOT
                 ),
                 Address("0x90e0eadc09d3a68906ea98a2f491a812ec014042"): Account(
-                    code=bytes.fromhex("30")
+                    code=Op.ADDRESS
                 ),
                 Address("0x917f282ccc051b582c75d69de2d2f77558d01b32"): Account(
                     code=bytes.fromhex("64")
@@ -421,19 +452,19 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("b1")
                 ),
                 Address("0x92677d7ddd0bad23935af236f6336d5e9338d2e6"): Account(
-                    code=bytes.fromhex("3a")
+                    code=Op.GASPRICE
                 ),
                 Address("0x9372388c6d9ce24ca0e249aa827f9ff2b641a202"): Account(
                     code=bytes.fromhex("bd")
                 ),
                 Address("0x942513234c11851bb10e44f4577f5a6cce7fad41"): Account(
-                    code=bytes.fromhex("5e")
+                    code=Op.MCOPY
                 ),
                 Address("0x9438534827d857f5224200f759b77363d611aa9e"): Account(
-                    code=bytes.fromhex("9f")
+                    code=Op.SWAP16
                 ),
                 Address("0x944bc6b39f0e791f6c337108ba01e1ec9b2ba55a"): Account(
-                    code=bytes.fromhex("56")
+                    code=Op.JUMP
                 ),
                 Address("0x94a388c70e6f6b7f1278b881d57479b74f46be59"): Account(
                     code=bytes.fromhex("c6")
@@ -442,22 +473,22 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("ee")
                 ),
                 Address("0x9887a94dea014df90a0f86df570a0737cf88fdc9"): Account(
-                    code=bytes.fromhex("31")
+                    code=Op.BALANCE
                 ),
                 Address("0x9a60dc9a38714f2800e2bd9915733b4a5d173cdb"): Account(
-                    code=bytes.fromhex("51")
+                    code=Op.MLOAD
                 ),
                 Address("0x9aa011f281bbfd8f9dc302221f027316f13f066b"): Account(
-                    code=bytes.fromhex("5c")
+                    code=Op.TLOAD
                 ),
                 Address("0x9bca700a703b09867dd79e37999b607e47978591"): Account(
-                    code=bytes.fromhex("9d")
+                    code=Op.SWAP14
                 ),
                 Address("0x9bd09ea8167c09d875ba7f88272012afd239f565"): Account(
-                    code=bytes.fromhex("5d")
+                    code=Op.TSTORE
                 ),
                 Address("0x9ccc4a50a9c5f9cac81d45d82309203cbd1b7227"): Account(
-                    code=bytes.fromhex("09")
+                    code=Op.MULMOD
                 ),
                 Address("0x9d0633c9368df76b6b9f29d8066789e4b4153dab"): Account(
                     code=bytes.fromhex("cd")
@@ -472,7 +503,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("69")
                 ),
                 Address("0x9e129ccbd3a730427f5ec8edc6ea9304a2d1d4b8"): Account(
-                    code=bytes.fromhex("18")
+                    code=Op.XOR
                 ),
                 Address("0x9ecbd230fab2f1c3de3d864df05b8ebf746ac26c"): Account(
                     code=bytes.fromhex("aa")
@@ -481,16 +512,16 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("27")
                 ),
                 Address("0xa0194d3beca6170a68427162da4f8abd16f480af"): Account(
-                    code=bytes.fromhex("a4")
+                    code=Op.LOG4
                 ),
                 Address("0xa04d0a88a9ae6c46bc745c798c9519e1ba89fce1"): Account(
-                    code=bytes.fromhex("9c")
+                    code=Op.SWAP13
                 ),
                 Address("0xa0fe04ffd7e70c2bfd5cc77c71edac5787ac80c5"): Account(
                     code=bytes.fromhex("29")
                 ),
                 Address("0xa121689d6c5fc55f45f0153840354c0b1ab0fb9a"): Account(
-                    code=bytes.fromhex("1d")
+                    code=Op.SAR
                 ),
                 Address("0xa1321ad573c8e819d6cedb91404be76099d52cb3"): Account(
                     code=bytes.fromhex("62")
@@ -499,7 +530,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("24")
                 ),
                 Address("0xa2b32e58f26129b3c7db1b29f9fe1dbd5f06300b"): Account(
-                    code=bytes.fromhex("89")
+                    code=Op.DUP10
                 ),
                 Address("0xa36bc5ec80ff9f2e4880fbfe6c0f0564e2fedc61"): Account(
                     code=bytes.fromhex("4b")
@@ -514,25 +545,25 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("74")
                 ),
                 Address("0xa772c31a50f49fdb1c38844acbd1da01058eab8c"): Account(
-                    code=bytes.fromhex("55")
+                    code=Op.SSTORE
                 ),
                 Address("0xa8f1f5e8946c02aaa9e1ef76345b48b2a1bd2e72"): Account(
-                    code=bytes.fromhex("11")
+                    code=Op.GT
                 ),
                 Address("0xac93d96a6bf62070ebc7bc5da426aed65e8c0279"): Account(
                     code=bytes.fromhex("26")
                 ),
                 Address("0xace653909db84c7a21b84fb5e0030900d380620c"): Account(
-                    code=bytes.fromhex("49")
+                    code=Op.BLOBHASH
                 ),
                 Address("0xacfb937e08f245b0b925d6494e24f5e3380694f3"): Account(
-                    code=bytes.fromhex("1a")
+                    code=Op.BYTE
                 ),
                 Address("0xade6af237ebe91a4a089a7e2d2947ac950929c30"): Account(
                     code=bytes.fromhex("70")
                 ),
                 Address("0xaed70239fad0cccf38eca9b42c837bc2b7b90081"): Account(
-                    code=bytes.fromhex("98")
+                    code=Op.SWAP9
                 ),
                 Address("0xaf6e76cea557fe9aea01a5995165dd3acf9fc314"): Account(
                     code=bytes.fromhex("d1")
@@ -541,13 +572,13 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("b6")
                 ),
                 Address("0xb053a8a8b29da0456612fd1bea8097b38d54499f"): Account(
-                    code=bytes.fromhex("47")
+                    code=Op.SELFBALANCE
                 ),
                 Address("0xb16ff84e2bbe3da2f4264371798af1e36c116c27"): Account(
                     code=bytes.fromhex("21")
                 ),
                 Address("0xb6260c3f6c760c6c15c2f8d517adb528387ac60f"): Account(
-                    code=bytes.fromhex("39")
+                    code=Op.CODECOPY
                 ),
                 Address("0xb665f20aae80b544107967d6b3457a3cd8aea7e5"): Account(
                     code=bytes.fromhex("0d")
@@ -556,22 +587,22 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("0c")
                 ),
                 Address("0xb7c2524aacd673374e4ab9f59d36c0af7e34841f"): Account(
-                    code=bytes.fromhex("12")
+                    code=Op.SLT
                 ),
                 Address("0xbb91c2530eff3457d9eef4023c3ec9f2dc138450"): Account(
-                    code=bytes.fromhex("36")
+                    code=Op.CALLDATASIZE
                 ),
                 Address("0xbd7a0a7a887168bf69d77a5f6f5327bbeaabdc2b"): Account(
                     code=bytes.fromhex("b8")
                 ),
                 Address("0xbfd3c45dcbf5d5904e33b81875ddf5b1f15dfc13"): Account(
-                    code=bytes.fromhex("01")
+                    code=Op.ADD
                 ),
                 Address("0xc0b4d0c4cd917296f37c72cf9819924973a7ee1b"): Account(
-                    code=bytes.fromhex("45")
+                    code=Op.GASLIMIT
                 ),
                 Address("0xc0cf186c24141d69e1d20ff2cd5bdec9be8ab785"): Account(
-                    code=bytes.fromhex("05")
+                    code=Op.SDIV
                 ),
                 Address("0xc17ac54bafe20657752a9640235821205973ca88"): Account(
                     code=bytes.fromhex("b7")
@@ -586,40 +617,40 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("dd")
                 ),
                 Address("0xc6c80264b29b13efe41cea2845ed7fe56fc5e802"): Account(
-                    code=bytes.fromhex("35")
+                    code=Op.CALLDATALOAD
                 ),
                 Address("0xc75bb53f5bf285d71f966c88f7c0510a1bd44b6e"): Account(
-                    code=bytes.fromhex("9b")
+                    code=Op.SWAP12
                 ),
                 Address("0xc7b8d44ca2296a34574e2493db17e8bc0ca3bb38"): Account(
-                    code=bytes.fromhex("8e")
+                    code=Op.DUP15
                 ),
                 Address("0xc7fcaf2fe80a01788419e97614ca277995d80c99"): Account(
-                    code=bytes.fromhex("4a")
+                    code=Op.BLOBBASEFEE
                 ),
                 Address("0xc81538e290b3d1e3a0eeab500ae83f08c1ee6e3c"): Account(
-                    code=bytes.fromhex("50")
+                    code=Op.POP
                 ),
                 Address("0xc9a6adf4ab3739dc89216c4f63994c3563ceee65"): Account(
-                    code=bytes.fromhex("53")
+                    code=Op.MSTORE8
                 ),
                 Address("0xc9fdb2413eada793de23ed1e406819c5827dde61"): Account(
-                    code=bytes.fromhex("9e")
+                    code=Op.SWAP15
                 ),
                 Address("0xca34b71c190e0d3317cb980371c9b2cf23496918"): Account(
                     code=bytes.fromhex("b3")
                 ),
                 Address("0xca52ebc06dc8434a0823bb780f3afbdeb351d525"): Account(
-                    code=bytes.fromhex("58")
+                    code=Op.PC
                 ),
                 Address("0xcba97325070dd3d8ac77f285809239fee2718051"): Account(
                     code=bytes.fromhex("b0")
                 ),
                 Address("0xceecdc0231b8e90f9267b51453853781addab55f"): Account(
-                    code=bytes.fromhex("38")
+                    code=Op.CODESIZE
                 ),
                 Address("0xcfbc70e723bf9ad1ae1a959feaf370826f593f9f"): Account(
-                    code=bytes.fromhex("16")
+                    code=Op.AND
                 ),
                 Address("0xd17a40495ca7d40c158b73b6a73b4f98dc0895a3"): Account(
                     code=bytes.fromhex("d3")
@@ -628,10 +659,10 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("e6")
                 ),
                 Address("0xd535c93dbdb259c0c4135968c5188f7f2ae34828"): Account(
-                    code=bytes.fromhex("99")
+                    code=Op.SWAP10
                 ),
                 Address("0xd5413f13c536e63432af1ad29ec598342f02ebee"): Account(
-                    code=bytes.fromhex("1b")
+                    code=Op.SHL
                 ),
                 Address("0xd5c8c8c0c86672b12a4f6b5210f432006244244c"): Account(
                     code=bytes.fromhex("e2")
@@ -649,7 +680,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("c4")
                 ),
                 Address("0xd71b77b3d09277b1e4b3e5207f6035af3eab2634"): Account(
-                    code=bytes.fromhex("1e")
+                    code=Op.CLZ
                 ),
                 Address("0xd95defdf76a2f495975eab8431525805a31642e1"): Account(
                     code=bytes.fromhex("4c")
@@ -670,7 +701,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("4d")
                 ),
                 Address("0xe4a48fbec33ebad8ff03bbc6b633214b6a0f99ff"): Account(
-                    code=bytes.fromhex("37")
+                    code=Op.CALLDATACOPY
                 ),
                 Address("0xe68e7090f263d1ad63d53097a0a6ea872ba83488"): Account(
                     code=bytes.fromhex("a5")
@@ -688,10 +719,10 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("7b")
                 ),
                 Address("0xef2a648613a66eff36dbb498a5157db95dadf9db"): Account(
-                    code=bytes.fromhex("20")
+                    code=Op.SHA3
                 ),
                 Address("0xefa4282d9bb8bd04a0c9d19af9e34f889b8d3db0"): Account(
-                    code=bytes.fromhex("48")
+                    code=Op.BASEFEE
                 ),
                 Address("0xf0a2cf1f39c93e0f6b0fe7a4a48ba459898bb2d9"): Account(
                     code=bytes.fromhex("ab")
@@ -709,13 +740,13 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("e9")
                 ),
                 Address("0xf5e5e37d6a7af368ca71edc99db716b4f7e5d160"): Account(
-                    code=bytes.fromhex("10")
+                    code=Op.LT
                 ),
                 Address("0xf5f6b7cd6b4b660499fc01f44980627a79ad15c6"): Account(
-                    code=bytes.fromhex("0a")
+                    code=Op.EXP
                 ),
                 Address("0xf669d895834c50200348687b6c272eb4bf153505"): Account(
-                    code=bytes.fromhex("57")
+                    code=Op.JUMPI
                 ),
                 Address("0xf68fc0e4488e0dc0c65715a9ca684c6660eed489"): Account(
                     code=bytes.fromhex("7e")
@@ -733,13 +764,13 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("7c")
                 ),
                 Address("0xf8c799cec07550adbabb4cb6365374bf15b6624c"): Account(
-                    code=bytes.fromhex("a2")
+                    code=Op.LOG2
                 ),
                 Address("0xf92ee445f202b95e4254332d07e349437c2dce8f"): Account(
                     code=bytes.fromhex("6c")
                 ),
                 Address("0xfac8a0ed8609d54d8cfe8f947547e46cd84ec439"): Account(
-                    code=bytes.fromhex("9a")
+                    code=Op.SWAP11
                 ),
                 Address("0xfde1e9f0558f54e33912dab00eace3787dc72303"): Account(
                     code=bytes.fromhex("dc")
@@ -760,9 +791,39 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x09fdd11d68be787a4c43f692a0778befc011cd35"): Account(
                     storage={239: 1, 256: 1},
-                    code=bytes.fromhex(
-                        "7f600060005360016000f3000000000000000000000000000000000000000000006000526024356004355b818110603857600161010055005b8060019182536000600a8180f515604f575b01602a565b818155604a56"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x600060005360016000F300000000000000000000000000000000000000000000,  # noqa: E501
+                    )
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x38, condition=Op.LT(Op.DUP2, Op.DUP2))
+                    + Op.SSTORE(key=0x100, value=0x1)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.DUP1
+                    + Op.PUSH1[0x1]
+                    + Op.SWAP2
+                    + Op.DUP3
+                    + Op.MSTORE8
+                    + Op.JUMPI(
+                        pc=0x4F,
+                        condition=Op.ISZERO(
+                            Op.CREATE2(
+                                value=Op.DUP1,
+                                offset=Op.DUP2,
+                                size=0xA,
+                                salt=0x0,
+                            )
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.ADD
+                    + Op.JUMP(pc=0x2A)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=Op.DUP2)
+                    + Op.JUMP(pc=0x4A),
                 )
             },
         ),
@@ -770,37 +831,67 @@ REFERENCE_SPEC_VERSION = "N/A"
             "1a8451e600000000000000000000000000000000000000000000000000000000000000f00000000000000000000000000000000000000000000000000000000000000100",  # noqa: E501
             {
                 Address("0x070db4fa29b5d139bedb29347001bb9c3d75dc3a"): Account(
-                    code=bytes.fromhex("ff")
+                    code=Op.SELFDESTRUCT
                 ),
                 Address("0x0921b94546fac76144d92d3c6cd96a3784fb0254"): Account(
                     code=bytes.fromhex("f9")
                 ),
                 Address("0x09fdd11d68be787a4c43f692a0778befc011cd35"): Account(
                     storage={256: 1},
-                    code=bytes.fromhex(
-                        "7f600060005360016000f3000000000000000000000000000000000000000000006000526024356004355b818110603857600161010055005b8060019182536000600a8180f515604f575b01602a565b818155604a56"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x600060005360016000F300000000000000000000000000000000000000000000,  # noqa: E501
+                    )
+                    + Op.CALLDATALOAD(offset=0x24)
+                    + Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0x38, condition=Op.LT(Op.DUP2, Op.DUP2))
+                    + Op.SSTORE(key=0x100, value=0x1)
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.DUP1
+                    + Op.PUSH1[0x1]
+                    + Op.SWAP2
+                    + Op.DUP3
+                    + Op.MSTORE8
+                    + Op.JUMPI(
+                        pc=0x4F,
+                        condition=Op.ISZERO(
+                            Op.CREATE2(
+                                value=Op.DUP1,
+                                offset=Op.DUP2,
+                                size=0xA,
+                                salt=0x0,
+                            )
+                        ),
+                    )
+                    + Op.JUMPDEST
+                    + Op.ADD
+                    + Op.JUMP(pc=0x2A)
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=Op.DUP2)
+                    + Op.JUMP(pc=0x4A),
                 ),
                 Address("0x0deb678ad394bd015a846c2c8731943c0bb13795"): Account(
-                    code=bytes.fromhex("f3")
+                    code=Op.RETURN
                 ),
                 Address("0x2e3f76fff36e20b0cd74ee90abceb94e5215b815"): Account(
-                    code=bytes.fromhex("fe")
+                    code=Op.INVALID
                 ),
                 Address("0x65ffaf4d5b8e3efec7168f5fcc75baa24b627d39"): Account(
-                    code=bytes.fromhex("f4")
+                    code=Op.DELEGATECALL
                 ),
                 Address("0x6812a41ce61f22b4861e457ba383905680d0a3ed"): Account(
-                    code=bytes.fromhex("fa")
+                    code=Op.STATICCALL
                 ),
                 Address("0x8068a55ce40cff0f8ad518429fcea001c94df346"): Account(
                     code=bytes.fromhex("fc")
                 ),
                 Address("0x820bd67ad14a30f7778e54ddb440aa4acebca5fe"): Account(
-                    code=bytes.fromhex("f2")
+                    code=Op.CALLCODE
                 ),
                 Address("0x896e9dc41224489ed98380921ef0aeac66115d7b"): Account(
-                    code=bytes.fromhex("f0")
+                    code=Op.CREATE
                 ),
                 Address("0xa20eb455e7760ed71bec79457e424daff092563c"): Account(
                     code=bytes.fromhex("fb")
@@ -809,10 +900,10 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("f8")
                 ),
                 Address("0xc24ed098dac1dd9979547cda3f5ba5aa819e0fe7"): Account(
-                    code=bytes.fromhex("f5")
+                    code=Op.CREATE2
                 ),
                 Address("0xdb906979390d6688f88c0e5f8152d1b91567669d"): Account(
-                    code=bytes.fromhex("fd")
+                    code=Op.REVERT
                 ),
                 Address("0xdfff98a75e634eef4477c7df52ff28a8c7d9c6ed"): Account(
                     code=bytes.fromhex("f7")
@@ -821,7 +912,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=bytes.fromhex("f6")
                 ),
                 Address("0xe6aea598fc28c34b486a623adb5d113444522a81"): Account(
-                    code=bytes.fromhex("f1")
+                    code=Op.CALL
                 ),
             },
         ),
@@ -852,10 +943,37 @@ def test_create2_first_byte_loop(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7f600060005360016000f300000000000000000000000000000000000000000000600052"  # noqa: E501
-            "6024356004355b818110603857600161010055005b8060019182536000600a8180f51560"  # noqa: E501
-            "4f575b01602a565b818155604a56"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x600060005360016000F300000000000000000000000000000000000000000000,  # noqa: E501
+            )
+            + Op.CALLDATALOAD(offset=0x24)
+            + Op.CALLDATALOAD(offset=0x4)
+            + Op.JUMPDEST
+            + Op.JUMPI(pc=0x38, condition=Op.LT(Op.DUP2, Op.DUP2))
+            + Op.SSTORE(key=0x100, value=0x1)
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.DUP1
+            + Op.PUSH1[0x1]
+            + Op.SWAP2
+            + Op.DUP3
+            + Op.MSTORE8
+            + Op.JUMPI(
+                pc=0x4F,
+                condition=Op.ISZERO(
+                    Op.CREATE2(
+                        value=Op.DUP1, offset=Op.DUP2, size=0xA, salt=0x0
+                    ),
+                ),
+            )
+            + Op.JUMPDEST
+            + Op.ADD
+            + Op.JUMP(pc=0x2A)
+            + Op.JUMPDEST
+            + Op.SSTORE(key=Op.DUP2, value=Op.DUP2)
+            + Op.JUMP(pc=0x4A)
         ),
     )
     pre[sender] = Account(balance=0x3B9ACA00, nonce=0)

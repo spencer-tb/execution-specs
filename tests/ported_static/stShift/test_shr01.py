@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,7 +47,7 @@ def test_shr01(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("600060011c600055"),
+        code=Op.SSTORE(key=0x0, value=Op.SHR(0x1, 0x0)),
         storage={0x0: 0x3},
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -64,7 +65,7 @@ def test_shr01(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("600060011c600055")),
+        contract: Account(code=Op.SSTORE(key=0x0, value=Op.SHR(0x1, 0x0))),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

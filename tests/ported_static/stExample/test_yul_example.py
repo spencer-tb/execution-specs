@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,7 +48,7 @@ def test_yul_example(
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("600360005560206000f3"),
+        code=Op.SSTORE(key=0x0, value=0x3) + Op.RETURN(offset=0x0, size=0x20),
     )
 
     tx = Transaction(
@@ -65,7 +66,10 @@ def test_yul_example(
     post = {
         contract: Account(
             storage={0: 3},
-            code=bytes.fromhex("600360005560206000f3"),
+            code=(
+                Op.SSTORE(key=0x0, value=0x3)
+                + Op.RETURN(offset=0x0, size=0x20)
+            ),
         ),
     }
 

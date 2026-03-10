@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,8 +49,11 @@ def test_returndatacopy_initial(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6e112233445566778899aabbccddeeff6000526020600060003e60005160005500"  # noqa: E501
+        code=(
+            Op.MSTORE(offset=0x0, value=0x112233445566778899AABBCCDDEEFF)
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
@@ -70,8 +74,11 @@ def test_returndatacopy_initial(
     post = {
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "6e112233445566778899aabbccddeeff6000526020600060003e60005160005500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=0x112233445566778899AABBCCDDEEFF)
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

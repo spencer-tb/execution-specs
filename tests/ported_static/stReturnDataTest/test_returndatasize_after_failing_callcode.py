@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,17 +50,24 @@ def test_returndatasize_after_failing_callcode(
     )
 
     pre[callee] = Account(balance=0x10000000, nonce=0)
-    pre[callee_1] = Account(
-        balance=0x6400000000,
-        nonce=0,
-        code=bytes.fromhex("fd"),
-    )
+    pre[callee_1] = Account(balance=0x6400000000, nonce=0, code=Op.REVERT)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000600073665521fd750490fd880ee369c267fca44ed8a078620186a0f2"  # noqa: E501
-            "503d60005500"
+        code=(
+            Op.POP(
+                Op.CALLCODE(
+                    gas=0x186A0,
+                    address=0x665521FD750490FD880EE369C267FCA44ED8A078,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+            + Op.STOP
         ),
         storage={0x0: 0xFFFFFFFF},
     )
@@ -78,10 +86,22 @@ def test_returndatasize_after_failing_callcode(
     )
 
     post = {
-        callee_1: Account(code=bytes.fromhex("fd")),
+        callee_1: Account(code=Op.REVERT),
         contract: Account(
-            code=bytes.fromhex(
-                "6000600060006000600073665521fd750490fd880ee369c267fca44ed8a078620186a0f2503d60005500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALLCODE(
+                        gas=0x186A0,
+                        address=0x665521FD750490FD880EE369C267FCA44ED8A078,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+                + Op.STOP
             ),
         ),
     }

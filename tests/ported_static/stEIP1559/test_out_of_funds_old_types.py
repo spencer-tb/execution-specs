@@ -16,6 +16,7 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -36,7 +37,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=bytes.fromhex("600260005500")
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
                 )
             },
             id="case0",
@@ -50,7 +51,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=bytes.fromhex("600260005500")
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
                 )
             },
             id="case1",
@@ -64,7 +65,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=bytes.fromhex("600260005500")
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
                 )
             },
             id="case2",
@@ -77,7 +78,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=bytes.fromhex("600260005500")
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
                 )
             },
             id="case3",
@@ -91,7 +92,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=bytes.fromhex("600260005500")
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
                 )
             },
             id="case4",
@@ -105,7 +106,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=bytes.fromhex("600260005500")
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
                 )
             },
             id="case5",
@@ -119,7 +120,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=bytes.fromhex("600260005500")
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
                 )
             },
             id="case6",
@@ -132,7 +133,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=bytes.fromhex("600260005500")
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
                 )
             },
             id="case7",
@@ -169,7 +170,7 @@ def test_out_of_funds_old_types(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("600260005500"),
+        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

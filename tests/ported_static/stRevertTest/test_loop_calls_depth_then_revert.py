@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,17 +50,35 @@ def test_loop_calls_depth_then_revert(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6001600054016000556000600060006000600073f59fd1c021541704a4a52c0674543045"  # noqa: E501
-            "667176665af100"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.CALL(
+                gas=Op.GAS,
+                address=0xF59FD1C021541704A4A52C067454304566717666,
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600160005401600055600060006000600060007380d46fa47b41ab46a227915ae4f63559"  # noqa: E501
-            "c0d4dfe25af100"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.CALL(
+                gas=Op.GAS,
+                address=0x80D46FA47B41AB46A227915AE4F63559C0D4DFE2,
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -79,14 +98,34 @@ def test_loop_calls_depth_then_revert(
     post = {
         callee: Account(
             storage={0: 192},
-            code=bytes.fromhex(
-                "6001600054016000556000600060006000600073f59fd1c021541704a4a52c0674543045667176665af100"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.CALL(
+                    gas=Op.GAS,
+                    address=0xF59FD1C021541704A4A52C067454304566717666,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={0: 193},
-            code=bytes.fromhex(
-                "600160005401600055600060006000600060007380d46fa47b41ab46a227915ae4f63559c0d4dfe25af100"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.CALL(
+                    gas=Op.GAS,
+                    address=0x80D46FA47B41AB46A227915AE4F63559C0D4DFE2,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
     }

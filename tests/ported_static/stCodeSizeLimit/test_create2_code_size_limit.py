@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,9 +35,20 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
                     storage={1: 1},
-                    code=bytes.fromhex(
-                        "6000356000526000368180f56000556001805500"
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
+                    )
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.CREATE2(
+                            value=Op.DUP1,
+                            offset=Op.DUP2,
+                            size=Op.CALLDATASIZE,
+                            salt=0x0,
+                        ),
+                    )
+                    + Op.SSTORE(key=Op.DUP1, value=0x1)
+                    + Op.STOP,
                 )
             },
         ),
@@ -53,9 +65,20 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 0x81C305016AB9CA56033A07CC37E7A30FC3E079AC,
                         1: 1,
                     },
-                    code=bytes.fromhex(
-                        "6000356000526000368180f56000556001805500"
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
+                    )
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.CREATE2(
+                            value=Op.DUP1,
+                            offset=Op.DUP2,
+                            size=Op.CALLDATASIZE,
+                            salt=0x0,
+                        ),
+                    )
+                    + Op.SSTORE(key=Op.DUP1, value=0x1)
+                    + Op.STOP,
                 ),
             },
         ),
@@ -87,7 +110,20 @@ def test_create2_code_size_limit(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("6000356000526000368180f56000556001805500"),
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.CREATE2(
+                    value=Op.DUP1,
+                    offset=Op.DUP2,
+                    size=Op.CALLDATASIZE,
+                    salt=0x0,
+                ),
+            )
+            + Op.SSTORE(key=Op.DUP1, value=0x1)
+            + Op.STOP
+        ),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

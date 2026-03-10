@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,9 +34,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x4cd5f424ac9e070c2a651452c5666cf8a05f27a7"): Account(
-                    code=bytes.fromhex(
-                        "734cd5f424ac9e070c2a651452c5666cf8a05f27a7313b60005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.EXTCODESIZE(
+                            address=Op.BALANCE(
+                                address=0x4CD5F424AC9E070C2A651452C5666CF8A05F27A7  # noqa: E501
+                            )
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -43,9 +50,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x4cd5f424ac9e070c2a651452c5666cf8a05f27a7"): Account(
-                    code=bytes.fromhex(
-                        "734cd5f424ac9e070c2a651452c5666cf8a05f27a7313b60005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.EXTCODESIZE(
+                            address=Op.BALANCE(
+                                address=0x4CD5F424AC9E070C2A651452C5666CF8A05F27A7  # noqa: E501
+                            )
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -77,8 +90,16 @@ def test_extcodesize_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "734cd5f424ac9e070c2a651452c5666cf8a05f27a7313b60005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.EXTCODESIZE(
+                    address=Op.BALANCE(
+                        address=0x4CD5F424AC9E070C2A651452C5666CF8A05F27A7,
+                    ),
+                ),
+            )
+            + Op.STOP
         ),
     )
 

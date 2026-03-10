@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,15 @@ def test_create_name_registrator_pre_store1_not_enough_gas(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7f6001600155601080600c6000396000f3006000355415600957005b6020356000600052"  # noqa: E501
-            "60356020536055602153602260006017f000"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
+            )
+            + Op.MSTORE8(offset=0x20, value=0x35)
+            + Op.MSTORE8(offset=0x21, value=0x55)
+            + Op.CREATE(value=0x17, offset=0x0, size=0x22)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -70,8 +77,15 @@ def test_create_name_registrator_pre_store1_not_enough_gas(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "7f6001600155601080600c6000396000f3006000355415600957005b602035600060005260356020536055602153602260006017f000"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
+                )
+                + Op.MSTORE8(offset=0x20, value=0x35)
+                + Op.MSTORE8(offset=0x21, value=0x55)
+                + Op.CREATE(value=0x17, offset=0x0, size=0x22)
+                + Op.STOP
             ),
         ),
     }

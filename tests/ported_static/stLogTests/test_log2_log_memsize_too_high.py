@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,18 +48,37 @@ def test_log2_log_memsize_too_high(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000600060006017733bad71f49ad0cabda27d388877a6cf157e9a34716103e8f160"  # noqa: E501
-            "005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x3E8,
+                    address=0x3BAD71F49AD0CABDA27D388877A6CF157E9A3471,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7faabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd600052"  # noqa: E501
-            "600060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ff6001a200"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0xAABBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCCDD,  # noqa: E501
+            )
+            + Op.LOG2(
+                offset=0x1,
+                size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                topic_1=0x0,
+                topic_2=0x0,
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -77,13 +97,35 @@ def test_log2_log_memsize_too_high(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "60006000600060006017733bad71f49ad0cabda27d388877a6cf157e9a34716103e8f160005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x3E8,
+                        address=0x3BAD71F49AD0CABDA27D388877A6CF157E9A3471,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         callee: Account(
-            code=bytes.fromhex(
-                "7faabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd600052600060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001a200"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0xAABBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCCDD,  # noqa: E501
+                )
+                + Op.LOG2(
+                    offset=0x1,
+                    size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    topic_1=0x0,
+                    topic_2=0x0,
+                )
+                + Op.STOP
             ),
         ),
     }

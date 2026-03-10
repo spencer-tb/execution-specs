@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -32,9 +33,17 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
                     storage={1: 1},
-                    code=bytes.fromhex(
-                        "60003560005236600080f06000556001805500"
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
+                    )
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.CREATE(
+                            value=Op.DUP1, offset=0x0, size=Op.CALLDATASIZE
+                        ),
+                    )
+                    + Op.SSTORE(key=Op.DUP1, value=0x1)
+                    + Op.STOP,
                 )
             },
         ),
@@ -46,9 +55,17 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 0xF1ECF98489FA9ED60A664FC4998DB699CFA39D40,
                         1: 1,
                     },
-                    code=bytes.fromhex(
-                        "60003560005236600080f06000556001805500"
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
+                    )
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.CREATE(
+                            value=Op.DUP1, offset=0x0, size=Op.CALLDATASIZE
+                        ),
+                    )
+                    + Op.SSTORE(key=Op.DUP1, value=0x1)
+                    + Op.STOP,
                 ),
                 Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(
                     code=bytes.fromhex(
@@ -85,7 +102,17 @@ def test_create_code_size_limit(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("60003560005236600080f06000556001805500"),
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.CREATE(
+                    value=Op.DUP1, offset=0x0, size=Op.CALLDATASIZE
+                ),
+            )
+            + Op.SSTORE(key=Op.DUP1, value=0x1)
+            + Op.STOP
+        ),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

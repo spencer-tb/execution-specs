@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,7 +49,11 @@ def test_suicide_caller(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("3360005533ff00"),
+        code=(
+            Op.SSTORE(key=0x0, value=Op.CALLER)
+            + Op.SELFDESTRUCT(address=Op.CALLER)
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -67,7 +72,11 @@ def test_suicide_caller(
     post = {
         contract: Account(
             storage={0: 0xEBAF50DEBF10E08302FE4280C32DF010463CA297},
-            code=bytes.fromhex("3360005533ff00"),
+            code=(
+                Op.SSTORE(key=0x0, value=Op.CALLER)
+                + Op.SELFDESTRUCT(address=Op.CALLER)
+                + Op.STOP
+            ),
         ),
     }
 

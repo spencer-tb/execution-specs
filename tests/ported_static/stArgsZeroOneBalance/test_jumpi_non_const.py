@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0xeef87925c20b97e4ee58e24dd39d7c09785362ba"): Account(
-                    code=bytes.fromhex(
-                        "73eef87925c20b97e4ee58e24dd39d7c09785362ba3173eef87925c20b97e4ee58e24dd39d7c09785362ba315700"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=Op.BALANCE(
+                            address=0xEEF87925C20B97E4EE58E24DD39D7C09785362BA
+                        ),
+                        condition=Op.BALANCE(
+                            address=0xEEF87925C20B97E4EE58E24DD39D7C09785362BA
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +48,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0xeef87925c20b97e4ee58e24dd39d7c09785362ba"): Account(
-                    code=bytes.fromhex(
-                        "73eef87925c20b97e4ee58e24dd39d7c09785362ba3173eef87925c20b97e4ee58e24dd39d7c09785362ba315700"  # noqa: E501
+                    code=Op.JUMPI(
+                        pc=Op.BALANCE(
+                            address=0xEEF87925C20B97E4EE58E24DD39D7C09785362BA
+                        ),
+                        condition=Op.BALANCE(
+                            address=0xEEF87925C20B97E4EE58E24DD39D7C09785362BA
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -75,9 +88,16 @@ def test_jumpi_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73eef87925c20b97e4ee58e24dd39d7c09785362ba3173eef87925c20b97e4ee58e24dd3"  # noqa: E501
-            "9d7c09785362ba315700"
+        code=(
+            Op.JUMPI(
+                pc=Op.BALANCE(
+                    address=0xEEF87925C20B97E4EE58E24DD39D7C09785362BA
+                ),
+                condition=Op.BALANCE(
+                    address=0xEEF87925C20B97E4EE58E24DD39D7C09785362BA,
+                ),
+            )
+            + Op.STOP
         ),
     )
 

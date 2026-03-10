@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,7 +48,7 @@ def test_sha3_dejavu(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60ff630fffffff20"),
+        code=Op.SHA3(offset=0xFFFFFFF, size=0xFF),
     )
 
     tx = Transaction(
@@ -63,7 +64,7 @@ def test_sha3_dejavu(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("60ff630fffffff20")),
+        contract: Account(code=Op.SHA3(offset=0xFFFFFFF, size=0xFF)),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,7 +35,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             53020,
             {
                 Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
-                    code=bytes.fromhex("605a600053600160006001f0ff00")
+                    code=Op.MSTORE8(offset=0x0, value=0x5A)
+                    + Op.SELFDESTRUCT(
+                        address=Op.CREATE(value=0x1, offset=0x0, size=0x1)
+                    )
+                    + Op.STOP
                 )
             },
         ),
@@ -42,7 +47,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             1000000,
             {
                 Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
-                    code=bytes.fromhex("605a600053600160006001f0ff00")
+                    code=Op.MSTORE8(offset=0x0, value=0x5A)
+                    + Op.SELFDESTRUCT(
+                        address=Op.CREATE(value=0x1, offset=0x0, size=0x1)
+                    )
+                    + Op.STOP
                 )
             },
         ),
@@ -73,7 +82,13 @@ def test_create_init_oo_gfor_create(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("605a600053600160006001f0ff00"),
+        code=(
+            Op.MSTORE8(offset=0x0, value=0x5A)
+            + Op.SELFDESTRUCT(
+                address=Op.CREATE(value=0x1, offset=0x0, size=0x1)
+            )
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 

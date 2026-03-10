@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,9 +35,33 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x443a994e18105c3ea686d3931729a1ac3d8fdd93"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "73443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd9331f260005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALLCODE(
+                            gas=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            address=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            value=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            args_offset=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            args_size=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            ret_offset=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            ret_size=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -44,9 +69,33 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x443a994e18105c3ea686d3931729a1ac3d8fdd93"): Account(
-                    code=bytes.fromhex(
-                        "73443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd9331f260005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALLCODE(
+                            gas=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            address=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            value=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            args_offset=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            args_size=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            ret_offset=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                            ret_size=Op.BALANCE(
+                                address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93  # noqa: E501
+                            ),
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -78,12 +127,34 @@ def test_callcode_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d39317"  # noqa: E501
-            "29a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18"  # noqa: E501
-            "105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3931729a1ac3d8fdd"  # noqa: E501
-            "933173443a994e18105c3ea686d3931729a1ac3d8fdd933173443a994e18105c3ea686d3"  # noqa: E501
-            "931729a1ac3d8fdd9331f260005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALLCODE(
+                    gas=Op.BALANCE(
+                        address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93,
+                    ),
+                    address=Op.BALANCE(
+                        address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93,
+                    ),
+                    value=Op.BALANCE(
+                        address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93,
+                    ),
+                    args_offset=Op.BALANCE(
+                        address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93,
+                    ),
+                    args_size=Op.BALANCE(
+                        address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93,
+                    ),
+                    ret_offset=Op.BALANCE(
+                        address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93,
+                    ),
+                    ret_size=Op.BALANCE(
+                        address=0x443A994E18105C3EA686D3931729A1AC3D8FDD93,
+                    ),
+                ),
+            )
+            + Op.STOP
         ),
     )
 

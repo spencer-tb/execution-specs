@@ -16,6 +16,7 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -36,9 +37,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
                     storage={1: 24743},
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    ),
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3),
                 )
             },
             id="case0",
@@ -50,9 +57,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    )
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3)
                 )
             },
             id="case1",
@@ -66,9 +79,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
                     storage={1: 24743},
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    ),
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3),
                 )
             },
             id="case2",
@@ -81,9 +100,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
                     storage={1: 24743},
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    ),
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3),
                 )
             },
             id="case3",
@@ -95,9 +120,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    )
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3)
                 )
             },
             id="case4",
@@ -110,9 +141,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    )
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3)
                 )
             },
             id="case5",
@@ -126,9 +163,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
                     storage={1: 24743, 2: 24743},
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    ),
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3),
                 )
             },
             id="case6",
@@ -140,9 +183,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    )
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3)
                 )
             },
             id="case7",
@@ -156,9 +205,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
                     storage={1: 24743, 2: 24743},
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    ),
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3),
                 )
             },
             id="case8",
@@ -171,9 +226,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
                     storage={1: 24743, 2: 24743},
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    ),
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3),
                 )
             },
             id="case9",
@@ -185,9 +246,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    )
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3)
                 )
             },
             id="case10",
@@ -200,9 +267,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=bytes.fromhex(
-                        "6004355b60008111600c57005b6160a7815560001901600356"
-                    )
+                    code=Op.CALLDATALOAD(offset=0x4)
+                    + Op.JUMPDEST
+                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+                    + Op.NOT(0x0)
+                    + Op.ADD
+                    + Op.JUMP(pc=0x3)
                 )
             },
             id="case11",
@@ -238,8 +311,16 @@ def test_val_causes_oof(
     pre[contract] = Account(
         balance=0x5AF3107A4000,
         nonce=0,
-        code=bytes.fromhex(
-            "6004355b60008111600c57005b6160a7815560001901600356"
+        code=(
+            Op.CALLDATALOAD(offset=0x4)
+            + Op.JUMPDEST
+            + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(key=Op.DUP2, value=0x60A7)
+            + Op.NOT(0x0)
+            + Op.ADD
+            + Op.JUMP(pc=0x3)
         ),
     )
 

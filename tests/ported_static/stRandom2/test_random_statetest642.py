@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,11 +50,18 @@ def test_random_statetest642(
     pre[callee_1] = Account(
         balance=0x577686E8D1344340,
         nonce=112,
-        code=bytes.fromhex(
-            "62f46a4f547b169c9edf92f4b39273fe47accc75d1209ae58463c2585607ce051ff6714c"  # noqa: E501
-            "4f0fbf6de0659784434fb240652ff52d08576408f168a43a6651f765a4788a0553708629"  # noqa: E501
-            "0691d5a3239db43eefea96b0012ea26534e99e4ba9ee7f92f37fa731707f800683bafb70"  # noqa: E501
-            "815757d861ad8cc6804154ce5b9de3146b58cd53"
+        code=(
+            Op.SLOAD(key=0xF46A4F)
+            + Op.JUMPI(
+                pc=0x4C4F0FBF6DE0659784434FB240652FF52D08,
+                condition=0x169C9EDF92F4B39273FE47ACCC75D1209AE58463C2585607CE051FF6,  # noqa: E501
+            )
+            + Op.MSTORE8(offset=0x51F765A4788A05, value=0x8F168A43A)
+            + Op.PUSH17[0x86290691D5A3239DB43EEFEA96B0012EA2]
+            + Op.MSTORE8(
+                offset=0x92F37FA731707F800683BAFB70815757D861AD8CC6804154CE5B9DE3146B58CD,  # noqa: E501
+                value=0x34E99E4BA9EE,
+            )
         ),
     )
     pre[sender] = Account(balance=0x26551A696CACB206, nonce=0)
@@ -84,8 +92,18 @@ def test_random_statetest642(
 
     post = {
         callee_1: Account(
-            code=bytes.fromhex(
-                "62f46a4f547b169c9edf92f4b39273fe47accc75d1209ae58463c2585607ce051ff6714c4f0fbf6de0659784434fb240652ff52d08576408f168a43a6651f765a4788a05537086290691d5a3239db43eefea96b0012ea26534e99e4ba9ee7f92f37fa731707f800683bafb70815757d861ad8cc6804154ce5b9de3146b58cd53"  # noqa: E501
+            code=(
+                Op.SLOAD(key=0xF46A4F)
+                + Op.JUMPI(
+                    pc=0x4C4F0FBF6DE0659784434FB240652FF52D08,
+                    condition=0x169C9EDF92F4B39273FE47ACCC75D1209AE58463C2585607CE051FF6,  # noqa: E501
+                )
+                + Op.MSTORE8(offset=0x51F765A4788A05, value=0x8F168A43A)
+                + Op.PUSH17[0x86290691D5A3239DB43EEFEA96B0012EA2]
+                + Op.MSTORE8(
+                    offset=0x92F37FA731707F800683BAFB70815757D861AD8CC6804154CE5B9DE3146B58CD,  # noqa: E501
+                    value=0x34E99E4BA9EE,
+                )
             ),
         ),
     }

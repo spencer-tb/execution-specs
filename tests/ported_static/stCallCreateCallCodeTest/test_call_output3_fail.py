@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,16 +51,30 @@ def test_call_output3_fail(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7f5e20a0453cecd065ea59c37ac63e079ee08998b6045136a8ce6635c7912ec0b6600052"  # noqa: E501
-            "6020600060006000600073834abc2c68c5f44ea9ae82b67aaf92044901cdc661c350f150"  # noqa: E501
-            "60005160005500"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x5E20A0453CECD065EA59C37AC63E079EE08998B6045136A8CE6635C7912EC0B6,  # noqa: E501
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x834ABC2C68C5F44EA9AE82B67AAF92044901CDC6,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("016001600101600055"),
+        code=Op.ADD + Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)),
     )
 
     tx = Transaction(
@@ -79,11 +94,29 @@ def test_call_output3_fail(
             storage={
                 0: 0x5E20A0453CECD065EA59C37AC63E079EE08998B6045136A8CE6635C7912EC0B6,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "7f5e20a0453cecd065ea59c37ac63e079ee08998b6045136a8ce6635c7912ec0b66000526020600060006000600073834abc2c68c5f44ea9ae82b67aaf92044901cdc661c350f15060005160005500"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x5E20A0453CECD065EA59C37AC63E079EE08998B6045136A8CE6635C7912EC0B6,  # noqa: E501
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x834ABC2C68C5F44EA9AE82B67AAF92044901CDC6,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
-        callee: Account(code=bytes.fromhex("016001600101600055")),
+        callee: Account(
+            code=Op.ADD + Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

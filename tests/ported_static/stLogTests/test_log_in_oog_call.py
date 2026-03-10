@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,14 +48,29 @@ def test_log_in_oog_call(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60206000a067ffffffffffffffff5100"),
+        code=(
+            Op.LOG0(offset=0x0, size=0x20)
+            + Op.MLOAD(offset=0xFFFFFFFFFFFFFFFF)
+            + Op.STOP
+        ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600060177369b6134b97e638b919a7089df82af74961e71ff8620186a0f1"  # noqa: E501
-            "60005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x186A0,
+                    address=0x69B6134B97E638B919A7089DF82AF74961E71FF8,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -73,11 +89,27 @@ def test_log_in_oog_call(
 
     post = {
         callee: Account(
-            code=bytes.fromhex("60206000a067ffffffffffffffff5100"),
+            code=(
+                Op.LOG0(offset=0x0, size=0x20)
+                + Op.MLOAD(offset=0xFFFFFFFFFFFFFFFF)
+                + Op.STOP
+            ),
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "600060006000600060177369b6134b97e638b919a7089df82af74961e71ff8620186a0f160005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x186A0,
+                        address=0x69B6134B97E638B919A7089DF82AF74961E71FF8,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

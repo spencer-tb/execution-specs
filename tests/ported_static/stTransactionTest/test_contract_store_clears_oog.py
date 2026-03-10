@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,9 +49,18 @@ def test_contract_store_clears_oog(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600060005560006001556000600255600060035560006004556000600555600060065560"  # noqa: E501
-            "006007556000600855600c60095500"
+        code=(
+            Op.SSTORE(key=0x0, value=0x0)
+            + Op.SSTORE(key=0x1, value=0x0)
+            + Op.SSTORE(key=0x2, value=0x0)
+            + Op.SSTORE(key=0x3, value=0x0)
+            + Op.SSTORE(key=0x4, value=0x0)
+            + Op.SSTORE(key=0x5, value=0x0)
+            + Op.SSTORE(key=0x6, value=0x0)
+            + Op.SSTORE(key=0x7, value=0x0)
+            + Op.SSTORE(key=0x8, value=0x0)
+            + Op.SSTORE(key=0x9, value=0xC)
+            + Op.STOP
         ),
         storage={
             0x0: 0xC,
@@ -93,8 +103,18 @@ def test_contract_store_clears_oog(
                 8: 12,
                 9: 12,
             },
-            code=bytes.fromhex(
-                "600060005560006001556000600255600060035560006004556000600555600060065560006007556000600855600c60095500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=0x0)
+                + Op.SSTORE(key=0x1, value=0x0)
+                + Op.SSTORE(key=0x2, value=0x0)
+                + Op.SSTORE(key=0x3, value=0x0)
+                + Op.SSTORE(key=0x4, value=0x0)
+                + Op.SSTORE(key=0x5, value=0x0)
+                + Op.SSTORE(key=0x6, value=0x0)
+                + Op.SSTORE(key=0x7, value=0x0)
+                + Op.SSTORE(key=0x8, value=0x0)
+                + Op.SSTORE(key=0x9, value=0xC)
+                + Op.STOP
             ),
         ),
     }

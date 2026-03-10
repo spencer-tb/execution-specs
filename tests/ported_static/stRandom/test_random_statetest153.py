@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,12 +48,29 @@ def test_random_statetest153(
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("44420b4442432055"),
+        code=(
+            Op.SIGNEXTEND(Op.TIMESTAMP, Op.PREVRANDAO)
+            + Op.SSTORE(
+                key=Op.SHA3(offset=Op.NUMBER, size=Op.TIMESTAMP),
+                value=Op.PREVRANDAO,
+            )
+        ),
     )
 
     tx = Transaction(
@@ -69,13 +87,32 @@ def test_random_statetest153(
 
     post = {
         coinbase: Account(
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
         contract: Account(
             storage={
                 0xAE72E2BF2302EBCD309E003E5BE58830F96DEDDAF87BB89EEEA159388BFE3EC1: 0x20000,  # noqa: E501
             },
-            code=bytes.fromhex("44420b4442432055"),
+            code=(
+                Op.SIGNEXTEND(Op.TIMESTAMP, Op.PREVRANDAO)
+                + Op.SSTORE(
+                    key=Op.SHA3(offset=Op.NUMBER, size=Op.TIMESTAMP),
+                    value=Op.PREVRANDAO,
+                )
+            ),
         ),
     }
 

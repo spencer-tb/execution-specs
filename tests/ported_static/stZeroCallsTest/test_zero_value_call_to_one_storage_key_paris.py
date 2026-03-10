@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,9 +52,22 @@ def test_zero_value_call_to_one_storage_key_paris(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a60005560006000600060006000734757608f18b70777ae788dd4056eeed52f7aa68f61"  # noqa: E501
-            "ea60f1600155600160645500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=0xEA60,
+                    address=0x4757608F18B70777AE788DD4056EEED52F7AA68F,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x64, value=0x1)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -74,8 +88,22 @@ def test_zero_value_call_to_one_storage_key_paris(
         callee: Account(storage={0: 1}),
         contract: Account(
             storage={0: 0x8D5B6, 1: 1, 100: 1},
-            code=bytes.fromhex(
-                "5a60005560006000600060006000734757608f18b70777ae788dd4056eeed52f7aa68f61ea60f1600155600160645500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=0xEA60,
+                        address=0x4757608F18B70777AE788DD4056EEED52F7AA68F,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x64, value=0x1)
+                + Op.STOP
             ),
         ),
     }

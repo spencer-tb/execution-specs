@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,9 +48,21 @@ def test_revert_prefound_call(
     pre[contract] = Account(
         balance=1,
         nonce=0,
-        code=bytes.fromhex(
-            "602060006020600060007385fdde91fd0ce22a2968e1f1b2ebb9f9e5a180ba61c350f160"  # noqa: E501
-            "0055600c60015500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0xC350,
+                    address=0x85FDDE91FD0CE22A2968E1F1B2EBB9F9E5A180BA,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=0xC)
+            + Op.STOP
         ),
     )
     pre[callee] = Account(balance=1, nonce=0)
@@ -70,8 +83,21 @@ def test_revert_prefound_call(
     post = {
         contract: Account(
             storage={0: 1, 1: 12},
-            code=bytes.fromhex(
-                "602060006020600060007385fdde91fd0ce22a2968e1f1b2ebb9f9e5a180ba61c350f1600055600c60015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0xC350,
+                        address=0x85FDDE91FD0CE22A2968E1F1B2EBB9F9E5A180BA,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x0,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=0xC)
+                + Op.STOP
             ),
         ),
     }

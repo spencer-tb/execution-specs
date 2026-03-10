@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,10 +34,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "0060016000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -44,10 +45,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff9150505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -55,10 +56,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff925050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -66,10 +67,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff93505050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -77,10 +78,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff9450505050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -88,10 +89,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff955050505050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -99,10 +100,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff60ff96505050505050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -110,10 +111,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060ff60ff60ff60ff60ff60ff60ff60ff9750505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -121,10 +122,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060ff60ff60ff60ff60ff60ff60ff60ff60ff985050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -132,10 +133,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060ff60ff60ff60ff60ff60ff60ff60ff60ff60ff99505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -143,10 +144,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff9a50505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -154,10 +155,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600160010a5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -165,10 +166,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff9b5050505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -176,10 +177,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff9c505050505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -187,10 +188,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff9d50505050505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -198,10 +199,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff9e5050505050505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -209,10 +210,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff9f505050505050505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -220,10 +221,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60006000a060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -231,10 +232,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60006000a160006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -242,10 +243,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60006000a260006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -253,10 +254,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60006000a360006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -264,10 +265,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60006000a460006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -275,10 +276,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600160010b5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -286,10 +287,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060fff05060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -297,10 +298,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60006000600060006017730f572e5295c57f15886f9b263e2f6d2d6c7b5ec66064f15060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -308,10 +309,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60006000600060006000730f572e5295c57f15886f9b263e2f6d2d6c7b5ec66064f25060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -319,10 +320,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -330,10 +331,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060006000730f572e5295c57f15886f9b263e2f6d2d6c7b5ec6620186a0f45060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -341,10 +342,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060006000730f572e5295c57f15886f9b263e2f6d2d6c7b5ec6612710fa5060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -352,10 +353,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60006000fd60006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -363,10 +364,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "32ff",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -374,10 +375,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001105060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -385,10 +386,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001115060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -396,10 +397,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001125060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -407,10 +408,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001135060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -418,10 +419,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001145060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -429,10 +430,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000155060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -440,10 +441,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60006000165060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -451,10 +452,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60006000175060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -462,10 +463,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001015060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -473,10 +474,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60006000185060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -484,10 +485,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000195060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -495,10 +496,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "67805020100804020160001a5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -506,10 +507,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060002060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -517,10 +518,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "305060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -528,10 +529,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000315060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -539,10 +540,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "325060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -550,10 +551,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "335060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -561,10 +562,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "345060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -572,10 +573,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000355060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -583,10 +584,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001025060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -594,10 +595,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "365060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -605,10 +606,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060003760006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -616,10 +617,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "385060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -627,7 +628,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "38600060013960015160005560006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
                     storage={
@@ -635,7 +636,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     }
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -643,10 +644,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "3a5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -654,10 +655,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60003b5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -665,10 +666,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6014600060007310000000000000000000000000000000000000103c60006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -676,10 +677,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "3d5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -687,10 +688,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060003e60006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -698,10 +699,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60005060005060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -709,10 +710,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001035060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -720,10 +721,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000515060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -731,10 +732,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060005260006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -742,10 +743,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60005360006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -753,10 +754,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000545060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -764,13 +765,13 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600160015560006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
                     storage={1: 1}
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -778,10 +779,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600456005b60006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -789,10 +790,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6001600657005b60006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -800,10 +801,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "585060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -811,10 +812,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "595060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -822,10 +823,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "5a5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -833,10 +834,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001045060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -844,10 +845,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "5b60006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -855,10 +856,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -866,10 +867,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "61ffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -877,10 +878,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "62ffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -888,10 +889,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "63ffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -899,10 +900,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "64ffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -910,10 +911,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "65ffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -921,10 +922,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "66ffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -932,10 +933,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "67ffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -943,10 +944,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "68ffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -954,10 +955,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001055060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -965,10 +966,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "69ffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -976,10 +977,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6affffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -987,10 +988,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6bffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -998,10 +999,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6cffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1009,10 +1010,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6dffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1020,10 +1021,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6effffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1031,10 +1032,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6fffffffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1042,10 +1043,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "70ffffffffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1053,10 +1054,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "71ffffffffffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1064,10 +1065,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "72ffffffffffffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1075,10 +1076,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001065060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1086,10 +1087,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "73ffffffffffffffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1097,10 +1098,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "74ffffffffffffffffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1108,10 +1109,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "75ffffffffffffffffffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1119,10 +1120,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "76ffffffffffffffffffffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1130,10 +1131,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "77ffffffffffffffffffffffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1141,10 +1142,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "78ffffffffffffffffffffffffffffffffffffffffffffffffff5060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1152,10 +1153,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "79ffffffffffffffffffffffffffffffffffffffffffffffffffff5060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1163,10 +1164,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "7affffffffffffffffffffffffffffffffffffffffffffffffffffff5060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1174,10 +1175,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "7bffffffffffffffffffffffffffffffffffffffffffffffffffffffff5060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1185,10 +1186,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "7cffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1196,10 +1197,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60016001075060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1207,10 +1208,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "7dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1218,10 +1219,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "7effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1229,10 +1230,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1240,10 +1241,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff80505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1251,10 +1252,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff8150505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1262,10 +1263,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff825050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1273,10 +1274,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff83505050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1284,10 +1285,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff8450505050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1295,10 +1296,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff855050505050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1306,10 +1307,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff86505050505050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1317,10 +1318,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600160016001085060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1328,10 +1329,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff60ff8750505050505050505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1339,10 +1340,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff60ff60ff885050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1350,10 +1351,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff89505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1361,10 +1362,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff8a50505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1372,10 +1373,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff8b5050505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1383,10 +1384,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff8c505050505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1394,10 +1395,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff8d50505050505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1405,10 +1406,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff8e5050505050505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1416,10 +1417,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff60ff8f505050505050505050505050505050505060006000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1427,10 +1428,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60ff60ff90505060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1438,10 +1439,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600160016001095060006000f3",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1449,10 +1450,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "ef",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1460,10 +1461,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60008080808073b94f5374fce5edbc8e2a8697c15331677e6ebf0b61c350f100",
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1}, code=bytes.fromhex("600160005500")
+                    storage={0: 1},
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP,
                 ),
             },
         ),
@@ -1471,10 +1473,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60008080808073b94f5374fce5edbc8e2a8697c15331677e6ebf0b61c350f150fe",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1482,10 +1484,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "60008080808073b94f5374fce5edbc8e2a8697c15331677e6ebf0b61c350f15060ef60005360016000f3",  # noqa: E501
             {
                 Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"): Account(
-                    code=bytes.fromhex("61ffff5060046000f3")
+                    code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex("600160005500")
+                    code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP
                 ),
             },
         ),
@@ -1650,7 +1652,7 @@ def test_opcodes_transaction_init(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
-        code=bytes.fromhex("61ffff5060046000f3"),
+        code=Op.POP(0xFFFF) + Op.RETURN(offset=0x0, size=0x4),
     )
     pre[sender] = Account(
         balance=0xDE0B6B3A7640000,
@@ -1660,7 +1662,7 @@ def test_opcodes_transaction_init(
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("600160005500"),
+        code=Op.SSTORE(key=0x0, value=0x1) + Op.STOP,
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

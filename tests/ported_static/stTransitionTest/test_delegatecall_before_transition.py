@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,14 +51,28 @@ def test_delegatecall_before_transition(
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=bytes.fromhex("336001553460025500"),
+        code=(
+            Op.SSTORE(key=0x1, value=Op.CALLER)
+            + Op.SSTORE(key=0x2, value=Op.CALLVALUE)
+            + Op.STOP
+        ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6002600060406000720d3f6e432d6891a965fc56d39e729652a0762a6207a120f4600055"  # noqa: E501
-            "00"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.DELEGATECALL(
+                    gas=0x7A120,
+                    address=0xD3F6E432D6891A965FC56D39E729652A0762A,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x2,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -75,14 +90,31 @@ def test_delegatecall_before_transition(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("336001553460025500")),
+        callee: Account(
+            code=(
+                Op.SSTORE(key=0x1, value=Op.CALLER)
+                + Op.SSTORE(key=0x2, value=Op.CALLVALUE)
+                + Op.STOP
+            ),
+        ),
         contract: Account(
             storage={
                 0: 1,
                 1: 0xEBAF50DEBF10E08302FE4280C32DF010463CA297,
             },
-            code=bytes.fromhex(
-                "6002600060406000720d3f6e432d6891a965fc56d39e729652a0762a6207a120f460005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.DELEGATECALL(
+                        gas=0x7A120,
+                        address=0xD3F6E432D6891A965FC56D39E729652A0762A,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x2,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

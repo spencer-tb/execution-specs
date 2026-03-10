@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,9 +51,24 @@ def test_call_lose_gas_oog(
     pre[contract] = Account(
         balance=1024,
         nonce=0,
-        code=bytes.fromhex(
-            "600160005401600055600060006000600073be855315b63d137b74d5eed6be5cd9dde6e2"  # noqa: E501
-            "478d620186a060005402600101f46001556103e86000540260010160025500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.DELEGATECALL(
+                    gas=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x186A0)),
+                    address=0xBE855315B63D137B74D5EED6BE5CD9DDE6E2478D,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x2,
+                value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3E8)),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(balance=7000, nonce=0)
@@ -72,8 +88,24 @@ def test_call_lose_gas_oog(
     post = {
         contract: Account(
             storage={0: 1, 2: 1001},
-            code=bytes.fromhex(
-                "600160005401600055600060006000600073be855315b63d137b74d5eed6be5cd9dde6e2478d620186a060005402600101f46001556103e86000540260010160025500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.DELEGATECALL(
+                        gas=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x186A0)),
+                        address=0xBE855315B63D137B74D5EED6BE5CD9DDE6E2478D,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x2,
+                    value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3E8)),
+                )
+                + Op.STOP
             ),
         ),
     }

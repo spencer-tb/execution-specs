@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,30 +47,578 @@ def test_contract_creation_spam(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7f6004600c60003960046000f3600035ff00000000000000000000000000000000600052"  # noqa: E501
-            "602060006000f0600054805b6001018060005260008060208180876006f1506001018060"  # noqa: E501
-            "005260008060208180876006f1506001018060005260008060208180876006f150600101"  # noqa: E501
-            "8060005260008060208180876006f1506001018060005260008060208180876006f15060"  # noqa: E501
-            "01018060005260008060208180876006f1506001018060005260008060208180876006f1"  # noqa: E501
-            "506001018060005260008060208180876006f15060010180600052600080602081808760"  # noqa: E501
-            "06f1506001018060005260008060208180876006f1506001018060005260008060208180"  # noqa: E501
-            "876006f1506001018060005260008060208180876006f150600101806000526000806020"  # noqa: E501
-            "8180876006f1506001018060005260008060208180876006f15060010180600052600080"  # noqa: E501
-            "60208180876006f1506001018060005260008060208180876006f1506001018060005260"  # noqa: E501
-            "008060208180876006f1506001018060005260008060208180876006f150600101806000"  # noqa: E501
-            "5260008060208180876006f1506001018060005260008060208180876006f15060010180"  # noqa: E501
-            "60005260008060208180876006f1506001018060005260008060208180876006f1506001"  # noqa: E501
-            "018060005260008060208180876006f1506001018060005260008060208180876006f150"  # noqa: E501
-            "6001018060005260008060208180876006f1506001018060005260008060208180876006"  # noqa: E501
-            "f1506001018060005260008060208180876006f150600101806000526000806020818087"  # noqa: E501
-            "6006f1506001018060005260008060208180876006f15060010180600052600080602081"  # noqa: E501
-            "80876006f1506001018060005260008060208180876006f1506001018060005260008060"  # noqa: E501
-            "208180876006f1506001018060005260008060208180876006f150600101806000526000"  # noqa: E501
-            "8060208180876006f1506001018060005260008060208180876006f15060010180600052"  # noqa: E501
-            "60008060208180876006f1506001018060005260008060208180876006f1506001018060"  # noqa: E501
-            "005260008060208180876006f1506001018060005260008060208180876006f150600101"  # noqa: E501
-            "8060005260008060208180876006f1505a616000106200002f57600055"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x6004600C60003960046000F3600035FF00000000000000000000000000000000,  # noqa: E501
+            )
+            + Op.CREATE(value=0x0, offset=0x0, size=0x20)
+            + Op.SLOAD(key=0x0)
+            + Op.DUP1
+            + Op.JUMPDEST
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.MSTORE(offset=0x0, value=Op.DUP1)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x6,
+                    address=Op.DUP8,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.JUMPI(pc=Op.PUSH3[0x2F], condition=Op.LT(0x6000, Op.GAS))
+            + Op.PUSH1[0x0]
+            + Op.SSTORE
         ),
     )
     pre[sender] = Account(balance=0xC9F2C9CD04674EDEA40000000, nonce=0)
@@ -89,12 +638,582 @@ def test_contract_creation_spam(
     post = {
         contract: Account(
             storage={0: 0x10C20},
-            code=bytes.fromhex(
-                "7f6004600c60003960046000f3600035ff00000000000000000000000000000000600052602060006000f0600054805b6001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1506001018060005260008060208180876006f1505a616000106200002f57600055"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x6004600C60003960046000F3600035FF00000000000000000000000000000000,  # noqa: E501
+                )
+                + Op.CREATE(value=0x0, offset=0x0, size=0x20)
+                + Op.SLOAD(key=0x0)
+                + Op.DUP1
+                + Op.JUMPDEST
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.PUSH1[0x1]
+                + Op.ADD
+                + Op.MSTORE(offset=0x0, value=Op.DUP1)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x6,
+                        address=Op.DUP8,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.JUMPI(pc=Op.PUSH3[0x2F], condition=Op.LT(0x6000, Op.GAS))
+                + Op.PUSH1[0x0]
+                + Op.SSTORE
             ),
         ),
         Address("0xcc8c7a84d4f2872441499fa72b48bd45b03923ab"): Account(
-            code=bytes.fromhex("600035ff"),
+            code=Op.SELFDESTRUCT(address=Op.CALLDATALOAD(offset=0x0)),
         ),
     }
 

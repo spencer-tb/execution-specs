@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,9 @@ def test_refund_ff(
     pre[contract] = Account(
         balance=0,
         nonce=1,
-        code=bytes.fromhex("737704d8a022a1ba8f3539fc82c7d7fb065abc0df3ff"),
+        code=(
+            Op.SELFDESTRUCT(address=0x7704D8A022A1BA8F3539FC82C7D7FB065ABC0DF3)
+        ),
     )
 
     tx = Transaction(
@@ -67,7 +70,11 @@ def test_refund_ff(
 
     post = {
         contract: Account(
-            code=bytes.fromhex("737704d8a022a1ba8f3539fc82c7d7fb065abc0df3ff"),
+            code=(
+                Op.SELFDESTRUCT(
+                    address=0x7704D8A022A1BA8F3539FC82C7D7FB065ABC0DF3,
+                )
+            ),
         ),
     }
 

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,7 +47,19 @@ def test_self_balance_gas_cost(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("5a475a905090036002900360015500"),
+        code=(
+            Op.GAS
+            + Op.SELFBALANCE
+            + Op.GAS
+            + Op.SWAP1
+            + Op.POP
+            + Op.SWAP1
+            + Op.SUB
+            + Op.PUSH1[0x2]
+            + Op.SWAP1
+            + Op.SSTORE(key=0x1, value=Op.SUB)
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
 
@@ -65,7 +78,19 @@ def test_self_balance_gas_cost(
     post = {
         contract: Account(
             storage={1: 5},
-            code=bytes.fromhex("5a475a905090036002900360015500"),
+            code=(
+                Op.GAS
+                + Op.SELFBALANCE
+                + Op.GAS
+                + Op.SWAP1
+                + Op.POP
+                + Op.SWAP1
+                + Op.SUB
+                + Op.PUSH1[0x2]
+                + Op.SWAP1
+                + Op.SSTORE(key=0x1, value=Op.SUB)
+                + Op.STOP
+            ),
         ),
     }
 

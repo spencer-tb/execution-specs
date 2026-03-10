@@ -17,6 +17,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -37,7 +38,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "3860008039386000f3",
             {
                 Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-                    code=bytes.fromhex("3860008039386000f3")
+                    code=Op.CODECOPY(
+                        dest_offset=Op.DUP1, offset=0x0, size=Op.CODESIZE
+                    )
+                    + Op.RETURN(offset=0x0, size=Op.CODESIZE)
                 )
             },
         ),

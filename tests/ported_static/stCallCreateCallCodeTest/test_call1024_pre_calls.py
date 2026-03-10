@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -60,11 +61,45 @@ def test_call1024_pre_calls(
     pre[contract] = Account(
         balance=2024,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000600173d9b97c712ebce43f3c19179bbef44b550f9e8bc061fffff160"  # noqa: E501
-            "02556000600060006000600173d9b97c712ebce43f3c19179bbef44b550f9e8bc061ffff"  # noqa: E501
-            "f1600355600160005401600055600060006000600060007348c20cd83ddbd3908712f4d3"  # noqa: E501
-            "1c51b3cdaae287ce650ffffffffffff160015500"
+        code=(
+            Op.SSTORE(
+                key=0x2,
+                value=Op.CALL(
+                    gas=0xFFFF,
+                    address=0xD9B97C712EBCE43F3C19179BBEF44B550F9E8BC0,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x3,
+                value=Op.CALL(
+                    gas=0xFFFF,
+                    address=0xD9B97C712EBCE43F3C19179BBEF44B550F9E8BC0,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=0xFFFFFFFFFFF,
+                    address=0x48C20CD83DDBD3908712F4D31C51B3CDAAE287CE,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(balance=7000, nonce=0)
@@ -84,8 +119,45 @@ def test_call1024_pre_calls(
     post = {
         contract: Account(
             storage={0: 1025, 1: 1},
-            code=bytes.fromhex(
-                "6000600060006000600173d9b97c712ebce43f3c19179bbef44b550f9e8bc061fffff16002556000600060006000600173d9b97c712ebce43f3c19179bbef44b550f9e8bc061fffff1600355600160005401600055600060006000600060007348c20cd83ddbd3908712f4d31c51b3cdaae287ce650ffffffffffff160015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x2,
+                    value=Op.CALL(
+                        gas=0xFFFF,
+                        address=0xD9B97C712EBCE43F3C19179BBEF44B550F9E8BC0,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x3,
+                    value=Op.CALL(
+                        gas=0xFFFF,
+                        address=0xD9B97C712EBCE43F3C19179BBEF44B550F9E8BC0,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=0xFFFFFFFFFFF,
+                        address=0x48C20CD83DDBD3908712F4D31C51B3CDAAE287CE,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

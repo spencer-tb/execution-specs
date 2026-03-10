@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,14 +51,24 @@ def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_
     pre[callee] = Account(
         balance=0x186A0,
         nonce=0,
-        code=bytes.fromhex("600c600155"),
+        code=Op.SSTORE(key=0x1, value=0xC),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "60ff60ff60ff60ff60007373d01f7d28c5a55520cd80d2c3f0938c1834ccff620927c0f1"  # noqa: E501
-            "600155"
+        code=(
+            Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=0x927C0,
+                    address=0x73D01F7D28C5A55520CD80D2C3F0938C1834CCFF,
+                    value=0x0,
+                    args_offset=0xFF,
+                    args_size=0xFF,
+                    ret_offset=0xFF,
+                    ret_size=0xFF,
+                ),
+            )
         ),
     )
     pre[sender] = Account(balance=0x186A000, nonce=0)
@@ -75,11 +86,22 @@ def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_
     )
 
     post = {
-        callee: Account(storage={1: 12}, code=bytes.fromhex("600c600155")),
+        callee: Account(storage={1: 12}, code=Op.SSTORE(key=0x1, value=0xC)),
         contract: Account(
             storage={1: 1},
-            code=bytes.fromhex(
-                "60ff60ff60ff60ff60007373d01f7d28c5a55520cd80d2c3f0938c1834ccff620927c0f1600155"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=0x927C0,
+                        address=0x73D01F7D28C5A55520CD80D2C3F0938C1834CCFF,
+                        value=0x0,
+                        args_offset=0xFF,
+                        args_size=0xFF,
+                        ret_offset=0xFF,
+                        ret_size=0xFF,
+                    ),
+                )
             ),
         ),
     }

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,23 +52,47 @@ def test_call_ask_more_gas_on_depth2_then_transaction_has(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a6008556000600060006000600073f39d40eacb6d2c685ac10664e759d1cf8f775dff62"  # noqa: E501
-            "0927c0f160095500"
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.CALL(
+                    gas=0x927C0,
+                    address=0xF39D40EACB6D2C685AC10664E759D1CF8F775DFF,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a600855600060006000600060007325c370b55ec8467127bc4e13404915901d68909862"  # noqa: E501
-            "030d40f160095500"
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.CALL(
+                    gas=0x30D40,
+                    address=0x25C370B55EC8467127BC4E13404915901D689098,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("5a60085500"),
+        code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.STOP,
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
@@ -86,19 +111,45 @@ def test_call_ask_more_gas_on_depth2_then_transaction_has(
     post = {
         callee: Account(
             storage={8: 0x30D3E, 9: 1},
-            code=bytes.fromhex(
-                "5a6008556000600060006000600073f39d40eacb6d2c685ac10664e759d1cf8f775dff620927c0f160095500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.CALL(
+                        gas=0x927C0,
+                        address=0xF39D40EACB6D2C685AC10664E759D1CF8F775DFF,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={8: 0x8D5B6, 9: 1},
-            code=bytes.fromhex(
-                "5a600855600060006000600060007325c370b55ec8467127bc4e13404915901d68909862030d40f160095500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.CALL(
+                        gas=0x30D40,
+                        address=0x25C370B55EC8467127BC4E13404915901D689098,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         callee_1: Account(
             storage={8: 0x2A1F6},
-            code=bytes.fromhex("5a60085500"),
+            code=Op.SSTORE(key=0x8, value=Op.GAS) + Op.STOP,
         ),
     }
 

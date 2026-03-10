@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,7 +48,11 @@ def test_sha3_deja(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("6042601f53600064ffffffffff2080"),
+        code=(
+            Op.MSTORE8(offset=0x1F, value=0x42)
+            + Op.SHA3(offset=0xFFFFFFFFFF, size=0x0)
+            + Op.DUP1
+        ),
     )
 
     tx = Transaction(
@@ -64,7 +69,11 @@ def test_sha3_deja(
 
     post = {
         contract: Account(
-            code=bytes.fromhex("6042601f53600064ffffffffff2080"),
+            code=(
+                Op.MSTORE8(offset=0x1F, value=0x42)
+                + Op.SHA3(offset=0xFFFFFFFFFF, size=0x0)
+                + Op.DUP1
+            ),
         ),
     }
 

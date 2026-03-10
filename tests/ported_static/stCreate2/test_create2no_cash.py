@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,7 +32,8 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060006000600073e2b35478fdd26477cc576dd906e6277761246a3c620249f0f100",  # noqa: E501
             {
                 Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
-                    code=bytes.fromhex("6000600060006065f500")
+                    code=Op.CREATE2(value=0x65, offset=0x0, size=0x0, salt=0x0)
+                    + Op.STOP
                 )
             },
         ),
@@ -39,7 +41,8 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060006000600173e2b35478fdd26477cc576dd906e6277761246a3c620249f0f100",  # noqa: E501
             {
                 Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
-                    code=bytes.fromhex("6000600060006065f500")
+                    code=Op.CREATE2(value=0x65, offset=0x0, size=0x0, salt=0x0)
+                    + Op.STOP
                 )
             },
         ),
@@ -47,7 +50,8 @@ REFERENCE_SPEC_VERSION = "N/A"
             "600060006000600073e2b35478fdd26477cc576dd906e6277761246a3c620249f0fa00",  # noqa: E501
             {
                 Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
-                    code=bytes.fromhex("6000600060006065f500")
+                    code=Op.CREATE2(value=0x65, offset=0x0, size=0x0, salt=0x0)
+                    + Op.STOP
                 )
             },
         ),
@@ -79,7 +83,7 @@ def test_create2no_cash(
     pre[contract] = Account(
         balance=100,
         nonce=0,
-        code=bytes.fromhex("6000600060006065f500"),
+        code=Op.CREATE2(value=0x65, offset=0x0, size=0x0, salt=0x0) + Op.STOP,
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

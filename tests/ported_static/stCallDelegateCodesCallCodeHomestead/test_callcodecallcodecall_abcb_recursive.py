@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,25 +52,56 @@ def test_callcodecallcodecall_abcb_recursive(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "604060006040600073e0b280638526cecd3ec29969b517aeb3fcbb31fa63017d7840f460"  # noqa: E501
-            "005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.DELEGATECALL(
+                    gas=0x17D7840,
+                    address=0xE0B280638526CECD3EC29969B517AEB3FCBB31FA,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0x2540BE400,
         nonce=0,
-        code=bytes.fromhex(
-            "6040600060406000600073e0b280638526cecd3ec29969b517aeb3fcbb31fa6207a120f2"  # noqa: E501
-            "60025500"
+        code=(
+            Op.SSTORE(
+                key=0x2,
+                value=Op.CALLCODE(
+                    gas=0x7A120,
+                    address=0xE0B280638526CECD3EC29969B517AEB3FCBB31FA,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=0x2540BE400,
         nonce=0,
-        code=bytes.fromhex(
-            "604060006040600073a71333d8c0291cfd6da54bec5a3957563ab16c1c620f4240f46001"  # noqa: E501
-            "5500"
+        code=(
+            Op.SSTORE(
+                key=0x1,
+                value=Op.DELEGATECALL(
+                    gas=0xF4240,
+                    address=0xA71333D8C0291CFD6DA54BEC5A3957563AB16C1C,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -89,18 +121,52 @@ def test_callcodecallcodecall_abcb_recursive(
     post = {
         contract: Account(
             storage={0: 1, 1: 1},
-            code=bytes.fromhex(
-                "604060006040600073e0b280638526cecd3ec29969b517aeb3fcbb31fa63017d7840f460005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.DELEGATECALL(
+                        gas=0x17D7840,
+                        address=0xE0B280638526CECD3EC29969B517AEB3FCBB31FA,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         callee: Account(
-            code=bytes.fromhex(
-                "6040600060406000600073e0b280638526cecd3ec29969b517aeb3fcbb31fa6207a120f260025500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x2,
+                    value=Op.CALLCODE(
+                        gas=0x7A120,
+                        address=0xE0B280638526CECD3EC29969B517AEB3FCBB31FA,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         callee_1: Account(
-            code=bytes.fromhex(
-                "604060006040600073a71333d8c0291cfd6da54bec5a3957563ab16c1c620f4240f460015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x1,
+                    value=Op.DELEGATECALL(
+                        gas=0xF4240,
+                        address=0xA71333D8C0291CFD6DA54BEC5A3957563AB16C1C,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

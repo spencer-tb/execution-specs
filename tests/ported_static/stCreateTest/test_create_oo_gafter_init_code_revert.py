@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,23 +51,47 @@ def test_create_oo_gafter_init_code_revert(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("622fffff60002000"),
+        code=Op.SHA3(offset=0x0, size=0x2FFFFF) + Op.STOP,
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6d6460016001556000526005601bf3600052600e60126000f05060006000600060006000"  # noqa: E501
-            "73094f5374fce5edbc8e2a8697c15331677e6ebf0b612710f25060206000fd00"
+        code=(
+            Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
+            + Op.POP(Op.CREATE(value=0x0, offset=0x12, size=0xE))
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=0x2710,
+                    address=0x94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.REVERT(offset=0x0, size=0x20)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b5af1506000"  # noqa: E501
-            "5160015500"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
     )
 
@@ -83,16 +108,42 @@ def test_create_oo_gafter_init_code_revert(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("622fffff60002000")),
+        callee: Account(code=Op.SHA3(offset=0x0, size=0x2FFFFF) + Op.STOP),
         callee_1: Account(
-            code=bytes.fromhex(
-                "6d6460016001556000526005601bf3600052600e60126000f0506000600060006000600073094f5374fce5edbc8e2a8697c15331677e6ebf0b612710f25060206000fd00"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
+                + Op.POP(Op.CREATE(value=0x0, offset=0x12, size=0xE))
+                + Op.POP(
+                    Op.CALLCODE(
+                        gas=0x2710,
+                        address=0x94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.REVERT(offset=0x0, size=0x20)
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={1: 0x6460016001556000526005601BF3},
-            code=bytes.fromhex(
-                "6020600060006000600073b94f5374fce5edbc8e2a8697c15331677e6ebf0b5af15060005160015500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

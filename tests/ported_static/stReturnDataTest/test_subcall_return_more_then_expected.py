@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,36 +52,139 @@ def test_subcall_return_more_then_expected(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7f1122334455667788991011121314151617181920212223242526272829303132600052"  # noqa: E501
-            "7f3334353637383940414243444546474849505152535455565758596061626364602052"  # noqa: E501
-            "60406000fd00"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x20,
+                value=0x3334353637383940414243444546474849505152535455565758596061626364,  # noqa: E501
+            )
+            + Op.REVERT(offset=0x0, size=0x40)
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7f1122334455667788991011121314151617181920212223242526272829303132600052"  # noqa: E501
-            "7f3334353637383940414243444546474849505152535455565758596061626364602052"  # noqa: E501
-            "60406000f300"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x20,
+                value=0x3334353637383940414243444546474849505152535455565758596061626364,  # noqa: E501
+            )
+            + Op.RETURN(offset=0x0, size=0x40)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "600c600060006000600073a8592f39b32943f9f464090497722b4f9c15f59862030d40f1"  # noqa: E501
-            "506000516000556000600052600c60006000600073a8592f39b32943f9f464090497722b"  # noqa: E501
-            "4f9c15f59862030d40f4506000516001556000600052600c60006000600073a8592f39b3"  # noqa: E501
-            "2943f9f464090497722b4f9c15f59862030d40fa506000516002556000600052600c6000"  # noqa: E501
-            "60006000600073a8592f39b32943f9f464090497722b4f9c15f59862030d40f250600051"  # noqa: E501
-            "6003556000600052600c600060006000600073028cdafc3d5d27d006ffb88e1ecf2fa4b4"  # noqa: E501
-            "12ee4f62030d40f1506000516004556000600052600c60006000600073028cdafc3d5d27"  # noqa: E501
-            "d006ffb88e1ecf2fa4b412ee4f62030d40f4506000516005556000600052600c60006000"  # noqa: E501
-            "600073028cdafc3d5d27d006ffb88e1ecf2fa4b412ee4f62030d40fa5060005160065560"  # noqa: E501
-            "00600052600c600060006000600073028cdafc3d5d27d006ffb88e1ecf2fa4b412ee4f62"  # noqa: E501
-            "030d40f25060005160075500"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x30D40,
+                    address=0xA8592F39B32943F9F464090497722B4F9C15F598,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0xC,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.POP(
+                Op.DELEGATECALL(
+                    gas=0x30D40,
+                    address=0xA8592F39B32943F9F464090497722B4F9C15F598,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0xC,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0x30D40,
+                    address=0xA8592F39B32943F9F464090497722B4F9C15F598,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0xC,
+                ),
+            )
+            + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=0x30D40,
+                    address=0xA8592F39B32943F9F464090497722B4F9C15F598,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0xC,
+                ),
+            )
+            + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.POP(
+                Op.CALL(
+                    gas=0x30D40,
+                    address=0x28CDAFC3D5D27D006FFB88E1ECF2FA4B412EE4F,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0xC,
+                ),
+            )
+            + Op.SSTORE(key=0x4, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.POP(
+                Op.DELEGATECALL(
+                    gas=0x30D40,
+                    address=0x28CDAFC3D5D27D006FFB88E1ECF2FA4B412EE4F,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0xC,
+                ),
+            )
+            + Op.SSTORE(key=0x5, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0x30D40,
+                    address=0x28CDAFC3D5D27D006FFB88E1ECF2FA4B412EE4F,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0xC,
+                ),
+            )
+            + Op.SSTORE(key=0x6, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=0x30D40,
+                    address=0x28CDAFC3D5D27D006FFB88E1ECF2FA4B412EE4F,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0xC,
+                ),
+            )
+            + Op.SSTORE(key=0x7, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -99,13 +203,31 @@ def test_subcall_return_more_then_expected(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "7f11223344556677889910111213141516171819202122232425262728293031326000527f333435363738394041424344454647484950515253545556575859606162636460205260406000fd00"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x20,
+                    value=0x3334353637383940414243444546474849505152535455565758596061626364,  # noqa: E501
+                )
+                + Op.REVERT(offset=0x0, size=0x40)
+                + Op.STOP
             ),
         ),
         callee_1: Account(
-            code=bytes.fromhex(
-                "7f11223344556677889910111213141516171819202122232425262728293031326000527f333435363738394041424344454647484950515253545556575859606162636460205260406000f300"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x20,
+                    value=0x3334353637383940414243444546474849505152535455565758596061626364,  # noqa: E501
+                )
+                + Op.RETURN(offset=0x0, size=0x40)
+                + Op.STOP
             ),
         ),
         contract: Account(
@@ -119,8 +241,107 @@ def test_subcall_return_more_then_expected(
                 6: 0x1122334455667788991011120000000000000000000000000000000000000000,  # noqa: E501
                 7: 0x1122334455667788991011120000000000000000000000000000000000000000,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "600c600060006000600073a8592f39b32943f9f464090497722b4f9c15f59862030d40f1506000516000556000600052600c60006000600073a8592f39b32943f9f464090497722b4f9c15f59862030d40f4506000516001556000600052600c60006000600073a8592f39b32943f9f464090497722b4f9c15f59862030d40fa506000516002556000600052600c600060006000600073a8592f39b32943f9f464090497722b4f9c15f59862030d40f2506000516003556000600052600c600060006000600073028cdafc3d5d27d006ffb88e1ecf2fa4b412ee4f62030d40f1506000516004556000600052600c60006000600073028cdafc3d5d27d006ffb88e1ecf2fa4b412ee4f62030d40f4506000516005556000600052600c60006000600073028cdafc3d5d27d006ffb88e1ecf2fa4b412ee4f62030d40fa506000516006556000600052600c600060006000600073028cdafc3d5d27d006ffb88e1ecf2fa4b412ee4f62030d40f25060005160075500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x30D40,
+                        address=0xA8592F39B32943F9F464090497722B4F9C15F598,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0xC,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0x30D40,
+                        address=0xA8592F39B32943F9F464090497722B4F9C15F598,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0xC,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.POP(
+                    Op.STATICCALL(
+                        gas=0x30D40,
+                        address=0xA8592F39B32943F9F464090497722B4F9C15F598,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0xC,
+                    ),
+                )
+                + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.POP(
+                    Op.CALLCODE(
+                        gas=0x30D40,
+                        address=0xA8592F39B32943F9F464090497722B4F9C15F598,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0xC,
+                    ),
+                )
+                + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x30D40,
+                        address=0x28CDAFC3D5D27D006FFB88E1ECF2FA4B412EE4F,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0xC,
+                    ),
+                )
+                + Op.SSTORE(key=0x4, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0x30D40,
+                        address=0x28CDAFC3D5D27D006FFB88E1ECF2FA4B412EE4F,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0xC,
+                    ),
+                )
+                + Op.SSTORE(key=0x5, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.POP(
+                    Op.STATICCALL(
+                        gas=0x30D40,
+                        address=0x28CDAFC3D5D27D006FFB88E1ECF2FA4B412EE4F,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0xC,
+                    ),
+                )
+                + Op.SSTORE(key=0x6, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.POP(
+                    Op.CALLCODE(
+                        gas=0x30D40,
+                        address=0x28CDAFC3D5D27D006FFB88E1ECF2FA4B412EE4F,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0xC,
+                    ),
+                )
+                + Op.SSTORE(key=0x7, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

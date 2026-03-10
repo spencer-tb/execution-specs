@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,8 +50,24 @@ def test_callcode_ecrecover0_0input(
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,
-        code=bytes.fromhex(
-            "602060806080600060006001620493e0f260025560a060020a6080510660005500"  # noqa: E501
+        code=(
+            Op.SSTORE(
+                key=0x2,
+                value=Op.CALLCODE(
+                    gas=0x493E0,
+                    address=0x1,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x80,
+                    ret_offset=0x80,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.MOD(Op.MLOAD(offset=0x80), Op.EXP(0x2, 0xA0)),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -70,8 +87,24 @@ def test_callcode_ecrecover0_0input(
     post = {
         contract: Account(
             storage={2: 1},
-            code=bytes.fromhex(
-                "602060806080600060006001620493e0f260025560a060020a6080510660005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x2,
+                    value=Op.CALLCODE(
+                        gas=0x493E0,
+                        address=0x1,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x80,
+                        ret_offset=0x80,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x0,
+                    value=Op.MOD(Op.MLOAD(offset=0x80), Op.EXP(0x2, 0xA0)),
+                )
+                + Op.STOP
             ),
         ),
     }

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -37,9 +38,112 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x290DECD9548B62A8D60345A988386FC84BA6BC95484008F6362F93160EF3E563  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "600035601c52740100000000000000000000000000000000000000006020526fffffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff000000000000000000000000000000016060527402540be3fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffdabf41c00000000000000000000000002540be40060a0526330c8d1da600051141561012c576107806004356004013511151558576004356004013560200160043560040161014037602061092061014051610160600060086305f5e0fff11558576020610900526109006040806109608284600060046018f150505061096080516020820120905060005561096060206020820352604081510160206001820306601f820103905060208203f350005b"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x1C, value=Op.CALLDATALOAD(offset=0x0)
+                    )
+                    + Op.MSTORE(
+                        offset=0x20,
+                        value=0x10000000000000000000000000000000000000000,
+                    )
+                    + Op.MSTORE(
+                        offset=0x40, value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.MSTORE(
+                        offset=0x60,
+                        value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000001,  # noqa: E501
+                    )
+                    + Op.MSTORE(
+                        offset=0x80,
+                        value=0x2540BE3FFFFFFFFFFFFFFFFFFFFFFFFFDABF41C00,
+                    )
+                    + Op.MSTORE(
+                        offset=0xA0,
+                        value=0xFFFFFFFFFFFFFFFFFFFFFFFDABF41C00000000000000000000000002540BE400,  # noqa: E501
+                    )
+                    + Op.JUMPI(
+                        pc=0x12C,
+                        condition=Op.ISZERO(
+                            Op.EQ(Op.MLOAD(offset=0x0), 0x30C8D1DA)
+                        ),
+                    )
+                    + Op.JUMPI(
+                        pc=Op.PC,
+                        condition=Op.ISZERO(
+                            Op.ISZERO(
+                                Op.GT(
+                                    Op.CALLDATALOAD(
+                                        offset=Op.ADD(
+                                            0x4, Op.CALLDATALOAD(offset=0x4)
+                                        )
+                                    ),
+                                    0x780,
+                                )
+                            )
+                        ),
+                    )
+                    + Op.CALLDATACOPY(
+                        dest_offset=0x140,
+                        offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4)),
+                        size=Op.ADD(
+                            0x20,
+                            Op.CALLDATALOAD(
+                                offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4))
+                            ),
+                        ),
+                    )
+                    + Op.JUMPI(
+                        pc=Op.PC,
+                        condition=Op.ISZERO(
+                            Op.CALL(
+                                gas=0x5F5E0FF,
+                                address=0x8,
+                                value=0x0,
+                                args_offset=0x160,
+                                args_size=Op.MLOAD(offset=0x140),
+                                ret_offset=0x920,
+                                ret_size=0x20,
+                            )
+                        ),
+                    )
+                    + Op.MSTORE(offset=0x900, value=0x20)
+                    + Op.PUSH2[0x900]
+                    + Op.PUSH1[0x40]
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0x18,
+                            address=0x4,
+                            value=0x0,
+                            args_offset=Op.DUP5,
+                            args_size=Op.DUP3,
+                            ret_offset=0x960,
+                            ret_size=Op.DUP1,
+                        )
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH2[0x960]
+                    + Op.SHA3(
+                        offset=Op.ADD(Op.DUP3, 0x20),
+                        size=Op.MLOAD(offset=Op.DUP1),
+                    )
+                    + Op.SWAP1
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.SSTORE
+                    + Op.PUSH2[0x960]
+                    + Op.MSTORE(offset=Op.SUB(Op.DUP3, 0x20), value=0x20)
+                    + Op.ADD(Op.MLOAD(offset=Op.DUP2), 0x40)
+                    + Op.SUB(
+                        Op.ADD(Op.DUP3, 0x1F),
+                        Op.MOD(Op.SUB(Op.DUP3, 0x1), 0x20),
+                    )
+                    + Op.SWAP1
+                    + Op.POP
+                    + Op.SUB(Op.DUP3, 0x20)
+                    + Op.RETURN
+                    + Op.POP
+                    + Op.STOP
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -50,9 +154,112 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x290DECD9548B62A8D60345A988386FC84BA6BC95484008F6362F93160EF3E563  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "600035601c52740100000000000000000000000000000000000000006020526fffffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff000000000000000000000000000000016060527402540be3fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffdabf41c00000000000000000000000002540be40060a0526330c8d1da600051141561012c576107806004356004013511151558576004356004013560200160043560040161014037602061092061014051610160600060086305f5e0fff11558576020610900526109006040806109608284600060046018f150505061096080516020820120905060005561096060206020820352604081510160206001820306601f820103905060208203f350005b"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x1C, value=Op.CALLDATALOAD(offset=0x0)
+                    )
+                    + Op.MSTORE(
+                        offset=0x20,
+                        value=0x10000000000000000000000000000000000000000,
+                    )
+                    + Op.MSTORE(
+                        offset=0x40, value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.MSTORE(
+                        offset=0x60,
+                        value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000001,  # noqa: E501
+                    )
+                    + Op.MSTORE(
+                        offset=0x80,
+                        value=0x2540BE3FFFFFFFFFFFFFFFFFFFFFFFFFDABF41C00,
+                    )
+                    + Op.MSTORE(
+                        offset=0xA0,
+                        value=0xFFFFFFFFFFFFFFFFFFFFFFFDABF41C00000000000000000000000002540BE400,  # noqa: E501
+                    )
+                    + Op.JUMPI(
+                        pc=0x12C,
+                        condition=Op.ISZERO(
+                            Op.EQ(Op.MLOAD(offset=0x0), 0x30C8D1DA)
+                        ),
+                    )
+                    + Op.JUMPI(
+                        pc=Op.PC,
+                        condition=Op.ISZERO(
+                            Op.ISZERO(
+                                Op.GT(
+                                    Op.CALLDATALOAD(
+                                        offset=Op.ADD(
+                                            0x4, Op.CALLDATALOAD(offset=0x4)
+                                        )
+                                    ),
+                                    0x780,
+                                )
+                            )
+                        ),
+                    )
+                    + Op.CALLDATACOPY(
+                        dest_offset=0x140,
+                        offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4)),
+                        size=Op.ADD(
+                            0x20,
+                            Op.CALLDATALOAD(
+                                offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4))
+                            ),
+                        ),
+                    )
+                    + Op.JUMPI(
+                        pc=Op.PC,
+                        condition=Op.ISZERO(
+                            Op.CALL(
+                                gas=0x5F5E0FF,
+                                address=0x8,
+                                value=0x0,
+                                args_offset=0x160,
+                                args_size=Op.MLOAD(offset=0x140),
+                                ret_offset=0x920,
+                                ret_size=0x20,
+                            )
+                        ),
+                    )
+                    + Op.MSTORE(offset=0x900, value=0x20)
+                    + Op.PUSH2[0x900]
+                    + Op.PUSH1[0x40]
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0x18,
+                            address=0x4,
+                            value=0x0,
+                            args_offset=Op.DUP5,
+                            args_size=Op.DUP3,
+                            ret_offset=0x960,
+                            ret_size=Op.DUP1,
+                        )
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH2[0x960]
+                    + Op.SHA3(
+                        offset=Op.ADD(Op.DUP3, 0x20),
+                        size=Op.MLOAD(offset=Op.DUP1),
+                    )
+                    + Op.SWAP1
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.SSTORE
+                    + Op.PUSH2[0x960]
+                    + Op.MSTORE(offset=Op.SUB(Op.DUP3, 0x20), value=0x20)
+                    + Op.ADD(Op.MLOAD(offset=Op.DUP2), 0x40)
+                    + Op.SUB(
+                        Op.ADD(Op.DUP3, 0x1F),
+                        Op.MOD(Op.SUB(Op.DUP3, 0x1), 0x20),
+                    )
+                    + Op.SWAP1
+                    + Op.POP
+                    + Op.SUB(Op.DUP3, 0x20)
+                    + Op.RETURN
+                    + Op.POP
+                    + Op.STOP
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -63,9 +270,112 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x290DECD9548B62A8D60345A988386FC84BA6BC95484008F6362F93160EF3E563  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "600035601c52740100000000000000000000000000000000000000006020526fffffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff000000000000000000000000000000016060527402540be3fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffdabf41c00000000000000000000000002540be40060a0526330c8d1da600051141561012c576107806004356004013511151558576004356004013560200160043560040161014037602061092061014051610160600060086305f5e0fff11558576020610900526109006040806109608284600060046018f150505061096080516020820120905060005561096060206020820352604081510160206001820306601f820103905060208203f350005b"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x1C, value=Op.CALLDATALOAD(offset=0x0)
+                    )
+                    + Op.MSTORE(
+                        offset=0x20,
+                        value=0x10000000000000000000000000000000000000000,
+                    )
+                    + Op.MSTORE(
+                        offset=0x40, value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.MSTORE(
+                        offset=0x60,
+                        value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000001,  # noqa: E501
+                    )
+                    + Op.MSTORE(
+                        offset=0x80,
+                        value=0x2540BE3FFFFFFFFFFFFFFFFFFFFFFFFFDABF41C00,
+                    )
+                    + Op.MSTORE(
+                        offset=0xA0,
+                        value=0xFFFFFFFFFFFFFFFFFFFFFFFDABF41C00000000000000000000000002540BE400,  # noqa: E501
+                    )
+                    + Op.JUMPI(
+                        pc=0x12C,
+                        condition=Op.ISZERO(
+                            Op.EQ(Op.MLOAD(offset=0x0), 0x30C8D1DA)
+                        ),
+                    )
+                    + Op.JUMPI(
+                        pc=Op.PC,
+                        condition=Op.ISZERO(
+                            Op.ISZERO(
+                                Op.GT(
+                                    Op.CALLDATALOAD(
+                                        offset=Op.ADD(
+                                            0x4, Op.CALLDATALOAD(offset=0x4)
+                                        )
+                                    ),
+                                    0x780,
+                                )
+                            )
+                        ),
+                    )
+                    + Op.CALLDATACOPY(
+                        dest_offset=0x140,
+                        offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4)),
+                        size=Op.ADD(
+                            0x20,
+                            Op.CALLDATALOAD(
+                                offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4))
+                            ),
+                        ),
+                    )
+                    + Op.JUMPI(
+                        pc=Op.PC,
+                        condition=Op.ISZERO(
+                            Op.CALL(
+                                gas=0x5F5E0FF,
+                                address=0x8,
+                                value=0x0,
+                                args_offset=0x160,
+                                args_size=Op.MLOAD(offset=0x140),
+                                ret_offset=0x920,
+                                ret_size=0x20,
+                            )
+                        ),
+                    )
+                    + Op.MSTORE(offset=0x900, value=0x20)
+                    + Op.PUSH2[0x900]
+                    + Op.PUSH1[0x40]
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0x18,
+                            address=0x4,
+                            value=0x0,
+                            args_offset=Op.DUP5,
+                            args_size=Op.DUP3,
+                            ret_offset=0x960,
+                            ret_size=Op.DUP1,
+                        )
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH2[0x960]
+                    + Op.SHA3(
+                        offset=Op.ADD(Op.DUP3, 0x20),
+                        size=Op.MLOAD(offset=Op.DUP1),
+                    )
+                    + Op.SWAP1
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.SSTORE
+                    + Op.PUSH2[0x960]
+                    + Op.MSTORE(offset=Op.SUB(Op.DUP3, 0x20), value=0x20)
+                    + Op.ADD(Op.MLOAD(offset=Op.DUP2), 0x40)
+                    + Op.SUB(
+                        Op.ADD(Op.DUP3, 0x1F),
+                        Op.MOD(Op.SUB(Op.DUP3, 0x1), 0x20),
+                    )
+                    + Op.SWAP1
+                    + Op.POP
+                    + Op.SUB(Op.DUP3, 0x20)
+                    + Op.RETURN
+                    + Op.POP
+                    + Op.STOP
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -76,9 +386,112 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x290DECD9548B62A8D60345A988386FC84BA6BC95484008F6362F93160EF3E563  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "600035601c52740100000000000000000000000000000000000000006020526fffffffffffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff000000000000000000000000000000016060527402540be3fffffffffffffffffffffffffdabf41c006080527ffffffffffffffffffffffffdabf41c00000000000000000000000002540be40060a0526330c8d1da600051141561012c576107806004356004013511151558576004356004013560200160043560040161014037602061092061014051610160600060086305f5e0fff11558576020610900526109006040806109608284600060046018f150505061096080516020820120905060005561096060206020820352604081510160206001820306601f820103905060208203f350005b"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x1C, value=Op.CALLDATALOAD(offset=0x0)
+                    )
+                    + Op.MSTORE(
+                        offset=0x20,
+                        value=0x10000000000000000000000000000000000000000,
+                    )
+                    + Op.MSTORE(
+                        offset=0x40, value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.MSTORE(
+                        offset=0x60,
+                        value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000001,  # noqa: E501
+                    )
+                    + Op.MSTORE(
+                        offset=0x80,
+                        value=0x2540BE3FFFFFFFFFFFFFFFFFFFFFFFFFDABF41C00,
+                    )
+                    + Op.MSTORE(
+                        offset=0xA0,
+                        value=0xFFFFFFFFFFFFFFFFFFFFFFFDABF41C00000000000000000000000002540BE400,  # noqa: E501
+                    )
+                    + Op.JUMPI(
+                        pc=0x12C,
+                        condition=Op.ISZERO(
+                            Op.EQ(Op.MLOAD(offset=0x0), 0x30C8D1DA)
+                        ),
+                    )
+                    + Op.JUMPI(
+                        pc=Op.PC,
+                        condition=Op.ISZERO(
+                            Op.ISZERO(
+                                Op.GT(
+                                    Op.CALLDATALOAD(
+                                        offset=Op.ADD(
+                                            0x4, Op.CALLDATALOAD(offset=0x4)
+                                        )
+                                    ),
+                                    0x780,
+                                )
+                            )
+                        ),
+                    )
+                    + Op.CALLDATACOPY(
+                        dest_offset=0x140,
+                        offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4)),
+                        size=Op.ADD(
+                            0x20,
+                            Op.CALLDATALOAD(
+                                offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4))
+                            ),
+                        ),
+                    )
+                    + Op.JUMPI(
+                        pc=Op.PC,
+                        condition=Op.ISZERO(
+                            Op.CALL(
+                                gas=0x5F5E0FF,
+                                address=0x8,
+                                value=0x0,
+                                args_offset=0x160,
+                                args_size=Op.MLOAD(offset=0x140),
+                                ret_offset=0x920,
+                                ret_size=0x20,
+                            )
+                        ),
+                    )
+                    + Op.MSTORE(offset=0x900, value=0x20)
+                    + Op.PUSH2[0x900]
+                    + Op.PUSH1[0x40]
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0x18,
+                            address=0x4,
+                            value=0x0,
+                            args_offset=Op.DUP5,
+                            args_size=Op.DUP3,
+                            ret_offset=0x960,
+                            ret_size=Op.DUP1,
+                        )
+                    )
+                    + Op.POP
+                    + Op.POP
+                    + Op.PUSH2[0x960]
+                    + Op.SHA3(
+                        offset=Op.ADD(Op.DUP3, 0x20),
+                        size=Op.MLOAD(offset=Op.DUP1),
+                    )
+                    + Op.SWAP1
+                    + Op.POP
+                    + Op.PUSH1[0x0]
+                    + Op.SSTORE
+                    + Op.PUSH2[0x960]
+                    + Op.MSTORE(offset=Op.SUB(Op.DUP3, 0x20), value=0x20)
+                    + Op.ADD(Op.MLOAD(offset=Op.DUP2), 0x40)
+                    + Op.SUB(
+                        Op.ADD(Op.DUP3, 0x1F),
+                        Op.MOD(Op.SUB(Op.DUP3, 0x1), 0x20),
+                    )
+                    + Op.SWAP1
+                    + Op.POP
+                    + Op.SUB(Op.DUP3, 0x20)
+                    + Op.RETURN
+                    + Op.POP
+                    + Op.STOP
+                    + Op.JUMPDEST,
                 )
             },
         ),
@@ -143,16 +556,103 @@ def test_ecpairing_one_point_not_in_subgroup(
     pre[contract] = Account(
         balance=0,
         nonce=1,
-        code=bytes.fromhex(
-            "600035601c52740100000000000000000000000000000000000000006020526fffffffff"  # noqa: E501
-            "ffffffffffffffffffffffff6040527fffffffffffffffffffffffffffffffff00000000"  # noqa: E501
-            "0000000000000000000000016060527402540be3fffffffffffffffffffffffffdabf41c"  # noqa: E501
-            "006080527ffffffffffffffffffffffffdabf41c00000000000000000000000002540be4"  # noqa: E501
-            "0060a0526330c8d1da600051141561012c57610780600435600401351115155857600435"  # noqa: E501
-            "6004013560200160043560040161014037602061092061014051610160600060086305f5"  # noqa: E501
-            "e0fff11558576020610900526109006040806109608284600060046018f1505050610960"  # noqa: E501
-            "80516020820120905060005561096060206020820352604081510160206001820306601f"  # noqa: E501
-            "820103905060208203f350005b"
+        code=(
+            Op.MSTORE(offset=0x1C, value=Op.CALLDATALOAD(offset=0x0))
+            + Op.MSTORE(
+                offset=0x20,
+                value=0x10000000000000000000000000000000000000000,
+            )
+            + Op.MSTORE(offset=0x40, value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+            + Op.MSTORE(
+                offset=0x60,
+                value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000001,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x80,
+                value=0x2540BE3FFFFFFFFFFFFFFFFFFFFFFFFFDABF41C00,
+            )
+            + Op.MSTORE(
+                offset=0xA0,
+                value=0xFFFFFFFFFFFFFFFFFFFFFFFDABF41C00000000000000000000000002540BE400,  # noqa: E501
+            )
+            + Op.JUMPI(
+                pc=0x12C,
+                condition=Op.ISZERO(Op.EQ(Op.MLOAD(offset=0x0), 0x30C8D1DA)),
+            )
+            + Op.JUMPI(
+                pc=Op.PC,
+                condition=Op.ISZERO(
+                    Op.ISZERO(
+                        Op.GT(
+                            Op.CALLDATALOAD(
+                                offset=Op.ADD(
+                                    0x4, Op.CALLDATALOAD(offset=0x4)
+                                ),
+                            ),
+                            0x780,
+                        ),
+                    ),
+                ),
+            )
+            + Op.CALLDATACOPY(
+                dest_offset=0x140,
+                offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4)),
+                size=Op.ADD(
+                    0x20,
+                    Op.CALLDATALOAD(
+                        offset=Op.ADD(0x4, Op.CALLDATALOAD(offset=0x4)),
+                    ),
+                ),
+            )
+            + Op.JUMPI(
+                pc=Op.PC,
+                condition=Op.ISZERO(
+                    Op.CALL(
+                        gas=0x5F5E0FF,
+                        address=0x8,
+                        value=0x0,
+                        args_offset=0x160,
+                        args_size=Op.MLOAD(offset=0x140),
+                        ret_offset=0x920,
+                        ret_size=0x20,
+                    ),
+                ),
+            )
+            + Op.MSTORE(offset=0x900, value=0x20)
+            + Op.PUSH2[0x900]
+            + Op.PUSH1[0x40]
+            + Op.POP(
+                Op.CALL(
+                    gas=0x18,
+                    address=0x4,
+                    value=0x0,
+                    args_offset=Op.DUP5,
+                    args_size=Op.DUP3,
+                    ret_offset=0x960,
+                    ret_size=Op.DUP1,
+                ),
+            )
+            + Op.POP
+            + Op.POP
+            + Op.PUSH2[0x960]
+            + Op.SHA3(
+                offset=Op.ADD(Op.DUP3, 0x20), size=Op.MLOAD(offset=Op.DUP1)
+            )
+            + Op.SWAP1
+            + Op.POP
+            + Op.PUSH1[0x0]
+            + Op.SSTORE
+            + Op.PUSH2[0x960]
+            + Op.MSTORE(offset=Op.SUB(Op.DUP3, 0x20), value=0x20)
+            + Op.ADD(Op.MLOAD(offset=Op.DUP2), 0x40)
+            + Op.SUB(Op.ADD(Op.DUP3, 0x1F), Op.MOD(Op.SUB(Op.DUP3, 0x1), 0x20))
+            + Op.SWAP1
+            + Op.POP
+            + Op.SUB(Op.DUP3, 0x20)
+            + Op.RETURN
+            + Op.POP
+            + Op.STOP
+            + Op.JUMPDEST
         ),
         storage={
             0x0: 0x290DECD9548B62A8D60345A988386FC84BA6BC95484008F6362F93160EF3E563,  # noqa: E501

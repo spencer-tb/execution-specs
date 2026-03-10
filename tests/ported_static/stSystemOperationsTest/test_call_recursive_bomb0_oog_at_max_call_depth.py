@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,9 +51,31 @@ def test_call_recursive_bomb0_oog_at_max_call_depth(
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,
-        code=bytes.fromhex(
-            "600160005401600055690fffffffffffffffffff61040260005404026002556000600069"  # noqa: E501
-            "0fffffffffffffffffff610402600054040260006000306104005a03f160015500"  # noqa: E501
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.SSTORE(
+                key=0x2,
+                value=Op.MUL(
+                    Op.DIV(Op.SLOAD(key=0x0), 0x402),
+                    0xFFFFFFFFFFFFFFFFFFF,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=Op.SUB(Op.GAS, 0x400),
+                    address=Op.ADDRESS,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=Op.MUL(
+                        Op.DIV(Op.SLOAD(key=0x0), 0x402),
+                        0xFFFFFFFFFFFFFFFFFFF,
+                    ),
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -72,8 +95,31 @@ def test_call_recursive_bomb0_oog_at_max_call_depth(
     post = {
         contract: Account(
             storage={0: 749, 1: 1},
-            code=bytes.fromhex(
-                "600160005401600055690fffffffffffffffffff610402600054040260025560006000690fffffffffffffffffff610402600054040260006000306104005a03f160015500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.SSTORE(
+                    key=0x2,
+                    value=Op.MUL(
+                        Op.DIV(Op.SLOAD(key=0x0), 0x402),
+                        0xFFFFFFFFFFFFFFFFFFF,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=Op.SUB(Op.GAS, 0x400),
+                        address=Op.ADDRESS,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=Op.MUL(
+                            Op.DIV(Op.SLOAD(key=0x0), 0x402),
+                            0xFFFFFFFFFFFFFFFFFFF,
+                        ),
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

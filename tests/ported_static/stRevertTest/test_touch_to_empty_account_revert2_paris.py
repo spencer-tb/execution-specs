@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,10 +52,32 @@ def test_touch_to_empty_account_revert2_paris(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600060007376fae819612a29489a1a43208613d8f8557b88986201fbd0f1"  # noqa: E501
-            "6000556000600060006000600073fc4d79463bc948eb3fe54196270de2b78c2015066201"  # noqa: E501
-            "fbd0f160015500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x1FBD0,
+                    address=0x76FAE819612A29489A1A43208613D8F8557B8898,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=0x1FBD0,
+                    address=0xFC4D79463BC948EB3FE54196270DE2B78C201506,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(balance=10, nonce=0)
@@ -62,9 +85,21 @@ def test_touch_to_empty_account_revert2_paris(
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600060007376fae819612a29489a1a43208613d8f8557b88986201fbd0f1"  # noqa: E501
-            "600255622fffff60002000"
+        code=(
+            Op.SSTORE(
+                key=0x2,
+                value=Op.CALL(
+                    gas=0x1FBD0,
+                    address=0x76FAE819612A29489A1A43208613D8F8557B8898,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SHA3(offset=0x0, size=0x2FFFFF)
+            + Op.STOP
         ),
     )
 
@@ -83,13 +118,50 @@ def test_touch_to_empty_account_revert2_paris(
     post = {
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "600060006000600060007376fae819612a29489a1a43208613d8f8557b88986201fbd0f16000556000600060006000600073fc4d79463bc948eb3fe54196270de2b78c2015066201fbd0f160015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x1FBD0,
+                        address=0x76FAE819612A29489A1A43208613D8F8557B8898,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=0x1FBD0,
+                        address=0xFC4D79463BC948EB3FE54196270DE2B78C201506,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         callee_1: Account(
-            code=bytes.fromhex(
-                "600060006000600060007376fae819612a29489a1a43208613d8f8557b88986201fbd0f1600255622fffff60002000"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x2,
+                    value=Op.CALL(
+                        gas=0x1FBD0,
+                        address=0x76FAE819612A29489A1A43208613D8F8557B8898,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SHA3(offset=0x0, size=0x2FFFFF)
+                + Op.STOP
             ),
         ),
     }

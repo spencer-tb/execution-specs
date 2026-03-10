@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             54000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex(
-                        "6d6460016001556000526005601bf36000526000600e60126000f500"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0, value=0x6460016001556000526005601BF3
                     )
+                    + Op.CREATE2(value=0x0, offset=0x12, size=0xE, salt=0x0)
+                    + Op.STOP
                 )
             },
         ),
@@ -41,12 +44,14 @@ REFERENCE_SPEC_VERSION = "N/A"
             55000,
             {
                 Address("0x6878b140f875209c82ab4d5f083b55947299ef6b"): Account(
-                    code=bytes.fromhex("6001600155")
+                    code=Op.SSTORE(key=0x1, value=0x1)
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex(
-                        "6d6460016001556000526005601bf36000526000600e60126000f500"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0, value=0x6460016001556000526005601BF3
                     )
+                    + Op.CREATE2(value=0x0, offset=0x12, size=0xE, salt=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -78,8 +83,10 @@ def test_create2_oo_gafter_init_code(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6d6460016001556000526005601bf36000526000600e60126000f500"
+        code=(
+            Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
+            + Op.CREATE2(value=0x0, offset=0x12, size=0xE, salt=0x0)
+            + Op.STOP
         ),
     )
 

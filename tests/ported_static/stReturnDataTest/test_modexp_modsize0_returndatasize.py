@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -35,9 +36,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x4263c26963e4c1dd1cb69c116009e749f9e4eec2"): Account(
                     storage={1: 1},
-                    code=bytes.fromhex(
-                        "36600060003760206103e8366000600060055af26001556103e8516002553d60035500"  # noqa: E501
-                    ),
+                    code=Op.CALLDATACOPY(
+                        dest_offset=0x0, offset=0x0, size=Op.CALLDATASIZE
+                    )
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0x5,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=Op.CALLDATASIZE,
+                            ret_offset=0x3E8,
+                            ret_size=0x20,
+                        ),
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x3E8))
+                    + Op.SSTORE(key=0x3, value=Op.RETURNDATASIZE)
+                    + Op.STOP,
                 )
             },
         ),
@@ -46,9 +62,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x4263c26963e4c1dd1cb69c116009e749f9e4eec2"): Account(
                     storage={1: 1, 3: 1},
-                    code=bytes.fromhex(
-                        "36600060003760206103e8366000600060055af26001556103e8516002553d60035500"  # noqa: E501
-                    ),
+                    code=Op.CALLDATACOPY(
+                        dest_offset=0x0, offset=0x0, size=Op.CALLDATASIZE
+                    )
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0x5,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=Op.CALLDATASIZE,
+                            ret_offset=0x3E8,
+                            ret_size=0x20,
+                        ),
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x3E8))
+                    + Op.SSTORE(key=0x3, value=Op.RETURNDATASIZE)
+                    + Op.STOP,
                 )
             },
         ),
@@ -57,9 +88,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x4263c26963e4c1dd1cb69c116009e749f9e4eec2"): Account(
                     storage={1: 1, 3: 100},
-                    code=bytes.fromhex(
-                        "36600060003760206103e8366000600060055af26001556103e8516002553d60035500"  # noqa: E501
-                    ),
+                    code=Op.CALLDATACOPY(
+                        dest_offset=0x0, offset=0x0, size=Op.CALLDATASIZE
+                    )
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0x5,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=Op.CALLDATASIZE,
+                            ret_offset=0x3E8,
+                            ret_size=0x20,
+                        ),
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x3E8))
+                    + Op.SSTORE(key=0x3, value=Op.RETURNDATASIZE)
+                    + Op.STOP,
                 )
             },
         ),
@@ -68,9 +114,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x4263c26963e4c1dd1cb69c116009e749f9e4eec2"): Account(
                     storage={1: 1, 3: 256},
-                    code=bytes.fromhex(
-                        "36600060003760206103e8366000600060055af26001556103e8516002553d60035500"  # noqa: E501
-                    ),
+                    code=Op.CALLDATACOPY(
+                        dest_offset=0x0, offset=0x0, size=Op.CALLDATASIZE
+                    )
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0x5,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=Op.CALLDATASIZE,
+                            ret_offset=0x3E8,
+                            ret_size=0x20,
+                        ),
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x3E8))
+                    + Op.SSTORE(key=0x3, value=Op.RETURNDATASIZE)
+                    + Op.STOP,
                 )
             },
         ),
@@ -78,9 +139,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             "0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000f3f14010101",  # noqa: E501
             {
                 Address("0x4263c26963e4c1dd1cb69c116009e749f9e4eec2"): Account(
-                    code=bytes.fromhex(
-                        "36600060003760206103e8366000600060055af26001556103e8516002553d60035500"  # noqa: E501
+                    code=Op.CALLDATACOPY(
+                        dest_offset=0x0, offset=0x0, size=Op.CALLDATASIZE
                     )
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALLCODE(
+                            gas=Op.GAS,
+                            address=0x5,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=Op.CALLDATASIZE,
+                            ret_offset=0x3E8,
+                            ret_size=0x20,
+                        ),
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x3E8))
+                    + Op.SSTORE(key=0x3, value=Op.RETURNDATASIZE)
+                    + Op.STOP
                 )
             },
         ),
@@ -111,8 +187,23 @@ def test_modexp_modsize0_returndatasize(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "36600060003760206103e8366000600060055af26001556103e8516002553d60035500"  # noqa: E501
+        code=(
+            Op.CALLDATACOPY(dest_offset=0x0, offset=0x0, size=Op.CALLDATASIZE)
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x5,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=Op.CALLDATASIZE,
+                    ret_offset=0x3E8,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x3E8))
+            + Op.SSTORE(key=0x3, value=Op.RETURNDATASIZE)
+            + Op.STOP
         ),
         storage={0x3: 0xFFFFFFFF},
     )

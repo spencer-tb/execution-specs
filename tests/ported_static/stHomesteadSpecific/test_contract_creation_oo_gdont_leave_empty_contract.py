@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,14 @@ def test_contract_creation_oo_gdont_leave_empty_contract(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "60106001557f6001600155601080600c6000396000f3006000355415600957005b602035"  # noqa: E501
-            "6000600052602060006000f000"
+        code=(
+            Op.SSTORE(key=0x1, value=0x10)
+            + Op.MSTORE(
+                offset=0x0,
+                value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
+            )
+            + Op.CREATE(value=0x0, offset=0x0, size=0x20)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xF4240, nonce=0)
@@ -71,8 +77,14 @@ def test_contract_creation_oo_gdont_leave_empty_contract(
     post = {
         contract: Account(
             storage={1: 16},
-            code=bytes.fromhex(
-                "60106001557f6001600155601080600c6000396000f3006000355415600957005b6020356000600052602060006000f000"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x1, value=0x10)
+                + Op.MSTORE(
+                    offset=0x0,
+                    value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
+                )
+                + Op.CREATE(value=0x0, offset=0x0, size=0x20)
+                + Op.STOP
             ),
         ),
     }

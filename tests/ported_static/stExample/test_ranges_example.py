@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -36,7 +37,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -49,7 +51,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -62,7 +65,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -75,7 +79,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -88,7 +93,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -101,7 +107,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -114,7 +121,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -127,7 +135,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -140,7 +149,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -153,7 +163,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -166,7 +177,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -179,7 +191,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -192,7 +205,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -205,7 +219,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -218,7 +233,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -231,7 +247,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -244,7 +261,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -257,7 +275,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -270,7 +289,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -283,7 +303,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -296,7 +317,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -309,7 +331,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -322,7 +345,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -335,7 +359,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex("60003560005500"),
+                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
+                    + Op.STOP,
                 )
             },
         ),
@@ -394,7 +419,7 @@ def test_ranges_example(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60003560005500"),
+        code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.STOP,
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,20 +48,41 @@ def test_random_statetest626(
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7f00000000000000000000000100000000000000000000000000000000000000007f0000"  # noqa: E501
-            "00000000000000000000000000000000000000000000000000000000c3507f0000000000"  # noqa: E501
-            "0000000000000000000000000000000000000000000000000000017fffffffffffffffff"  # noqa: E501
-            "ffffffffffffffffffffffffffffffffffffffffffffffff7f0000000000000000000000"  # noqa: E501
-            "0000000000000000000000000000000000000000007f0000000000000000000000000000"  # noqa: E501
-            "0000000000000000000000000000000000017f0000000000000000000000004f3f701464"  # noqa: E501
-            "972e74606d6ea82d4d3080599a0e797f0000000000000000000000000000000000000000"  # noqa: E501
-            "00000000000000000000c350f4fd94058f06a255"
+        code=(
+            Op.PUSH32[0x10000000000000000000000000000000000000000]
+            + Op.REVERT(
+                offset=Op.DELEGATECALL(
+                    gas=Op.PUSH32[0xC350],
+                    address=Op.PUSH32[
+                        0x4F3F701464972E74606D6EA82D4D3080599A0E79
+                    ],
+                    args_offset=Op.PUSH32[0x1],
+                    args_size=Op.PUSH32[0x0],
+                    ret_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    ret_size=Op.PUSH32[0x1],
+                ),
+                size=Op.PUSH32[0xC350],
+            )
+            + Op.SWAP5
+            + Op.MOD(Op.DUP16, Op.SDIV)
+            + Op.LOG2
+            + Op.SSTORE
         ),
     )
 
@@ -87,11 +109,41 @@ def test_random_statetest626(
 
     post = {
         coinbase: Account(
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "7f00000000000000000000000100000000000000000000000000000000000000007f000000000000000000000000000000000000000000000000000000000000c3507f00000000000000000000000000000000000000000000000000000000000000017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f00000000000000000000000000000000000000000000000000000000000000007f00000000000000000000000000000000000000000000000000000000000000017f0000000000000000000000004f3f701464972e74606d6ea82d4d3080599a0e797f000000000000000000000000000000000000000000000000000000000000c350f4fd94058f06a255"  # noqa: E501
+            code=(
+                Op.PUSH32[0x10000000000000000000000000000000000000000]
+                + Op.REVERT(
+                    offset=Op.DELEGATECALL(
+                        gas=Op.PUSH32[0xC350],
+                        address=Op.PUSH32[
+                            0x4F3F701464972E74606D6EA82D4D3080599A0E79
+                        ],
+                        args_offset=Op.PUSH32[0x1],
+                        args_size=Op.PUSH32[0x0],
+                        ret_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        ret_size=Op.PUSH32[0x1],
+                    ),
+                    size=Op.PUSH32[0xC350],
+                )
+                + Op.SWAP5
+                + Op.MOD(Op.DUP16, Op.SDIV)
+                + Op.LOG2
+                + Op.SSTORE
             ),
         ),
     }

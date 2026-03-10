@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,16 +48,28 @@ def test_delegate_call_on_eip(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a600852600060006000600073fd59abae521384b5731ac657616680219fbc423d620927"  # noqa: E501
-            "c0f46009555a6008510360085500"
+        code=(
+            Op.MSTORE(offset=0x8, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.DELEGATECALL(
+                    gas=0x927C0,
+                    address=0xFD59ABAE521384B5731AC657616680219FBC423D,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x8, value=Op.SUB(Op.MLOAD(offset=0x8), Op.GAS))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("601260005500"),
+        code=Op.SSTORE(key=0x0, value=0x12) + Op.STOP,
     )
 
     tx = Transaction(
@@ -74,11 +87,26 @@ def test_delegate_call_on_eip(
     post = {
         contract: Account(
             storage={0: 18, 8: 46841, 9: 1},
-            code=bytes.fromhex(
-                "5a600852600060006000600073fd59abae521384b5731ac657616680219fbc423d620927c0f46009555a6008510360085500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x8, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.DELEGATECALL(
+                        gas=0x927C0,
+                        address=0xFD59ABAE521384B5731AC657616680219FBC423D,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x8, value=Op.SUB(Op.MLOAD(offset=0x8), Op.GAS)
+                )
+                + Op.STOP
             ),
         ),
-        callee: Account(code=bytes.fromhex("601260005500")),
+        callee: Account(code=Op.SSTORE(key=0x0, value=0x12) + Op.STOP),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

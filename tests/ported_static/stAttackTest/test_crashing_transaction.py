@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -63,7 +64,12 @@ def test_crashing_transaction(
 
     post = {
         Address("0xecbf9aa676d9e0bbba7e517d1350c1b64f8c6779"): Account(
-            code=bytes.fromhex("60606040526008565b00"),
+            code=(
+                Op.MSTORE(offset=0x40, value=0x60)
+                + Op.JUMP(pc=0x8)
+                + Op.JUMPDEST
+                + Op.STOP
+            ),
         ),
     }
 

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,7 +51,14 @@ def test_recursive_create_return_value(
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,
-        code=bytes.fromhex("602060006000396001602060006000f00160005500"),
+        code=(
+            Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20)
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.ADD(Op.CREATE(value=0x0, offset=0x0, size=0x20), 0x1),
+            )
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -111,7 +119,16 @@ def test_recursive_create_return_value(
         ),
         contract: Account(
             storage={0: 0xD2571607E241ECF590ED94B12D87C94BABE36DB7},
-            code=bytes.fromhex("602060006000396001602060006000f00160005500"),
+            code=(
+                Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20)
+                + Op.SSTORE(
+                    key=0x0,
+                    value=Op.ADD(
+                        Op.CREATE(value=0x0, offset=0x0, size=0x20), 0x1
+                    ),
+                )
+                + Op.STOP
+            ),
         ),
         Address("0x09a35a6f6607eebc286c6b5194a213370bcadb30"): Account(
             storage={0: 0x18205DF1C43E9E29920725E96A362260AA5D3242},

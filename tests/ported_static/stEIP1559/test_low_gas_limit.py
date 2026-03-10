@@ -16,6 +16,7 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,7 +34,8 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.GAS_ALLOWANCE_EXCEEDED,
             {
                 Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
-                    storage={0: 24743}, code=bytes.fromhex("600260005500")
+                    storage={0: 24743},
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
                 )
             },
             id="case0",
@@ -44,7 +46,8 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
-                    storage={0: 2}, code=bytes.fromhex("600260005500")
+                    storage={0: 2},
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
                 )
             },
             id="case1",
@@ -54,7 +57,8 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
-                    storage={0: 24743}, code=bytes.fromhex("600260005500")
+                    storage={0: 24743},
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
                 )
             },
             id="case2",
@@ -64,7 +68,8 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INTRINSIC_GAS_TOO_LOW,
             {
                 Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
-                    storage={0: 24743}, code=bytes.fromhex("600260005500")
+                    storage={0: 24743},
+                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
                 )
             },
             id="case3",
@@ -98,7 +103,7 @@ def test_low_gas_limit(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("600260005500"),
+        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
         storage={0x0: 0x60A7},
     )
 

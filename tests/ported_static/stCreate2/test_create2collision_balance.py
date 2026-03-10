@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -40,7 +41,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6d6460016001556000526005601bf36000526000600e60126000f500",
             {
                 Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
-                    code=bytes.fromhex("6001600155")
+                    code=Op.SSTORE(key=0x1, value=0x1)
                 )
             },
         ),

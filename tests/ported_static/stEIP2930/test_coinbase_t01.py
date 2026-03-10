@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,9 +34,29 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x30873f83c35401e315e6e5994c012f1ee8119585"): Account(
                     storage={0: 6800},
-                    code=bytes.fromhex(
-                        "5a6000526000808080620f4240737704d8a022a1ba8f3539fc82c7d7fb065abc0df35af1505a6020526021602051600051030360005500"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(offset=0x0, value=Op.GAS)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0x7704D8A022A1BA8F3539FC82C7D7FB065ABC0DF3,
+                            value=0xF4240,
+                            args_offset=Op.DUP1,
+                            args_size=Op.DUP1,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(offset=0x20, value=Op.GAS)
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SUB(
+                            Op.SUB(
+                                Op.MLOAD(offset=0x0), Op.MLOAD(offset=0x20)
+                            ),
+                            0x21,
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -51,9 +72,29 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x30873f83c35401e315e6e5994c012f1ee8119585"): Account(
                     storage={0: 6800},
-                    code=bytes.fromhex(
-                        "5a6000526000808080620f4240737704d8a022a1ba8f3539fc82c7d7fb065abc0df35af1505a6020526021602051600051030360005500"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(offset=0x0, value=Op.GAS)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0x7704D8A022A1BA8F3539FC82C7D7FB065ABC0DF3,
+                            value=0xF4240,
+                            args_offset=Op.DUP1,
+                            args_size=Op.DUP1,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(offset=0x20, value=Op.GAS)
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SUB(
+                            Op.SUB(
+                                Op.MLOAD(offset=0x0), Op.MLOAD(offset=0x20)
+                            ),
+                            0x21,
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -69,9 +110,29 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x30873f83c35401e315e6e5994c012f1ee8119585"): Account(
                     storage={0: 6800},
-                    code=bytes.fromhex(
-                        "5a6000526000808080620f4240737704d8a022a1ba8f3539fc82c7d7fb065abc0df35af1505a6020526021602051600051030360005500"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(offset=0x0, value=Op.GAS)
+                    + Op.POP(
+                        Op.CALL(
+                            gas=Op.GAS,
+                            address=0x7704D8A022A1BA8F3539FC82C7D7FB065ABC0DF3,
+                            value=0xF4240,
+                            args_offset=Op.DUP1,
+                            args_size=Op.DUP1,
+                            ret_offset=Op.DUP1,
+                            ret_size=0x0,
+                        )
+                    )
+                    + Op.MSTORE(offset=0x20, value=Op.GAS)
+                    + Op.SSTORE(
+                        key=0x0,
+                        value=Op.SUB(
+                            Op.SUB(
+                                Op.MLOAD(offset=0x0), Op.MLOAD(offset=0x20)
+                            ),
+                            0x21,
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -102,9 +163,28 @@ def test_coinbase_t01(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
-        code=bytes.fromhex(
-            "5a6000526000808080620f4240737704d8a022a1ba8f3539fc82c7d7fb065abc0df35af1"  # noqa: E501
-            "505a6020526021602051600051030360005500"
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0x7704D8A022A1BA8F3539FC82C7D7FB065ABC0DF3,
+                    value=0xF4240,
+                    args_offset=Op.DUP1,
+                    args_size=Op.DUP1,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x20, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.SUB(
+                    Op.SUB(Op.MLOAD(offset=0x0), Op.MLOAD(offset=0x20)),
+                    0x21,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[coinbase] = Account(balance=0, nonce=1)

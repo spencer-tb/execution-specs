@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,15 +47,50 @@ def test_exp_empty(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a600052600c60000a6001555a600051036002555a6000526000600c0a6003555a600051"  # noqa: E501
-            "036004555a60005267ffffffffffffffff60000a6005555a600051036006555a6000526f"  # noqa: E501
-            "ffffffffffffffffffffffffffffffff60000a6007555a600051036008555a6000527fff"  # noqa: E501
-            "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60000a6009"  # noqa: E501
-            "555a60005103600a555a600052600067ffffffffffffffff0a600b555a60005103600c55"  # noqa: E501
-            "5a60005260006fffffffffffffffffffffffffffffffff0a600d555a60005103600e555a"  # noqa: E501
-            "60005260007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffff0a600f555a6000510360645500"
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.SSTORE(key=0x1, value=Op.EXP(0x0, 0xC))
+            + Op.SSTORE(key=0x2, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.SSTORE(key=0x3, value=Op.EXP(0xC, 0x0))
+            + Op.SSTORE(key=0x4, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.SSTORE(key=0x5, value=Op.EXP(0x0, 0xFFFFFFFFFFFFFFFF))
+            + Op.SSTORE(key=0x6, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x7,
+                value=Op.EXP(0x0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF),
+            )
+            + Op.SSTORE(key=0x8, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.EXP(
+                    0x0,
+                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                ),
+            )
+            + Op.SSTORE(key=0xA, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.SSTORE(key=0xB, value=Op.EXP(0xFFFFFFFFFFFFFFFF, 0x0))
+            + Op.SSTORE(key=0xC, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0xD,
+                value=Op.EXP(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, 0x0),
+            )
+            + Op.SSTORE(key=0xE, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0xF,
+                value=Op.EXP(
+                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -87,8 +123,66 @@ def test_exp_empty(
                 15: 1,
                 100: 22127,
             },
-            code=bytes.fromhex(
-                "5a600052600c60000a6001555a600051036002555a6000526000600c0a6003555a600051036004555a60005267ffffffffffffffff60000a6005555a600051036006555a6000526fffffffffffffffffffffffffffffffff60000a6007555a600051036008555a6000527fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60000a6009555a60005103600a555a600052600067ffffffffffffffff0a600b555a60005103600c555a60005260006fffffffffffffffffffffffffffffffff0a600d555a60005103600e555a60005260007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0a600f555a6000510360645500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.SSTORE(key=0x1, value=Op.EXP(0x0, 0xC))
+                + Op.SSTORE(
+                    key=0x2, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.SSTORE(key=0x3, value=Op.EXP(0xC, 0x0))
+                + Op.SSTORE(
+                    key=0x4, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.SSTORE(key=0x5, value=Op.EXP(0x0, 0xFFFFFFFFFFFFFFFF))
+                + Op.SSTORE(
+                    key=0x6, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x7,
+                    value=Op.EXP(0x0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF),
+                )
+                + Op.SSTORE(
+                    key=0x8, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.EXP(
+                        0x0,
+                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0xA, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.SSTORE(key=0xB, value=Op.EXP(0xFFFFFFFFFFFFFFFF, 0x0))
+                + Op.SSTORE(
+                    key=0xC, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0xD,
+                    value=Op.EXP(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, 0x0),
+                )
+                + Op.SSTORE(
+                    key=0xE, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0xF,
+                    value=Op.EXP(
+                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.STOP
             ),
         ),
     }

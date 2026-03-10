@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,18 +52,41 @@ def test_touch_to_empty_account_revert_paris(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000600073ba4d09eb64fddcec11d7587e1f51ac0b07c5069c617530f160"  # noqa: E501
-            "0055600160025500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x7530,
+                    address=0xBA4D09EB64FDDCEC11D7587E1F51AC0B07C5069C,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x2, value=0x1)
+            + Op.STOP
         ),
     )
     pre[callee] = Account(balance=10, nonce=0)
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600060007376fae819612a29489a1a43208613d8f8557b8898617530f160"  # noqa: E501
-            "015500"
+        code=(
+            Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=0x7530,
+                    address=0x76FAE819612A29489A1A43208613D8F8557B8898,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -81,13 +105,38 @@ def test_touch_to_empty_account_revert_paris(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "6000600060006000600073ba4d09eb64fddcec11d7587e1f51ac0b07c5069c617530f1600055600160025500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x7530,
+                        address=0xBA4D09EB64FDDCEC11D7587E1F51AC0B07C5069C,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x2, value=0x1)
+                + Op.STOP
             ),
         ),
         callee_1: Account(
-            code=bytes.fromhex(
-                "600060006000600060007376fae819612a29489a1a43208613d8f8557b8898617530f160015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=0x7530,
+                        address=0x76FAE819612A29489A1A43208613D8F8557B8898,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

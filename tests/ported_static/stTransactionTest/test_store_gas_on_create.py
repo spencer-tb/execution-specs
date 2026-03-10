@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,7 +47,11 @@ def test_store_gas_on_create(
     pre[coinbase] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("635a60fd556000526004601c6000f000"),
+        code=(
+            Op.MSTORE(offset=0x0, value=0x5A60FD55)
+            + Op.CREATE(value=0x0, offset=0x1C, size=0x4)
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -63,7 +68,11 @@ def test_store_gas_on_create(
 
     post = {
         coinbase: Account(
-            code=bytes.fromhex("635a60fd556000526004601c6000f000"),
+            code=(
+                Op.MSTORE(offset=0x0, value=0x5A60FD55)
+                + Op.CREATE(value=0x0, offset=0x1C, size=0x4)
+                + Op.STOP
+            ),
         ),
         Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(
             storage={253: 0x12F39},

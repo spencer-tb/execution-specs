@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,7 +47,14 @@ def test_eip2315_not_removed(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60045e005c60016000555d"),
+        code=(
+            Op.PUSH1[0x4]
+            + Op.MCOPY
+            + Op.STOP
+            + Op.TLOAD
+            + Op.SSTORE(key=0x0, value=0x1)
+            + Op.TSTORE
+        ),
     )
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
 
@@ -63,7 +71,16 @@ def test_eip2315_not_removed(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("60045e005c60016000555d")),
+        contract: Account(
+            code=(
+                Op.PUSH1[0x4]
+                + Op.MCOPY
+                + Op.STOP
+                + Op.TLOAD
+                + Op.SSTORE(key=0x0, value=0x1)
+                + Op.TSTORE
+            ),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

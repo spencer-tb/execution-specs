@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x99914055ed765ea48582acc6c8196d07835da7d7"): Account(
-                    code=bytes.fromhex(
-                        "7399914055ed765ea48582acc6c8196d07835da7d7317399914055ed765ea48582acc6c8196d07835da7d7317399914055ed765ea48582acc6c8196d07835da7d731a100"  # noqa: E501
+                    code=Op.LOG1(
+                        offset=Op.BALANCE(
+                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
+                        ),
+                        size=Op.BALANCE(
+                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
+                        ),
+                        topic_1=Op.BALANCE(
+                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +51,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x99914055ed765ea48582acc6c8196d07835da7d7"): Account(
-                    code=bytes.fromhex(
-                        "7399914055ed765ea48582acc6c8196d07835da7d7317399914055ed765ea48582acc6c8196d07835da7d7317399914055ed765ea48582acc6c8196d07835da7d731a100"  # noqa: E501
+                    code=Op.LOG1(
+                        offset=Op.BALANCE(
+                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
+                        ),
+                        size=Op.BALANCE(
+                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
+                        ),
+                        topic_1=Op.BALANCE(
+                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -75,9 +94,19 @@ def test_log1_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7399914055ed765ea48582acc6c8196d07835da7d7317399914055ed765ea48582acc6c8"  # noqa: E501
-            "196d07835da7d7317399914055ed765ea48582acc6c8196d07835da7d731a100"
+        code=(
+            Op.LOG1(
+                offset=Op.BALANCE(
+                    address=0x99914055ED765EA48582ACC6C8196D07835DA7D7,
+                ),
+                size=Op.BALANCE(
+                    address=0x99914055ED765EA48582ACC6C8196D07835DA7D7,
+                ),
+                topic_1=Op.BALANCE(
+                    address=0x99914055ED765EA48582ACC6C8196D07835DA7D7,
+                ),
+            )
+            + Op.STOP
         ),
     )
 

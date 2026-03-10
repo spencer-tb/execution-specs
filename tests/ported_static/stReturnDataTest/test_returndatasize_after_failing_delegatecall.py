@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,18 +49,24 @@ def test_returndatasize_after_failing_delegatecall(
         gas_limit=111669149696,
     )
 
-    pre[callee] = Account(
-        balance=0x6400000000,
-        nonce=0,
-        code=bytes.fromhex("fd"),
-    )
+    pre[callee] = Account(balance=0x6400000000, nonce=0, code=Op.REVERT)
     pre[callee_1] = Account(balance=0x1000000, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600073665521fd750490fd880ee369c267fca44ed8a078612710f4503d60"  # noqa: E501
-            "005500"
+        code=(
+            Op.POP(
+                Op.DELEGATECALL(
+                    gas=0x2710,
+                    address=0x665521FD750490FD880EE369C267FCA44ED8A078,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+            + Op.STOP
         ),
         storage={
             0x0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
@@ -80,10 +87,21 @@ def test_returndatasize_after_failing_delegatecall(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("fd")),
+        callee: Account(code=Op.REVERT),
         contract: Account(
-            code=bytes.fromhex(
-                "600060006000600073665521fd750490fd880ee369c267fca44ed8a078612710f4503d60005500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0x2710,
+                        address=0x665521FD750490FD880EE369C267FCA44ED8A078,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+                + Op.STOP
             ),
         ),
     }

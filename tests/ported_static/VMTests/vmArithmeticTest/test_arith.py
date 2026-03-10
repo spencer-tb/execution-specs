@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,9 +47,24 @@ def test_arith(
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex(
-            "600160019001600702600501600290046004906021900560170160030260059007600303"  # noqa: E501
-            "600960110a60005560086000f3"
+        code=(
+            Op.PUSH1[0x1]
+            + Op.PUSH1[0x1]
+            + Op.SWAP1
+            + Op.ADD(0x5, Op.MUL(0x7, Op.ADD))
+            + Op.PUSH1[0x2]
+            + Op.SWAP1
+            + Op.DIV
+            + Op.PUSH1[0x4]
+            + Op.SWAP1
+            + Op.PUSH1[0x21]
+            + Op.SWAP1
+            + Op.MUL(0x3, Op.ADD(0x17, Op.SDIV))
+            + Op.PUSH1[0x5]
+            + Op.SWAP1
+            + Op.SUB(0x3, Op.SMOD)
+            + Op.SSTORE(key=0x0, value=Op.EXP(0x11, 0x9))
+            + Op.RETURN(offset=0x0, size=0x8)
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
@@ -68,8 +84,24 @@ def test_arith(
     post = {
         contract: Account(
             storage={0: 0x1B9C636491},
-            code=bytes.fromhex(
-                "600160019001600702600501600290046004906021900560170160030260059007600303600960110a60005560086000f3"  # noqa: E501
+            code=(
+                Op.PUSH1[0x1]
+                + Op.PUSH1[0x1]
+                + Op.SWAP1
+                + Op.ADD(0x5, Op.MUL(0x7, Op.ADD))
+                + Op.PUSH1[0x2]
+                + Op.SWAP1
+                + Op.DIV
+                + Op.PUSH1[0x4]
+                + Op.SWAP1
+                + Op.PUSH1[0x21]
+                + Op.SWAP1
+                + Op.MUL(0x3, Op.ADD(0x17, Op.SDIV))
+                + Op.PUSH1[0x5]
+                + Op.SWAP1
+                + Op.SUB(0x3, Op.SMOD)
+                + Op.SSTORE(key=0x0, value=Op.EXP(0x11, 0x9))
+                + Op.RETURN(offset=0x0, size=0x8)
             ),
         ),
     }

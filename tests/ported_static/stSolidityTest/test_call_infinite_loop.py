@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,10 +49,46 @@ def test_call_infinite_loop(
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,
-        code=bytes.fromhex(
-            "60003560e060020a90048063296df0df1460295780634893d88a146035578063981a3165"  # noqa: E501
-            "14604157005b602f604d565b60006000f35b603b6062565b60006000f35b6047605a565b"  # noqa: E501
-            "60006000f35b5b600115605857604e565b565b60606062565b565b6068605a565b56"  # noqa: E501
+        code=(
+            Op.CALLDATALOAD(offset=0x0)
+            + Op.EXP(0x2, 0xE0)
+            + Op.SWAP1
+            + Op.DIV
+            + Op.JUMPI(pc=0x29, condition=Op.EQ(0x296DF0DF, Op.DUP1))
+            + Op.JUMPI(pc=0x35, condition=Op.EQ(0x4893D88A, Op.DUP1))
+            + Op.JUMPI(pc=0x41, condition=Op.EQ(0x981A3165, Op.DUP1))
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.PUSH1[0x2F]
+            + Op.JUMP(pc=0x4D)
+            + Op.JUMPDEST
+            + Op.RETURN(offset=0x0, size=0x0)
+            + Op.JUMPDEST
+            + Op.PUSH1[0x3B]
+            + Op.JUMP(pc=0x62)
+            + Op.JUMPDEST
+            + Op.RETURN(offset=0x0, size=0x0)
+            + Op.JUMPDEST
+            + Op.PUSH1[0x47]
+            + Op.JUMP(pc=0x5A)
+            + Op.JUMPDEST
+            + Op.RETURN(offset=0x0, size=0x0)
+            + Op.JUMPDEST
+            + Op.JUMPDEST
+            + Op.JUMPI(pc=0x58, condition=Op.ISZERO(0x1))
+            + Op.JUMP(pc=0x4E)
+            + Op.JUMPDEST
+            + Op.JUMP
+            + Op.JUMPDEST
+            + Op.PUSH1[0x60]
+            + Op.JUMP(pc=0x62)
+            + Op.JUMPDEST
+            + Op.JUMP
+            + Op.JUMPDEST
+            + Op.PUSH1[0x68]
+            + Op.JUMP(pc=0x5A)
+            + Op.JUMPDEST
+            + Op.JUMP
         ),
     )
 
@@ -69,8 +106,46 @@ def test_call_infinite_loop(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "60003560e060020a90048063296df0df1460295780634893d88a146035578063981a316514604157005b602f604d565b60006000f35b603b6062565b60006000f35b6047605a565b60006000f35b5b600115605857604e565b565b60606062565b565b6068605a565b56"  # noqa: E501
+            code=(
+                Op.CALLDATALOAD(offset=0x0)
+                + Op.EXP(0x2, 0xE0)
+                + Op.SWAP1
+                + Op.DIV
+                + Op.JUMPI(pc=0x29, condition=Op.EQ(0x296DF0DF, Op.DUP1))
+                + Op.JUMPI(pc=0x35, condition=Op.EQ(0x4893D88A, Op.DUP1))
+                + Op.JUMPI(pc=0x41, condition=Op.EQ(0x981A3165, Op.DUP1))
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.PUSH1[0x2F]
+                + Op.JUMP(pc=0x4D)
+                + Op.JUMPDEST
+                + Op.RETURN(offset=0x0, size=0x0)
+                + Op.JUMPDEST
+                + Op.PUSH1[0x3B]
+                + Op.JUMP(pc=0x62)
+                + Op.JUMPDEST
+                + Op.RETURN(offset=0x0, size=0x0)
+                + Op.JUMPDEST
+                + Op.PUSH1[0x47]
+                + Op.JUMP(pc=0x5A)
+                + Op.JUMPDEST
+                + Op.RETURN(offset=0x0, size=0x0)
+                + Op.JUMPDEST
+                + Op.JUMPDEST
+                + Op.JUMPI(pc=0x58, condition=Op.ISZERO(0x1))
+                + Op.JUMP(pc=0x4E)
+                + Op.JUMPDEST
+                + Op.JUMP
+                + Op.JUMPDEST
+                + Op.PUSH1[0x60]
+                + Op.JUMP(pc=0x62)
+                + Op.JUMPDEST
+                + Op.JUMP
+                + Op.JUMPDEST
+                + Op.PUSH1[0x68]
+                + Op.JUMP(pc=0x5A)
+                + Op.JUMPDEST
+                + Op.JUMP
             ),
         ),
     }

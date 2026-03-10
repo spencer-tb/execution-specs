@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,15 +51,25 @@ def test_delegatecall_sender_check(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6002600060406000737607cc240d38ccf9b55d1eeb1df0c187f8ec28c16207a120f46000"  # noqa: E501
-            "5500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.DELEGATECALL(
+                    gas=0x7A120,
+                    address=0x7607CC240D38CCF9B55D1EEB1DF0C187F8EC28C1,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x2,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=bytes.fromhex("3360015500"),
+        code=Op.SSTORE(key=0x1, value=Op.CALLER) + Op.STOP,
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -80,11 +91,22 @@ def test_delegatecall_sender_check(
                 0: 1,
                 1: 0xEBAF50DEBF10E08302FE4280C32DF010463CA297,
             },
-            code=bytes.fromhex(
-                "6002600060406000737607cc240d38ccf9b55d1eeb1df0c187f8ec28c16207a120f460005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.DELEGATECALL(
+                        gas=0x7A120,
+                        address=0x7607CC240D38CCF9B55D1EEB1DF0C187F8EC28C1,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x2,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
-        callee: Account(code=bytes.fromhex("3360015500")),
+        callee: Account(code=Op.SSTORE(key=0x1, value=Op.CALLER) + Op.STOP),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

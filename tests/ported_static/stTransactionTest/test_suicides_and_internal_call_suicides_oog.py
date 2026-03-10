@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,13 +48,28 @@ def test_suicides_and_internal_call_suicides_oog(
         gas_limit=1000000,
     )
 
-    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("6001ff00"))
+    pre[callee] = Account(
+        balance=0,
+        nonce=0,
+        code=Op.SELFDESTRUCT(address=0x1) + Op.STOP,
+    )
     pre[contract] = Account(
         balance=10,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000600060006001735f0d8cd21c9026a32a4e8d15257b1801458989f36155f0f150"  # noqa: E501
-            "6000ff00"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x55F0,
+                    address=0x5F0D8CD21C9026A32A4E8D15257B1801458989F3,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SELFDESTRUCT(address=0x0)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x5F5E100, nonce=0)
@@ -71,10 +87,22 @@ def test_suicides_and_internal_call_suicides_oog(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("6001ff00")),
+        callee: Account(code=Op.SELFDESTRUCT(address=0x1) + Op.STOP),
         contract: Account(
-            code=bytes.fromhex(
-                "60006000600060006001735f0d8cd21c9026a32a4e8d15257b1801458989f36155f0f1506000ff00"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x55F0,
+                        address=0x5F0D8CD21C9026A32A4E8D15257B1801458989F3,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SELFDESTRUCT(address=0x0)
+                + Op.STOP
             ),
         ),
     }

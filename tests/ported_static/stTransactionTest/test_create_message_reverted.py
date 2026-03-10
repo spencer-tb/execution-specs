@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,7 +49,11 @@ def test_create_message_reverted(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("64600c6000556000526005601b6000f000"),
+        code=(
+            Op.MSTORE(offset=0x0, value=0x600C600055)
+            + Op.CREATE(value=0x0, offset=0x1B, size=0x5)
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0x1C9C380, nonce=0)
 
@@ -66,7 +71,11 @@ def test_create_message_reverted(
 
     post = {
         contract: Account(
-            code=bytes.fromhex("64600c6000556000526005601b6000f000"),
+            code=(
+                Op.MSTORE(offset=0x0, value=0x600C600055)
+                + Op.CREATE(value=0x0, offset=0x1B, size=0x5)
+                + Op.STOP
+            ),
         ),
     }
 

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,7 +34,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0xd9cba08b7a9695800f57e226045176cf420ca0c1"): Account(
-                    code=bytes.fromhex("63ffffffff6000f300")
+                    code=Op.RETURN(offset=0x0, size=0xFFFFFFFF) + Op.STOP
                 )
             },
         ),
@@ -41,7 +42,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0xd9cba08b7a9695800f57e226045176cf420ca0c1"): Account(
-                    code=bytes.fromhex("63ffffffff6000f300")
+                    code=Op.RETURN(offset=0x0, size=0xFFFFFFFF) + Op.STOP
                 )
             },
         ),
@@ -73,7 +74,7 @@ def test_mload32bit_bound_return(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("63ffffffff6000f300"),
+        code=Op.RETURN(offset=0x0, size=0xFFFFFFFF) + Op.STOP,
     )
 
     tx = Transaction(

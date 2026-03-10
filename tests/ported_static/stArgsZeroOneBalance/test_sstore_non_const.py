@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x82d3d8be7168e697ed33f2a50810fa614393171e"): Account(
-                    code=bytes.fromhex(
-                        "7382d3d8be7168e697ed33f2a50810fa614393171e317382d3d8be7168e697ed33f2a50810fa614393171e315500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=Op.BALANCE(
+                            address=0x82D3D8BE7168E697ED33F2A50810FA614393171E
+                        ),
+                        value=Op.BALANCE(
+                            address=0x82D3D8BE7168E697ED33F2A50810FA614393171E
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -42,9 +49,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x82d3d8be7168e697ed33f2a50810fa614393171e"): Account(
                     storage={1: 1},
-                    code=bytes.fromhex(
-                        "7382d3d8be7168e697ed33f2a50810fa614393171e317382d3d8be7168e697ed33f2a50810fa614393171e315500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=Op.BALANCE(
+                            address=0x82D3D8BE7168E697ED33F2A50810FA614393171E
+                        ),
+                        value=Op.BALANCE(
+                            address=0x82D3D8BE7168E697ED33F2A50810FA614393171E
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -76,9 +89,16 @@ def test_sstore_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7382d3d8be7168e697ed33f2a50810fa614393171e317382d3d8be7168e697ed33f2a508"  # noqa: E501
-            "10fa614393171e315500"
+        code=(
+            Op.SSTORE(
+                key=Op.BALANCE(
+                    address=0x82D3D8BE7168E697ED33F2A50810FA614393171E
+                ),
+                value=Op.BALANCE(
+                    address=0x82D3D8BE7168E697ED33F2A50810FA614393171E,
+                ),
+            )
+            + Op.STOP
         ),
     )
 

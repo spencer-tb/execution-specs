@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,7 +49,7 @@ def test_refund_get_ether_back(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("600060015500"),
+        code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP,
         storage={0x1: 0x1},
     )
 
@@ -65,7 +66,7 @@ def test_refund_get_ether_back(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("600060015500")),
+        contract: Account(code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

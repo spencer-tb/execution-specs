@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,18 +52,26 @@ def test_returndatacopy_after_failing_callcode(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000600073665521fd750490fd880ee369c267fca44ed8a0786000f25060"  # noqa: E501
-            "20600060003e60005160005500"
+        code=(
+            Op.POP(
+                Op.CALLCODE(
+                    gas=0x0,
+                    address=0x665521FD750490FD880EE369C267FCA44ED8A078,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
         storage={0x0: 0xFFFFFFFFFFFF},
     )
     pre[callee] = Account(balance=0x10000000, nonce=0)
-    pre[callee_1] = Account(
-        balance=0x6400000000,
-        nonce=0,
-        code=bytes.fromhex("fd"),
-    )
+    pre[callee_1] = Account(balance=0x6400000000, nonce=0, code=Op.REVERT)
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
@@ -80,11 +89,24 @@ def test_returndatacopy_after_failing_callcode(
     post = {
         contract: Account(
             storage={0: 0xFFFFFFFFFFFF},
-            code=bytes.fromhex(
-                "6000600060006000600073665521fd750490fd880ee369c267fca44ed8a0786000f2506020600060003e60005160005500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALLCODE(
+                        gas=0x0,
+                        address=0x665521FD750490FD880EE369C267FCA44ED8A078,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
-        callee_1: Account(code=bytes.fromhex("fd")),
+        callee_1: Account(code=Op.REVERT),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,7 +48,12 @@ def test_calldatacopy_dejavu(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60ff60ff630fffffff630fffffff37"),
+        code=(
+            Op.PUSH1[0xFF]
+            + Op.CALLDATACOPY(
+                dest_offset=0xFFFFFFF, offset=0xFFFFFFF, size=0xFF
+            )
+        ),
     )
 
     tx = Transaction(
@@ -64,7 +70,14 @@ def test_calldatacopy_dejavu(
 
     post = {
         contract: Account(
-            code=bytes.fromhex("60ff60ff630fffffff630fffffff37"),
+            code=(
+                Op.PUSH1[0xFF]
+                + Op.CALLDATACOPY(
+                    dest_offset=0xFFFFFFF,
+                    offset=0xFFFFFFF,
+                    size=0xFF,
+                )
+            ),
         ),
     }
 

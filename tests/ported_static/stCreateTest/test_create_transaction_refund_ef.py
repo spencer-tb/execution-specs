@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,7 +49,7 @@ def test_create_transaction_refund_ef(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("6000805500"),
+        code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP,
         storage={0x0: 0x1},
     )
     pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
@@ -68,7 +69,10 @@ def test_create_transaction_refund_ef(
     )
 
     post = {
-        contract: Account(storage={0: 1}, code=bytes.fromhex("6000805500")),
+        contract: Account(
+            storage={0: 1},
+            code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP,
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

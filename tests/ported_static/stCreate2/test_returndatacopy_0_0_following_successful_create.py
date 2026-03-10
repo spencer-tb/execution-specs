@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,21 @@ def test_returndatacopy_0_0_following_successful_create(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600780601f60003960006000f5506000600060003e60006000550000fe6001600055"  # noqa: E501
-            "0000"
+        code=(
+            Op.PUSH1[0x0]
+            + Op.PUSH1[0x7]
+            + Op.CODECOPY(dest_offset=0x0, offset=0x1F, size=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x0]
+            + Op.POP(Op.CREATE2)
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x0)
+            + Op.SSTORE(key=0x0, value=0x0)
+            + Op.STOP
+            + Op.STOP
+            + Op.INVALID
+            + Op.SSTORE(key=0x0, value=0x1)
+            + Op.STOP
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
@@ -71,8 +84,21 @@ def test_returndatacopy_0_0_following_successful_create(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "6000600780601f60003960006000f5506000600060003e60006000550000fe60016000550000"  # noqa: E501
+            code=(
+                Op.PUSH1[0x0]
+                + Op.PUSH1[0x7]
+                + Op.CODECOPY(dest_offset=0x0, offset=0x1F, size=Op.DUP1)
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0x0]
+                + Op.POP(Op.CREATE2)
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x0)
+                + Op.SSTORE(key=0x0, value=0x0)
+                + Op.STOP
+                + Op.STOP
+                + Op.INVALID
+                + Op.SSTORE(key=0x0, value=0x1)
+                + Op.STOP
+                + Op.STOP
             ),
         ),
         Address("0x75579e0e990d8361c48b86c1b57686589df3264a"): Account(

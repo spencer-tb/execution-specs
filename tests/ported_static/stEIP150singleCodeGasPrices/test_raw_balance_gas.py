@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,8 +49,13 @@ def test_raw_balance_gas(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a60005273faa10b404ab607779993c016cd5da73ae1f29d7e31505a6000510360015500"  # noqa: E501
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.POP(
+                Op.BALANCE(address=0xFAA10B404AB607779993C016CD5DA73AE1F29D7E),
+            )
+            + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -69,8 +75,17 @@ def test_raw_balance_gas(
     post = {
         contract: Account(
             storage={1: 116},
-            code=bytes.fromhex(
-                "5a60005273faa10b404ab607779993c016cd5da73ae1f29d7e31505a6000510360015500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.POP(
+                    Op.BALANCE(
+                        address=0xFAA10B404AB607779993C016CD5DA73AE1F29D7E
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.STOP
             ),
         ),
     }

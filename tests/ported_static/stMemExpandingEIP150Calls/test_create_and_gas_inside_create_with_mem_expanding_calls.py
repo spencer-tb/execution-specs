@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,8 +51,13 @@ def test_create_and_gas_inside_create_with_mem_expanding_calls(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a600a55635a60fd556000526004601c6000f0600b555a600955"
+        code=(
+            Op.SSTORE(key=0xA, value=Op.GAS)
+            + Op.MSTORE(offset=0x0, value=0x5A60FD55)
+            + Op.SSTORE(
+                key=0xB, value=Op.CREATE(value=0x0, offset=0x1C, size=0x4)
+            )
+            + Op.SSTORE(key=0x9, value=Op.GAS)
         ),
     )
 
@@ -74,8 +80,14 @@ def test_create_and_gas_inside_create_with_mem_expanding_calls(
                 10: 0x8D5B6,
                 11: 0xF1ECF98489FA9ED60A664FC4998DB699CFA39D40,
             },
-            code=bytes.fromhex(
-                "5a600a55635a60fd556000526004601c6000f0600b555a600955"
+            code=(
+                Op.SSTORE(key=0xA, value=Op.GAS)
+                + Op.MSTORE(offset=0x0, value=0x5A60FD55)
+                + Op.SSTORE(
+                    key=0xB,
+                    value=Op.CREATE(value=0x0, offset=0x1C, size=0x4),
+                )
+                + Op.SSTORE(key=0x9, value=Op.GAS)
             ),
         ),
         Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(

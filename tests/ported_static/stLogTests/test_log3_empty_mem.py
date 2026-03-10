@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,15 +48,31 @@ def test_log3_empty_mem(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000600060006017737314cc13d5f8cf58db63f7c590a16c8ca956b2496103e8f160"  # noqa: E501
-            "005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x3E8,
+                    address=0x7314CC13D5F8CF58DB63F7C590A16C8CA956B249,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60006000600060006000a300"),
+        code=(
+            Op.LOG3(
+                offset=0x0, size=0x0, topic_1=0x0, topic_2=0x0, topic_3=0x0
+            )
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -74,11 +91,34 @@ def test_log3_empty_mem(
     post = {
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "60006000600060006017737314cc13d5f8cf58db63f7c590a16c8ca956b2496103e8f160005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x3E8,
+                        address=0x7314CC13D5F8CF58DB63F7C590A16C8CA956B249,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
-        callee: Account(code=bytes.fromhex("60006000600060006000a300")),
+        callee: Account(
+            code=(
+                Op.LOG3(
+                    offset=0x0,
+                    size=0x0,
+                    topic_1=0x0,
+                    topic_2=0x0,
+                    topic_3=0x0,
+                )
+                + Op.STOP
+            ),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

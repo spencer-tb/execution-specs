@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x14f6d924bbf6563dd087359472133ffe566e60b1"): Account(
-                    code=bytes.fromhex(
-                        "7314f6d924bbf6563dd087359472133ffe566e60b1315460035500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x3,
+                        value=Op.SLOAD(
+                            key=Op.BALANCE(
+                                address=0x14F6D924BBF6563DD087359472133FFE566E60B1  # noqa: E501
+                            )
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +48,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x14f6d924bbf6563dd087359472133ffe566e60b1"): Account(
-                    code=bytes.fromhex(
-                        "7314f6d924bbf6563dd087359472133ffe566e60b1315460035500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x3,
+                        value=Op.SLOAD(
+                            key=Op.BALANCE(
+                                address=0x14F6D924BBF6563DD087359472133FFE566E60B1  # noqa: E501
+                            )
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -74,8 +87,16 @@ def test_sload_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7314f6d924bbf6563dd087359472133ffe566e60b1315460035500"
+        code=(
+            Op.SSTORE(
+                key=0x3,
+                value=Op.SLOAD(
+                    key=Op.BALANCE(
+                        address=0x14F6D924BBF6563DD087359472133FFE566E60B1,
+                    ),
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,19 +48,41 @@ def test_random_statetest361(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "41417ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7f"  # noqa: E501
-            "00000000000000000000000100000000000000000000000000000000000000007fffffff"  # noqa: E501
-            "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7f000000000000"  # noqa: E501
-            "00000000000100000000000000000000000000000000000000007fffffffffffffffffff"  # noqa: E501
-            "ffffffffffffffffffffffffffffffffffffffffffffff066f9e9092673a8f430b6ba115"  # noqa: E501
-            "209018165560005155"
+        code=(
+            Op.COINBASE
+            + Op.COINBASE
+            + Op.PUSH32[
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+            ]
+            + Op.PUSH32[0x10000000000000000000000000000000000000000]
+            + Op.PUSH32[
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+            ]
+            + Op.MOD(
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                Op.PUSH32[0x10000000000000000000000000000000000000000],
+            )
+            + Op.SSTORE(
+                key=Op.MLOAD(offset=0x0),
+                value=0x9E9092673A8F430B6BA1152090181655,
+            )
         ),
     )
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
 
     tx = Transaction(
@@ -84,12 +107,41 @@ def test_random_statetest361(
     post = {
         contract: Account(
             storage={0: 0x9E9092673A8F430B6BA1152090181655},
-            code=bytes.fromhex(
-                "41417ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7f00000000000000000000000100000000000000000000000000000000000000007ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe7f00000000000000000000000100000000000000000000000000000000000000007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff066f9e9092673a8f430b6ba115209018165560005155"  # noqa: E501
+            code=(
+                Op.COINBASE
+                + Op.COINBASE
+                + Op.PUSH32[
+                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+                ]
+                + Op.PUSH32[0x10000000000000000000000000000000000000000]
+                + Op.PUSH32[
+                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+                ]
+                + Op.MOD(
+                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    Op.PUSH32[0x10000000000000000000000000000000000000000],
+                )
+                + Op.SSTORE(
+                    key=Op.MLOAD(offset=0x0),
+                    value=0x9E9092673A8F430B6BA1152090181655,
+                )
             ),
         ),
         coinbase: Account(
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
     }
 

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,16 +48,29 @@ def test_make_money(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7b601080600c6000396000f2006000355415600957006020356000355560005260006000"  # noqa: E501
-            "60006000601773802edccf6cde9162a05fd89cdfcd8dc4a230b9787fffffffffffffffff"  # noqa: E501
-            "ffffffffffffffffffffffffffffffffffffffffffffffecf100"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x601080600C6000396000F20060003554156009570060203560003555,  # noqa: E501
+            )
+            + Op.CALL(
+                gas=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEC,  # noqa: E501
+                address=0x802EDCCF6CDE9162A05FD89CDFCD8DC4A230B978,
+                value=0x17,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("600160015532600255"),
+        code=(
+            Op.SSTORE(key=0x1, value=0x1) + Op.SSTORE(key=0x2, value=Op.ORIGIN)
+        ),
     )
     pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
 
@@ -74,8 +88,21 @@ def test_make_money(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "7b601080600c6000396000f200600035541560095700602035600035556000526000600060006000601773802edccf6cde9162a05fd89cdfcd8dc4a230b9787fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffecf100"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x601080600C6000396000F20060003554156009570060203560003555,  # noqa: E501
+                )
+                + Op.CALL(
+                    gas=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEC,  # noqa: E501
+                    address=0x802EDCCF6CDE9162A05FD89CDFCD8DC4A230B978,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
         callee: Account(
@@ -83,7 +110,10 @@ def test_make_money(
                 1: 1,
                 2: 0xC4A2CA1058DF329E5DA4755F9921DDAF05CBAA06,
             },
-            code=bytes.fromhex("600160015532600255"),
+            code=(
+                Op.SSTORE(key=0x1, value=0x1)
+                + Op.SSTORE(key=0x2, value=Op.ORIGIN)
+            ),
         ),
     }
 

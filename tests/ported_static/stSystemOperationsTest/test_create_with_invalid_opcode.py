@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,16 @@ def test_create_with_invalid_opcode(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("444242424245434253f0"),
+        code=(
+            Op.PREVRANDAO
+            + Op.TIMESTAMP
+            + Op.TIMESTAMP
+            + Op.TIMESTAMP
+            + Op.TIMESTAMP
+            + Op.GASLIMIT
+            + Op.MSTORE8(offset=Op.TIMESTAMP, value=Op.NUMBER)
+            + Op.CREATE
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -66,7 +76,18 @@ def test_create_with_invalid_opcode(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("444242424245434253f0")),
+        contract: Account(
+            code=(
+                Op.PREVRANDAO
+                + Op.TIMESTAMP
+                + Op.TIMESTAMP
+                + Op.TIMESTAMP
+                + Op.TIMESTAMP
+                + Op.GASLIMIT
+                + Op.MSTORE8(offset=Op.TIMESTAMP, value=Op.NUMBER)
+                + Op.CREATE
+            ),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

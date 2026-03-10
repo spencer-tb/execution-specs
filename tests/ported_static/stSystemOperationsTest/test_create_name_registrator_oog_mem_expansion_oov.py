@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,20 @@ def test_create_name_registrator_oog_mem_expansion_oov(
     pre[contract] = Account(
         balance=0x2710,
         nonce=0,
-        code=bytes.fromhex(
-            "7c601080600c6000396000f3006000355415600957005b602035600035556000526affff"  # noqa: E501
-            "ffffffffffffffffff6003612af8f060005500"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x601080600C6000396000F3006000355415600957005B60203560003555,  # noqa: E501
+            )
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.CREATE(
+                    value=0x2AF8,
+                    offset=0x3,
+                    size=0xFFFFFFFFFFFFFFFFFFFFFF,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -70,8 +82,20 @@ def test_create_name_registrator_oog_mem_expansion_oov(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "7c601080600c6000396000f3006000355415600957005b602035600035556000526affffffffffffffffffffff6003612af8f060005500"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x601080600C6000396000F3006000355415600957005B60203560003555,  # noqa: E501
+                )
+                + Op.SSTORE(
+                    key=0x0,
+                    value=Op.CREATE(
+                        value=0x2AF8,
+                        offset=0x3,
+                        size=0xFFFFFFFFFFFFFFFFFFFFFF,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

@@ -17,6 +17,7 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,12 +52,12 @@ def test_transaction_colliding_with_non_empty_account_calls(
     pre[sender] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("6000600155"),
+        code=Op.SSTORE(key=0x1, value=0x0),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("6000600155"),
+        code=Op.SSTORE(key=0x1, value=0x0),
     )
     pre[coinbase] = Account(balance=0, nonce=1)
 
@@ -74,8 +75,8 @@ def test_transaction_colliding_with_non_empty_account_calls(
     )
 
     post = {
-        sender: Account(code=bytes.fromhex("6000600155")),
-        contract: Account(code=bytes.fromhex("6000600155")),
+        sender: Account(code=Op.SSTORE(key=0x1, value=0x0)),
+        contract: Account(code=Op.SSTORE(key=0x1, value=0x0)),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

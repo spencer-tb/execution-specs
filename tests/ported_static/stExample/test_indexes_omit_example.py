@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,7 +48,7 @@ def test_indexes_omit_example(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("600160010160005500"),
+        code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)) + Op.STOP,
     )
     pre[coinbase] = Account(balance=0, nonce=1)
 
@@ -66,7 +67,7 @@ def test_indexes_omit_example(
     post = {
         contract: Account(
             storage={0: 2},
-            code=bytes.fromhex("600160010160005500"),
+            code=Op.SSTORE(key=0x0, value=Op.ADD(0x1, 0x1)) + Op.STOP,
         ),
     }
 

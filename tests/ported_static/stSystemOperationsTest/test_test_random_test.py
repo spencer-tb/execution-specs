@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,7 +49,24 @@ def test_test_random_test(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("424443444243434383f0155af055"),
+        code=(
+            Op.TIMESTAMP
+            + Op.PREVRANDAO
+            + Op.NUMBER
+            + Op.PREVRANDAO
+            + Op.SSTORE(
+                key=Op.CREATE(
+                    value=Op.GAS,
+                    offset=Op.ISZERO(
+                        Op.CREATE(
+                            value=Op.DUP4, offset=Op.NUMBER, size=Op.NUMBER
+                        ),
+                    ),
+                    size=Op.NUMBER,
+                ),
+                value=Op.TIMESTAMP,
+            )
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -67,7 +85,26 @@ def test_test_random_test(
     post = {
         contract: Account(
             storage={0xEBCCE5F60530275EE9318CE1EFF9E4BFEE810172: 1000},
-            code=bytes.fromhex("424443444243434383f0155af055"),
+            code=(
+                Op.TIMESTAMP
+                + Op.PREVRANDAO
+                + Op.NUMBER
+                + Op.PREVRANDAO
+                + Op.SSTORE(
+                    key=Op.CREATE(
+                        value=Op.GAS,
+                        offset=Op.ISZERO(
+                            Op.CREATE(
+                                value=Op.DUP4,
+                                offset=Op.NUMBER,
+                                size=Op.NUMBER,
+                            ),
+                        ),
+                        size=Op.NUMBER,
+                    ),
+                    value=Op.TIMESTAMP,
+                )
+            ),
         ),
     }
 

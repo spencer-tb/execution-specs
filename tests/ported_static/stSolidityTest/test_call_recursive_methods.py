@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,11 +50,46 @@ def test_call_recursive_methods(
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,
-        code=bytes.fromhex(
-            "7c0100000000000000000000000000000000000000000000000000000000600035046329"  # noqa: E501
-            "6df0df811460415780634893d88a14604d578063981a316514605957005b60476065565b"  # noqa: E501
-            "60006000f35b6053607a565b60006000f35b605f6072565b60006000f35b5b6001156070"  # noqa: E501
-            "576066565b565b6078607a565b565b60806072565b56"
+        code=(
+            Op.DIV(
+                Op.CALLDATALOAD(offset=0x0),
+                0x100000000000000000000000000000000000000000000000000000000,
+            )
+            + Op.JUMPI(pc=0x41, condition=Op.EQ(Op.DUP2, 0x296DF0DF))
+            + Op.JUMPI(pc=0x4D, condition=Op.EQ(0x4893D88A, Op.DUP1))
+            + Op.JUMPI(pc=0x59, condition=Op.EQ(0x981A3165, Op.DUP1))
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.PUSH1[0x47]
+            + Op.JUMP(pc=0x65)
+            + Op.JUMPDEST
+            + Op.RETURN(offset=0x0, size=0x0)
+            + Op.JUMPDEST
+            + Op.PUSH1[0x53]
+            + Op.JUMP(pc=0x7A)
+            + Op.JUMPDEST
+            + Op.RETURN(offset=0x0, size=0x0)
+            + Op.JUMPDEST
+            + Op.PUSH1[0x5F]
+            + Op.JUMP(pc=0x72)
+            + Op.JUMPDEST
+            + Op.RETURN(offset=0x0, size=0x0)
+            + Op.JUMPDEST
+            + Op.JUMPDEST
+            + Op.JUMPI(pc=0x70, condition=Op.ISZERO(0x1))
+            + Op.JUMP(pc=0x66)
+            + Op.JUMPDEST
+            + Op.JUMP
+            + Op.JUMPDEST
+            + Op.PUSH1[0x78]
+            + Op.JUMP(pc=0x7A)
+            + Op.JUMPDEST
+            + Op.JUMP
+            + Op.JUMPDEST
+            + Op.PUSH1[0x80]
+            + Op.JUMP(pc=0x72)
+            + Op.JUMPDEST
+            + Op.JUMP
         ),
     )
     pre[coinbase] = Account(balance=0, nonce=1)
@@ -72,8 +108,46 @@ def test_call_recursive_methods(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "7c01000000000000000000000000000000000000000000000000000000006000350463296df0df811460415780634893d88a14604d578063981a316514605957005b60476065565b60006000f35b6053607a565b60006000f35b605f6072565b60006000f35b5b6001156070576066565b565b6078607a565b565b60806072565b56"  # noqa: E501
+            code=(
+                Op.DIV(
+                    Op.CALLDATALOAD(offset=0x0),
+                    0x100000000000000000000000000000000000000000000000000000000,  # noqa: E501
+                )
+                + Op.JUMPI(pc=0x41, condition=Op.EQ(Op.DUP2, 0x296DF0DF))
+                + Op.JUMPI(pc=0x4D, condition=Op.EQ(0x4893D88A, Op.DUP1))
+                + Op.JUMPI(pc=0x59, condition=Op.EQ(0x981A3165, Op.DUP1))
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.PUSH1[0x47]
+                + Op.JUMP(pc=0x65)
+                + Op.JUMPDEST
+                + Op.RETURN(offset=0x0, size=0x0)
+                + Op.JUMPDEST
+                + Op.PUSH1[0x53]
+                + Op.JUMP(pc=0x7A)
+                + Op.JUMPDEST
+                + Op.RETURN(offset=0x0, size=0x0)
+                + Op.JUMPDEST
+                + Op.PUSH1[0x5F]
+                + Op.JUMP(pc=0x72)
+                + Op.JUMPDEST
+                + Op.RETURN(offset=0x0, size=0x0)
+                + Op.JUMPDEST
+                + Op.JUMPDEST
+                + Op.JUMPI(pc=0x70, condition=Op.ISZERO(0x1))
+                + Op.JUMP(pc=0x66)
+                + Op.JUMPDEST
+                + Op.JUMP
+                + Op.JUMPDEST
+                + Op.PUSH1[0x78]
+                + Op.JUMP(pc=0x7A)
+                + Op.JUMPDEST
+                + Op.JUMP
+                + Op.JUMPDEST
+                + Op.PUSH1[0x80]
+                + Op.JUMP(pc=0x72)
+                + Op.JUMPDEST
+                + Op.JUMP
             ),
         ),
     }

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,16 +48,33 @@ def test_revert_in_delegate_call(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=bytes.fromhex(
-            "604060006040600073c3ecfe24c185ad3c946ebff4624131e8af5220a261c350f4600055"  # noqa: E501
-            "3d60015560206000603f3e603f5160025500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0xC3ECFE24C185AD3C946EBFF4624131E8AF5220A2,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.RETURNDATASIZE)
+            + Op.RETURNDATACOPY(dest_offset=0x3F, offset=0x0, size=0x20)
+            + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x3F))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x5F5E100, nonce=0)
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("600a60205260206020fd00"),
+        code=(
+            Op.MSTORE(offset=0x20, value=0xA)
+            + Op.REVERT(offset=0x20, size=0x20)
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -74,11 +92,31 @@ def test_revert_in_delegate_call(
     post = {
         contract: Account(
             storage={1: 32, 2: 10},
-            code=bytes.fromhex(
-                "604060006040600073c3ecfe24c185ad3c946ebff4624131e8af5220a261c350f46000553d60015560206000603f3e603f5160025500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0xC3ECFE24C185AD3C946EBFF4624131E8AF5220A2,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=Op.RETURNDATASIZE)
+                + Op.RETURNDATACOPY(dest_offset=0x3F, offset=0x0, size=0x20)
+                + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x3F))
+                + Op.STOP
             ),
         ),
-        callee: Account(code=bytes.fromhex("600a60205260206020fd00")),
+        callee: Account(
+            code=(
+                Op.MSTORE(offset=0x20, value=0xA)
+                + Op.REVERT(offset=0x20, size=0x20)
+                + Op.STOP
+            ),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,13 +47,24 @@ def test_call_oog_additional_gas_costs2(
         gas_limit=3000000000,
     )
 
-    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("6000"))
+    pre[callee] = Account(balance=0, nonce=0, code=Op.PUSH1[0x0])
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "604060006040600060017389cd1cb7ad11c6949bec0c8c7533dc073960c54f611770f160"  # noqa: E501
-            "005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x1770,
+                    address=0x89CD1CB7AD11C6949BEC0C8C7533DC073960C54F,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
         storage={0x0: 0x2},
     )
@@ -72,11 +84,23 @@ def test_call_oog_additional_gas_costs2(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("6000")),
+        callee: Account(code=Op.PUSH1[0x0]),
         contract: Account(
             storage={0: 2},
-            code=bytes.fromhex(
-                "604060006040600060017389cd1cb7ad11c6949bec0c8c7533dc073960c54f611770f160005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x1770,
+                        address=0x89CD1CB7AD11C6949BEC0C8C7533DC073960C54F,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

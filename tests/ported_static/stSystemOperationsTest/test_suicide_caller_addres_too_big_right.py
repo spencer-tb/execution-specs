@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,8 +50,12 @@ def test_suicide_caller_addres_too_big_right(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "3360005574a94f5374fce5edbc8e2a8697c15331677e6ebf0baaff00"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.CALLER)
+            + Op.SELFDESTRUCT(
+                address=0xA94F5374FCE5EDBC8E2A8697C15331677E6EBF0BAA
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -70,8 +75,12 @@ def test_suicide_caller_addres_too_big_right(
     post = {
         contract: Account(
             storage={0: 0xA94F5374FCE5EDBC8E2A8697C15331677E6EBF0B},
-            code=bytes.fromhex(
-                "3360005574a94f5374fce5edbc8e2a8697c15331677e6ebf0baaff00"
+            code=(
+                Op.SSTORE(key=0x0, value=Op.CALLER)
+                + Op.SELFDESTRUCT(
+                    address=0xA94F5374FCE5EDBC8E2A8697C15331677E6EBF0BAA,
+                )
+                + Op.STOP
             ),
         ),
     }

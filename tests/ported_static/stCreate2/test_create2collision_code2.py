@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -53,7 +54,7 @@ def test_create2collision_code2(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    pre[contract] = Account(balance=0, nonce=1, code=bytes.fromhex("010203"))
+    pre[contract] = Account(balance=0, nonce=1, code=Op.SUB(Op.MUL, Op.ADD))
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -70,7 +71,7 @@ def test_create2collision_code2(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("010203")),
+        contract: Account(code=Op.SUB(Op.MUL, Op.ADD)),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

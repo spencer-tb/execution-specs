@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,17 +52,48 @@ def test_call_recursive_bomb_pre_call(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "600160005401600055600060006000600060003062036b005a03f160015500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=Op.SUB(Op.GAS, 0x36B00),
+                    address=Op.ADDRESS,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000601773bad304eb96065b2a98b57a48a06ae28d285a71b5620186a0f1"  # noqa: E501
-            "5060006000600060006017731b3f200856856edc2e98efcd637775c6e341e3c06707ffff"  # noqa: E501
-            "fffffffffff100"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x186A0,
+                    address=0xBAD304EB96065B2A98B57A48A06AE28D285A71B5,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.CALL(
+                gas=0x7FFFFFFFFFFFFFF,
+                address=0x1B3F200856856EDC2E98EFCD637775C6E341E3C0,
+                value=0x17,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
@@ -81,13 +113,46 @@ def test_call_recursive_bomb_pre_call(
     post = {
         callee: Account(
             storage={0: 1024, 1: 1},
-            code=bytes.fromhex(
-                "600160005401600055600060006000600060003062036b005a03f160015500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=Op.SUB(Op.GAS, 0x36B00),
+                        address=Op.ADDRESS,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "6000600060006000601773bad304eb96065b2a98b57a48a06ae28d285a71b5620186a0f15060006000600060006017731b3f200856856edc2e98efcd637775c6e341e3c06707fffffffffffffff100"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x186A0,
+                        address=0xBAD304EB96065B2A98B57A48A06AE28D285A71B5,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.CALL(
+                    gas=0x7FFFFFFFFFFFFFF,
+                    address=0x1B3F200856856EDC2E98EFCD637775C6E341E3C0,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
     }

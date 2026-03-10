@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,14 +51,40 @@ def test_call_and_callcode_consume_more_gas_then_transaction_has_with_mem_expand
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a60085560ff60ff60ff60ff600073a1f6e75a455896613053d45331763a07f471896962"  # noqa: E501
-            "0927c0f160095560ff60ff60ff60ff600073a1f6e75a455896613053d45331763a07f471"  # noqa: E501
-            "8969620927c0f2600a55"
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.CALL(
+                    gas=0x927C0,
+                    address=0xA1F6E75A455896613053D45331763A07F4718969,
+                    value=0x0,
+                    args_offset=0xFF,
+                    args_size=0xFF,
+                    ret_offset=0xFF,
+                    ret_size=0xFF,
+                ),
+            )
+            + Op.SSTORE(
+                key=0xA,
+                value=Op.CALLCODE(
+                    gas=0x927C0,
+                    address=0xA1F6E75A455896613053D45331763A07F4718969,
+                    value=0x0,
+                    args_offset=0xFF,
+                    args_size=0xFF,
+                    ret_offset=0xFF,
+                    ret_size=0xFF,
+                ),
+            )
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
-    pre[callee] = Account(balance=0, nonce=0, code=bytes.fromhex("6012600055"))
+    pre[callee] = Account(
+        balance=0,
+        nonce=0,
+        code=Op.SSTORE(key=0x0, value=0x12),
+    )
 
     tx = Transaction(
         secret_key=Hash(
@@ -74,11 +101,35 @@ def test_call_and_callcode_consume_more_gas_then_transaction_has_with_mem_expand
     post = {
         contract: Account(
             storage={0: 18, 8: 0x8D5B6, 9: 1, 10: 1},
-            code=bytes.fromhex(
-                "5a60085560ff60ff60ff60ff600073a1f6e75a455896613053d45331763a07f4718969620927c0f160095560ff60ff60ff60ff600073a1f6e75a455896613053d45331763a07f4718969620927c0f2600a55"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.CALL(
+                        gas=0x927C0,
+                        address=0xA1F6E75A455896613053D45331763A07F4718969,
+                        value=0x0,
+                        args_offset=0xFF,
+                        args_size=0xFF,
+                        ret_offset=0xFF,
+                        ret_size=0xFF,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0xA,
+                    value=Op.CALLCODE(
+                        gas=0x927C0,
+                        address=0xA1F6E75A455896613053D45331763A07F4718969,
+                        value=0x0,
+                        args_offset=0xFF,
+                        args_size=0xFF,
+                        ret_offset=0xFF,
+                        ret_size=0xFF,
+                    ),
+                )
             ),
         ),
-        callee: Account(storage={0: 18}, code=bytes.fromhex("6012600055")),
+        callee: Account(storage={0: 18}, code=Op.SSTORE(key=0x0, value=0x12)),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

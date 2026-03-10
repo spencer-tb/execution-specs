@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,18 +34,42 @@ REFERENCE_SPEC_VERSION = "N/A"
             460000,
             {
                 Address("0x93a599bde9a3b6390afdb06952aa5ec0b8c44f3b"): Account(
-                    code=bytes.fromhex("600c60015560016000fd600d60035500")
+                    code=Op.SSTORE(key=0x1, value=0xC)
+                    + Op.REVERT(offset=0x0, size=0x1)
+                    + Op.SSTORE(key=0x3, value=0xD)
+                    + Op.STOP
                 ),
                 Address("0xceb48d108c874b5b014acdd1a2466d65a3d01de6"): Account(
                     storage={2: 14},
-                    code=bytes.fromhex(
-                        "600060006000600060007393a599bde9a3b6390afdb06952aa5ec0b8c44f3b61c350f1600055600e60025500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=0xC350,
+                            address=0x93A599BDE9A3B6390AFDB06952AA5EC0B8C44F3B,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
+                    )
+                    + Op.SSTORE(key=0x2, value=0xE)
+                    + Op.STOP,
                 ),
                 Address("0xf94d87faf19d8c731e70e1b0a25f9668718f6e17"): Account(
-                    code=bytes.fromhex(
-                        "6000600060006000600060003561ea60f1600a5500"
+                    code=Op.SSTORE(
+                        key=0xA,
+                        value=Op.CALL(
+                            gas=0xEA60,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
                     )
+                    + Op.STOP
                 ),
             },
         ),
@@ -52,17 +77,41 @@ REFERENCE_SPEC_VERSION = "N/A"
             62912,
             {
                 Address("0x93a599bde9a3b6390afdb06952aa5ec0b8c44f3b"): Account(
-                    code=bytes.fromhex("600c60015560016000fd600d60035500")
+                    code=Op.SSTORE(key=0x1, value=0xC)
+                    + Op.REVERT(offset=0x0, size=0x1)
+                    + Op.SSTORE(key=0x3, value=0xD)
+                    + Op.STOP
                 ),
                 Address("0xceb48d108c874b5b014acdd1a2466d65a3d01de6"): Account(
-                    code=bytes.fromhex(
-                        "600060006000600060007393a599bde9a3b6390afdb06952aa5ec0b8c44f3b61c350f1600055600e60025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=0xC350,
+                            address=0x93A599BDE9A3B6390AFDB06952AA5EC0B8C44F3B,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=0xE)
+                    + Op.STOP
                 ),
                 Address("0xf94d87faf19d8c731e70e1b0a25f9668718f6e17"): Account(
-                    code=bytes.fromhex(
-                        "6000600060006000600060003561ea60f1600a5500"
+                    code=Op.SSTORE(
+                        key=0xA,
+                        value=Op.CALL(
+                            gas=0xEA60,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
                     )
+                    + Op.STOP
                 ),
             },
         ),
@@ -95,20 +144,51 @@ def test_revert_opcode_direct_call(
     pre[callee] = Account(
         balance=1,
         nonce=0,
-        code=bytes.fromhex("600c60015560016000fd600d60035500"),
+        code=(
+            Op.SSTORE(key=0x1, value=0xC)
+            + Op.REVERT(offset=0x0, size=0x1)
+            + Op.SSTORE(key=0x3, value=0xD)
+            + Op.STOP
+        ),
     )
     pre[contract] = Account(
         balance=1,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600060007393a599bde9a3b6390afdb06952aa5ec0b8c44f3b61c350f160"  # noqa: E501
-            "0055600e60025500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0xC350,
+                    address=0x93A599BDE9A3B6390AFDB06952AA5EC0B8C44F3B,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x2, value=0xE)
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=1,
         nonce=0,
-        code=bytes.fromhex("6000600060006000600060003561ea60f1600a5500"),
+        code=(
+            Op.SSTORE(
+                key=0xA,
+                value=Op.CALL(
+                    gas=0xEA60,
+                    address=Op.CALLDATALOAD(offset=0x0),
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 

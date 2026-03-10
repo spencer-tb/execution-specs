@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,13 +32,13 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060006000f500",
             {
                 Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(
-                    code=bytes.fromhex("010203")
+                    code=Op.SUB(Op.MUL, Op.ADD)
                 ),
                 Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
-                    code=bytes.fromhex("010203")
+                    code=Op.SUB(Op.MUL, Op.ADD)
                 ),
                 Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
-                    code=bytes.fromhex("010203")
+                    code=Op.SUB(Op.MUL, Op.ADD)
                 ),
             },
         ),
@@ -45,13 +46,13 @@ REFERENCE_SPEC_VERSION = "N/A"
             "64600160015560005260006005601b6000f500",
             {
                 Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(
-                    code=bytes.fromhex("010203")
+                    code=Op.SUB(Op.MUL, Op.ADD)
                 ),
                 Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
-                    code=bytes.fromhex("010203")
+                    code=Op.SUB(Op.MUL, Op.ADD)
                 ),
                 Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
-                    code=bytes.fromhex("010203")
+                    code=Op.SUB(Op.MUL, Op.ADD)
                 ),
             },
         ),
@@ -59,13 +60,13 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6d6460016001556000526005601bf36000526000600e60126000f500",
             {
                 Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(
-                    code=bytes.fromhex("010203")
+                    code=Op.SUB(Op.MUL, Op.ADD)
                 ),
                 Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
-                    code=bytes.fromhex("010203")
+                    code=Op.SUB(Op.MUL, Op.ADD)
                 ),
                 Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
-                    code=bytes.fromhex("010203")
+                    code=Op.SUB(Op.MUL, Op.ADD)
                 ),
             },
         ),
@@ -96,9 +97,9 @@ def test_create2collision_code(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    pre[contract] = Account(balance=0, nonce=0, code=bytes.fromhex("010203"))
-    pre[callee_1] = Account(balance=0, nonce=0, code=bytes.fromhex("010203"))
-    pre[callee_2] = Account(balance=0, nonce=0, code=bytes.fromhex("010203"))
+    pre[contract] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
+    pre[callee_1] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
+    pre[callee_2] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 

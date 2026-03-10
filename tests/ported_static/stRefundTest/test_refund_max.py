@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,8 +47,18 @@ def test_refund_max(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
-        code=bytes.fromhex(
-            "60008060005580600155806002558060035580600455806005558060065560075500"  # noqa: E501
+        code=(
+            Op.PUSH1[0x0]
+            + Op.SSTORE(key=0x0, value=Op.DUP1)
+            + Op.SSTORE(key=0x1, value=Op.DUP1)
+            + Op.SSTORE(key=0x2, value=Op.DUP1)
+            + Op.SSTORE(key=0x3, value=Op.DUP1)
+            + Op.SSTORE(key=0x4, value=Op.DUP1)
+            + Op.SSTORE(key=0x5, value=Op.DUP1)
+            + Op.SSTORE(key=0x6, value=Op.DUP1)
+            + Op.PUSH1[0x7]
+            + Op.SSTORE
+            + Op.STOP
         ),
         storage={
             0x0: 0x60A7,
@@ -77,8 +88,18 @@ def test_refund_max(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "60008060005580600155806002558060035580600455806005558060065560075500"  # noqa: E501
+            code=(
+                Op.PUSH1[0x0]
+                + Op.SSTORE(key=0x0, value=Op.DUP1)
+                + Op.SSTORE(key=0x1, value=Op.DUP1)
+                + Op.SSTORE(key=0x2, value=Op.DUP1)
+                + Op.SSTORE(key=0x3, value=Op.DUP1)
+                + Op.SSTORE(key=0x4, value=Op.DUP1)
+                + Op.SSTORE(key=0x5, value=Op.DUP1)
+                + Op.SSTORE(key=0x6, value=Op.DUP1)
+                + Op.PUSH1[0x7]
+                + Op.SSTORE
+                + Op.STOP
             ),
         ),
     }

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,15 +52,31 @@ def test_zero_value_suicide_to_non_zero_balance_oog_revert(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("739089da66e8bbc08846842a301905501bc8525dc4ff00"),
+        code=(
+            Op.SELFDESTRUCT(address=0x9089DA66E8BBC08846842A301905501BC8525DC4)
+            + Op.STOP
+        ),
     )
     pre[callee_1] = Account(balance=100, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000600073888748026558f849c1b2433ea5e1daf1444dfc6061c350f150"  # noqa: E501
-            "600c600255600c600355600c60045500"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x888748026558F849C1B2433EA5E1DAF1444DFC60,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x2, value=0xC)
+            + Op.SSTORE(key=0x3, value=0xC)
+            + Op.SSTORE(key=0x4, value=0xC)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -78,13 +95,30 @@ def test_zero_value_suicide_to_non_zero_balance_oog_revert(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "739089da66e8bbc08846842a301905501bc8525dc4ff00"
+            code=(
+                Op.SELFDESTRUCT(
+                    address=0x9089DA66E8BBC08846842A301905501BC8525DC4,
+                )
+                + Op.STOP
             ),
         ),
         contract: Account(
-            code=bytes.fromhex(
-                "6000600060006000600073888748026558f849c1b2433ea5e1daf1444dfc6061c350f150600c600255600c600355600c60045500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x888748026558F849C1B2433EA5E1DAF1444DFC60,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x2, value=0xC)
+                + Op.SSTORE(key=0x3, value=0xC)
+                + Op.SSTORE(key=0x4, value=0xC)
+                + Op.STOP
             ),
         ),
     }

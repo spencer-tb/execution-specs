@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,14 +32,25 @@ REFERENCE_SPEC_VERSION = "N/A"
             "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=bytes.fromhex("6002600360045055")
+                    code=Op.PUSH1[0x2]
+                    + Op.PUSH1[0x3]
+                    + Op.POP(0x4)
+                    + Op.SSTORE
                 ),
                 Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=bytes.fromhex("5060026003600455")
+                    code=Op.POP + Op.PUSH1[0x2] + Op.SSTORE(key=0x4, value=0x3)
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={3: 2},
-                    code=bytes.fromhex("6000600060006000600435611000015af400"),
+                    code=Op.DELEGATECALL(
+                        gas=Op.GAS,
+                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    )
+                    + Op.STOP,
                 ),
             },
         ),
@@ -46,13 +58,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=bytes.fromhex("6002600360045055")
+                    code=Op.PUSH1[0x2]
+                    + Op.PUSH1[0x3]
+                    + Op.POP(0x4)
+                    + Op.SSTORE
                 ),
                 Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=bytes.fromhex("5060026003600455")
+                    code=Op.POP + Op.PUSH1[0x2] + Op.SSTORE(key=0x4, value=0x3)
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=bytes.fromhex("6000600060006000600435611000015af400")
+                    code=Op.DELEGATECALL(
+                        gas=Op.GAS,
+                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    )
+                    + Op.STOP
                 ),
             },
         ),
@@ -85,18 +108,28 @@ def test_pop(
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("6002600360045055"),
+        code=Op.PUSH1[0x2] + Op.PUSH1[0x3] + Op.POP(0x4) + Op.SSTORE,
     )
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("5060026003600455"),
+        code=Op.POP + Op.PUSH1[0x2] + Op.SSTORE(key=0x4, value=0x3),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("6000600060006000600435611000015af400"),
+        code=(
+            Op.DELEGATECALL(
+                gas=Op.GAS,
+                address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
+        ),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

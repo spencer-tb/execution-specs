@@ -19,6 +19,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -42,12 +43,34 @@ REFERENCE_SPEC_VERSION = "N/A"
                         1: 0x68FA59E127B7526718EB0A4E113DF5793628CB91,
                         2: 0x76FAE819612A29489A1A43208613D8F8557B8898,
                     },
-                    code=bytes.fromhex("6001600054018060005554ff"),
+                    code=Op.ADD(Op.SLOAD(key=0x0), 0x1)
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SELFDESTRUCT(address=Op.SLOAD),
                 ),
                 Address("0x8ec7465877d3957084dc907c0f6d8f2911a17a52"): Account(
-                    code=bytes.fromhex(
-                        "6000808080348060011c9082808080857329e4504a3d2a0e0ae0ebbbefedd4570639b3ebee62011170f150037329e4504a3d2a0e0ae0ebbbefedd4570639b3ebee62011170f100"  # noqa: E501
+                    code=Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.CALLVALUE
+                    + Op.SHR(0x1, Op.DUP1)
+                    + Op.SWAP1
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0x11170,
+                            address=0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE,
+                            value=Op.DUP6,
+                            args_offset=Op.DUP1,
+                            args_size=Op.DUP1,
+                            ret_offset=Op.DUP1,
+                            ret_size=Op.DUP3,
+                        )
                     )
+                    + Op.SUB
+                    + Op.PUSH20[0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE]
+                    + Op.PUSH3[0x11170]
+                    + Op.CALL
+                    + Op.STOP
                 ),
             },
         ),
@@ -60,12 +83,34 @@ REFERENCE_SPEC_VERSION = "N/A"
                         1: 0x68FA59E127B7526718EB0A4E113DF5793628CB91,
                         2: 0x76FAE819612A29489A1A43208613D8F8557B8898,
                     },
-                    code=bytes.fromhex("6001600054018060005554ff"),
+                    code=Op.ADD(Op.SLOAD(key=0x0), 0x1)
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SELFDESTRUCT(address=Op.SLOAD),
                 ),
                 Address("0x8ec7465877d3957084dc907c0f6d8f2911a17a52"): Account(
-                    code=bytes.fromhex(
-                        "6000808080348060011c9082808080857329e4504a3d2a0e0ae0ebbbefedd4570639b3ebee62011170f150037329e4504a3d2a0e0ae0ebbbefedd4570639b3ebee62011170f100"  # noqa: E501
+                    code=Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.CALLVALUE
+                    + Op.SHR(0x1, Op.DUP1)
+                    + Op.SWAP1
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0x11170,
+                            address=0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE,
+                            value=Op.DUP6,
+                            args_offset=Op.DUP1,
+                            args_size=Op.DUP1,
+                            ret_offset=Op.DUP1,
+                            ret_size=Op.DUP3,
+                        )
                     )
+                    + Op.SUB
+                    + Op.PUSH20[0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE]
+                    + Op.PUSH3[0x11170]
+                    + Op.CALL
+                    + Op.STOP
                 ),
             },
         ),
@@ -78,12 +123,34 @@ REFERENCE_SPEC_VERSION = "N/A"
                         1: 0x68FA59E127B7526718EB0A4E113DF5793628CB91,
                         2: 0x76FAE819612A29489A1A43208613D8F8557B8898,
                     },
-                    code=bytes.fromhex("6001600054018060005554ff"),
+                    code=Op.ADD(Op.SLOAD(key=0x0), 0x1)
+                    + Op.SSTORE(key=0x0, value=Op.DUP1)
+                    + Op.SELFDESTRUCT(address=Op.SLOAD),
                 ),
                 Address("0x8ec7465877d3957084dc907c0f6d8f2911a17a52"): Account(
-                    code=bytes.fromhex(
-                        "6000808080348060011c9082808080857329e4504a3d2a0e0ae0ebbbefedd4570639b3ebee62011170f150037329e4504a3d2a0e0ae0ebbbefedd4570639b3ebee62011170f100"  # noqa: E501
+                    code=Op.PUSH1[0x0]
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.DUP1
+                    + Op.CALLVALUE
+                    + Op.SHR(0x1, Op.DUP1)
+                    + Op.SWAP1
+                    + Op.POP(
+                        Op.CALL(
+                            gas=0x11170,
+                            address=0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE,
+                            value=Op.DUP6,
+                            args_offset=Op.DUP1,
+                            args_size=Op.DUP1,
+                            ret_offset=Op.DUP1,
+                            ret_size=Op.DUP3,
+                        )
                     )
+                    + Op.SUB
+                    + Op.PUSH20[0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE]
+                    + Op.PUSH3[0x11170]
+                    + Op.CALL
+                    + Op.STOP
                 ),
             },
         ),
@@ -117,7 +184,11 @@ def test_double_selfdestruct_touch_paris(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("6001600054018060005554ff"),
+        code=(
+            Op.ADD(Op.SLOAD(key=0x0), 0x1)
+            + Op.SSTORE(key=0x0, value=Op.DUP1)
+            + Op.SELFDESTRUCT(address=Op.SLOAD)
+        ),
         storage={
             0x0: 0x0,
             0x1: 0x68FA59E127B7526718EB0A4E113DF5793628CB91,
@@ -130,9 +201,30 @@ def test_double_selfdestruct_touch_paris(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000808080348060011c9082808080857329e4504a3d2a0e0ae0ebbbefedd4570639b3eb"  # noqa: E501
-            "ee62011170f150037329e4504a3d2a0e0ae0ebbbefedd4570639b3ebee62011170f100"  # noqa: E501
+        code=(
+            Op.PUSH1[0x0]
+            + Op.DUP1
+            + Op.DUP1
+            + Op.DUP1
+            + Op.CALLVALUE
+            + Op.SHR(0x1, Op.DUP1)
+            + Op.SWAP1
+            + Op.POP(
+                Op.CALL(
+                    gas=0x11170,
+                    address=0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE,
+                    value=Op.DUP6,
+                    args_offset=Op.DUP1,
+                    args_size=Op.DUP1,
+                    ret_offset=Op.DUP1,
+                    ret_size=Op.DUP3,
+                ),
+            )
+            + Op.SUB
+            + Op.PUSH20[0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE]
+            + Op.PUSH3[0x11170]
+            + Op.CALL
+            + Op.STOP
         ),
     )
 

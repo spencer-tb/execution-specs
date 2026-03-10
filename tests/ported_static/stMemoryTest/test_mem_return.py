@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,7 +47,11 @@ def test_mem_return(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("366000600037596000f300"),
+        code=(
+            Op.CALLDATACOPY(dest_offset=0x0, offset=0x0, size=Op.CALLDATASIZE)
+            + Op.RETURN(offset=0x0, size=Op.MSIZE)
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
@@ -67,7 +72,17 @@ def test_mem_return(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("366000600037596000f300")),
+        contract: Account(
+            code=(
+                Op.CALLDATACOPY(
+                    dest_offset=0x0,
+                    offset=0x0,
+                    size=Op.CALLDATASIZE,
+                )
+                + Op.RETURN(offset=0x0, size=Op.MSIZE)
+                + Op.STOP
+            ),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

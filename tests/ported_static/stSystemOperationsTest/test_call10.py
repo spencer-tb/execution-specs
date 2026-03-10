@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,10 +50,29 @@ def test_call10(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=bytes.fromhex(
-            "5b600a60805110156042576000600061c3506000600173d9b97c712ebce43f3c19179bbe"  # noqa: E501
-            "f44b550f9e8bc0650ffffffffffff16000556001608051016080526000565b6080516001"  # noqa: E501
-            "5500"
+        code=(
+            Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x42,
+                condition=Op.ISZERO(Op.LT(Op.MLOAD(offset=0x80), 0xA)),
+            )
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0xFFFFFFFFFFF,
+                    address=0xD9B97C712EBCE43F3C19179BBEF44B550F9E8BC0,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0xC350,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.MSTORE(offset=0x80, value=Op.ADD(Op.MLOAD(offset=0x80), 0x1))
+            + Op.JUMP(pc=0x0)
+            + Op.JUMPDEST
+            + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
+            + Op.STOP
         ),
     )
 
@@ -71,8 +91,31 @@ def test_call10(
     post = {
         contract: Account(
             storage={0: 1, 1: 10},
-            code=bytes.fromhex(
-                "5b600a60805110156042576000600061c3506000600173d9b97c712ebce43f3c19179bbef44b550f9e8bc0650ffffffffffff16000556001608051016080526000565b60805160015500"  # noqa: E501
+            code=(
+                Op.JUMPDEST
+                + Op.JUMPI(
+                    pc=0x42,
+                    condition=Op.ISZERO(Op.LT(Op.MLOAD(offset=0x80), 0xA)),
+                )
+                + Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0xFFFFFFFFFFF,
+                        address=0xD9B97C712EBCE43F3C19179BBEF44B550F9E8BC0,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0xC350,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.MSTORE(
+                    offset=0x80, value=Op.ADD(Op.MLOAD(offset=0x80), 0x1)
+                )
+                + Op.JUMP(pc=0x0)
+                + Op.JUMPDEST
+                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
+                + Op.STOP
             ),
         ),
     }

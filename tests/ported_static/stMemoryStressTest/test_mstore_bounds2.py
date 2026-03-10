@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0xdd1868b8341812c23c84da08446bc70919a815df"): Account(
-                    code=bytes.fromhex("600164ffffffffff5200")
+                    code=Op.MSTORE(offset=0xFFFFFFFFFF, value=0x1) + Op.STOP
                 )
             },
         ),
@@ -39,7 +40,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0xdd1868b8341812c23c84da08446bc70919a815df"): Account(
-                    code=bytes.fromhex("600164ffffffffff5200")
+                    code=Op.MSTORE(offset=0xFFFFFFFFFF, value=0x1) + Op.STOP
                 )
             },
         ),
@@ -74,7 +75,7 @@ def test_mstore_bounds2(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("600164ffffffffff5200"),
+        code=Op.MSTORE(offset=0xFFFFFFFFFF, value=0x1) + Op.STOP,
     )
 
     tx = Transaction(

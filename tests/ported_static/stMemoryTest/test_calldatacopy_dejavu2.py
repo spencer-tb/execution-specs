@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,8 +48,13 @@ def test_calldatacopy_dejavu2(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6042601f536101036000601f37606060005114601f57640badc0ffee60ff555b00"  # noqa: E501
+        code=(
+            Op.MSTORE8(offset=0x1F, value=0x42)
+            + Op.CALLDATACOPY(dest_offset=0x1F, offset=0x0, size=0x103)
+            + Op.JUMPI(pc=0x1F, condition=Op.EQ(Op.MLOAD(offset=0x0), 0x60))
+            + Op.SSTORE(key=0xFF, value=0xBADC0FFEE)
+            + Op.JUMPDEST
+            + Op.STOP
         ),
     )
 
@@ -67,8 +73,15 @@ def test_calldatacopy_dejavu2(
     post = {
         contract: Account(
             storage={255: 0xBADC0FFEE},
-            code=bytes.fromhex(
-                "6042601f536101036000601f37606060005114601f57640badc0ffee60ff555b00"  # noqa: E501
+            code=(
+                Op.MSTORE8(offset=0x1F, value=0x42)
+                + Op.CALLDATACOPY(dest_offset=0x1F, offset=0x0, size=0x103)
+                + Op.JUMPI(
+                    pc=0x1F, condition=Op.EQ(Op.MLOAD(offset=0x0), 0x60)
+                )
+                + Op.SSTORE(key=0xFF, value=0xBADC0FFEE)
+                + Op.JUMPDEST
+                + Op.STOP
             ),
         ),
     }

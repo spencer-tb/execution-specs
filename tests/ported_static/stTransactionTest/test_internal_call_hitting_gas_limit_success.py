@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,14 +51,23 @@ def test_internal_call_hitting_gas_limit_success(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000600060006001739f499a40cbc961c5230197401ce369d5c53ed8966161a8f100"  # noqa: E501
+        code=(
+            Op.CALL(
+                gas=0x61A8,
+                address=0x9F499A40CBC961C5230197401CE369D5C53ED896,
+                value=0x1,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("603760015500"),
+        code=Op.SSTORE(key=0x1, value=0x37) + Op.STOP,
     )
     pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
 
@@ -75,11 +85,23 @@ def test_internal_call_hitting_gas_limit_success(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "60006000600060006001739f499a40cbc961c5230197401ce369d5c53ed8966161a8f100"  # noqa: E501
+            code=(
+                Op.CALL(
+                    gas=0x61A8,
+                    address=0x9F499A40CBC961C5230197401CE369D5C53ED896,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
-        callee: Account(storage={1: 55}, code=bytes.fromhex("603760015500")),
+        callee: Account(
+            storage={1: 55},
+            code=Op.SSTORE(key=0x1, value=0x37) + Op.STOP,
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

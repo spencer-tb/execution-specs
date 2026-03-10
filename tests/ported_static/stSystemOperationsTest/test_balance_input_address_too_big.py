@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,8 +50,14 @@ def test_balance_input_address_too_big(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "74ebaf50debf10e08302fe4280c32df010463ca297aa3160005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.BALANCE(
+                    address=0xEBAF50DEBF10E08302FE4280C32DF010463CA297AA,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -69,8 +76,14 @@ def test_balance_input_address_too_big(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "74ebaf50debf10e08302fe4280c32df010463ca297aa3160005500"
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.BALANCE(
+                        address=0xEBAF50DEBF10E08302FE4280C32DF010463CA297AA,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

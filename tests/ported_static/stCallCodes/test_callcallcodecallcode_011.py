@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,33 +52,73 @@ def test_callcallcodecallcode_011(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6040600060406000600373181b4ed322e192361633cc3c0a418f259ab0cf4b6203d090f2"  # noqa: E501
-            "60025500"
+        code=(
+            Op.SSTORE(
+                key=0x2,
+                value=Op.CALLCODE(
+                    gas=0x3D090,
+                    address=0x181B4ED322E192361633CC3C0A418F259AB0CF4B,
+                    value=0x3,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600160035533600455346007553061014a553261014c55366101505538610152553a6101"  # noqa: E501
-            "545500"
+        code=(
+            Op.SSTORE(key=0x3, value=0x1)
+            + Op.SSTORE(key=0x4, value=Op.CALLER)
+            + Op.SSTORE(key=0x7, value=Op.CALLVALUE)
+            + Op.SSTORE(key=0x14A, value=Op.ADDRESS)
+            + Op.SSTORE(key=0x14C, value=Op.ORIGIN)
+            + Op.SSTORE(key=0x150, value=Op.CALLDATASIZE)
+            + Op.SSTORE(key=0x152, value=Op.CODESIZE)
+            + Op.SSTORE(key=0x154, value=Op.GASPRICE)
+            + Op.STOP
         ),
     )
     pre[callee_2] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "60406000604060006002730ffffaeb931552e5f094ca96a70be612da56b887620493e0f2"  # noqa: E501
-            "60015500"
+        code=(
+            Op.SSTORE(
+                key=0x1,
+                value=Op.CALLCODE(
+                    gas=0x493E0,
+                    address=0xFFFFAEB931552E5F094CA96A70BE612DA56B887,
+                    value=0x2,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "60406000604060006001734c0de71b93de6b7055a3686e4bf93add02b39ed862055730f1"  # noqa: E501
-            "60005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x55730,
+                    address=0x4C0DE71B93DE6B7055A3686E4BF93ADD02B39ED8,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -96,13 +137,33 @@ def test_callcallcodecallcode_011(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "6040600060406000600373181b4ed322e192361633cc3c0a418f259ab0cf4b6203d090f260025500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x2,
+                    value=Op.CALLCODE(
+                        gas=0x3D090,
+                        address=0x181B4ED322E192361633CC3C0A418F259AB0CF4B,
+                        value=0x3,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         callee_1: Account(
-            code=bytes.fromhex(
-                "600160035533600455346007553061014a553261014c55366101505538610152553a6101545500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x3, value=0x1)
+                + Op.SSTORE(key=0x4, value=Op.CALLER)
+                + Op.SSTORE(key=0x7, value=Op.CALLVALUE)
+                + Op.SSTORE(key=0x14A, value=Op.ADDRESS)
+                + Op.SSTORE(key=0x14C, value=Op.ORIGIN)
+                + Op.SSTORE(key=0x150, value=Op.CALLDATASIZE)
+                + Op.SSTORE(key=0x152, value=Op.CODESIZE)
+                + Op.SSTORE(key=0x154, value=Op.GASPRICE)
+                + Op.STOP
             ),
         ),
         callee_2: Account(
@@ -118,14 +179,38 @@ def test_callcallcodecallcode_011(
                 338: 39,
                 340: 10,
             },
-            code=bytes.fromhex(
-                "60406000604060006002730ffffaeb931552e5f094ca96a70be612da56b887620493e0f260015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALLCODE(
+                        gas=0x493E0,
+                        address=0xFFFFAEB931552E5F094CA96A70BE612DA56B887,
+                        value=0x2,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "60406000604060006001734c0de71b93de6b7055a3686e4bf93add02b39ed862055730f160005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x55730,
+                        address=0x4C0DE71B93DE6B7055A3686E4BF93ADD02B39ED8,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

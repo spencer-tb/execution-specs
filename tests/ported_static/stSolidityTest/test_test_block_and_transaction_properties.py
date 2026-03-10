@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,22 +51,207 @@ def test_test_block_and_transaction_properties(
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,
-        code=bytes.fromhex(
-            "60606040526000357c010000000000000000000000000000000000000000000000000000"  # noqa: E501
-            "000090048063c040622614610044578063e97384dc1461006957610042565b005b610051"  # noqa: E501
-            "600480505061008e565b60405180821515815260200191505060405180910390f35b6100"  # noqa: E501
-            "7660048050506100c9565b60405180821515815260200191505060405180910390f35b60"  # noqa: E501
-            "006100986100c9565b600060006101000a81548160ff0219169083021790555060006000"  # noqa: E501
-            "9054906101000a900460ff1690506100c6565b90565b6000600190508050732adc256650"  # noqa: E501
-            "18aa1fe0e6bc666dac8fc2697ff9ba4173ffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ff1614151561010d57600090506101f7565b6302b8feb044141515610123576000905061"  # noqa: E501
-            "01f7565b677fffffffffffffff4514151561013d57600090506101f7565b607843141515"  # noqa: E501
-            "61015057600090506101f7565b6078405042505a50737f3f285918d9b5e764174551e10b"  # noqa: E501
-            "7539b97bbb273373ffffffffffffffffffffffffffffffffffffffff1614151561019457"  # noqa: E501
-            "600090506101f7565b6064341415156101a757600090506101f7565b60013a1415156101"  # noqa: E501
-            "ba57600090506101f7565b737f3f285918d9b5e764174551e10b7539b97bbb273273ffff"  # noqa: E501
-            "ffffffffffffffffffffffffffffffffffff161415156101f657600090506101f7565b5b"  # noqa: E501
-            "9056"
+        code=(
+            Op.MSTORE(offset=0x40, value=0x60)
+            + Op.CALLDATALOAD(offset=0x0)
+            + Op.PUSH29[
+                0x100000000000000000000000000000000000000000000000000000000
+            ]
+            + Op.SWAP1
+            + Op.DIV
+            + Op.JUMPI(pc=Op.PUSH2[0x44], condition=Op.EQ(0xC0406226, Op.DUP1))
+            + Op.JUMPI(pc=Op.PUSH2[0x69], condition=Op.EQ(0xE97384DC, Op.DUP1))
+            + Op.JUMP(pc=Op.PUSH2[0x42])
+            + Op.JUMPDEST
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.PUSH2[0x51]
+            + Op.PUSH1[0x4]
+            + Op.POP(Op.DUP1)
+            + Op.POP
+            + Op.JUMP(pc=Op.PUSH2[0x8E])
+            + Op.JUMPDEST
+            + Op.MLOAD(offset=0x40)
+            + Op.DUP1
+            + Op.MSTORE(offset=Op.DUP2, value=Op.ISZERO(Op.ISZERO(Op.DUP3)))
+            + Op.PUSH1[0x20]
+            + Op.ADD
+            + Op.SWAP2
+            + Op.POP
+            + Op.POP
+            + Op.MLOAD(offset=0x40)
+            + Op.DUP1
+            + Op.SWAP2
+            + Op.SUB
+            + Op.SWAP1
+            + Op.RETURN
+            + Op.JUMPDEST
+            + Op.PUSH2[0x76]
+            + Op.PUSH1[0x4]
+            + Op.POP(Op.DUP1)
+            + Op.POP
+            + Op.JUMP(pc=Op.PUSH2[0xC9])
+            + Op.JUMPDEST
+            + Op.MLOAD(offset=0x40)
+            + Op.DUP1
+            + Op.MSTORE(offset=Op.DUP2, value=Op.ISZERO(Op.ISZERO(Op.DUP3)))
+            + Op.PUSH1[0x20]
+            + Op.ADD
+            + Op.SWAP2
+            + Op.POP
+            + Op.POP
+            + Op.MLOAD(offset=0x40)
+            + Op.DUP1
+            + Op.SWAP2
+            + Op.SUB
+            + Op.SWAP1
+            + Op.RETURN
+            + Op.JUMPDEST
+            + Op.PUSH1[0x0]
+            + Op.PUSH2[0x98]
+            + Op.JUMP(pc=Op.PUSH2[0xC9])
+            + Op.JUMPDEST
+            + Op.PUSH1[0x0]
+            + Op.EXP(0x100, 0x0)
+            + Op.AND(Op.NOT(Op.MUL(0xFF, Op.DUP2)), Op.SLOAD(key=Op.DUP2))
+            + Op.SWAP1
+            + Op.OR(Op.MUL, Op.DUP4)
+            + Op.SWAP1
+            + Op.SSTORE
+            + Op.POP
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.SLOAD
+            + Op.SWAP1
+            + Op.PUSH2[0x100]
+            + Op.EXP
+            + Op.SWAP1
+            + Op.AND(0xFF, Op.DIV)
+            + Op.SWAP1
+            + Op.POP
+            + Op.JUMP(pc=Op.PUSH2[0xC6])
+            + Op.JUMPDEST
+            + Op.SWAP1
+            + Op.JUMP
+            + Op.JUMPDEST
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x1]
+            + Op.SWAP1
+            + Op.POP
+            + Op.POP(Op.DUP1)
+            + Op.JUMPI(
+                pc=0x10D,
+                condition=Op.ISZERO(
+                    Op.ISZERO(
+                        Op.EQ(
+                            Op.AND(
+                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                                Op.COINBASE,
+                            ),
+                            0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA,
+                        ),
+                    ),
+                ),
+            )
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.POP
+            + Op.JUMP(pc=0x1F7)
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x123,
+                condition=Op.ISZERO(
+                    Op.ISZERO(Op.EQ(Op.PREVRANDAO, 0x2B8FEB0))
+                ),
+            )
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.POP
+            + Op.JUMP(pc=0x1F7)
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x13D,
+                condition=Op.ISZERO(
+                    Op.ISZERO(Op.EQ(Op.GASLIMIT, 0x7FFFFFFFFFFFFFFF)),
+                ),
+            )
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.POP
+            + Op.JUMP(pc=0x1F7)
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x150,
+                condition=Op.ISZERO(Op.ISZERO(Op.EQ(Op.NUMBER, 0x78))),
+            )
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.POP
+            + Op.JUMP(pc=0x1F7)
+            + Op.JUMPDEST
+            + Op.POP(Op.BLOCKHASH(block_number=0x78))
+            + Op.POP(Op.TIMESTAMP)
+            + Op.POP(Op.GAS)
+            + Op.JUMPI(
+                pc=0x194,
+                condition=Op.ISZERO(
+                    Op.ISZERO(
+                        Op.EQ(
+                            Op.AND(
+                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                                Op.CALLER,
+                            ),
+                            0x7F3F285918D9B5E764174551E10B7539B97BBB27,
+                        ),
+                    ),
+                ),
+            )
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.POP
+            + Op.JUMP(pc=0x1F7)
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x1A7,
+                condition=Op.ISZERO(Op.ISZERO(Op.EQ(Op.CALLVALUE, 0x64))),
+            )
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.POP
+            + Op.JUMP(pc=0x1F7)
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x1BA,
+                condition=Op.ISZERO(Op.ISZERO(Op.EQ(Op.GASPRICE, 0x1))),
+            )
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.POP
+            + Op.JUMP(pc=0x1F7)
+            + Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x1F6,
+                condition=Op.ISZERO(
+                    Op.ISZERO(
+                        Op.EQ(
+                            Op.AND(
+                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                                Op.ORIGIN,
+                            ),
+                            0x7F3F285918D9B5E764174551E10B7539B97BBB27,
+                        ),
+                    ),
+                ),
+            )
+            + Op.PUSH1[0x0]
+            + Op.SWAP1
+            + Op.POP
+            + Op.JUMP(pc=0x1F7)
+            + Op.JUMPDEST
+            + Op.JUMPDEST
+            + Op.SWAP1
+            + Op.JUMP
         ),
     )
 
@@ -83,8 +269,215 @@ def test_test_block_and_transaction_properties(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "60606040526000357c010000000000000000000000000000000000000000000000000000000090048063c040622614610044578063e97384dc1461006957610042565b005b610051600480505061008e565b60405180821515815260200191505060405180910390f35b61007660048050506100c9565b60405180821515815260200191505060405180910390f35b60006100986100c9565b600060006101000a81548160ff02191690830217905550600060009054906101000a900460ff1690506100c6565b90565b6000600190508050732adc25665018aa1fe0e6bc666dac8fc2697ff9ba4173ffffffffffffffffffffffffffffffffffffffff1614151561010d57600090506101f7565b6302b8feb04414151561012357600090506101f7565b677fffffffffffffff4514151561013d57600090506101f7565b60784314151561015057600090506101f7565b6078405042505a50737f3f285918d9b5e764174551e10b7539b97bbb273373ffffffffffffffffffffffffffffffffffffffff1614151561019457600090506101f7565b6064341415156101a757600090506101f7565b60013a1415156101ba57600090506101f7565b737f3f285918d9b5e764174551e10b7539b97bbb273273ffffffffffffffffffffffffffffffffffffffff161415156101f657600090506101f7565b5b9056"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x40, value=0x60)
+                + Op.CALLDATALOAD(offset=0x0)
+                + Op.PUSH29[
+                    0x100000000000000000000000000000000000000000000000000000000
+                ]
+                + Op.SWAP1
+                + Op.DIV
+                + Op.JUMPI(
+                    pc=Op.PUSH2[0x44], condition=Op.EQ(0xC0406226, Op.DUP1)
+                )
+                + Op.JUMPI(
+                    pc=Op.PUSH2[0x69], condition=Op.EQ(0xE97384DC, Op.DUP1)
+                )
+                + Op.JUMP(pc=Op.PUSH2[0x42])
+                + Op.JUMPDEST
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.PUSH2[0x51]
+                + Op.PUSH1[0x4]
+                + Op.POP(Op.DUP1)
+                + Op.POP
+                + Op.JUMP(pc=Op.PUSH2[0x8E])
+                + Op.JUMPDEST
+                + Op.MLOAD(offset=0x40)
+                + Op.DUP1
+                + Op.MSTORE(
+                    offset=Op.DUP2, value=Op.ISZERO(Op.ISZERO(Op.DUP3))
+                )
+                + Op.PUSH1[0x20]
+                + Op.ADD
+                + Op.SWAP2
+                + Op.POP
+                + Op.POP
+                + Op.MLOAD(offset=0x40)
+                + Op.DUP1
+                + Op.SWAP2
+                + Op.SUB
+                + Op.SWAP1
+                + Op.RETURN
+                + Op.JUMPDEST
+                + Op.PUSH2[0x76]
+                + Op.PUSH1[0x4]
+                + Op.POP(Op.DUP1)
+                + Op.POP
+                + Op.JUMP(pc=Op.PUSH2[0xC9])
+                + Op.JUMPDEST
+                + Op.MLOAD(offset=0x40)
+                + Op.DUP1
+                + Op.MSTORE(
+                    offset=Op.DUP2, value=Op.ISZERO(Op.ISZERO(Op.DUP3))
+                )
+                + Op.PUSH1[0x20]
+                + Op.ADD
+                + Op.SWAP2
+                + Op.POP
+                + Op.POP
+                + Op.MLOAD(offset=0x40)
+                + Op.DUP1
+                + Op.SWAP2
+                + Op.SUB
+                + Op.SWAP1
+                + Op.RETURN
+                + Op.JUMPDEST
+                + Op.PUSH1[0x0]
+                + Op.PUSH2[0x98]
+                + Op.JUMP(pc=Op.PUSH2[0xC9])
+                + Op.JUMPDEST
+                + Op.PUSH1[0x0]
+                + Op.EXP(0x100, 0x0)
+                + Op.AND(Op.NOT(Op.MUL(0xFF, Op.DUP2)), Op.SLOAD(key=Op.DUP2))
+                + Op.SWAP1
+                + Op.OR(Op.MUL, Op.DUP4)
+                + Op.SWAP1
+                + Op.SSTORE
+                + Op.POP
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0x0]
+                + Op.SWAP1
+                + Op.SLOAD
+                + Op.SWAP1
+                + Op.PUSH2[0x100]
+                + Op.EXP
+                + Op.SWAP1
+                + Op.AND(0xFF, Op.DIV)
+                + Op.SWAP1
+                + Op.POP
+                + Op.JUMP(pc=Op.PUSH2[0xC6])
+                + Op.JUMPDEST
+                + Op.SWAP1
+                + Op.JUMP
+                + Op.JUMPDEST
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0x1]
+                + Op.SWAP1
+                + Op.POP
+                + Op.POP(Op.DUP1)
+                + Op.JUMPI(
+                    pc=0x10D,
+                    condition=Op.ISZERO(
+                        Op.ISZERO(
+                            Op.EQ(
+                                Op.AND(
+                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                                    Op.COINBASE,
+                                ),
+                                0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA,
+                            ),
+                        ),
+                    ),
+                )
+                + Op.PUSH1[0x0]
+                + Op.SWAP1
+                + Op.POP
+                + Op.JUMP(pc=0x1F7)
+                + Op.JUMPDEST
+                + Op.JUMPI(
+                    pc=0x123,
+                    condition=Op.ISZERO(
+                        Op.ISZERO(Op.EQ(Op.PREVRANDAO, 0x2B8FEB0)),
+                    ),
+                )
+                + Op.PUSH1[0x0]
+                + Op.SWAP1
+                + Op.POP
+                + Op.JUMP(pc=0x1F7)
+                + Op.JUMPDEST
+                + Op.JUMPI(
+                    pc=0x13D,
+                    condition=Op.ISZERO(
+                        Op.ISZERO(Op.EQ(Op.GASLIMIT, 0x7FFFFFFFFFFFFFFF)),
+                    ),
+                )
+                + Op.PUSH1[0x0]
+                + Op.SWAP1
+                + Op.POP
+                + Op.JUMP(pc=0x1F7)
+                + Op.JUMPDEST
+                + Op.JUMPI(
+                    pc=0x150,
+                    condition=Op.ISZERO(Op.ISZERO(Op.EQ(Op.NUMBER, 0x78))),
+                )
+                + Op.PUSH1[0x0]
+                + Op.SWAP1
+                + Op.POP
+                + Op.JUMP(pc=0x1F7)
+                + Op.JUMPDEST
+                + Op.POP(Op.BLOCKHASH(block_number=0x78))
+                + Op.POP(Op.TIMESTAMP)
+                + Op.POP(Op.GAS)
+                + Op.JUMPI(
+                    pc=0x194,
+                    condition=Op.ISZERO(
+                        Op.ISZERO(
+                            Op.EQ(
+                                Op.AND(
+                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                                    Op.CALLER,
+                                ),
+                                0x7F3F285918D9B5E764174551E10B7539B97BBB27,
+                            ),
+                        ),
+                    ),
+                )
+                + Op.PUSH1[0x0]
+                + Op.SWAP1
+                + Op.POP
+                + Op.JUMP(pc=0x1F7)
+                + Op.JUMPDEST
+                + Op.JUMPI(
+                    pc=0x1A7,
+                    condition=Op.ISZERO(Op.ISZERO(Op.EQ(Op.CALLVALUE, 0x64))),
+                )
+                + Op.PUSH1[0x0]
+                + Op.SWAP1
+                + Op.POP
+                + Op.JUMP(pc=0x1F7)
+                + Op.JUMPDEST
+                + Op.JUMPI(
+                    pc=0x1BA,
+                    condition=Op.ISZERO(Op.ISZERO(Op.EQ(Op.GASPRICE, 0x1))),
+                )
+                + Op.PUSH1[0x0]
+                + Op.SWAP1
+                + Op.POP
+                + Op.JUMP(pc=0x1F7)
+                + Op.JUMPDEST
+                + Op.JUMPI(
+                    pc=0x1F6,
+                    condition=Op.ISZERO(
+                        Op.ISZERO(
+                            Op.EQ(
+                                Op.AND(
+                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                                    Op.ORIGIN,
+                                ),
+                                0x7F3F285918D9B5E764174551E10B7539B97BBB27,
+                            ),
+                        ),
+                    ),
+                )
+                + Op.PUSH1[0x0]
+                + Op.SWAP1
+                + Op.POP
+                + Op.JUMP(pc=0x1F7)
+                + Op.JUMPDEST
+                + Op.JUMPDEST
+                + Op.SWAP1
+                + Op.JUMP
             ),
         ),
     }

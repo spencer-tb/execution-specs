@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,17 +50,32 @@ def test_log0_non_empty_mem_log_mem_size1(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7faabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd600052"  # noqa: E501
-            "60016000a000"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0xAABBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCCDD,  # noqa: E501
+            )
+            + Op.LOG0(offset=0x0, size=0x1)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600060177302da68e115cd98f7d70e0b7cfabe76581fd2d6676103e8f160"  # noqa: E501
-            "005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x3E8,
+                    address=0x2DA68E115CD98F7D70E0B7CFABE76581FD2D667,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -78,14 +94,31 @@ def test_log0_non_empty_mem_log_mem_size1(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "7faabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd60005260016000a000"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0xAABBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCCDD,  # noqa: E501
+                )
+                + Op.LOG0(offset=0x0, size=0x1)
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "600060006000600060177302da68e115cd98f7d70e0b7cfabe76581fd2d6676103e8f160005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x3E8,
+                        address=0x2DA68E115CD98F7D70E0B7CFABE76581FD2D667,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,10 +52,26 @@ def test_ext_code_copy_target_range_longer_than_code_tests(
     pre[contract] = Account(
         balance=7000,
         nonce=0,
-        code=bytes.fromhex(
-            "611234602052604060006000737ac02e797f450c7ea62753383f618e1903cd6bba3c6000"  # noqa: E501
-            "51600055602051600155615678606052604060006040734768b5e50b0ebe91ae38d84a47"  # noqa: E501
-            "e3179e615f9c403c60405160025560605160035500"
+        code=(
+            Op.MSTORE(offset=0x20, value=0x1234)
+            + Op.EXTCODECOPY(
+                address=0x7AC02E797F450C7EA62753383F618E1903CD6BBA,
+                dest_offset=0x0,
+                offset=0x0,
+                size=0x40,
+            )
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x20))
+            + Op.MSTORE(offset=0x60, value=0x5678)
+            + Op.EXTCODECOPY(
+                address=0x4768B5E50B0EBE91AE38D84A47E3179E615F9C40,
+                dest_offset=0x40,
+                offset=0x0,
+                size=0x40,
+            )
+            + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x40))
+            + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x60))
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
@@ -82,8 +99,26 @@ def test_ext_code_copy_target_range_longer_than_code_tests(
             storage={
                 0: 0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "611234602052604060006000737ac02e797f450c7ea62753383f618e1903cd6bba3c600051600055602051600155615678606052604060006040734768b5e50b0ebe91ae38d84a47e3179e615f9c403c60405160025560605160035500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x20, value=0x1234)
+                + Op.EXTCODECOPY(
+                    address=0x7AC02E797F450C7EA62753383F618E1903CD6BBA,
+                    dest_offset=0x0,
+                    offset=0x0,
+                    size=0x40,
+                )
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x20))
+                + Op.MSTORE(offset=0x60, value=0x5678)
+                + Op.EXTCODECOPY(
+                    address=0x4768B5E50B0EBE91AE38D84A47E3179E615F9C40,
+                    dest_offset=0x40,
+                    offset=0x0,
+                    size=0x40,
+                )
+                + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x40))
+                + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x60))
+                + Op.STOP
             ),
         ),
         callee: Account(

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,24 +52,53 @@ def test_callcallcode_01(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "604060006040600073d42cd48f1d9a88f4b75bfb5e46e754c1128bd7fb6203d090f46001"  # noqa: E501
-            "5500"
+        code=(
+            Op.SSTORE(
+                key=0x1,
+                value=Op.DELEGATECALL(
+                    gas=0x3D090,
+                    address=0xD42CD48F1D9A88F4B75BFB5E46E754C1128BD7FB,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600160025533600455346005553060e6553260e8553660ec553860ee553a60f05500"  # noqa: E501
+        code=(
+            Op.SSTORE(key=0x2, value=0x1)
+            + Op.SSTORE(key=0x4, value=Op.CALLER)
+            + Op.SSTORE(key=0x5, value=Op.CALLVALUE)
+            + Op.SSTORE(key=0xE6, value=Op.ADDRESS)
+            + Op.SSTORE(key=0xE8, value=Op.ORIGIN)
+            + Op.SSTORE(key=0xEC, value=Op.CALLDATASIZE)
+            + Op.SSTORE(key=0xEE, value=Op.CODESIZE)
+            + Op.SSTORE(key=0xF0, value=Op.GASPRICE)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "60406000604060006001731ccccf19d84280c8a0e94209761296dabd87b3c962055730f2"  # noqa: E501
-            "60005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALLCODE(
+                    gas=0x55730,
+                    address=0x1CCCCF19D84280C8A0E94209761296DABD87B3C9,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -87,13 +117,32 @@ def test_callcallcode_01(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "604060006040600073d42cd48f1d9a88f4b75bfb5e46e754c1128bd7fb6203d090f460015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x1,
+                    value=Op.DELEGATECALL(
+                        gas=0x3D090,
+                        address=0xD42CD48F1D9A88F4B75BFB5E46E754C1128BD7FB,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         callee_1: Account(
-            code=bytes.fromhex(
-                "600160025533600455346005553060e6553260e8553660ec553860ee553a60f05500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x2, value=0x1)
+                + Op.SSTORE(key=0x4, value=Op.CALLER)
+                + Op.SSTORE(key=0x5, value=Op.CALLVALUE)
+                + Op.SSTORE(key=0xE6, value=Op.ADDRESS)
+                + Op.SSTORE(key=0xE8, value=Op.ORIGIN)
+                + Op.SSTORE(key=0xEC, value=Op.CALLDATASIZE)
+                + Op.SSTORE(key=0xEE, value=Op.CODESIZE)
+                + Op.SSTORE(key=0xF0, value=Op.GASPRICE)
+                + Op.STOP
             ),
         ),
         contract: Account(
@@ -109,8 +158,20 @@ def test_callcallcode_01(
                 238: 34,
                 240: 10,
             },
-            code=bytes.fromhex(
-                "60406000604060006001731ccccf19d84280c8a0e94209761296dabd87b3c962055730f260005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALLCODE(
+                        gas=0x55730,
+                        address=0x1CCCCF19D84280C8A0E94209761296DABD87B3C9,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

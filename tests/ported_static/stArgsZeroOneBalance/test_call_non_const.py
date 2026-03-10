@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -32,9 +33,33 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x7d7e1645af7df916da558f0695e9dedd23b1215e"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31f160005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            address=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            value=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            args_offset=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            args_size=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            ret_offset=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            ret_size=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -42,9 +67,33 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x7d7e1645af7df916da558f0695e9dedd23b1215e"): Account(
-                    code=bytes.fromhex(
-                        "737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31f160005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            address=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            value=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            args_offset=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            args_size=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            ret_offset=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                            ret_size=Op.BALANCE(
+                                address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E  # noqa: E501
+                            ),
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -76,12 +125,34 @@ def test_call_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695"  # noqa: E501
-            "e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af"  # noqa: E501
-            "7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f0695e9dedd23b121"  # noqa: E501
-            "5e31737d7e1645af7df916da558f0695e9dedd23b1215e31737d7e1645af7df916da558f"  # noqa: E501
-            "0695e9dedd23b1215e31f160005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=Op.BALANCE(
+                        address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E,
+                    ),
+                    address=Op.BALANCE(
+                        address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E,
+                    ),
+                    value=Op.BALANCE(
+                        address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E,
+                    ),
+                    args_offset=Op.BALANCE(
+                        address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E,
+                    ),
+                    args_size=Op.BALANCE(
+                        address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E,
+                    ),
+                    ret_offset=Op.BALANCE(
+                        address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E,
+                    ),
+                    ret_size=Op.BALANCE(
+                        address=0x7D7E1645AF7DF916DA558F0695E9DEDD23B1215E,
+                    ),
+                ),
+            )
+            + Op.STOP
         ),
     )
 

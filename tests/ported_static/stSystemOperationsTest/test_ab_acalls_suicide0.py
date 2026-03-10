@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,17 +50,45 @@ def test_ab_acalls_suicide0(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600060187324940009f045e4134ed2ab242be610d312fe9a29620186a0f1"  # noqa: E501
-            "58557324940009f045e4134ed2ab242be610d312fe9a29ff00"
+        code=(
+            Op.SSTORE(
+                key=Op.PC,
+                value=Op.CALL(
+                    gas=0x186A0,
+                    address=0x24940009F045E4134ED2AB242BE610D312FE9A29,
+                    value=0x18,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SELFDESTRUCT(
+                address=0x24940009F045E4134ED2AB242BE610D312FE9A29
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600060177310481e52c494fd0d78604b0f9207a89008f7e9a961c350f160"  # noqa: E501
-            "0101585500"
+        code=(
+            Op.SSTORE(
+                key=Op.PC,
+                value=Op.ADD(
+                    0x1,
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x10481E52C494FD0D78604B0F9207A89008F7E9A9,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -79,14 +108,44 @@ def test_ab_acalls_suicide0(
     post = {
         contract: Account(
             storage={36: 1},
-            code=bytes.fromhex(
-                "600060006000600060187324940009f045e4134ed2ab242be610d312fe9a29620186a0f158557324940009f045e4134ed2ab242be610d312fe9a29ff00"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=Op.PC,
+                    value=Op.CALL(
+                        gas=0x186A0,
+                        address=0x24940009F045E4134ED2AB242BE610D312FE9A29,
+                        value=0x18,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SELFDESTRUCT(
+                    address=0x24940009F045E4134ED2AB242BE610D312FE9A29,
+                )
+                + Op.STOP
             ),
         ),
         callee: Account(
             storage={38: 1},
-            code=bytes.fromhex(
-                "600060006000600060177310481e52c494fd0d78604b0f9207a89008f7e9a961c350f1600101585500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=Op.PC,
+                    value=Op.ADD(
+                        0x1,
+                        Op.CALL(
+                            gas=0xC350,
+                            address=0x10481E52C494FD0D78604B0F9207A89008F7E9A9,
+                            value=0x17,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

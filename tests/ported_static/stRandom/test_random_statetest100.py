@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,12 +48,38 @@ def test_random_statetest100(
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("414243444342444283f24455"),
+        code=(
+            Op.COINBASE
+            + Op.TIMESTAMP
+            + Op.SSTORE(
+                key=Op.PREVRANDAO,
+                value=Op.CALLCODE(
+                    gas=Op.DUP4,
+                    address=Op.TIMESTAMP,
+                    value=Op.PREVRANDAO,
+                    args_offset=Op.TIMESTAMP,
+                    args_size=Op.NUMBER,
+                    ret_offset=Op.PREVRANDAO,
+                    ret_size=Op.NUMBER,
+                ),
+            )
+        ),
     )
 
     tx = Transaction(
@@ -69,11 +96,39 @@ def test_random_statetest100(
 
     post = {
         coinbase: Account(
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
         contract: Account(
             storage={0x20000: 1},
-            code=bytes.fromhex("414243444342444283f24455"),
+            code=(
+                Op.COINBASE
+                + Op.TIMESTAMP
+                + Op.SSTORE(
+                    key=Op.PREVRANDAO,
+                    value=Op.CALLCODE(
+                        gas=Op.DUP4,
+                        address=Op.TIMESTAMP,
+                        value=Op.PREVRANDAO,
+                        args_offset=Op.TIMESTAMP,
+                        args_size=Op.NUMBER,
+                        ret_offset=Op.PREVRANDAO,
+                        ret_size=Op.NUMBER,
+                    ),
+                )
+            ),
         ),
     }
 

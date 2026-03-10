@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,13 +50,25 @@ def test_suicides_stop_after_suicide(
     pre[callee] = Account(
         balance=1110,
         nonce=0,
-        code=bytes.fromhex("6001ff00"),
+        code=Op.SELFDESTRUCT(address=0x1) + Op.STOP,
     )
     pre[sender] = Account(balance=0x7459280, nonce=0)
     pre[contract] = Account(
         balance=0x2710,
         nonce=0,
-        code=bytes.fromhex("6000ff600060006000600060006000617530f100"),
+        code=(
+            Op.SELFDESTRUCT(address=0x0)
+            + Op.CALL(
+                gas=0x7530,
+                address=0x0,
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -71,9 +84,21 @@ def test_suicides_stop_after_suicide(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("6001ff00")),
+        callee: Account(code=Op.SELFDESTRUCT(address=0x1) + Op.STOP),
         contract: Account(
-            code=bytes.fromhex("6000ff600060006000600060006000617530f100"),
+            code=(
+                Op.SELFDESTRUCT(address=0x0)
+                + Op.CALL(
+                    gas=0x7530,
+                    address=0x0,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
+            ),
         ),
     }
 

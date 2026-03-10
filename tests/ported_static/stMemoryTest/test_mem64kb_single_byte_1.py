@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,7 +48,11 @@ def test_mem64kb_single_byte_1(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("602a61f9fe535960005500"),
+        code=(
+            Op.MSTORE8(offset=0xF9FE, value=0x2A)
+            + Op.SSTORE(key=0x0, value=Op.MSIZE)
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -65,7 +70,11 @@ def test_mem64kb_single_byte_1(
     post = {
         contract: Account(
             storage={0: 64000},
-            code=bytes.fromhex("602a61f9fe535960005500"),
+            code=(
+                Op.MSTORE8(offset=0xF9FE, value=0x2A)
+                + Op.SSTORE(key=0x0, value=Op.MSIZE)
+                + Op.STOP
+            ),
         ),
     }
 

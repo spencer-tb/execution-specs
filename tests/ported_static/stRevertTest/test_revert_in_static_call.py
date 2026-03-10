@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,15 +48,25 @@ def test_revert_in_static_call(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=bytes.fromhex(
-            "60406000604060007333fcf0576ab8b4527c9426094e2e355a7ffc7e7161c350fa600055"  # noqa: E501
-            "00"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.STATICCALL(
+                    gas=0xC350,
+                    address=0x33FCF0576AB8B4527C9426094E2E355A7FFC7E71,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("60006000fd00"),
+        code=Op.REVERT(offset=0x0, size=0x0) + Op.STOP,
     )
     pre[sender] = Account(balance=0x5F5E100, nonce=0)
 
@@ -73,11 +84,22 @@ def test_revert_in_static_call(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "60406000604060007333fcf0576ab8b4527c9426094e2e355a7ffc7e7161c350fa60005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.STATICCALL(
+                        gas=0xC350,
+                        address=0x33FCF0576AB8B4527C9426094E2E355A7FFC7E71,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
-        callee: Account(code=bytes.fromhex("60006000fd00")),
+        callee: Account(code=Op.REVERT(offset=0x0, size=0x0) + Op.STOP),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -32,9 +33,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
                     storage={0: 12},
-                    code=bytes.fromhex(
-                        "6e600160005560016000fd6011600155600052600f60116001f0600155600c60005500"  # noqa: E501
-                    ),
+                    code=Op.MSTORE(
+                        offset=0x0, value=0x600160005560016000FD6011600155
+                    )
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CREATE(value=0x1, offset=0x11, size=0xF),
+                    )
+                    + Op.SSTORE(key=0x0, value=0xC)
+                    + Op.STOP,
                 )
             },
         ),
@@ -42,9 +49,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             70000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=bytes.fromhex(
-                        "6e600160005560016000fd6011600155600052600f60116001f0600155600c60005500"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0, value=0x600160005560016000FD6011600155
                     )
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.CREATE(value=0x1, offset=0x11, size=0xF),
+                    )
+                    + Op.SSTORE(key=0x0, value=0xC)
+                    + Op.STOP
                 )
             },
         ),
@@ -76,8 +89,13 @@ def test_revert_opcode_create(
     pre[contract] = Account(
         balance=1,
         nonce=0,
-        code=bytes.fromhex(
-            "6e600160005560016000fd6011600155600052600f60116001f0600155600c60005500"  # noqa: E501
+        code=(
+            Op.MSTORE(offset=0x0, value=0x600160005560016000FD6011600155)
+            + Op.SSTORE(
+                key=0x1, value=Op.CREATE(value=0x1, offset=0x11, size=0xF)
+            )
+            + Op.SSTORE(key=0x0, value=0xC)
+            + Op.STOP
         ),
     )
 

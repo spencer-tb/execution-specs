@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,12 +32,40 @@ REFERENCE_SPEC_VERSION = "N/A"
             3141592,
             {
                 Address("0x4f3f701464972e74606d6ea82d4d3080599a0e79"): Account(
-                    code=bytes.fromhex("6000355415600957005b60203560003555")
+                    code=Op.JUMPI(
+                        pc=0x9,
+                        condition=Op.ISZERO(
+                            Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                        ),
+                    )
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=Op.CALLDATALOAD(offset=0x0),
+                        value=Op.CALLDATALOAD(offset=0x20),
+                    )
                 ),
                 Address("0x709ee68118ab00ce0bab659c9aa89744b35703fa"): Account(
-                    code=bytes.fromhex(
-                        "5b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe457f00000000000000000000000100000000000000000000000000000000000000007f00000000000000000000000000000000000000000000000000000000000000017f000000000000000000000000000000000000000000000000000000000000c3504357155320803a975560005155"  # noqa: E501
-                    )
+                    code=Op.JUMPDEST
+                    + Op.PUSH32[
+                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
+                    ]
+                    + Op.PUSH32[
+                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+                    ]
+                    + Op.GASLIMIT
+                    + Op.PUSH32[0x10000000000000000000000000000000000000000]
+                    + Op.PUSH32[0x1]
+                    + Op.JUMPI(pc=Op.NUMBER, condition=Op.PUSH32[0xC350])
+                    + Op.ISZERO
+                    + Op.MSTORE8
+                    + Op.SHA3
+                    + Op.DUP1
+                    + Op.GASPRICE
+                    + Op.SWAP8
+                    + Op.SSTORE
+                    + Op.MLOAD(offset=0x0)
+                    + Op.SSTORE
                 ),
             },
         ),
@@ -44,12 +73,40 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0x4f3f701464972e74606d6ea82d4d3080599a0e79"): Account(
-                    code=bytes.fromhex("6000355415600957005b60203560003555")
+                    code=Op.JUMPI(
+                        pc=0x9,
+                        condition=Op.ISZERO(
+                            Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                        ),
+                    )
+                    + Op.STOP
+                    + Op.JUMPDEST
+                    + Op.SSTORE(
+                        key=Op.CALLDATALOAD(offset=0x0),
+                        value=Op.CALLDATALOAD(offset=0x20),
+                    )
                 ),
                 Address("0x709ee68118ab00ce0bab659c9aa89744b35703fa"): Account(
-                    code=bytes.fromhex(
-                        "5b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe457f00000000000000000000000100000000000000000000000000000000000000007f00000000000000000000000000000000000000000000000000000000000000017f000000000000000000000000000000000000000000000000000000000000c3504357155320803a975560005155"  # noqa: E501
-                    )
+                    code=Op.JUMPDEST
+                    + Op.PUSH32[
+                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
+                    ]
+                    + Op.PUSH32[
+                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+                    ]
+                    + Op.GASLIMIT
+                    + Op.PUSH32[0x10000000000000000000000000000000000000000]
+                    + Op.PUSH32[0x1]
+                    + Op.JUMPI(pc=Op.NUMBER, condition=Op.PUSH32[0xC350])
+                    + Op.ISZERO
+                    + Op.MSTORE8
+                    + Op.SHA3
+                    + Op.DUP1
+                    + Op.GASPRICE
+                    + Op.SWAP8
+                    + Op.SSTORE
+                    + Op.MLOAD(offset=0x0)
+                    + Op.SSTORE
                 ),
             },
         ),
@@ -80,17 +137,43 @@ def test_fill_stack(
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fff"  # noqa: E501
-            "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe457f000000"  # noqa: E501
-            "00000000000000000100000000000000000000000000000000000000007f000000000000"  # noqa: E501
-            "00000000000000000000000000000000000000000000000000017f000000000000000000"  # noqa: E501
-            "000000000000000000000000000000000000000000c3504357155320803a975560005155"  # noqa: E501
+        code=(
+            Op.JUMPDEST
+            + Op.PUSH32[
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
+            ]
+            + Op.PUSH32[
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
+            ]
+            + Op.GASLIMIT
+            + Op.PUSH32[0x10000000000000000000000000000000000000000]
+            + Op.PUSH32[0x1]
+            + Op.JUMPI(pc=Op.NUMBER, condition=Op.PUSH32[0xC350])
+            + Op.ISZERO
+            + Op.MSTORE8
+            + Op.SHA3
+            + Op.DUP1
+            + Op.GASPRICE
+            + Op.SWAP8
+            + Op.SSTORE
+            + Op.MLOAD(offset=0x0)
+            + Op.SSTORE
         ),
     )
     pre[sender] = Account(balance=0x152D02C7E14AF6800000, nonce=0)

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,9 +48,14 @@ def test_sar_2_254_254(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "7f400000000000000000000000000000000000000000000000000000000000000060fe1d"  # noqa: E501
-            "600055"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.SAR(
+                    0xFE,
+                    0x4000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
+                ),
+            )
         ),
         storage={0x0: 0x3},
     )
@@ -69,8 +75,14 @@ def test_sar_2_254_254(
     post = {
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "7f400000000000000000000000000000000000000000000000000000000000000060fe1d600055"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.SAR(
+                        0xFE,
+                        0x4000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
+                    ),
+                )
             ),
         ),
     }

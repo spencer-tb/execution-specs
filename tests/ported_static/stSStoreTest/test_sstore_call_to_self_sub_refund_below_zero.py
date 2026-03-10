@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,8 +51,22 @@ def test_sstore_call_to_self_sub_refund_below_zero(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "3330146015576000600155600080808080305af1005b600360015500"
+        code=(
+            Op.JUMPI(pc=0x15, condition=Op.EQ(Op.ADDRESS, Op.CALLER))
+            + Op.SSTORE(key=0x1, value=0x0)
+            + Op.CALL(
+                gas=Op.GAS,
+                address=Op.ADDRESS,
+                value=Op.DUP1,
+                args_offset=Op.DUP1,
+                args_size=Op.DUP1,
+                ret_offset=Op.DUP1,
+                ret_size=0x0,
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(key=0x1, value=0x3)
+            + Op.STOP
         ),
         storage={0x1: 0x2},
     )
@@ -71,8 +86,22 @@ def test_sstore_call_to_self_sub_refund_below_zero(
     post = {
         contract: Account(
             storage={1: 3},
-            code=bytes.fromhex(
-                "3330146015576000600155600080808080305af1005b600360015500"
+            code=(
+                Op.JUMPI(pc=0x15, condition=Op.EQ(Op.ADDRESS, Op.CALLER))
+                + Op.SSTORE(key=0x1, value=0x0)
+                + Op.CALL(
+                    gas=Op.GAS,
+                    address=Op.ADDRESS,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP1,
+                    args_size=Op.DUP1,
+                    ret_offset=Op.DUP1,
+                    ret_size=0x0,
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(key=0x1, value=0x3)
+                + Op.STOP
             ),
         ),
     }

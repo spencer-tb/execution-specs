@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,15 +51,32 @@ def test_call_to_return1_for_dynamic_jump1(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6001601f60006000601773d43411a40a68e9cba15440e3c34a74a4dc5f79dd6103e8f160"  # noqa: E501
-            "005560005156605b6023602355"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x3E8,
+                    address=0xD43411A40A68E9CBA15440E3C34A74A4DC5F79DD,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x1F,
+                    ret_size=0x1,
+                ),
+            )
+            + Op.JUMP(pc=Op.MLOAD(offset=0x0))
+            + Op.PUSH1[0x5B]
+            + Op.SSTORE(key=0x23, value=0x23)
         ),
     )
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=bytes.fromhex("6001600155602b601f536001601ff3"),
+        code=(
+            Op.SSTORE(key=0x1, value=0x1)
+            + Op.MSTORE8(offset=0x1F, value=0x2B)
+            + Op.RETURN(offset=0x1F, size=0x1)
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -76,11 +94,31 @@ def test_call_to_return1_for_dynamic_jump1(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "6001601f60006000601773d43411a40a68e9cba15440e3c34a74a4dc5f79dd6103e8f160005560005156605b6023602355"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x3E8,
+                        address=0xD43411A40A68E9CBA15440E3C34A74A4DC5F79DD,
+                        value=0x17,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x1F,
+                        ret_size=0x1,
+                    ),
+                )
+                + Op.JUMP(pc=Op.MLOAD(offset=0x0))
+                + Op.PUSH1[0x5B]
+                + Op.SSTORE(key=0x23, value=0x23)
             ),
         ),
-        callee: Account(code=bytes.fromhex("6001600155602b601f536001601ff3")),
+        callee: Account(
+            code=(
+                Op.SSTORE(key=0x1, value=0x1)
+                + Op.MSTORE8(offset=0x1F, value=0x2B)
+                + Op.RETURN(offset=0x1F, size=0x1)
+            ),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

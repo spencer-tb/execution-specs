@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -73,21 +74,181 @@ def test_revert_precompiled_touch_storage_paris(
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000600161c350fa506000600060006000600261c350fa50600060006000"  # noqa: E501
-            "6000600361c350fa506000600060006000600461c350fa506000600060006000600561c3"  # noqa: E501
-            "50fa506000600060006000600661c350fa506000600060006000600761c350fa50600060"  # noqa: E501
-            "0060006000600861c350fa505a6001555a6002555a60035500"
+        code=(
+            Op.POP(
+                Op.STATICCALL(
+                    gas=0xC350,
+                    address=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0xC350,
+                    address=0x2,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0xC350,
+                    address=0x3,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0xC350,
+                    address=0x4,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0xC350,
+                    address=0x5,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0xC350,
+                    address=0x6,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0xC350,
+                    address=0x7,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0xC350,
+                    address=0x8,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.GAS)
+            + Op.SSTORE(key=0x2, value=Op.GAS)
+            + Op.SSTORE(key=0x3, value=Op.GAS)
+            + Op.STOP
         ),
     )
     pre[callee_2] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000600161c350f4506000600060006000600261c350f450600060006000"  # noqa: E501
-            "6000600361c350f4506000600060006000600461c350f4506000600060006000600561c3"  # noqa: E501
-            "50f4506000600060006000600661c350f4506000600060006000600761c350f450600060"  # noqa: E501
-            "0060006000600861c350f4505a6001555a6002555a60035500"
+        code=(
+            Op.POP(
+                Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0x2,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0x3,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0x4,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0x5,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0x6,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0x7,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0x8,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.GAS)
+            + Op.SSTORE(key=0x2, value=Op.GAS)
+            + Op.SSTORE(key=0x3, value=Op.GAS)
+            + Op.STOP
         ),
     )
     pre[callee_3] = Account(balance=10, nonce=0, storage={0x0: 0x1})
@@ -97,12 +258,99 @@ def test_revert_precompiled_touch_storage_paris(
     pre[callee_7] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000600060006000600161c350f15060006000600060006000600261c350f1506000"  # noqa: E501
-            "6000600060006000600361c350f15060006000600060006000600461c350f15060006000"  # noqa: E501
-            "600060006000600561c350f15060006000600060006000600661c350f150600060006000"  # noqa: E501
-            "60006000600761c350f15060006000600060006000600861c350f1505a6001555a600255"  # noqa: E501
-            "5a60035500"
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x1,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x2,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x3,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x4,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x5,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x6,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x7,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0xC350,
+                    address=0x8,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.GAS)
+            + Op.SSTORE(key=0x2, value=Op.GAS)
+            + Op.SSTORE(key=0x3, value=Op.GAS)
+            + Op.STOP
         ),
     )
     pre[callee_8] = Account(balance=10, nonce=0, storage={0x0: 0x1})
@@ -112,18 +360,116 @@ def test_revert_precompiled_touch_storage_paris(
     pre[callee_11] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000600060006000600161c350f25060006000600060006000600261c350f2506000"  # noqa: E501
-            "6000600060006000600361c350f25060006000600060006000600461c350f25060006000"  # noqa: E501
-            "600060006000600561c350f25060006000600060006000600661c350f250600060006000"  # noqa: E501
-            "60006000600761c350f25060006000600060006000600861c350f2505a6001555a600255"  # noqa: E501
-            "5a60035500"
+        code=(
+            Op.POP(
+                Op.CALLCODE(
+                    gas=0xC350,
+                    address=0x1,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=0xC350,
+                    address=0x2,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=0xC350,
+                    address=0x3,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=0xC350,
+                    address=0x4,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=0xC350,
+                    address=0x5,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=0xC350,
+                    address=0x6,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=0xC350,
+                    address=0x7,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CALLCODE(
+                    gas=0xC350,
+                    address=0x8,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.GAS)
+            + Op.SSTORE(key=0x2, value=Op.GAS)
+            + Op.SSTORE(key=0x3, value=Op.GAS)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("600060006000600060006000355af200"),
+        code=(
+            Op.CALLCODE(
+                gas=Op.GAS,
+                address=Op.CALLDATALOAD(offset=0x0),
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
+        ),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -143,13 +489,179 @@ def test_revert_precompiled_touch_storage_paris(
     post = {
         callee: Account(storage={0: 1}),
         callee_1: Account(
-            code=bytes.fromhex(
-                "6000600060006000600161c350fa506000600060006000600261c350fa506000600060006000600361c350fa506000600060006000600461c350fa506000600060006000600561c350fa506000600060006000600661c350fa506000600060006000600761c350fa506000600060006000600861c350fa505a6001555a6002555a60035500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.STATICCALL(
+                        gas=0xC350,
+                        address=0x1,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.STATICCALL(
+                        gas=0xC350,
+                        address=0x2,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.STATICCALL(
+                        gas=0xC350,
+                        address=0x3,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.STATICCALL(
+                        gas=0xC350,
+                        address=0x4,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.STATICCALL(
+                        gas=0xC350,
+                        address=0x5,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.STATICCALL(
+                        gas=0xC350,
+                        address=0x6,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.STATICCALL(
+                        gas=0xC350,
+                        address=0x7,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.STATICCALL(
+                        gas=0xC350,
+                        address=0x8,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=Op.GAS)
+                + Op.SSTORE(key=0x2, value=Op.GAS)
+                + Op.SSTORE(key=0x3, value=Op.GAS)
+                + Op.STOP
             ),
         ),
         callee_2: Account(
-            code=bytes.fromhex(
-                "6000600060006000600161c350f4506000600060006000600261c350f4506000600060006000600361c350f4506000600060006000600461c350f4506000600060006000600561c350f4506000600060006000600661c350f4506000600060006000600761c350f4506000600060006000600861c350f4505a6001555a6002555a60035500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0x1,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0x2,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0x3,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0x4,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0x5,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0x6,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0x7,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0x8,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=Op.GAS)
+                + Op.SSTORE(key=0x2, value=Op.GAS)
+                + Op.SSTORE(key=0x3, value=Op.GAS)
+                + Op.STOP
             ),
         ),
         callee_3: Account(storage={0: 1}),
@@ -157,20 +669,213 @@ def test_revert_precompiled_touch_storage_paris(
         callee_5: Account(storage={0: 1}),
         callee_6: Account(storage={0: 1}),
         callee_7: Account(
-            code=bytes.fromhex(
-                "60006000600060006000600161c350f15060006000600060006000600261c350f15060006000600060006000600361c350f15060006000600060006000600461c350f15060006000600060006000600561c350f15060006000600060006000600661c350f15060006000600060006000600761c350f15060006000600060006000600861c350f1505a6001555a6002555a60035500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x1,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x2,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x3,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x4,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x5,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x6,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x7,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0xC350,
+                        address=0x8,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=Op.GAS)
+                + Op.SSTORE(key=0x2, value=Op.GAS)
+                + Op.SSTORE(key=0x3, value=Op.GAS)
+                + Op.STOP
             ),
         ),
         callee_8: Account(storage={0: 1}),
         callee_9: Account(storage={0: 1}),
         callee_10: Account(storage={0: 1}),
         callee_11: Account(
-            code=bytes.fromhex(
-                "60006000600060006000600161c350f25060006000600060006000600261c350f25060006000600060006000600361c350f25060006000600060006000600461c350f25060006000600060006000600561c350f25060006000600060006000600661c350f25060006000600060006000600761c350f25060006000600060006000600861c350f2505a6001555a6002555a60035500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.CALLCODE(
+                        gas=0xC350,
+                        address=0x1,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALLCODE(
+                        gas=0xC350,
+                        address=0x2,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALLCODE(
+                        gas=0xC350,
+                        address=0x3,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALLCODE(
+                        gas=0xC350,
+                        address=0x4,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALLCODE(
+                        gas=0xC350,
+                        address=0x5,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALLCODE(
+                        gas=0xC350,
+                        address=0x6,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALLCODE(
+                        gas=0xC350,
+                        address=0x7,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.POP(
+                    Op.CALLCODE(
+                        gas=0xC350,
+                        address=0x8,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=Op.GAS)
+                + Op.SSTORE(key=0x2, value=Op.GAS)
+                + Op.SSTORE(key=0x3, value=Op.GAS)
+                + Op.STOP
             ),
         ),
         contract: Account(
-            code=bytes.fromhex("600060006000600060006000355af200"),
+            code=(
+                Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=Op.CALLDATALOAD(offset=0x0),
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
+            ),
         ),
     }
 

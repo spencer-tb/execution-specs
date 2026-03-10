@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,16 @@ def test_call_contract_to_create_contract_no_cash(
     pre[contract] = Account(
         balance=0x2710,
         nonce=0,
-        code=bytes.fromhex(
-            "74600c60005566602060406000f060205260076039f36000526015600b620186a0f06000"  # noqa: E501
-            "5500"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x600C60005566602060406000F060205260076039F3,
+            )
+            + Op.SSTORE(
+                key=0x0,
+                value=Op.CREATE(value=0x186A0, offset=0xB, size=0x15),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
@@ -70,8 +78,16 @@ def test_call_contract_to_create_contract_no_cash(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "74600c60005566602060406000f060205260076039f36000526015600b620186a0f060005500"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x600C60005566602060406000F060205260076039F3,
+                )
+                + Op.SSTORE(
+                    key=0x0,
+                    value=Op.CREATE(value=0x186A0, offset=0xB, size=0x15),
+                )
+                + Op.STOP
             ),
         ),
     }

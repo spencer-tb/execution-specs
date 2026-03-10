@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,24 @@ def test_returndatacopy_following_successful_create(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600052596000526002806028600051396000516000f0506020600160003e60005160"  # noqa: E501
-            "005500fe0000"
+        code=(
+            Op.MSTORE(offset=0x0, value=0x0)
+            + Op.MSTORE(offset=0x0, value=Op.MSIZE)
+            + Op.PUSH1[0x2]
+            + Op.CODECOPY(
+                dest_offset=Op.MLOAD(offset=0x0),
+                offset=0x28,
+                size=Op.DUP1,
+            )
+            + Op.MLOAD(offset=0x0)
+            + Op.PUSH1[0x0]
+            + Op.POP(Op.CREATE)
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x1, size=0x20)
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
+            + Op.INVALID
+            + Op.STOP
+            + Op.STOP
         ),
         storage={0x0: 0x2},
     )
@@ -72,8 +88,24 @@ def test_returndatacopy_following_successful_create(
     post = {
         contract: Account(
             storage={0: 2},
-            code=bytes.fromhex(
-                "6000600052596000526002806028600051396000516000f0506020600160003e60005160005500fe0000"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=0x0)
+                + Op.MSTORE(offset=0x0, value=Op.MSIZE)
+                + Op.PUSH1[0x2]
+                + Op.CODECOPY(
+                    dest_offset=Op.MLOAD(offset=0x0),
+                    offset=0x28,
+                    size=Op.DUP1,
+                )
+                + Op.MLOAD(offset=0x0)
+                + Op.PUSH1[0x0]
+                + Op.POP(Op.CREATE)
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x1, size=0x20)
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
+                + Op.INVALID
+                + Op.STOP
+                + Op.STOP
             ),
         ),
     }

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,12 +50,37 @@ def test_call_ecrecover_unrecoverable_key(
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,
-        code=bytes.fromhex(
-            "7fa8b53bdf3306a35a7103ab5504a0c9b492295564b6202b1942a84ef300107281600052"  # noqa: E501
-            "601b6020527f307835653165303366353363653138623737326363623030393366663731"  # noqa: E501
-            "66336040527f663533663563373562373464636233316138356161386238383932623465"  # noqa: E501
-            "38626060527f112233445566778899101112131415161718192021222324252627282930"  # noqa: E501
-            "3132608052602060806080600060006001620493e0f15060805160005500"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0xA8B53BDF3306A35A7103AB5504A0C9B492295564B6202B1942A84EF300107281,  # noqa: E501
+            )
+            + Op.MSTORE(offset=0x20, value=0x1B)
+            + Op.MSTORE(
+                offset=0x40,
+                value=0x3078356531653033663533636531386237373263636230303933666637316633,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x60,
+                value=0x6635336635633735623734646362333161383561613862383839326234653862,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x80,
+                value=0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=0x493E0,
+                    address=0x1,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x80,
+                    ret_offset=0x80,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x80))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -76,8 +102,37 @@ def test_call_ecrecover_unrecoverable_key(
             storage={
                 0: 0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "7fa8b53bdf3306a35a7103ab5504a0c9b492295564b6202b1942a84ef300107281600052601b6020527f30783565316530336635336365313862373732636362303039336666373166336040527f66353366356337356237346463623331613835616138623838393262346538626060527f1122334455667788991011121314151617181920212223242526272829303132608052602060806080600060006001620493e0f15060805160005500"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0xA8B53BDF3306A35A7103AB5504A0C9B492295564B6202B1942A84EF300107281,  # noqa: E501
+                )
+                + Op.MSTORE(offset=0x20, value=0x1B)
+                + Op.MSTORE(
+                    offset=0x40,
+                    value=0x3078356531653033663533636531386237373263636230303933666637316633,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x60,
+                    value=0x6635336635633735623734646362333161383561613862383839326234653862,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x80,
+                    value=0x1122334455667788991011121314151617181920212223242526272829303132,  # noqa: E501
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=0x493E0,
+                        address=0x1,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x80,
+                        ret_offset=0x80,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x80))
+                + Op.STOP
             ),
         ),
     }

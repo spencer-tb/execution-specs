@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x39332a3856e9e6dbaebcdbd67b72b3e7209ffcb2"): Account(
-                    code=bytes.fromhex(
-                        "7339332a3856e9e6dbaebcdbd67b72b3e7209ffcb2317339332a3856e9e6dbaebcdbd67b72b3e7209ffcb231a000"  # noqa: E501
+                    code=Op.LOG0(
+                        offset=Op.BALANCE(
+                            address=0x39332A3856E9E6DBAEBCDBD67B72B3E7209FFCB2
+                        ),
+                        size=Op.BALANCE(
+                            address=0x39332A3856E9E6DBAEBCDBD67B72B3E7209FFCB2
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +48,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x39332a3856e9e6dbaebcdbd67b72b3e7209ffcb2"): Account(
-                    code=bytes.fromhex(
-                        "7339332a3856e9e6dbaebcdbd67b72b3e7209ffcb2317339332a3856e9e6dbaebcdbd67b72b3e7209ffcb231a000"  # noqa: E501
+                    code=Op.LOG0(
+                        offset=Op.BALANCE(
+                            address=0x39332A3856E9E6DBAEBCDBD67B72B3E7209FFCB2
+                        ),
+                        size=Op.BALANCE(
+                            address=0x39332A3856E9E6DBAEBCDBD67B72B3E7209FFCB2
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -75,9 +88,16 @@ def test_log0_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7339332a3856e9e6dbaebcdbd67b72b3e7209ffcb2317339332a3856e9e6dbaebcdbd67b"  # noqa: E501
-            "72b3e7209ffcb231a000"
+        code=(
+            Op.LOG0(
+                offset=Op.BALANCE(
+                    address=0x39332A3856E9E6DBAEBCDBD67B72B3E7209FFCB2,
+                ),
+                size=Op.BALANCE(
+                    address=0x39332A3856E9E6DBAEBCDBD67B72B3E7209FFCB2,
+                ),
+            )
+            + Op.STOP
         ),
     )
 

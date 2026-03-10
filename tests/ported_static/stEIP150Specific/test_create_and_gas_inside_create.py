@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,8 +50,14 @@ def test_create_and_gas_inside_create(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a606452635a60fd556000526004601c6000f0600b555a6064510360095500"
+        code=(
+            Op.MSTORE(offset=0x64, value=Op.GAS)
+            + Op.MSTORE(offset=0x0, value=0x5A60FD55)
+            + Op.SSTORE(
+                key=0xB, value=Op.CREATE(value=0x0, offset=0x1C, size=0x4)
+            )
+            + Op.SSTORE(key=0x9, value=Op.SUB(Op.MLOAD(offset=0x64), Op.GAS))
+            + Op.STOP
         ),
     )
 
@@ -72,8 +79,17 @@ def test_create_and_gas_inside_create(
                 9: 0x129DB,
                 11: 0xF1ECF98489FA9ED60A664FC4998DB699CFA39D40,
             },
-            code=bytes.fromhex(
-                "5a606452635a60fd556000526004601c6000f0600b555a6064510360095500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x64, value=Op.GAS)
+                + Op.MSTORE(offset=0x0, value=0x5A60FD55)
+                + Op.SSTORE(
+                    key=0xB,
+                    value=Op.CREATE(value=0x0, offset=0x1C, size=0x4),
+                )
+                + Op.SSTORE(
+                    key=0x9, value=Op.SUB(Op.MLOAD(offset=0x64), Op.GAS)
+                )
+                + Op.STOP
             ),
         ),
         Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(

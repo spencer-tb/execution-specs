@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,10 +50,25 @@ def test_loop_calls_depth_then_revert2(
     pre[contract] = Account(
         balance=10,
         nonce=0,
-        code=bytes.fromhex(
-            "6103ff60005414603f576001600054016000556000600060006000600073a00000000000"  # noqa: E501
-            "00000000000000000000000000005af15061041a600054106053575b66600060006002f0"  # noqa: E501
-            "600052600760196003f0505b"
+        code=(
+            Op.JUMPI(pc=0x3F, condition=Op.EQ(Op.SLOAD(key=0x0), 0x3FF))
+            + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xA000000000000000000000000000000000000000,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.JUMPI(pc=0x53, condition=Op.LT(Op.SLOAD(key=0x0), 0x41A))
+            + Op.JUMPDEST
+            + Op.MSTORE(offset=0x0, value=0x600060006002F0)
+            + Op.POP(Op.CREATE(value=0x3, offset=0x19, size=0x7))
+            + Op.JUMPDEST
         ),
     )
     pre[sender] = Account(balance=0x13426172C74D822B878FE800000000, nonce=0)
@@ -72,8 +88,25 @@ def test_loop_calls_depth_then_revert2(
     post = {
         contract: Account(
             storage={0: 1023},
-            code=bytes.fromhex(
-                "6103ff60005414603f576001600054016000556000600060006000600073a0000000000000000000000000000000000000005af15061041a600054106053575b66600060006002f0600052600760196003f0505b"  # noqa: E501
+            code=(
+                Op.JUMPI(pc=0x3F, condition=Op.EQ(Op.SLOAD(key=0x0), 0x3FF))
+                + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xA000000000000000000000000000000000000000,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.JUMPI(pc=0x53, condition=Op.LT(Op.SLOAD(key=0x0), 0x41A))
+                + Op.JUMPDEST
+                + Op.MSTORE(offset=0x0, value=0x600060006002F0)
+                + Op.POP(Op.CREATE(value=0x3, offset=0x19, size=0x7))
+                + Op.JUMPDEST
             ),
         ),
     }

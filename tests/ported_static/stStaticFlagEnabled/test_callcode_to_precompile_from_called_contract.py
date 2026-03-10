@@ -20,6 +20,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -55,78 +56,460 @@ def test_callcode_to_precompile_from_called_contract(
     pre[callee] = Account(
         balance=1000,
         nonce=0,
-        code=bytes.fromhex(
-            "7f18c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c600052"  # noqa: E501
-            "601c6020527f73b1693892219d736caba55bdb67216e485557ea6b6af75f37096c9aa6a5"  # noqa: E501
-            "a75f6040527feeb940b1d03b21e36b0e47e79769f095fe2ab855bd91e3a38756b7d75a9c"  # noqa: E501
-            "4549606052602061200060806000600060015af2620a00005260a060020a612000510662"  # noqa: E501
-            "0a010052620a0100513214620a020052600061200052602061202060806000600160015a"  # noqa: E501
-            "f2620b00005260a060020a6120205106620b010052620b0100513214620b020052600060"  # noqa: E501
-            "00526000602052600060405260006060526000612020527c0ccccccccccccccccccccccc"  # noqa: E501
-            "cccccccccccccccccccccccccccc000000600052602061200060206000600060025af262"  # noqa: E501
-            "0a030052600051620a04005261200051620a050052600061200052602061202060206000"  # noqa: E501
-            "600160025af2620b030052600051620b04005261202051620b0500526000600052600061"  # noqa: E501
-            "2020527c0ccccccccccccccccccccccccccccccccccccccccccccccccccc000000600052"  # noqa: E501
-            "602061200060206000600060035af2620a060052600051620a07005261200051620a0800"  # noqa: E501
-            "52600061200052602061202060206000600160035af2620b060052600051620b07005261"  # noqa: E501
-            "202051620b08005260006000526000612020527c0ccccccccccccccccccccccccccccccc"  # noqa: E501
-            "cccccccccccccccccccc000000600052602061200060206000600060045af2620a090052"  # noqa: E501
-            "61200051620a100052600061200052602061202060206000600160045af2620b09005261"  # noqa: E501
-            "202051620b10005260006000526000612020526001600052602060205260206040527f03"  # noqa: E501
-            "fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc6060527f2e"  # noqa: E501
-            "fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc6080527f2f"  # noqa: E501
-            "0000000000000000000000000000000000000000000000000000000000000060a0526020"  # noqa: E501
-            "61200060a16000600060055af2620a11005261200051620a120052600061200052602061"  # noqa: E501
-            "202060a16000600160055af2620b11005261202051620b12005260006000526000602052"  # noqa: E501
-            "600060405260006060526000608052600060a0526000612020527f0f25929bcb43d5a573"  # noqa: E501
-            "91564615c9e70a992b10eafa4db109709649cf48c50dd26000527f16da2f5cb6be7a0aa7"  # noqa: E501
-            "2c440c53c9bbdfec6c36c7d515536431b3a865468acbba6020527f1de49a4b0233273bba"  # noqa: E501
-            "8146af82042d004f2085ec982397db0d97da17204cc2866040527f0217327ffc463919be"  # noqa: E501
-            "f80cc166d09c6172639d8589799928761bcd9f22c903d460605260406120006080600060"  # noqa: E501
-            "0060065af2620a13005261200051620a14005261202051620a1500526000612000526000"  # noqa: E501
-            "61202052604061300060806000600160065af2620b13005261300051620b140052613020"  # noqa: E501
-            "51620b150052600060005260006020526000604052600060605260006130005260006130"  # noqa: E501
-            "20527f0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd260"  # noqa: E501
-            "00527f16da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba60"  # noqa: E501
-            "20526003604052604061200060606000600060075af2620a16005261200051620a170052"  # noqa: E501
-            "61202051620a180052600061200052600061202052604061300060606000600160075af2"  # noqa: E501
-            "620b16005261300051620b17005261302051620b18005260006000526000602052600060"  # noqa: E501
-            "40526000613000526000613020527f1c76476f4def4bb94541d57ebba1193381ffa7aa76"  # noqa: E501
-            "ada664dd31c16024c43f596000527f3034dd2920f673e204fee2811c678745fc819b55d3"  # noqa: E501
-            "e9d294e45c9b03a76aef416020527f209dd15ebff5d46c4bd888e51a93cf99a7329636c6"  # noqa: E501
-            "3514396b4a452003a35bf76040527f04bf11ca01483bfa8b34b43561848d28905960114c"  # noqa: E501
-            "8ac04049af4b6315a416786060527f2bb8324af6cfc93537a2ad1a445cfd0ca2a71acd7a"  # noqa: E501
-            "c41fadbf933c2a51be344d6080527f120a2a4cf30c1bf9845f20c6fe39e07ea2cce61f0c"  # noqa: E501
-            "9bb048165fe5e4de87755060a0527f111e129f1cf1097710d41c4ac70fcdfa5ba2023c6f"  # noqa: E501
-            "f1cbeac322de49d1b6df7c60c0527f2032c61a830e3c17286de9462bf242fca2883585b9"  # noqa: E501
-            "3870a73853face6a6bf41160e0527f198e9393920d483a7260bfb731fb5d25f1aa493335"  # noqa: E501
-            "a9e71297e485b7aef312c2610100527f1800deef121f1e76426a00665e5c4479674322d4"  # noqa: E501
-            "f75edadd46debd5cd992f6ed610120527f090689d0585ff075ec9e99ad690c3395bc4b31"  # noqa: E501
-            "3370b38ef355acdadcd122975b610140527f12c85ea5db8c6deb4aab71808dcb408fe3d1"  # noqa: E501
-            "e7690c43d37b4ce6cc0166fa7daa6101605260206120006101806000600060085af2620a"  # noqa: E501
-            "19005261200051620a20005260006120005260206120206101806000600160085af2620b"  # noqa: E501
-            "19005261202051620b20005260006120205262012020620a0000f300"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x18C547E4F7B0F325AD1E56F57E26C745B09A3E503D86E00E5255FF7F715D3D1C,  # noqa: E501
+            )
+            + Op.MSTORE(offset=0x20, value=0x1C)
+            + Op.MSTORE(
+                offset=0x40,
+                value=0x73B1693892219D736CABA55BDB67216E485557EA6B6AF75F37096C9AA6A5A75F,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x60,
+                value=0xEEB940B1D03B21E36B0E47E79769F095FE2AB855BD91E3A38756B7D75A9C4549,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xA0000,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x1,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x80,
+                    ret_offset=0x2000,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(
+                offset=0xA0100,
+                value=Op.MOD(Op.MLOAD(offset=0x2000), Op.EXP(0x2, 0xA0)),
+            )
+            + Op.MSTORE(
+                offset=0xA0200,
+                value=Op.EQ(Op.ORIGIN, Op.MLOAD(offset=0xA0100)),
+            )
+            + Op.MSTORE(offset=0x2000, value=0x0)
+            + Op.MSTORE(
+                offset=0xB0000,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x1,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x80,
+                    ret_offset=0x2020,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(
+                offset=0xB0100,
+                value=Op.MOD(Op.MLOAD(offset=0x2020), Op.EXP(0x2, 0xA0)),
+            )
+            + Op.MSTORE(
+                offset=0xB0200,
+                value=Op.EQ(Op.ORIGIN, Op.MLOAD(offset=0xB0100)),
+            )
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.MSTORE(offset=0x20, value=0x0)
+            + Op.MSTORE(offset=0x40, value=0x0)
+            + Op.MSTORE(offset=0x60, value=0x0)
+            + Op.MSTORE(offset=0x2020, value=0x0)
+            + Op.MSTORE(
+                offset=0x0,
+                value=0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC000000,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xA0300,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x2,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x2000,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(offset=0xA0400, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0xA0500, value=Op.MLOAD(offset=0x2000))
+            + Op.MSTORE(offset=0x2000, value=0x0)
+            + Op.MSTORE(
+                offset=0xB0300,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x2,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x2020,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(offset=0xB0400, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0xB0500, value=Op.MLOAD(offset=0x2020))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.MSTORE(offset=0x2020, value=0x0)
+            + Op.MSTORE(
+                offset=0x0,
+                value=0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC000000,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xA0600,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x3,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x2000,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(offset=0xA0700, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0xA0800, value=Op.MLOAD(offset=0x2000))
+            + Op.MSTORE(offset=0x2000, value=0x0)
+            + Op.MSTORE(
+                offset=0xB0600,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x3,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x2020,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(offset=0xB0700, value=Op.MLOAD(offset=0x0))
+            + Op.MSTORE(offset=0xB0800, value=Op.MLOAD(offset=0x2020))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.MSTORE(offset=0x2020, value=0x0)
+            + Op.MSTORE(
+                offset=0x0,
+                value=0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC000000,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xA0900,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x4,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x2000,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(offset=0xA1000, value=Op.MLOAD(offset=0x2000))
+            + Op.MSTORE(offset=0x2000, value=0x0)
+            + Op.MSTORE(
+                offset=0xB0900,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x4,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x2020,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(offset=0xB1000, value=Op.MLOAD(offset=0x2020))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.MSTORE(offset=0x2020, value=0x0)
+            + Op.MSTORE(offset=0x0, value=0x1)
+            + Op.MSTORE(offset=0x20, value=0x20)
+            + Op.MSTORE(offset=0x40, value=0x20)
+            + Op.MSTORE(
+                offset=0x60,
+                value=0x3FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x80,
+                value=0x2EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xA0,
+                value=0x2F00000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xA1100,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x5,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0xA1,
+                    ret_offset=0x2000,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(offset=0xA1200, value=Op.MLOAD(offset=0x2000))
+            + Op.MSTORE(offset=0x2000, value=0x0)
+            + Op.MSTORE(
+                offset=0xB1100,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x5,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0xA1,
+                    ret_offset=0x2020,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(offset=0xB1200, value=Op.MLOAD(offset=0x2020))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.MSTORE(offset=0x20, value=0x0)
+            + Op.MSTORE(offset=0x40, value=0x0)
+            + Op.MSTORE(offset=0x60, value=0x0)
+            + Op.MSTORE(offset=0x80, value=0x0)
+            + Op.MSTORE(offset=0xA0, value=0x0)
+            + Op.MSTORE(offset=0x2020, value=0x0)
+            + Op.MSTORE(
+                offset=0x0,
+                value=0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x20,
+                value=0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x40,
+                value=0x1DE49A4B0233273BBA8146AF82042D004F2085EC982397DB0D97DA17204CC286,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x60,
+                value=0x217327FFC463919BEF80CC166D09C6172639D8589799928761BCD9F22C903D4,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xA1300,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x6,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x80,
+                    ret_offset=0x2000,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.MSTORE(offset=0xA1400, value=Op.MLOAD(offset=0x2000))
+            + Op.MSTORE(offset=0xA1500, value=Op.MLOAD(offset=0x2020))
+            + Op.MSTORE(offset=0x2000, value=0x0)
+            + Op.MSTORE(offset=0x2020, value=0x0)
+            + Op.MSTORE(
+                offset=0xB1300,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x6,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x80,
+                    ret_offset=0x3000,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.MSTORE(offset=0xB1400, value=Op.MLOAD(offset=0x3000))
+            + Op.MSTORE(offset=0xB1500, value=Op.MLOAD(offset=0x3020))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.MSTORE(offset=0x20, value=0x0)
+            + Op.MSTORE(offset=0x40, value=0x0)
+            + Op.MSTORE(offset=0x60, value=0x0)
+            + Op.MSTORE(offset=0x3000, value=0x0)
+            + Op.MSTORE(offset=0x3020, value=0x0)
+            + Op.MSTORE(
+                offset=0x0,
+                value=0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x20,
+                value=0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
+            )
+            + Op.MSTORE(offset=0x40, value=0x3)
+            + Op.MSTORE(
+                offset=0xA1600,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x7,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x60,
+                    ret_offset=0x2000,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.MSTORE(offset=0xA1700, value=Op.MLOAD(offset=0x2000))
+            + Op.MSTORE(offset=0xA1800, value=Op.MLOAD(offset=0x2020))
+            + Op.MSTORE(offset=0x2000, value=0x0)
+            + Op.MSTORE(offset=0x2020, value=0x0)
+            + Op.MSTORE(
+                offset=0xB1600,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x7,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x60,
+                    ret_offset=0x3000,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.MSTORE(offset=0xB1700, value=Op.MLOAD(offset=0x3000))
+            + Op.MSTORE(offset=0xB1800, value=Op.MLOAD(offset=0x3020))
+            + Op.MSTORE(offset=0x0, value=0x0)
+            + Op.MSTORE(offset=0x20, value=0x0)
+            + Op.MSTORE(offset=0x40, value=0x0)
+            + Op.MSTORE(offset=0x3000, value=0x0)
+            + Op.MSTORE(offset=0x3020, value=0x0)
+            + Op.MSTORE(
+                offset=0x0,
+                value=0x1C76476F4DEF4BB94541D57EBBA1193381FFA7AA76ADA664DD31C16024C43F59,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x20,
+                value=0x3034DD2920F673E204FEE2811C678745FC819B55D3E9D294E45C9B03A76AEF41,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x40,
+                value=0x209DD15EBFF5D46C4BD888E51A93CF99A7329636C63514396B4A452003A35BF7,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x60,
+                value=0x4BF11CA01483BFA8B34B43561848D28905960114C8AC04049AF4B6315A41678,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x80,
+                value=0x2BB8324AF6CFC93537A2AD1A445CFD0CA2A71ACD7AC41FADBF933C2A51BE344D,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xA0,
+                value=0x120A2A4CF30C1BF9845F20C6FE39E07EA2CCE61F0C9BB048165FE5E4DE877550,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xC0,
+                value=0x111E129F1CF1097710D41C4AC70FCDFA5BA2023C6FF1CBEAC322DE49D1B6DF7C,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xE0,
+                value=0x2032C61A830E3C17286DE9462BF242FCA2883585B93870A73853FACE6A6BF411,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x100,
+                value=0x198E9393920D483A7260BFB731FB5D25F1AA493335A9E71297E485B7AEF312C2,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x120,
+                value=0x1800DEEF121F1E76426A00665E5C4479674322D4F75EDADD46DEBD5CD992F6ED,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x140,
+                value=0x90689D0585FF075EC9E99AD690C3395BC4B313370B38EF355ACDADCD122975B,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x160,
+                value=0x12C85EA5DB8C6DEB4AAB71808DCB408FE3D1E7690C43D37B4CE6CC0166FA7DAA,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0xA1900,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x8,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x180,
+                    ret_offset=0x2000,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(offset=0xA2000, value=Op.MLOAD(offset=0x2000))
+            + Op.MSTORE(offset=0x2000, value=0x0)
+            + Op.MSTORE(
+                offset=0xB1900,
+                value=Op.CALLCODE(
+                    gas=Op.GAS,
+                    address=0x8,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x180,
+                    ret_offset=0x2020,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.MSTORE(offset=0xB2000, value=Op.MLOAD(offset=0x2020))
+            + Op.MSTORE(offset=0x2020, value=0x0)
+            + Op.RETURN(offset=0xA0000, size=0x12020)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[callee_1] = Account(
         balance=1000,
         nonce=0,
-        code=bytes.fromhex(
-            "7ffeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed600055"  # noqa: E501
-            "62012020620a00006000600073a0000000000000000000000000000000000000005afa50"  # noqa: E501
-            "7ffeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed600155"  # noqa: E501
-            "620a000051610a0055620b000051610b0055620a010051610a0155620b010051610b0155"  # noqa: E501
-            "620a020051610a0255620b020051610b0255620a030051610a0355620b030051610b0355"  # noqa: E501
-            "620a040051610a0455620b040051610b0455620a050051610a0555620b050051610b0555"  # noqa: E501
-            "620a060051610a0655620b060051610b0655620a070051610a0755620b070051610b0755"  # noqa: E501
-            "620a080051610a0855620b080051610b0855620a090051610a0955620b090051610b0955"  # noqa: E501
-            "620a100051610a1055620b100051610b1055620a110051610a1155620b110051610b1155"  # noqa: E501
-            "620a120051610a1255620b120051610b1255620a130051610a1355620b130051610b1355"  # noqa: E501
-            "620a140051610a1455620b140051610b1455620a150051610a1555620b150051610b1555"  # noqa: E501
-            "620a160051610a1655620b160051610b1655620a170051610a1755620b170051610b1755"  # noqa: E501
-            "620a180051610a1855620b180051610b1855620a190051610a1955620b190051610b1955"  # noqa: E501
-            "620a200051610a2055620b200051610b205500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=0xFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEED,  # noqa: E501
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=Op.GAS,
+                    address=0xA000000000000000000000000000000000000000,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0xA0000,
+                    ret_size=0x12020,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x1,
+                value=0xFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEED,  # noqa: E501
+            )
+            + Op.SSTORE(key=0xA00, value=Op.MLOAD(offset=0xA0000))
+            + Op.SSTORE(key=0xB00, value=Op.MLOAD(offset=0xB0000))
+            + Op.SSTORE(key=0xA01, value=Op.MLOAD(offset=0xA0100))
+            + Op.SSTORE(key=0xB01, value=Op.MLOAD(offset=0xB0100))
+            + Op.SSTORE(key=0xA02, value=Op.MLOAD(offset=0xA0200))
+            + Op.SSTORE(key=0xB02, value=Op.MLOAD(offset=0xB0200))
+            + Op.SSTORE(key=0xA03, value=Op.MLOAD(offset=0xA0300))
+            + Op.SSTORE(key=0xB03, value=Op.MLOAD(offset=0xB0300))
+            + Op.SSTORE(key=0xA04, value=Op.MLOAD(offset=0xA0400))
+            + Op.SSTORE(key=0xB04, value=Op.MLOAD(offset=0xB0400))
+            + Op.SSTORE(key=0xA05, value=Op.MLOAD(offset=0xA0500))
+            + Op.SSTORE(key=0xB05, value=Op.MLOAD(offset=0xB0500))
+            + Op.SSTORE(key=0xA06, value=Op.MLOAD(offset=0xA0600))
+            + Op.SSTORE(key=0xB06, value=Op.MLOAD(offset=0xB0600))
+            + Op.SSTORE(key=0xA07, value=Op.MLOAD(offset=0xA0700))
+            + Op.SSTORE(key=0xB07, value=Op.MLOAD(offset=0xB0700))
+            + Op.SSTORE(key=0xA08, value=Op.MLOAD(offset=0xA0800))
+            + Op.SSTORE(key=0xB08, value=Op.MLOAD(offset=0xB0800))
+            + Op.SSTORE(key=0xA09, value=Op.MLOAD(offset=0xA0900))
+            + Op.SSTORE(key=0xB09, value=Op.MLOAD(offset=0xB0900))
+            + Op.SSTORE(key=0xA10, value=Op.MLOAD(offset=0xA1000))
+            + Op.SSTORE(key=0xB10, value=Op.MLOAD(offset=0xB1000))
+            + Op.SSTORE(key=0xA11, value=Op.MLOAD(offset=0xA1100))
+            + Op.SSTORE(key=0xB11, value=Op.MLOAD(offset=0xB1100))
+            + Op.SSTORE(key=0xA12, value=Op.MLOAD(offset=0xA1200))
+            + Op.SSTORE(key=0xB12, value=Op.MLOAD(offset=0xB1200))
+            + Op.SSTORE(key=0xA13, value=Op.MLOAD(offset=0xA1300))
+            + Op.SSTORE(key=0xB13, value=Op.MLOAD(offset=0xB1300))
+            + Op.SSTORE(key=0xA14, value=Op.MLOAD(offset=0xA1400))
+            + Op.SSTORE(key=0xB14, value=Op.MLOAD(offset=0xB1400))
+            + Op.SSTORE(key=0xA15, value=Op.MLOAD(offset=0xA1500))
+            + Op.SSTORE(key=0xB15, value=Op.MLOAD(offset=0xB1500))
+            + Op.SSTORE(key=0xA16, value=Op.MLOAD(offset=0xA1600))
+            + Op.SSTORE(key=0xB16, value=Op.MLOAD(offset=0xB1600))
+            + Op.SSTORE(key=0xA17, value=Op.MLOAD(offset=0xA1700))
+            + Op.SSTORE(key=0xB17, value=Op.MLOAD(offset=0xB1700))
+            + Op.SSTORE(key=0xA18, value=Op.MLOAD(offset=0xA1800))
+            + Op.SSTORE(key=0xB18, value=Op.MLOAD(offset=0xB1800))
+            + Op.SSTORE(key=0xA19, value=Op.MLOAD(offset=0xA1900))
+            + Op.SSTORE(key=0xB19, value=Op.MLOAD(offset=0xB1900))
+            + Op.SSTORE(key=0xA20, value=Op.MLOAD(offset=0xA2000))
+            + Op.SSTORE(key=0xB20, value=Op.MLOAD(offset=0xB2000))
+            + Op.STOP
         ),
         storage={
             0x0: 0xDEADBEAFDEADBEAFDEADBEAFDEADBEAFDEADBEAFDEADBEAFDEADBEAFDEADBEAF,  # noqa: E501
@@ -136,10 +519,27 @@ def test_callcode_to_precompile_from_called_contract(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=bytes.fromhex(
-            "7ffeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed600055"  # noqa: E501
-            "6000600060006000600073b0000000000000000000000000000000000000005af1507ffe"  # noqa: E501
-            "edfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed60015500"  # noqa: E501
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=0xFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEED,  # noqa: E501
+            )
+            + Op.POP(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=0xB000000000000000000000000000000000000000,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x1,
+                value=0xFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEED,  # noqa: E501
+            )
+            + Op.STOP
         ),
         storage={
             0x0: 0xDEADBEAFDEADBEAFDEADBEAFDEADBEAFDEADBEAFDEADBEAFDEADBEAFDEADBEAF,  # noqa: E501
@@ -161,8 +561,392 @@ def test_callcode_to_precompile_from_called_contract(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "7f18c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c600052601c6020527f73b1693892219d736caba55bdb67216e485557ea6b6af75f37096c9aa6a5a75f6040527feeb940b1d03b21e36b0e47e79769f095fe2ab855bd91e3a38756b7d75a9c4549606052602061200060806000600060015af2620a00005260a060020a6120005106620a010052620a0100513214620a020052600061200052602061202060806000600160015af2620b00005260a060020a6120205106620b010052620b0100513214620b02005260006000526000602052600060405260006060526000612020527c0ccccccccccccccccccccccccccccccccccccccccccccccccccc000000600052602061200060206000600060025af2620a030052600051620a04005261200051620a050052600061200052602061202060206000600160025af2620b030052600051620b04005261202051620b05005260006000526000612020527c0ccccccccccccccccccccccccccccccccccccccccccccccccccc000000600052602061200060206000600060035af2620a060052600051620a07005261200051620a080052600061200052602061202060206000600160035af2620b060052600051620b07005261202051620b08005260006000526000612020527c0ccccccccccccccccccccccccccccccccccccccccccccccccccc000000600052602061200060206000600060045af2620a09005261200051620a100052600061200052602061202060206000600160045af2620b09005261202051620b10005260006000526000612020526001600052602060205260206040527f03fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc6060527f2efffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc6080527f2f0000000000000000000000000000000000000000000000000000000000000060a052602061200060a16000600060055af2620a11005261200051620a120052600061200052602061202060a16000600160055af2620b11005261202051620b12005260006000526000602052600060405260006060526000608052600060a0526000612020527f0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd26000527f16da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba6020527f1de49a4b0233273bba8146af82042d004f2085ec982397db0d97da17204cc2866040527f0217327ffc463919bef80cc166d09c6172639d8589799928761bcd9f22c903d4606052604061200060806000600060065af2620a13005261200051620a14005261202051620a150052600061200052600061202052604061300060806000600160065af2620b13005261300051620b14005261302051620b15005260006000526000602052600060405260006060526000613000526000613020527f0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd26000527f16da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba6020526003604052604061200060606000600060075af2620a16005261200051620a17005261202051620a180052600061200052600061202052604061300060606000600160075af2620b16005261300051620b17005261302051620b1800526000600052600060205260006040526000613000526000613020527f1c76476f4def4bb94541d57ebba1193381ffa7aa76ada664dd31c16024c43f596000527f3034dd2920f673e204fee2811c678745fc819b55d3e9d294e45c9b03a76aef416020527f209dd15ebff5d46c4bd888e51a93cf99a7329636c63514396b4a452003a35bf76040527f04bf11ca01483bfa8b34b43561848d28905960114c8ac04049af4b6315a416786060527f2bb8324af6cfc93537a2ad1a445cfd0ca2a71acd7ac41fadbf933c2a51be344d6080527f120a2a4cf30c1bf9845f20c6fe39e07ea2cce61f0c9bb048165fe5e4de87755060a0527f111e129f1cf1097710d41c4ac70fcdfa5ba2023c6ff1cbeac322de49d1b6df7c60c0527f2032c61a830e3c17286de9462bf242fca2883585b93870a73853face6a6bf41160e0527f198e9393920d483a7260bfb731fb5d25f1aa493335a9e71297e485b7aef312c2610100527f1800deef121f1e76426a00665e5c4479674322d4f75edadd46debd5cd992f6ed610120527f090689d0585ff075ec9e99ad690c3395bc4b313370b38ef355acdadcd122975b610140527f12c85ea5db8c6deb4aab71808dcb408fe3d1e7690c43d37b4ce6cc0166fa7daa6101605260206120006101806000600060085af2620a19005261200051620a20005260006120005260206120206101806000600160085af2620b19005261202051620b20005260006120205262012020620a0000f300"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x18C547E4F7B0F325AD1E56F57E26C745B09A3E503D86E00E5255FF7F715D3D1C,  # noqa: E501
+                )
+                + Op.MSTORE(offset=0x20, value=0x1C)
+                + Op.MSTORE(
+                    offset=0x40,
+                    value=0x73B1693892219D736CABA55BDB67216E485557EA6B6AF75F37096C9AA6A5A75F,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x60,
+                    value=0xEEB940B1D03B21E36B0E47E79769F095FE2AB855BD91E3A38756B7D75A9C4549,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xA0000,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x1,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x80,
+                        ret_offset=0x2000,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(
+                    offset=0xA0100,
+                    value=Op.MOD(Op.MLOAD(offset=0x2000), Op.EXP(0x2, 0xA0)),
+                )
+                + Op.MSTORE(
+                    offset=0xA0200,
+                    value=Op.EQ(Op.ORIGIN, Op.MLOAD(offset=0xA0100)),
+                )
+                + Op.MSTORE(offset=0x2000, value=0x0)
+                + Op.MSTORE(
+                    offset=0xB0000,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x1,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x80,
+                        ret_offset=0x2020,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(
+                    offset=0xB0100,
+                    value=Op.MOD(Op.MLOAD(offset=0x2020), Op.EXP(0x2, 0xA0)),
+                )
+                + Op.MSTORE(
+                    offset=0xB0200,
+                    value=Op.EQ(Op.ORIGIN, Op.MLOAD(offset=0xB0100)),
+                )
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.MSTORE(offset=0x20, value=0x0)
+                + Op.MSTORE(offset=0x40, value=0x0)
+                + Op.MSTORE(offset=0x60, value=0x0)
+                + Op.MSTORE(offset=0x2020, value=0x0)
+                + Op.MSTORE(
+                    offset=0x0,
+                    value=0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC000000,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xA0300,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x2,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x2000,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(offset=0xA0400, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0xA0500, value=Op.MLOAD(offset=0x2000))
+                + Op.MSTORE(offset=0x2000, value=0x0)
+                + Op.MSTORE(
+                    offset=0xB0300,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x2,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x2020,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(offset=0xB0400, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0xB0500, value=Op.MLOAD(offset=0x2020))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.MSTORE(offset=0x2020, value=0x0)
+                + Op.MSTORE(
+                    offset=0x0,
+                    value=0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC000000,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xA0600,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x3,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x2000,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(offset=0xA0700, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0xA0800, value=Op.MLOAD(offset=0x2000))
+                + Op.MSTORE(offset=0x2000, value=0x0)
+                + Op.MSTORE(
+                    offset=0xB0600,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x3,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x2020,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(offset=0xB0700, value=Op.MLOAD(offset=0x0))
+                + Op.MSTORE(offset=0xB0800, value=Op.MLOAD(offset=0x2020))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.MSTORE(offset=0x2020, value=0x0)
+                + Op.MSTORE(
+                    offset=0x0,
+                    value=0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC000000,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xA0900,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x4,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x2000,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(offset=0xA1000, value=Op.MLOAD(offset=0x2000))
+                + Op.MSTORE(offset=0x2000, value=0x0)
+                + Op.MSTORE(
+                    offset=0xB0900,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x4,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x20,
+                        ret_offset=0x2020,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(offset=0xB1000, value=Op.MLOAD(offset=0x2020))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.MSTORE(offset=0x2020, value=0x0)
+                + Op.MSTORE(offset=0x0, value=0x1)
+                + Op.MSTORE(offset=0x20, value=0x20)
+                + Op.MSTORE(offset=0x40, value=0x20)
+                + Op.MSTORE(
+                    offset=0x60,
+                    value=0x3FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x80,
+                    value=0x2EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xA0,
+                    value=0x2F00000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xA1100,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x5,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0xA1,
+                        ret_offset=0x2000,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(offset=0xA1200, value=Op.MLOAD(offset=0x2000))
+                + Op.MSTORE(offset=0x2000, value=0x0)
+                + Op.MSTORE(
+                    offset=0xB1100,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x5,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0xA1,
+                        ret_offset=0x2020,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(offset=0xB1200, value=Op.MLOAD(offset=0x2020))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.MSTORE(offset=0x20, value=0x0)
+                + Op.MSTORE(offset=0x40, value=0x0)
+                + Op.MSTORE(offset=0x60, value=0x0)
+                + Op.MSTORE(offset=0x80, value=0x0)
+                + Op.MSTORE(offset=0xA0, value=0x0)
+                + Op.MSTORE(offset=0x2020, value=0x0)
+                + Op.MSTORE(
+                    offset=0x0,
+                    value=0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x20,
+                    value=0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x40,
+                    value=0x1DE49A4B0233273BBA8146AF82042D004F2085EC982397DB0D97DA17204CC286,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x60,
+                    value=0x217327FFC463919BEF80CC166D09C6172639D8589799928761BCD9F22C903D4,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xA1300,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x6,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x80,
+                        ret_offset=0x2000,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.MSTORE(offset=0xA1400, value=Op.MLOAD(offset=0x2000))
+                + Op.MSTORE(offset=0xA1500, value=Op.MLOAD(offset=0x2020))
+                + Op.MSTORE(offset=0x2000, value=0x0)
+                + Op.MSTORE(offset=0x2020, value=0x0)
+                + Op.MSTORE(
+                    offset=0xB1300,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x6,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x80,
+                        ret_offset=0x3000,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.MSTORE(offset=0xB1400, value=Op.MLOAD(offset=0x3000))
+                + Op.MSTORE(offset=0xB1500, value=Op.MLOAD(offset=0x3020))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.MSTORE(offset=0x20, value=0x0)
+                + Op.MSTORE(offset=0x40, value=0x0)
+                + Op.MSTORE(offset=0x60, value=0x0)
+                + Op.MSTORE(offset=0x3000, value=0x0)
+                + Op.MSTORE(offset=0x3020, value=0x0)
+                + Op.MSTORE(
+                    offset=0x0,
+                    value=0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x20,
+                    value=0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
+                )
+                + Op.MSTORE(offset=0x40, value=0x3)
+                + Op.MSTORE(
+                    offset=0xA1600,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x7,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x60,
+                        ret_offset=0x2000,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.MSTORE(offset=0xA1700, value=Op.MLOAD(offset=0x2000))
+                + Op.MSTORE(offset=0xA1800, value=Op.MLOAD(offset=0x2020))
+                + Op.MSTORE(offset=0x2000, value=0x0)
+                + Op.MSTORE(offset=0x2020, value=0x0)
+                + Op.MSTORE(
+                    offset=0xB1600,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x7,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x60,
+                        ret_offset=0x3000,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.MSTORE(offset=0xB1700, value=Op.MLOAD(offset=0x3000))
+                + Op.MSTORE(offset=0xB1800, value=Op.MLOAD(offset=0x3020))
+                + Op.MSTORE(offset=0x0, value=0x0)
+                + Op.MSTORE(offset=0x20, value=0x0)
+                + Op.MSTORE(offset=0x40, value=0x0)
+                + Op.MSTORE(offset=0x3000, value=0x0)
+                + Op.MSTORE(offset=0x3020, value=0x0)
+                + Op.MSTORE(
+                    offset=0x0,
+                    value=0x1C76476F4DEF4BB94541D57EBBA1193381FFA7AA76ADA664DD31C16024C43F59,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x20,
+                    value=0x3034DD2920F673E204FEE2811C678745FC819B55D3E9D294E45C9B03A76AEF41,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x40,
+                    value=0x209DD15EBFF5D46C4BD888E51A93CF99A7329636C63514396B4A452003A35BF7,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x60,
+                    value=0x4BF11CA01483BFA8B34B43561848D28905960114C8AC04049AF4B6315A41678,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x80,
+                    value=0x2BB8324AF6CFC93537A2AD1A445CFD0CA2A71ACD7AC41FADBF933C2A51BE344D,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xA0,
+                    value=0x120A2A4CF30C1BF9845F20C6FE39E07EA2CCE61F0C9BB048165FE5E4DE877550,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xC0,
+                    value=0x111E129F1CF1097710D41C4AC70FCDFA5BA2023C6FF1CBEAC322DE49D1B6DF7C,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xE0,
+                    value=0x2032C61A830E3C17286DE9462BF242FCA2883585B93870A73853FACE6A6BF411,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x100,
+                    value=0x198E9393920D483A7260BFB731FB5D25F1AA493335A9E71297E485B7AEF312C2,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x120,
+                    value=0x1800DEEF121F1E76426A00665E5C4479674322D4F75EDADD46DEBD5CD992F6ED,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x140,
+                    value=0x90689D0585FF075EC9E99AD690C3395BC4B313370B38EF355ACDADCD122975B,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x160,
+                    value=0x12C85EA5DB8C6DEB4AAB71808DCB408FE3D1E7690C43D37B4CE6CC0166FA7DAA,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0xA1900,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x8,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x180,
+                        ret_offset=0x2000,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(offset=0xA2000, value=Op.MLOAD(offset=0x2000))
+                + Op.MSTORE(offset=0x2000, value=0x0)
+                + Op.MSTORE(
+                    offset=0xB1900,
+                    value=Op.CALLCODE(
+                        gas=Op.GAS,
+                        address=0x8,
+                        value=0x1,
+                        args_offset=0x0,
+                        args_size=0x180,
+                        ret_offset=0x2020,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.MSTORE(offset=0xB2000, value=Op.MLOAD(offset=0x2020))
+                + Op.MSTORE(offset=0x2020, value=0x0)
+                + Op.RETURN(offset=0xA0000, size=0x12020)
+                + Op.STOP
             ),
         ),
         callee_1: Account(
@@ -212,8 +996,68 @@ def test_callcode_to_precompile_from_called_contract(
                 2841: 1,
                 2848: 1,
             },
-            code=bytes.fromhex(
-                "7ffeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed60005562012020620a00006000600073a0000000000000000000000000000000000000005afa507ffeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed600155620a000051610a0055620b000051610b0055620a010051610a0155620b010051610b0155620a020051610a0255620b020051610b0255620a030051610a0355620b030051610b0355620a040051610a0455620b040051610b0455620a050051610a0555620b050051610b0555620a060051610a0655620b060051610b0655620a070051610a0755620b070051610b0755620a080051610a0855620b080051610b0855620a090051610a0955620b090051610b0955620a100051610a1055620b100051610b1055620a110051610a1155620b110051610b1155620a120051610a1255620b120051610b1255620a130051610a1355620b130051610b1355620a140051610a1455620b140051610b1455620a150051610a1555620b150051610b1555620a160051610a1655620b160051610b1655620a170051610a1755620b170051610b1755620a180051610a1855620b180051610b1855620a190051610a1955620b190051610b1955620a200051610a2055620b200051610b205500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=0xFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEED,  # noqa: E501
+                )
+                + Op.POP(
+                    Op.STATICCALL(
+                        gas=Op.GAS,
+                        address=0xA000000000000000000000000000000000000000,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0xA0000,
+                        ret_size=0x12020,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x1,
+                    value=0xFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEED,  # noqa: E501
+                )
+                + Op.SSTORE(key=0xA00, value=Op.MLOAD(offset=0xA0000))
+                + Op.SSTORE(key=0xB00, value=Op.MLOAD(offset=0xB0000))
+                + Op.SSTORE(key=0xA01, value=Op.MLOAD(offset=0xA0100))
+                + Op.SSTORE(key=0xB01, value=Op.MLOAD(offset=0xB0100))
+                + Op.SSTORE(key=0xA02, value=Op.MLOAD(offset=0xA0200))
+                + Op.SSTORE(key=0xB02, value=Op.MLOAD(offset=0xB0200))
+                + Op.SSTORE(key=0xA03, value=Op.MLOAD(offset=0xA0300))
+                + Op.SSTORE(key=0xB03, value=Op.MLOAD(offset=0xB0300))
+                + Op.SSTORE(key=0xA04, value=Op.MLOAD(offset=0xA0400))
+                + Op.SSTORE(key=0xB04, value=Op.MLOAD(offset=0xB0400))
+                + Op.SSTORE(key=0xA05, value=Op.MLOAD(offset=0xA0500))
+                + Op.SSTORE(key=0xB05, value=Op.MLOAD(offset=0xB0500))
+                + Op.SSTORE(key=0xA06, value=Op.MLOAD(offset=0xA0600))
+                + Op.SSTORE(key=0xB06, value=Op.MLOAD(offset=0xB0600))
+                + Op.SSTORE(key=0xA07, value=Op.MLOAD(offset=0xA0700))
+                + Op.SSTORE(key=0xB07, value=Op.MLOAD(offset=0xB0700))
+                + Op.SSTORE(key=0xA08, value=Op.MLOAD(offset=0xA0800))
+                + Op.SSTORE(key=0xB08, value=Op.MLOAD(offset=0xB0800))
+                + Op.SSTORE(key=0xA09, value=Op.MLOAD(offset=0xA0900))
+                + Op.SSTORE(key=0xB09, value=Op.MLOAD(offset=0xB0900))
+                + Op.SSTORE(key=0xA10, value=Op.MLOAD(offset=0xA1000))
+                + Op.SSTORE(key=0xB10, value=Op.MLOAD(offset=0xB1000))
+                + Op.SSTORE(key=0xA11, value=Op.MLOAD(offset=0xA1100))
+                + Op.SSTORE(key=0xB11, value=Op.MLOAD(offset=0xB1100))
+                + Op.SSTORE(key=0xA12, value=Op.MLOAD(offset=0xA1200))
+                + Op.SSTORE(key=0xB12, value=Op.MLOAD(offset=0xB1200))
+                + Op.SSTORE(key=0xA13, value=Op.MLOAD(offset=0xA1300))
+                + Op.SSTORE(key=0xB13, value=Op.MLOAD(offset=0xB1300))
+                + Op.SSTORE(key=0xA14, value=Op.MLOAD(offset=0xA1400))
+                + Op.SSTORE(key=0xB14, value=Op.MLOAD(offset=0xB1400))
+                + Op.SSTORE(key=0xA15, value=Op.MLOAD(offset=0xA1500))
+                + Op.SSTORE(key=0xB15, value=Op.MLOAD(offset=0xB1500))
+                + Op.SSTORE(key=0xA16, value=Op.MLOAD(offset=0xA1600))
+                + Op.SSTORE(key=0xB16, value=Op.MLOAD(offset=0xB1600))
+                + Op.SSTORE(key=0xA17, value=Op.MLOAD(offset=0xA1700))
+                + Op.SSTORE(key=0xB17, value=Op.MLOAD(offset=0xB1700))
+                + Op.SSTORE(key=0xA18, value=Op.MLOAD(offset=0xA1800))
+                + Op.SSTORE(key=0xB18, value=Op.MLOAD(offset=0xB1800))
+                + Op.SSTORE(key=0xA19, value=Op.MLOAD(offset=0xA1900))
+                + Op.SSTORE(key=0xB19, value=Op.MLOAD(offset=0xB1900))
+                + Op.SSTORE(key=0xA20, value=Op.MLOAD(offset=0xA2000))
+                + Op.SSTORE(key=0xB20, value=Op.MLOAD(offset=0xB2000))
+                + Op.STOP
             ),
         ),
         contract: Account(
@@ -221,8 +1065,27 @@ def test_callcode_to_precompile_from_called_contract(
                 0: 0xFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEED,  # noqa: E501
                 1: 0xFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEED,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "7ffeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed6000556000600060006000600073b0000000000000000000000000000000000000005af1507ffeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed60015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=0xFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEED,  # noqa: E501
+                )
+                + Op.POP(
+                    Op.CALL(
+                        gas=Op.GAS,
+                        address=0xB000000000000000000000000000000000000000,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x1,
+                    value=0xFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEEDFEED,  # noqa: E501
+                )
+                + Op.STOP
             ),
         ),
     }

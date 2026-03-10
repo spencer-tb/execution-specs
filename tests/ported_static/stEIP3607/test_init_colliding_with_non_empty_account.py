@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -62,7 +63,7 @@ def test_init_colliding_with_non_empty_account(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("6000600155"),
+        code=Op.SSTORE(key=0x1, value=0x0),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[callee_1] = Account(balance=0, nonce=0, code=bytes.fromhex("00"))
@@ -82,7 +83,7 @@ def test_init_colliding_with_non_empty_account(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("6000600155")),
+        contract: Account(code=Op.SSTORE(key=0x1, value=0x0)),
         callee_1: Account(code=bytes.fromhex("00")),
     }
 

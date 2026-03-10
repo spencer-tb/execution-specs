@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,7 +35,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             "",
             {
                 Address("0x537cd1744af41c3a74d5aa5ae93958d1160ca98f"): Account(
-                    code=bytes.fromhex("6000600060003e60005160005500")
+                    code=Op.RETURNDATACOPY(
+                        dest_offset=0x0, offset=0x0, size=0x0
+                    )
+                    + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 )
             },
         ),
@@ -42,7 +47,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             "992919aa",
             {
                 Address("0x537cd1744af41c3a74d5aa5ae93958d1160ca98f"): Account(
-                    code=bytes.fromhex("6000600060003e60005160005500")
+                    code=Op.RETURNDATACOPY(
+                        dest_offset=0x0, offset=0x0, size=0x0
+                    )
+                    + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 )
             },
         ),
@@ -73,7 +82,11 @@ def test_returndatasize_initial_zero_read(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("6000600060003e60005160005500"),
+        code=(
+            Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x0)
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
+        ),
         storage={0x0: 0x1},
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,9 +52,21 @@ def test_zero_value_delegatecall_to_non_zero_balance(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a6000556000600060006000739089da66e8bbc08846842a301905501bc8525dc461ea60"  # noqa: E501
-            "f4600155600160645500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.DELEGATECALL(
+                    gas=0xEA60,
+                    address=0x9089DA66E8BBC08846842A301905501BC8525DC4,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x64, value=0x1)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -73,8 +86,21 @@ def test_zero_value_delegatecall_to_non_zero_balance(
     post = {
         contract: Account(
             storage={0: 0x8D5B6, 1: 1, 100: 1},
-            code=bytes.fromhex(
-                "5a6000556000600060006000739089da66e8bbc08846842a301905501bc8525dc461ea60f4600155600160645500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.DELEGATECALL(
+                        gas=0xEA60,
+                        address=0x9089DA66E8BBC08846842A301905501BC8525DC4,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0x64, value=0x1)
+                + Op.STOP
             ),
         ),
     }

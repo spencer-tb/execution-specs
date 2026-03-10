@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,16 +51,37 @@ def test_call_recursive_bomb0(
     pre[contract] = Account(
         balance=0x77359400,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000601773783516813e6366b978f7101a6a12b4c8498b02836305f5e100"  # noqa: E501
-            "f100"
+        code=(
+            Op.CALL(
+                gas=0x5F5E100,
+                address=0x783516813E6366B978F7101A6A12B4C8498B0283,
+                value=0x17,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6001600054016000556000600060006000600030612af85a03f160015500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=Op.SUB(Op.GAS, 0x2AF8),
+                    address=Op.ADDRESS,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -78,14 +100,36 @@ def test_call_recursive_bomb0(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "6000600060006000601773783516813e6366b978f7101a6a12b4c8498b02836305f5e100f100"  # noqa: E501
+            code=(
+                Op.CALL(
+                    gas=0x5F5E100,
+                    address=0x783516813E6366B978F7101A6A12B4C8498B0283,
+                    value=0x17,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
         callee: Account(
             storage={0: 313, 1: 1},
-            code=bytes.fromhex(
-                "6001600054016000556000600060006000600030612af85a03f160015500"
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=Op.SUB(Op.GAS, 0x2AF8),
+                        address=Op.ADDRESS,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

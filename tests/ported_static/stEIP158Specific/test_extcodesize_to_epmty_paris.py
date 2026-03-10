@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,16 @@ def test_extcodesize_to_epmty_paris(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a6000527376fae819612a29489a1a43208613d8f8557b88983b6001555a600051036064"  # noqa: E501
-            "5500"
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.EXTCODESIZE(
+                    address=0x76FAE819612A29489A1A43208613D8F8557B8898,
+                ),
+            )
+            + Op.SSTORE(key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.STOP
         ),
         storage={0x1: 0x600},
     )
@@ -73,8 +81,18 @@ def test_extcodesize_to_epmty_paris(
     post = {
         contract: Account(
             storage={100: 7617},
-            code=bytes.fromhex(
-                "5a6000527376fae819612a29489a1a43208613d8f8557b88983b6001555a6000510360645500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.EXTCODESIZE(
+                        address=0x76FAE819612A29489A1A43208613D8F8557B8898,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.STOP
             ),
         ),
     }

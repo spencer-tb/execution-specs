@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x02724f6cb897bbc3e063a03633d2ce4e83da8678"): Account(
-                    code=bytes.fromhex(
-                        "7302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da867831a300"  # noqa: E501
+                    code=Op.LOG3(
+                        offset=Op.BALANCE(
+                            address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                        ),
+                        size=Op.BALANCE(
+                            address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                        ),
+                        topic_1=Op.BALANCE(
+                            address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                        ),
+                        topic_2=Op.BALANCE(
+                            address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                        ),
+                        topic_3=Op.BALANCE(
+                            address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +57,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x02724f6cb897bbc3e063a03633d2ce4e83da8678"): Account(
-                    code=bytes.fromhex(
-                        "7302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da867831a300"  # noqa: E501
+                    code=Op.LOG3(
+                        offset=Op.BALANCE(
+                            address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                        ),
+                        size=Op.BALANCE(
+                            address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                        ),
+                        topic_1=Op.BALANCE(
+                            address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                        ),
+                        topic_2=Op.BALANCE(
+                            address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                        ),
+                        topic_3=Op.BALANCE(
+                            address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -74,11 +105,25 @@ def test_log3_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633"  # noqa: E501
-            "d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da8678317302724f6cb8"  # noqa: E501
-            "97bbc3e063a03633d2ce4e83da8678317302724f6cb897bbc3e063a03633d2ce4e83da86"  # noqa: E501
-            "7831a300"
+        code=(
+            Op.LOG3(
+                offset=Op.BALANCE(
+                    address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678,
+                ),
+                size=Op.BALANCE(
+                    address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678
+                ),
+                topic_1=Op.BALANCE(
+                    address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678,
+                ),
+                topic_2=Op.BALANCE(
+                    address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678,
+                ),
+                topic_3=Op.BALANCE(
+                    address=0x2724F6CB897BBC3E063A03633D2CE4E83DA8678,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)

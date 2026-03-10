@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,9 +52,21 @@ def test_call1024_balance_too_low(
     pre[contract] = Account(
         balance=1024,
         nonce=0,
-        code=bytes.fromhex(
-            "6001600054016000556000600060006000600054732aaa3ab47a59b4ad0ba3f72ad0b5bc"  # noqa: E501
-            "35388333b4650ffffffffffff160015500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=0xFFFFFFFFFFF,
+                    address=0x2AAA3AB47A59B4AD0BA3F72AD0B5BC35388333B4,
+                    value=Op.SLOAD(key=0x0),
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
@@ -74,8 +87,21 @@ def test_call1024_balance_too_low(
     post = {
         contract: Account(
             storage={0: 1025, 1: 1},
-            code=bytes.fromhex(
-                "6001600054016000556000600060006000600054732aaa3ab47a59b4ad0ba3f72ad0b5bc35388333b4650ffffffffffff160015500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=0xFFFFFFFFFFF,
+                        address=0x2AAA3AB47A59B4AD0BA3F72AD0B5BC35388333B4,
+                        value=Op.SLOAD(key=0x0),
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

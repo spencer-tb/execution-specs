@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,7 +47,7 @@ def test_log1_dejavu(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60ff60ff630fffffffa1"),
+        code=Op.LOG1(offset=0xFFFFFFF, size=0xFF, topic_1=0xFF),
     )
     pre[sender] = Account(balance=0x271000000000, nonce=0)
 
@@ -63,7 +64,9 @@ def test_log1_dejavu(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("60ff60ff630fffffffa1")),
+        contract: Account(
+            code=Op.LOG1(offset=0xFFFFFFF, size=0xFF, topic_1=0xFF),
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

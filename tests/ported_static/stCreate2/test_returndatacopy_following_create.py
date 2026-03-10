@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -59,22 +60,58 @@ def test_returndatacopy_following_create(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000602880601f60003960006000f5506020600060003e60005160005500fe7d11112222"  # noqa: E501
-            "3333444455556666777788889999aaaabbbbccccddddeeeeffff60005260206000f300"  # noqa: E501
+        code=(
+            Op.PUSH1[0x0]
+            + Op.PUSH1[0x28]
+            + Op.CODECOPY(dest_offset=0x0, offset=0x1F, size=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x0]
+            + Op.POP(Op.CREATE2)
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
+            + Op.INVALID
+            + Op.MSTORE(
+                offset=0x0,
+                value=0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
+            )
+            + Op.RETURN(offset=0x0, size=0x20)
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("600060006000600060006000355af100"),
+        code=(
+            Op.CALL(
+                gas=Op.GAS,
+                address=Op.CALLDATALOAD(offset=0x0),
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
+        ),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600280601f60003960006000f5506020600060003e60005160005500fe0000"  # noqa: E501
+        code=(
+            Op.PUSH1[0x0]
+            + Op.PUSH1[0x2]
+            + Op.CODECOPY(dest_offset=0x0, offset=0x1F, size=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x0]
+            + Op.POP(Op.CREATE2)
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
+            + Op.INVALID
+            + Op.STOP
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
@@ -97,17 +134,54 @@ def test_returndatacopy_following_create(
     post = {
         callee: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "6000602880601f60003960006000f5506020600060003e60005160005500fe7d111122223333444455556666777788889999aaaabbbbccccddddeeeeffff60005260206000f300"  # noqa: E501
+            code=(
+                Op.PUSH1[0x0]
+                + Op.PUSH1[0x28]
+                + Op.CODECOPY(dest_offset=0x0, offset=0x1F, size=Op.DUP1)
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0x0]
+                + Op.POP(Op.CREATE2)
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
+                + Op.INVALID
+                + Op.MSTORE(
+                    offset=0x0,
+                    value=0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
+                )
+                + Op.RETURN(offset=0x0, size=0x20)
+                + Op.STOP
             ),
         ),
         contract: Account(
-            code=bytes.fromhex("600060006000600060006000355af100"),
+            code=(
+                Op.CALL(
+                    gas=Op.GAS,
+                    address=Op.CALLDATALOAD(offset=0x0),
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
+            ),
         ),
         callee_1: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "6000600280601f60003960006000f5506020600060003e60005160005500fe0000"  # noqa: E501
+            code=(
+                Op.PUSH1[0x0]
+                + Op.PUSH1[0x2]
+                + Op.CODECOPY(dest_offset=0x0, offset=0x1F, size=Op.DUP1)
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0x0]
+                + Op.POP(Op.CREATE2)
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
+                + Op.INVALID
+                + Op.STOP
+                + Op.STOP
             ),
         ),
     }

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,22 +48,57 @@ def test_random_statetest178(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7d342beabe599e4bc177fd97d36df48d50650ba6129a9a83d4cf809ec21452357c620167"  # noqa: E501
-            "f530c3265be9887f6e5b8186decdc00a6a801e5f56dd8d9d36a4806dbccc299e4bbf46ad"  # noqa: E501
-            "577e25b5b1fc76b6999cb23a6a03c4035e36b8494135ee170647395da00b6e0a64c43f33"  # noqa: E501
-            "58b8bdcf593c89fb70b865ef153b5195c77959256beb4f932095eb8ac80bc2c050f6f550"  # noqa: E501
-            "a362aac77f5c4b197151df039d64b77dca22eb8fd4b8cf50fb85a36f1d909d1919a47fe9"  # noqa: E501
-            "7de5526726b4a47b866b7b13471056439457cd7cbc5060d978056ff5dd24a1f49e50b9f5"  # noqa: E501
-            "924f473b2dc5306d67054ca575d0603e616291a3601460106009601f6338a57ddc731b0a"  # noqa: E501
-            "78bdf6595742d34bf13386bcc01efaddf68c630e3319c8f133"
+        code=(
+            Op.CALLDATALOAD(
+                offset=0x342BEABE599E4BC177FD97D36DF48D50650BA6129A9A83D4CF809EC21452,  # noqa: E501
+            )
+            + Op.PUSH29[
+                0x620167F530C3265BE9887F6E5B8186DECDC00A6A801E5F56DD8D9D36A4
+            ]
+            + Op.DUP1
+            + Op.PUSH14[0xBCCC299E4BBF46AD577E25B5B1FC]
+            + Op.PUSH23[0xB6999CB23A6A03C4035E36B8494135EE170647395DA00B]
+            + Op.PUSH15[0xA64C43F3358B8BDCF593C89FB70B8]
+            + Op.PUSH6[0xEF153B5195C7]
+            + Op.PUSH26[0x59256BEB4F932095EB8AC80BC2C050F6F550A362AAC77F5C4B19]
+            + Op.PUSH18[0x51DF039D64B77DCA22EB8FD4B8CF50FB85A3]
+            + Op.PUSH16[0x1D909D1919A47FE97DE5526726B4A47B]
+            + Op.DUP7
+            + Op.LOG3(
+                offset=0x6291,
+                size=0x3E,
+                topic_1=0x56FF5DD24A1F49E50B9F5924F473B2DC5306D67054CA575D0,
+                topic_2=0xD9,
+                topic_3=0x7B13471056439457CD7CBC50,
+            )
+            + Op.CALL(
+                gas=0xE3319C8,
+                address=0x1B0A78BDF6595742D34BF13386BCC01EFADDF68C,
+                value=0x38A57DDC,
+                args_offset=0x1F,
+                args_size=0x9,
+                ret_offset=0x10,
+                ret_size=0x14,
+            )
+            + Op.CALLER
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
 
     tx = Transaction(
@@ -104,12 +140,58 @@ def test_random_statetest178(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "7d342beabe599e4bc177fd97d36df48d50650ba6129a9a83d4cf809ec21452357c620167f530c3265be9887f6e5b8186decdc00a6a801e5f56dd8d9d36a4806dbccc299e4bbf46ad577e25b5b1fc76b6999cb23a6a03c4035e36b8494135ee170647395da00b6e0a64c43f3358b8bdcf593c89fb70b865ef153b5195c77959256beb4f932095eb8ac80bc2c050f6f550a362aac77f5c4b197151df039d64b77dca22eb8fd4b8cf50fb85a36f1d909d1919a47fe97de5526726b4a47b866b7b13471056439457cd7cbc5060d978056ff5dd24a1f49e50b9f5924f473b2dc5306d67054ca575d0603e616291a3601460106009601f6338a57ddc731b0a78bdf6595742d34bf13386bcc01efaddf68c630e3319c8f133"  # noqa: E501
+            code=(
+                Op.CALLDATALOAD(
+                    offset=0x342BEABE599E4BC177FD97D36DF48D50650BA6129A9A83D4CF809EC21452,  # noqa: E501
+                )
+                + Op.PUSH29[
+                    0x620167F530C3265BE9887F6E5B8186DECDC00A6A801E5F56DD8D9D36A4  # noqa: E501
+                ]
+                + Op.DUP1
+                + Op.PUSH14[0xBCCC299E4BBF46AD577E25B5B1FC]
+                + Op.PUSH23[0xB6999CB23A6A03C4035E36B8494135EE170647395DA00B]
+                + Op.PUSH15[0xA64C43F3358B8BDCF593C89FB70B8]
+                + Op.PUSH6[0xEF153B5195C7]
+                + Op.PUSH26[
+                    0x59256BEB4F932095EB8AC80BC2C050F6F550A362AAC77F5C4B19
+                ]
+                + Op.PUSH18[0x51DF039D64B77DCA22EB8FD4B8CF50FB85A3]
+                + Op.PUSH16[0x1D909D1919A47FE97DE5526726B4A47B]
+                + Op.DUP7
+                + Op.LOG3(
+                    offset=0x6291,
+                    size=0x3E,
+                    topic_1=0x56FF5DD24A1F49E50B9F5924F473B2DC5306D67054CA575D0,  # noqa: E501
+                    topic_2=0xD9,
+                    topic_3=0x7B13471056439457CD7CBC50,
+                )
+                + Op.CALL(
+                    gas=0xE3319C8,
+                    address=0x1B0A78BDF6595742D34BF13386BCC01EFADDF68C,
+                    value=0x38A57DDC,
+                    args_offset=0x1F,
+                    args_size=0x9,
+                    ret_offset=0x10,
+                    ret_size=0x14,
+                )
+                + Op.CALLER
             ),
         ),
         coinbase: Account(
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
     }
 

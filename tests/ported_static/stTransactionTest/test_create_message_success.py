@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,11 @@ def test_create_message_success(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("64600c6000556000526005601b6000f000"),
+        code=(
+            Op.MSTORE(offset=0x0, value=0x600C600055)
+            + Op.CREATE(value=0x0, offset=0x1B, size=0x5)
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -66,7 +71,11 @@ def test_create_message_success(
 
     post = {
         contract: Account(
-            code=bytes.fromhex("64600c6000556000526005601b6000f000"),
+            code=(
+                Op.MSTORE(offset=0x0, value=0x600C600055)
+                + Op.CREATE(value=0x0, offset=0x1B, size=0x5)
+                + Op.STOP
+            ),
         ),
         Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(
             storage={0: 12},

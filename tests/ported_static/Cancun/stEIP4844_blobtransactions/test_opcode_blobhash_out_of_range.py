@@ -17,6 +17,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,7 +51,11 @@ def test_opcode_blobhash_out_of_range(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("600049600055600a4960015500"),
+        code=(
+            Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0))
+            + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xA))
+            + Op.STOP
+        ),
         storage={0x0: 0x1, 0x1: 0x1},
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -95,7 +100,11 @@ def test_opcode_blobhash_out_of_range(
             storage={
                 0: 0x1A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8,  # noqa: E501
             },
-            code=bytes.fromhex("600049600055600a4960015500"),
+            code=(
+                Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0))
+                + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xA))
+                + Op.STOP
+            ),
         ),
     }
 

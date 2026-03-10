@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,23 +52,49 @@ def test_call_goes_oog_on_second_level2_with_mem_expanding_calls(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a60085560ff60ff60ff60ff600073c10a98222464b07008ceb5a0ec44ed49920addda62"  # noqa: E501
-            "0927c0f1600955"
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.CALL(
+                    gas=0x927C0,
+                    address=0xC10A98222464B07008CEB5A0EC44ED49920ADDDA,
+                    value=0x0,
+                    args_offset=0xFF,
+                    args_size=0xFF,
+                    ret_offset=0xFF,
+                    ret_size=0xFF,
+                ),
+            )
         ),
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("5a6008555a6009555a600a55"),
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.SSTORE(key=0x9, value=Op.GAS)
+            + Op.SSTORE(key=0xA, value=Op.GAS)
+        ),
     )
     pre[sender] = Account(balance=0xE8D4A510000, nonce=0)
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a60085560ff60ff60ff60ff60007396983de02bfbcb5d0f4e0ee98fdde6d6f0c75fe062"  # noqa: E501
-            "0927c0f1600955"
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.CALL(
+                    gas=0x927C0,
+                    address=0x96983DE02BFBCB5D0F4E0EE98FDDE6D6F0C75FE0,
+                    value=0x0,
+                    args_offset=0xFF,
+                    args_size=0xFF,
+                    ret_offset=0xFF,
+                    ret_size=0xFF,
+                ),
+            )
         ),
     )
 
@@ -85,14 +112,44 @@ def test_call_goes_oog_on_second_level2_with_mem_expanding_calls(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "5a60085560ff60ff60ff60ff600073c10a98222464b07008ceb5a0ec44ed49920addda620927c0f1600955"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.CALL(
+                        gas=0x927C0,
+                        address=0xC10A98222464B07008CEB5A0EC44ED49920ADDDA,
+                        value=0x0,
+                        args_offset=0xFF,
+                        args_size=0xFF,
+                        ret_offset=0xFF,
+                        ret_size=0xFF,
+                    ),
+                )
             ),
         ),
-        callee: Account(code=bytes.fromhex("5a6008555a6009555a600a55")),
+        callee: Account(
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.SSTORE(key=0x9, value=Op.GAS)
+                + Op.SSTORE(key=0xA, value=Op.GAS)
+            ),
+        ),
         callee_1: Account(
-            code=bytes.fromhex(
-                "5a60085560ff60ff60ff60ff60007396983de02bfbcb5d0f4e0ee98fdde6d6f0c75fe0620927c0f1600955"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.CALL(
+                        gas=0x927C0,
+                        address=0x96983DE02BFBCB5D0F4E0EE98FDDE6D6F0C75FE0,
+                        value=0x0,
+                        args_offset=0xFF,
+                        args_size=0xFF,
+                        ret_offset=0xFF,
+                        ret_size=0xFF,
+                    ),
+                )
             ),
         ),
     }

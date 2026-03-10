@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,7 +48,12 @@ def test_push0_gas(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("5a6000555f5a6000540360015500"),
+        code=(
+            Op.SSTORE(key=0x0, value=Op.GAS)
+            + Op.PUSH0
+            + Op.SSTORE(key=0x1, value=Op.SUB(Op.SLOAD(key=0x0), Op.GAS))
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(
@@ -65,7 +71,12 @@ def test_push0_gas(
     post = {
         contract: Account(
             storage={0: 0x13496, 1: 22107},
-            code=bytes.fromhex("5a6000555f5a6000540360015500"),
+            code=(
+                Op.SSTORE(key=0x0, value=Op.GAS)
+                + Op.PUSH0
+                + Op.SSTORE(key=0x1, value=Op.SUB(Op.SLOAD(key=0x0), Op.GAS))
+                + Op.STOP
+            ),
         ),
     }
 

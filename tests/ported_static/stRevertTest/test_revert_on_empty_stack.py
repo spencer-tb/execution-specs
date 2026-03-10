@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -43,7 +44,7 @@ def test_revert_on_empty_stack(
         gas_limit=10000000,
     )
 
-    pre[contract] = Account(balance=0, nonce=0, code=bytes.fromhex("fd"))
+    pre[contract] = Account(balance=0, nonce=0, code=Op.REVERT)
     pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
 
     tx = Transaction(
@@ -59,7 +60,7 @@ def test_revert_on_empty_stack(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("fd")),
+        contract: Account(code=Op.REVERT),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

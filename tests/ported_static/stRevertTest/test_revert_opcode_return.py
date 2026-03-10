@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -32,40 +33,73 @@ REFERENCE_SPEC_VERSION = "N/A"
             800000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
                     storage={2: 0x726576657274206D657373616765},
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP,
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -74,40 +108,73 @@ REFERENCE_SPEC_VERSION = "N/A"
             80000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
                     storage={2: 0x726576657274206D657373616765},
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
+                    )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP,
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -116,39 +183,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             800000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -157,39 +257,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             80000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -198,39 +331,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             800000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -239,39 +405,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             80000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -280,39 +479,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             800000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -321,39 +553,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             80000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -362,39 +627,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             800000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -403,39 +701,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             80000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -444,39 +775,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             800000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -485,39 +849,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             80000,
             {
                 Address("0x1963fd2c717f5b4b9fa3d6baf38d66241e1ec005"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260206000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x20)
+                    + Op.STOP
                 ),
                 Address("0x1fc98371f1a058f1a6042e30a141aa8bb67dd1bc"): Account(
-                    code=bytes.fromhex(
-                        "60206000600060006000600035620249f0f160015560005160025500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x1,
+                        value=Op.CALL(
+                            gas=0x249F0,
+                            address=Op.CALLDATALOAD(offset=0x0),
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x20,
+                        ),
                     )
+                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+                    + Op.STOP
                 ),
                 Address("0x50eaca0a040ac6242d0c01cc1ff82f5b95cc10e4"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526e0fffffffffffffffffffffffffffff6000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    )
+                    + Op.STOP
                 ),
                 Address("0x745e52346d8549444323699e9fc383ae89bdd24f"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006000fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x0, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x858f82bbfd84fc9eb91291458511df77311dbd0d"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006e0ffffffffffffffffffffffffffffffd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0
+                    )
+                    + Op.STOP
                 ),
                 Address("0xe5b2dfe7f932f2d5eaa7c8fb2e1e9a8b6a846fd7"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d65737361676560005260006001fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x1, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf933d2374d5875de033a8ed9d9c1ce5dea25c78b"): Account(
-                    code=bytes.fromhex(
-                        "6c726576657274656420646174616000556d726576657274206d6573736167656000526000610100fd00"  # noqa: E501
+                    code=Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+                    + Op.MSTORE(
+                        offset=0x0, value=0x726576657274206D657373616765
                     )
+                    + Op.REVERT(offset=0x100, size=0x0)
+                    + Op.STOP
                 ),
             },
         ),
@@ -568,56 +965,81 @@ def test_revert_opcode_return(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6c726576657274656420646174616000556d726576657274206d65737361676560005260"  # noqa: E501
-            "206000fd00"
+        code=(
+            Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+            + Op.MSTORE(offset=0x0, value=0x726576657274206D657373616765)
+            + Op.REVERT(offset=0x0, size=0x20)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "60206000600060006000600035620249f0f160015560005160025500"
+        code=(
+            Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=0x249F0,
+                    address=Op.CALLDATALOAD(offset=0x0),
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6c726576657274656420646174616000556d726576657274206d6573736167656000526e"  # noqa: E501
-            "0fffffffffffffffffffffffffffff6000fd00"
+        code=(
+            Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+            + Op.MSTORE(offset=0x0, value=0x726576657274206D657373616765)
+            + Op.REVERT(offset=0x0, size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+            + Op.STOP
         ),
     )
     pre[callee_2] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6c726576657274656420646174616000556d726576657274206d65737361676560005260"  # noqa: E501
-            "006000fd00"
+        code=(
+            Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+            + Op.MSTORE(offset=0x0, value=0x726576657274206D657373616765)
+            + Op.REVERT(offset=0x0, size=0x0)
+            + Op.STOP
         ),
     )
     pre[callee_3] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6c726576657274656420646174616000556d726576657274206d65737361676560005260"  # noqa: E501
-            "006e0ffffffffffffffffffffffffffffffd00"
+        code=(
+            Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+            + Op.MSTORE(offset=0x0, value=0x726576657274206D657373616765)
+            + Op.REVERT(offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, size=0x0)
+            + Op.STOP
         ),
     )
     pre[callee_4] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6c726576657274656420646174616000556d726576657274206d65737361676560005260"  # noqa: E501
-            "006001fd00"
+        code=(
+            Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+            + Op.MSTORE(offset=0x0, value=0x726576657274206D657373616765)
+            + Op.REVERT(offset=0x1, size=0x0)
+            + Op.STOP
         ),
     )
     pre[callee_5] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6c726576657274656420646174616000556d726576657274206d65737361676560005260"  # noqa: E501
-            "00610100fd00"
+        code=(
+            Op.SSTORE(key=0x0, value=0x72657665727465642064617461)
+            + Op.MSTORE(offset=0x0, value=0x726576657274206D657373616765)
+            + Op.REVERT(offset=0x100, size=0x0)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)

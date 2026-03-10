@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,9 +47,16 @@ def test_stack_limit_push31_1024(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6103fe6000525b7e0102030405060708090a0102030405060708090a0102030405060708"  # noqa: E501
-            "090a016001600051036000526000516006570000"
+        code=(
+            Op.MSTORE(offset=0x0, value=0x3FE)
+            + Op.JUMPDEST
+            + Op.PUSH31[
+                0x102030405060708090A0102030405060708090A0102030405060708090A01
+            ]
+            + Op.MSTORE(offset=0x0, value=Op.SUB(Op.MLOAD(offset=0x0), 0x1))
+            + Op.JUMPI(pc=0x6, condition=Op.MLOAD(offset=0x0))
+            + Op.STOP
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
@@ -67,8 +75,18 @@ def test_stack_limit_push31_1024(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "6103fe6000525b7e0102030405060708090a0102030405060708090a0102030405060708090a016001600051036000526000516006570000"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=0x3FE)
+                + Op.JUMPDEST
+                + Op.PUSH31[
+                    0x102030405060708090A0102030405060708090A0102030405060708090A01  # noqa: E501
+                ]
+                + Op.MSTORE(
+                    offset=0x0, value=Op.SUB(Op.MLOAD(offset=0x0), 0x1)
+                )
+                + Op.JUMPI(pc=0x6, condition=Op.MLOAD(offset=0x0))
+                + Op.STOP
+                + Op.STOP
             ),
         ),
     }

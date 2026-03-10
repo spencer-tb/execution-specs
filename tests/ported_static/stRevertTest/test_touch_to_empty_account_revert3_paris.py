@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -53,29 +54,69 @@ def test_touch_to_empty_account_revert3_paris(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600060007328207e524ccb9dbc79bb3044819acd87d630f27a620186a0f1"  # noqa: E501
-            "600255622fffff60002000"
+        code=(
+            Op.SSTORE(
+                key=0x2,
+                value=Op.CALL(
+                    gas=0x186A0,
+                    address=0x28207E524CCB9DBC79BB3044819ACD87D630F27A,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SHA3(offset=0x0, size=0x2FFFFF)
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("7376fae819612a29489a1a43208613d8f8557b8898ff00"),
+        code=(
+            Op.SELFDESTRUCT(address=0x76FAE819612A29489A1A43208613D8F8557B8898)
+            + Op.STOP
+        ),
     )
     pre[callee_2] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("7376fae819612a29489a1a43208613d8f8557b8898ff00"),
+        code=(
+            Op.SELFDESTRUCT(address=0x76FAE819612A29489A1A43208613D8F8557B8898)
+            + Op.STOP
+        ),
     )
     pre[callee_3] = Account(balance=10, nonce=0)
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600060006000600060007351cd6399de7e11930d3aa146d45a2e327b5894b96201fbd0f1"  # noqa: E501
-            "60005560006000600060006000732620916b2f3d6b185f4d9dd1ecee4a1f665d5c366201"  # noqa: E501
-            "fbd0f160015500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x1FBD0,
+                    address=0x51CD6399DE7E11930D3AA146D45A2E327B5894B9,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.CALL(
+                    gas=0x1FBD0,
+                    address=0x2620916B2F3D6B185F4D9DD1ECEE4A1F665D5C36,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -94,24 +135,67 @@ def test_touch_to_empty_account_revert3_paris(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "600060006000600060007328207e524ccb9dbc79bb3044819acd87d630f27a620186a0f1600255622fffff60002000"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x2,
+                    value=Op.CALL(
+                        gas=0x186A0,
+                        address=0x28207E524CCB9DBC79BB3044819ACD87D630F27A,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SHA3(offset=0x0, size=0x2FFFFF)
+                + Op.STOP
             ),
         ),
         callee_1: Account(
-            code=bytes.fromhex(
-                "7376fae819612a29489a1a43208613d8f8557b8898ff00"
+            code=(
+                Op.SELFDESTRUCT(
+                    address=0x76FAE819612A29489A1A43208613D8F8557B8898,
+                )
+                + Op.STOP
             ),
         ),
         callee_2: Account(
-            code=bytes.fromhex(
-                "7376fae819612a29489a1a43208613d8f8557b8898ff00"
+            code=(
+                Op.SELFDESTRUCT(
+                    address=0x76FAE819612A29489A1A43208613D8F8557B8898,
+                )
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "600060006000600060007351cd6399de7e11930d3aa146d45a2e327b5894b96201fbd0f160005560006000600060006000732620916b2f3d6b185f4d9dd1ecee4a1f665d5c366201fbd0f160015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x1FBD0,
+                        address=0x51CD6399DE7E11930D3AA146D45A2E327B5894B9,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x1,
+                    value=Op.CALL(
+                        gas=0x1FBD0,
+                        address=0x2620916B2F3D6B185F4D9DD1ECEE4A1F665D5C36,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

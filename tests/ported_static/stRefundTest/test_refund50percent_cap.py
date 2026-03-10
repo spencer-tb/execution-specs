@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,9 +49,18 @@ def test_refund50percent_cap(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "600154506002545060ff60020a600a553031600b55600060015560006002556000600355"  # noqa: E501
-            "60006004556000600555600060065500"
+        code=(
+            Op.POP(Op.SLOAD(key=0x1))
+            + Op.POP(Op.SLOAD(key=0x2))
+            + Op.SSTORE(key=0xA, value=Op.EXP(0x2, 0xFF))
+            + Op.SSTORE(key=0xB, value=Op.BALANCE(address=Op.ADDRESS))
+            + Op.SSTORE(key=0x1, value=0x0)
+            + Op.SSTORE(key=0x2, value=0x0)
+            + Op.SSTORE(key=0x3, value=0x0)
+            + Op.SSTORE(key=0x4, value=0x0)
+            + Op.SSTORE(key=0x5, value=0x0)
+            + Op.SSTORE(key=0x6, value=0x0)
+            + Op.STOP
         ),
         storage={
             0x1: 0x1,
@@ -80,8 +90,18 @@ def test_refund50percent_cap(
                 10: 0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
                 11: 0xDE0B6B3A7640000,
             },
-            code=bytes.fromhex(
-                "600154506002545060ff60020a600a553031600b5560006001556000600255600060035560006004556000600555600060065500"  # noqa: E501
+            code=(
+                Op.POP(Op.SLOAD(key=0x1))
+                + Op.POP(Op.SLOAD(key=0x2))
+                + Op.SSTORE(key=0xA, value=Op.EXP(0x2, 0xFF))
+                + Op.SSTORE(key=0xB, value=Op.BALANCE(address=Op.ADDRESS))
+                + Op.SSTORE(key=0x1, value=0x0)
+                + Op.SSTORE(key=0x2, value=0x0)
+                + Op.SSTORE(key=0x3, value=0x0)
+                + Op.SSTORE(key=0x4, value=0x0)
+                + Op.SSTORE(key=0x5, value=0x0)
+                + Op.SSTORE(key=0x6, value=0x0)
+                + Op.STOP
             ),
         ),
     }

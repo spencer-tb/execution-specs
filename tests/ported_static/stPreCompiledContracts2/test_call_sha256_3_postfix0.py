@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,8 +50,22 @@ def test_call_sha256_3_postfix0(
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,
-        code=bytes.fromhex(
-            "65f34578907f006000526020600060256000600060026101f4f160025560005160005500"  # noqa: E501
+        code=(
+            Op.MSTORE(offset=0x0, value=0xF34578907F00)
+            + Op.SSTORE(
+                key=0x2,
+                value=Op.CALL(
+                    gas=0x1F4,
+                    address=0x2,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x25,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -73,8 +88,22 @@ def test_call_sha256_3_postfix0(
                 0: 0x3B745A1C00D035C334F358D007A430E4CF0AE63AA0556FB05529706DE546464D,  # noqa: E501
                 2: 1,
             },
-            code=bytes.fromhex(
-                "65f34578907f006000526020600060256000600060026101f4f160025560005160005500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=0xF34578907F00)
+                + Op.SSTORE(
+                    key=0x2,
+                    value=Op.CALL(
+                        gas=0x1F4,
+                        address=0x2,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x25,
+                        ret_offset=0x0,
+                        ret_size=0x20,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

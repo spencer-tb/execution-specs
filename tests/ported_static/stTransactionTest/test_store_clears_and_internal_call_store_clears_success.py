@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,18 +52,39 @@ def test_store_clears_and_internal_call_store_clears_success(
     pre[contract] = Account(
         balance=10,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000556000600155600060025560006003556000600060006000600173d61e0564fa"  # noqa: E501
-            "b2b0da5136f75db579b663bd9f2bd861c350f100"
+        code=(
+            Op.SSTORE(key=0x0, value=0x0)
+            + Op.SSTORE(key=0x1, value=0x0)
+            + Op.SSTORE(key=0x2, value=0x0)
+            + Op.SSTORE(key=0x3, value=0x0)
+            + Op.CALL(
+                gas=0xC350,
+                address=0xD61E0564FAB2B0DA5136F75DB579B663BD9F2BD8,
+                value=0x1,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
         ),
         storage={0x0: 0xC, 0x1: 0xC, 0x2: 0xC, 0x3: 0xC, 0x4: 0xC},
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600060005560006001556000600255600060035560006004556000600555600060065560"  # noqa: E501
-            "006007556000600855600060095500"
+        code=(
+            Op.SSTORE(key=0x0, value=0x0)
+            + Op.SSTORE(key=0x1, value=0x0)
+            + Op.SSTORE(key=0x2, value=0x0)
+            + Op.SSTORE(key=0x3, value=0x0)
+            + Op.SSTORE(key=0x4, value=0x0)
+            + Op.SSTORE(key=0x5, value=0x0)
+            + Op.SSTORE(key=0x6, value=0x0)
+            + Op.SSTORE(key=0x7, value=0x0)
+            + Op.SSTORE(key=0x8, value=0x0)
+            + Op.SSTORE(key=0x9, value=0x0)
+            + Op.STOP
         ),
         storage={
             0x0: 0xC,
@@ -93,13 +115,36 @@ def test_store_clears_and_internal_call_store_clears_success(
     post = {
         contract: Account(
             storage={4: 12},
-            code=bytes.fromhex(
-                "60006000556000600155600060025560006003556000600060006000600173d61e0564fab2b0da5136f75db579b663bd9f2bd861c350f100"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=0x0)
+                + Op.SSTORE(key=0x1, value=0x0)
+                + Op.SSTORE(key=0x2, value=0x0)
+                + Op.SSTORE(key=0x3, value=0x0)
+                + Op.CALL(
+                    gas=0xC350,
+                    address=0xD61E0564FAB2B0DA5136F75DB579B663BD9F2BD8,
+                    value=0x1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.STOP
             ),
         ),
         callee: Account(
-            code=bytes.fromhex(
-                "600060005560006001556000600255600060035560006004556000600555600060065560006007556000600855600060095500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=0x0)
+                + Op.SSTORE(key=0x1, value=0x0)
+                + Op.SSTORE(key=0x2, value=0x0)
+                + Op.SSTORE(key=0x3, value=0x0)
+                + Op.SSTORE(key=0x4, value=0x0)
+                + Op.SSTORE(key=0x5, value=0x0)
+                + Op.SSTORE(key=0x6, value=0x0)
+                + Op.SSTORE(key=0x7, value=0x0)
+                + Op.SSTORE(key=0x8, value=0x0)
+                + Op.SSTORE(key=0x9, value=0x0)
+                + Op.STOP
             ),
         ),
     }

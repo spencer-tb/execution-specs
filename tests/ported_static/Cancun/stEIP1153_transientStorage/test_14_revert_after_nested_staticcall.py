@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,11 +50,57 @@ def test_14_revert_after_nested_staticcall(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "5f3560e01c8063f5f4059014602f578063f8dfc2d014602b576362fdb9be14602357005b"  # noqa: E501
-            "60296077565b005b605d565b506029600a5f5d5f5c5f55630f8dfc2d60e41b5f5260205f"  # noqa: E501
-            "81813061fffffa5f516001556002555f5c600355565b63317edcdf60e11b5f525f806020"  # noqa: E501
-            "8180305af15f5260205ff35b600b5f5d56"
+        code=(
+            Op.SHR(0xE0, Op.CALLDATALOAD(offset=Op.PUSH0))
+            + Op.JUMPI(pc=0x2F, condition=Op.EQ(0xF5F40590, Op.DUP1))
+            + Op.JUMPI(pc=0x2B, condition=Op.EQ(0xF8DFC2D0, Op.DUP1))
+            + Op.PUSH4[0x62FDB9BE]
+            + Op.JUMPI(pc=0x23, condition=Op.EQ)
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.PUSH1[0x29]
+            + Op.JUMP(pc=0x77)
+            + Op.JUMPDEST
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.JUMP(pc=0x5D)
+            + Op.JUMPDEST
+            + Op.POP
+            + Op.PUSH1[0x29]
+            + Op.TSTORE(key=Op.PUSH0, value=0xA)
+            + Op.SSTORE(key=Op.PUSH0, value=Op.TLOAD(key=Op.PUSH0))
+            + Op.MSTORE(offset=Op.PUSH0, value=Op.SHL(0xE4, 0xF8DFC2D))
+            + Op.STATICCALL(
+                gas=0xFFFF,
+                address=Op.ADDRESS,
+                args_offset=Op.DUP2,
+                args_size=Op.DUP2,
+                ret_offset=Op.PUSH0,
+                ret_size=0x20,
+            )
+            + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=Op.PUSH0))
+            + Op.PUSH1[0x2]
+            + Op.SSTORE
+            + Op.SSTORE(key=0x3, value=Op.TLOAD(key=Op.PUSH0))
+            + Op.JUMP
+            + Op.JUMPDEST
+            + Op.MSTORE(offset=Op.PUSH0, value=Op.SHL(0xE1, 0x317EDCDF))
+            + Op.MSTORE(
+                offset=Op.PUSH0,
+                value=Op.CALL(
+                    gas=Op.GAS,
+                    address=Op.ADDRESS,
+                    value=Op.DUP1,
+                    args_offset=Op.DUP2,
+                    args_size=0x20,
+                    ret_offset=Op.DUP1,
+                    ret_size=Op.PUSH0,
+                ),
+            )
+            + Op.RETURN(offset=Op.PUSH0, size=0x20)
+            + Op.JUMPDEST
+            + Op.TSTORE(key=Op.PUSH0, value=0xB)
+            + Op.JUMP
         ),
         storage={0x1: 0xFFFF},
     )
@@ -76,8 +123,57 @@ def test_14_revert_after_nested_staticcall(
     post = {
         contract: Account(
             storage={0: 10, 2: 1, 3: 10},
-            code=bytes.fromhex(
-                "5f3560e01c8063f5f4059014602f578063f8dfc2d014602b576362fdb9be14602357005b60296077565b005b605d565b506029600a5f5d5f5c5f55630f8dfc2d60e41b5f5260205f81813061fffffa5f516001556002555f5c600355565b63317edcdf60e11b5f525f8060208180305af15f5260205ff35b600b5f5d56"  # noqa: E501
+            code=(
+                Op.SHR(0xE0, Op.CALLDATALOAD(offset=Op.PUSH0))
+                + Op.JUMPI(pc=0x2F, condition=Op.EQ(0xF5F40590, Op.DUP1))
+                + Op.JUMPI(pc=0x2B, condition=Op.EQ(0xF8DFC2D0, Op.DUP1))
+                + Op.PUSH4[0x62FDB9BE]
+                + Op.JUMPI(pc=0x23, condition=Op.EQ)
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.PUSH1[0x29]
+                + Op.JUMP(pc=0x77)
+                + Op.JUMPDEST
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.JUMP(pc=0x5D)
+                + Op.JUMPDEST
+                + Op.POP
+                + Op.PUSH1[0x29]
+                + Op.TSTORE(key=Op.PUSH0, value=0xA)
+                + Op.SSTORE(key=Op.PUSH0, value=Op.TLOAD(key=Op.PUSH0))
+                + Op.MSTORE(offset=Op.PUSH0, value=Op.SHL(0xE4, 0xF8DFC2D))
+                + Op.STATICCALL(
+                    gas=0xFFFF,
+                    address=Op.ADDRESS,
+                    args_offset=Op.DUP2,
+                    args_size=Op.DUP2,
+                    ret_offset=Op.PUSH0,
+                    ret_size=0x20,
+                )
+                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=Op.PUSH0))
+                + Op.PUSH1[0x2]
+                + Op.SSTORE
+                + Op.SSTORE(key=0x3, value=Op.TLOAD(key=Op.PUSH0))
+                + Op.JUMP
+                + Op.JUMPDEST
+                + Op.MSTORE(offset=Op.PUSH0, value=Op.SHL(0xE1, 0x317EDCDF))
+                + Op.MSTORE(
+                    offset=Op.PUSH0,
+                    value=Op.CALL(
+                        gas=Op.GAS,
+                        address=Op.ADDRESS,
+                        value=Op.DUP1,
+                        args_offset=Op.DUP2,
+                        args_size=0x20,
+                        ret_offset=Op.DUP1,
+                        ret_size=Op.PUSH0,
+                    ),
+                )
+                + Op.RETURN(offset=Op.PUSH0, size=0x20)
+                + Op.JUMPDEST
+                + Op.TSTORE(key=Op.PUSH0, value=0xB)
+                + Op.JUMP
             ),
         ),
     }

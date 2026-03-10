@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -55,9 +56,15 @@ def test_pop_bounds(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "60005063ffffffff5067ffffffffffffffff506fffffffffffffffffffffffffffffffff"  # noqa: E501
-            "507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5000"  # noqa: E501
+        code=(
+            Op.POP(0x0)
+            + Op.POP(0xFFFFFFFF)
+            + Op.POP(0xFFFFFFFFFFFFFFFF)
+            + Op.POP(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+            + Op.POP(
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
@@ -76,8 +83,15 @@ def test_pop_bounds(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "60005063ffffffff5067ffffffffffffffff506fffffffffffffffffffffffffffffffff507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5000"  # noqa: E501
+            code=(
+                Op.POP(0x0)
+                + Op.POP(0xFFFFFFFF)
+                + Op.POP(0xFFFFFFFFFFFFFFFF)
+                + Op.POP(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+                + Op.POP(
+                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                )
+                + Op.STOP
             ),
         ),
     }

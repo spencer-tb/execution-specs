@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,9 +35,28 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x62c5c9278da01e6594d6fede061838cf5e597f2b"): Account(
                     storage={0: 134, 1: 1, 2: 0x20B71},
-                    code=bytes.fromhex(
-                        "60016000540160005560006000600060007362c5c9278da01e6594d6fede061838cf5e597f2b610401600054046001036127105a0302f46001556103e86000540260010160025500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)
+                    )
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.DELEGATECALL(
+                            gas=Op.MUL(
+                                Op.SUB(Op.GAS, 0x2710),
+                                Op.SUB(0x1, Op.DIV(Op.SLOAD(key=0x0), 0x401)),
+                            ),
+                            address=0x62C5C9278DA01E6594D6FEDE061838CF5E597F2B,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
+                    )
+                    + Op.SSTORE(
+                        key=0x2,
+                        value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3E8)),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -45,9 +65,28 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x62c5c9278da01e6594d6fede061838cf5e597f2b"): Account(
                     storage={0: 146, 1: 1, 2: 0x23A51},
-                    code=bytes.fromhex(
-                        "60016000540160005560006000600060007362c5c9278da01e6594d6fede061838cf5e597f2b610401600054046001036127105a0302f46001556103e86000540260010160025500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)
+                    )
+                    + Op.SSTORE(
+                        key=0x1,
+                        value=Op.DELEGATECALL(
+                            gas=Op.MUL(
+                                Op.SUB(Op.GAS, 0x2710),
+                                Op.SUB(0x1, Op.DIV(Op.SLOAD(key=0x0), 0x401)),
+                            ),
+                            address=0x62C5C9278DA01E6594D6FEDE061838CF5E597F2B,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
+                    )
+                    + Op.SSTORE(
+                        key=0x2,
+                        value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3E8)),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -80,9 +119,27 @@ def test_call1024_oog(
     pre[contract] = Account(
         balance=1024,
         nonce=0,
-        code=bytes.fromhex(
-            "60016000540160005560006000600060007362c5c9278da01e6594d6fede061838cf5e59"  # noqa: E501
-            "7f2b610401600054046001036127105a0302f46001556103e86000540260010160025500"  # noqa: E501
+        code=(
+            Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
+            + Op.SSTORE(
+                key=0x1,
+                value=Op.DELEGATECALL(
+                    gas=Op.MUL(
+                        Op.SUB(Op.GAS, 0x2710),
+                        Op.SUB(0x1, Op.DIV(Op.SLOAD(key=0x0), 0x401)),
+                    ),
+                    address=0x62C5C9278DA01E6594D6FEDE061838CF5E597F2B,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(
+                key=0x2,
+                value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3E8)),
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(balance=7000, nonce=0)

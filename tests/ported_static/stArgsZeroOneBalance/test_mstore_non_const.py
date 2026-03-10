@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x2737dae115785244cfd2540fd942dc496b37cb71"): Account(
-                    code=bytes.fromhex(
-                        "732737dae115785244cfd2540fd942dc496b37cb7131732737dae115785244cfd2540fd942dc496b37cb71315200"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=Op.BALANCE(
+                            address=0x2737DAE115785244CFD2540FD942DC496B37CB71
+                        ),
+                        value=Op.BALANCE(
+                            address=0x2737DAE115785244CFD2540FD942DC496B37CB71
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +48,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x2737dae115785244cfd2540fd942dc496b37cb71"): Account(
-                    code=bytes.fromhex(
-                        "732737dae115785244cfd2540fd942dc496b37cb7131732737dae115785244cfd2540fd942dc496b37cb71315200"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=Op.BALANCE(
+                            address=0x2737DAE115785244CFD2540FD942DC496B37CB71
+                        ),
+                        value=Op.BALANCE(
+                            address=0x2737DAE115785244CFD2540FD942DC496B37CB71
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -74,9 +87,16 @@ def test_mstore_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "732737dae115785244cfd2540fd942dc496b37cb7131732737dae115785244cfd2540fd9"  # noqa: E501
-            "42dc496b37cb71315200"
+        code=(
+            Op.MSTORE(
+                offset=Op.BALANCE(
+                    address=0x2737DAE115785244CFD2540FD942DC496B37CB71,
+                ),
+                value=Op.BALANCE(
+                    address=0x2737DAE115785244CFD2540FD942DC496B37CB71,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)

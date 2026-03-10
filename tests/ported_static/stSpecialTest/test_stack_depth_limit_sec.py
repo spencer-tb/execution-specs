@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -61,7 +62,17 @@ def test_stack_depth_limit_sec(
 
     post = {
         Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-            code=bytes.fromhex("600060006000600060003060405a03f1"),
+            code=(
+                Op.CALL(
+                    gas=Op.SUB(Op.GAS, 0x40),
+                    address=Op.ADDRESS,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+            ),
         ),
     }
 

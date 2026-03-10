@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,9 +50,15 @@ def test_returndatacopy_initial_big_sum(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6e112233445566778899aabbccddeeff600052603f60020a603f60020a60003e60005160"  # noqa: E501
-            "005500"
+        code=(
+            Op.MSTORE(offset=0x0, value=0x112233445566778899AABBCCDDEEFF)
+            + Op.RETURNDATACOPY(
+                dest_offset=0x0,
+                offset=Op.EXP(0x2, 0x3F),
+                size=Op.EXP(0x2, 0x3F),
+            )
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
@@ -72,8 +79,15 @@ def test_returndatacopy_initial_big_sum(
     post = {
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "6e112233445566778899aabbccddeeff600052603f60020a603f60020a60003e60005160005500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=0x112233445566778899AABBCCDDEEFF)
+                + Op.RETURNDATACOPY(
+                    dest_offset=0x0,
+                    offset=Op.EXP(0x2, 0x3F),
+                    size=Op.EXP(0x2, 0x3F),
+                )
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

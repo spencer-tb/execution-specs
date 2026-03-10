@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -32,7 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6a6130ff6000526002601ef36000526000600b60156000f5506000600060006000736cd0e5133771823da00d4cb545ec8cdab0e38203620249f0fa00",  # noqa: E501
             {
                 Address("0x6cd0e5133771823da00d4cb545ec8cdab0e38203"): Account(
-                    code=bytes.fromhex("30ff")
+                    code=Op.SELFDESTRUCT(address=Op.ADDRESS)
                 )
             },
         ),
@@ -40,7 +41,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6a6130ff6000526002601ef36000526000600b60156001f5506000600060006000736cd0e5133771823da00d4cb545ec8cdab0e38203620249f0fa00",  # noqa: E501
             {
                 Address("0x6cd0e5133771823da00d4cb545ec8cdab0e38203"): Account(
-                    code=bytes.fromhex("30ff")
+                    code=Op.SELFDESTRUCT(address=Op.ADDRESS)
                 )
             },
         ),
@@ -67,7 +68,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6b626001ff6000526003601df36000526000600c60146000f5506000600060006000735649527a8464a86cae579719d347065f6eb27279620249f0fa00",  # noqa: E501
             {
                 Address("0x5649527a8464a86cae579719d347065f6eb27279"): Account(
-                    code=bytes.fromhex("6001ff")
+                    code=Op.SELFDESTRUCT(address=0x1)
                 )
             },
         ),
@@ -75,7 +76,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6b626001ff6000526003601df36000526000600c60146001f5506000600060006000735649527a8464a86cae579719d347065f6eb27279620249f0fa00",  # noqa: E501
             {
                 Address("0x5649527a8464a86cae579719d347065f6eb27279"): Account(
-                    code=bytes.fromhex("6001ff")
+                    code=Op.SELFDESTRUCT(address=0x1)
                 )
             },
         ),

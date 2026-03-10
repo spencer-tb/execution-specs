@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,20 +47,44 @@ def test_random_statetest367(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7f000000000000000000000000945304eb96065b2a98b57a48a06ae28d285a71b57f0000"  # noqa: E501
-            "00000000000000000000ffffffffffffffffffffffffffffffffffffffff7f0000000000"  # noqa: E501
-            "000000000000000000000000000000000000000000000000000000447f00000000000000"  # noqa: E501
-            "0000000000000000000000000000000000000000000000c3507f00000000000000000000"  # noqa: E501
-            "0000945304eb96065b2a98b57a48a06ae28d285a71b5447f000000000000000000000000"  # noqa: E501
-            "945304eb96065b2a98b57a48a06ae28d285a71b51905810a6c7a5959339f3342838b5560"  # noqa: E501
-            "005155"
+        code=(
+            Op.PUSH32[0x945304EB96065B2A98B57A48A06AE28D285A71B5]
+            + Op.PUSH32[0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF]
+            + Op.PUSH32[0x0]
+            + Op.PREVRANDAO
+            + Op.PUSH32[0xC350]
+            + Op.PUSH32[0x945304EB96065B2A98B57A48A06AE28D285A71B5]
+            + Op.SSTORE(
+                key=0x7A5959339F3342838B55600051,
+                value=Op.EXP(
+                    Op.DUP2,
+                    Op.SDIV(
+                        Op.NOT(
+                            Op.PUSH32[
+                                0x945304EB96065B2A98B57A48A06AE28D285A71B5
+                            ],
+                        ),
+                        Op.PREVRANDAO,
+                    ),
+                ),
+            )
         ),
     )
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
-        code=bytes.fromhex("6000355415600957005b60203560003555"),
+        code=(
+            Op.JUMPI(
+                pc=0x9,
+                condition=Op.ISZERO(Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))),
+            )
+            + Op.STOP
+            + Op.JUMPDEST
+            + Op.SSTORE(
+                key=Op.CALLDATALOAD(offset=0x0),
+                value=Op.CALLDATALOAD(offset=0x20),
+            )
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -87,12 +112,44 @@ def test_random_statetest367(
             storage={
                 0x7A5959339F3342838B55600051: 0x880AD67C991058B3847EC9F491F7A8D6ECBB1DFF5C2326E7E8E9EB560CA29ECD,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "7f000000000000000000000000945304eb96065b2a98b57a48a06ae28d285a71b57f000000000000000000000000ffffffffffffffffffffffffffffffffffffffff7f0000000000000000000000000000000000000000000000000000000000000000447f000000000000000000000000000000000000000000000000000000000000c3507f000000000000000000000000945304eb96065b2a98b57a48a06ae28d285a71b5447f000000000000000000000000945304eb96065b2a98b57a48a06ae28d285a71b51905810a6c7a5959339f3342838b5560005155"  # noqa: E501
+            code=(
+                Op.PUSH32[0x945304EB96065B2A98B57A48A06AE28D285A71B5]
+                + Op.PUSH32[0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF]
+                + Op.PUSH32[0x0]
+                + Op.PREVRANDAO
+                + Op.PUSH32[0xC350]
+                + Op.PUSH32[0x945304EB96065B2A98B57A48A06AE28D285A71B5]
+                + Op.SSTORE(
+                    key=0x7A5959339F3342838B55600051,
+                    value=Op.EXP(
+                        Op.DUP2,
+                        Op.SDIV(
+                            Op.NOT(
+                                Op.PUSH32[
+                                    0x945304EB96065B2A98B57A48A06AE28D285A71B5
+                                ],
+                            ),
+                            Op.PREVRANDAO,
+                        ),
+                    ),
+                )
             ),
         ),
         coinbase: Account(
-            code=bytes.fromhex("6000355415600957005b60203560003555"),
+            code=(
+                Op.JUMPI(
+                    pc=0x9,
+                    condition=Op.ISZERO(
+                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
+                    ),
+                )
+                + Op.STOP
+                + Op.JUMPDEST
+                + Op.SSTORE(
+                    key=Op.CALLDATALOAD(offset=0x0),
+                    value=Op.CALLDATALOAD(offset=0x20),
+                )
+            ),
         ),
     }
 

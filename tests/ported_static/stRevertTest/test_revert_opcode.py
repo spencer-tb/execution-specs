@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -32,7 +33,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(
-                    code=bytes.fromhex("600160005560016000fd6011600155")
+                    code=Op.SSTORE(key=0x0, value=0x1)
+                    + Op.REVERT(offset=0x0, size=0x1)
+                    + Op.SSTORE(key=0x1, value=0x11)
                 )
             },
         ),
@@ -41,7 +44,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             10,
             {
                 Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(
-                    code=bytes.fromhex("600160005560016000fd6011600155")
+                    code=Op.SSTORE(key=0x0, value=0x1)
+                    + Op.REVERT(offset=0x0, size=0x1)
+                    + Op.SSTORE(key=0x1, value=0x11)
                 )
             },
         ),
@@ -50,7 +55,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(
-                    code=bytes.fromhex("600160005560016000fd6011600155")
+                    code=Op.SSTORE(key=0x0, value=0x1)
+                    + Op.REVERT(offset=0x0, size=0x1)
+                    + Op.SSTORE(key=0x1, value=0x11)
                 )
             },
         ),
@@ -59,7 +66,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             10,
             {
                 Address("0xf5eaf70f313ab7c223ded96f5a804abc49bf804a"): Account(
-                    code=bytes.fromhex("600160005560016000fd6011600155")
+                    code=Op.SSTORE(key=0x0, value=0x1)
+                    + Op.REVERT(offset=0x0, size=0x1)
+                    + Op.SSTORE(key=0x1, value=0x11)
                 )
             },
         ),
@@ -91,7 +100,11 @@ def test_revert_opcode(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("600160005560016000fd6011600155"),
+        code=(
+            Op.SSTORE(key=0x0, value=0x1)
+            + Op.REVERT(offset=0x0, size=0x1)
+            + Op.SSTORE(key=0x1, value=0x11)
+        ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 

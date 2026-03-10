@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,10 +50,16 @@ def test_random_statetest646(
     pre[contract] = Account(
         balance=0xD61773F0C27B842F,
         nonce=28,
-        code=bytes.fromhex(
-            "64ba8b878e0154689b908f27acb42e5269603972609834bf9a7e578e45609242172907dd"  # noqa: E501
-            "75a92555656c5aa6e9248162013ffa6203864863446d325df0336d2c38cfa2f1cdf8cb62"  # noqa: E501
-            "3c0591987419"
+        code=(
+            Op.SLOAD(key=0xBA8B878E01)
+            + Op.PUSH9[0x9B908F27ACB42E5269]
+            + Op.SSTORE(
+                key=0x609834BF9A7E578E45609242172907DD75A925, value=0x39
+            )
+            + Op.PUSH6[0x6C5AA6E92481]
+            + Op.CREATE(value=0x446D325D, offset=0x38648, size=0x13FFA)
+            + Op.CALLER
+            + Op.NOT(0x2C38CFA2F1CDF8CB623C05919874)
         ),
     )
 
@@ -78,8 +85,17 @@ def test_random_statetest646(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "64ba8b878e0154689b908f27acb42e5269603972609834bf9a7e578e45609242172907dd75a92555656c5aa6e9248162013ffa6203864863446d325df0336d2c38cfa2f1cdf8cb623c0591987419"  # noqa: E501
+            code=(
+                Op.SLOAD(key=0xBA8B878E01)
+                + Op.PUSH9[0x9B908F27ACB42E5269]
+                + Op.SSTORE(
+                    key=0x609834BF9A7E578E45609242172907DD75A925,
+                    value=0x39,
+                )
+                + Op.PUSH6[0x6C5AA6E92481]
+                + Op.CREATE(value=0x446D325D, offset=0x38648, size=0x13FFA)
+                + Op.CALLER
+                + Op.NOT(0x2C38CFA2F1CDF8CB623C05919874)
             ),
         ),
     }

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,10 +50,17 @@ def test_delegatecode_dynamic_code2_self_call(
     pre[contract] = Account(
         balance=0x10C8E0,
         nonce=0,
-        code=bytes.fromhex(
-            "7f60406000604060007313136008b64ff592819b2fa6d43f2835c452020e620186600052"  # noqa: E501
-            "7fa0f4600b5533600c550000000000000000000000000000000000000000000000602052"  # noqa: E501
-            "604060006001f000"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x60406000604060007313136008B64FF592819B2FA6D43F2835C452020E620186,  # noqa: E501
+            )
+            + Op.MSTORE(
+                offset=0x20,
+                value=0xA0F4600B5533600C550000000000000000000000000000000000000000000000,  # noqa: E501
+            )
+            + Op.CREATE(value=0x1, offset=0x0, size=0x40)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x2386F26FC10000, nonce=0)
@@ -71,8 +79,17 @@ def test_delegatecode_dynamic_code2_self_call(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "7f60406000604060007313136008b64ff592819b2fa6d43f2835c452020e6201866000527fa0f4600b5533600c550000000000000000000000000000000000000000000000602052604060006001f000"  # noqa: E501
+            code=(
+                Op.MSTORE(
+                    offset=0x0,
+                    value=0x60406000604060007313136008B64FF592819B2FA6D43F2835C452020E620186,  # noqa: E501
+                )
+                + Op.MSTORE(
+                    offset=0x20,
+                    value=0xA0F4600B5533600C550000000000000000000000000000000000000000000000,  # noqa: E501
+                )
+                + Op.CREATE(value=0x1, offset=0x0, size=0x40)
+                + Op.STOP
             ),
         ),
         Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(

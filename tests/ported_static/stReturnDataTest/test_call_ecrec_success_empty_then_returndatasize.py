@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,21 @@ def test_call_ecrec_success_empty_then_returndatasize(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("60aa60006000600060006001619000f1503d60005500"),
+        code=(
+            Op.POP(
+                Op.CALL(
+                    gas=0x9000,
+                    address=0x1,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0xAA,
+                ),
+            )
+            + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+            + Op.STOP
+        ),
         storage={0x0: 0x60A7},
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
@@ -68,7 +83,21 @@ def test_call_ecrec_success_empty_then_returndatasize(
 
     post = {
         contract: Account(
-            code=bytes.fromhex("60aa60006000600060006001619000f1503d60005500"),
+            code=(
+                Op.POP(
+                    Op.CALL(
+                        gas=0x9000,
+                        address=0x1,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0xAA,
+                    ),
+                )
+                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+                + Op.STOP
+            ),
         ),
     }
 

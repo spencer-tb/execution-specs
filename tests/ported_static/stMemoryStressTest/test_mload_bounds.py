@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,7 +32,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0x8b0647e983082e6923f7b20e38972690fce91e9b"): Account(
-                    code=bytes.fromhex("6000515063ffffffff5100")
+                    code=Op.POP(Op.MLOAD(offset=0x0))
+                    + Op.MLOAD(offset=0xFFFFFFFF)
+                    + Op.STOP
                 )
             },
         ),
@@ -39,7 +42,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0x8b0647e983082e6923f7b20e38972690fce91e9b"): Account(
-                    code=bytes.fromhex("6000515063ffffffff5100")
+                    code=Op.POP(Op.MLOAD(offset=0x0))
+                    + Op.MLOAD(offset=0xFFFFFFFF)
+                    + Op.STOP
                 )
             },
         ),
@@ -70,7 +75,11 @@ def test_mload_bounds(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("6000515063ffffffff5100"),
+        code=(
+            Op.POP(Op.MLOAD(offset=0x0))
+            + Op.MLOAD(offset=0xFFFFFFFF)
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
 

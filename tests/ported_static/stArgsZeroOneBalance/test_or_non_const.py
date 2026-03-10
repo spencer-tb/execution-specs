@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x60da449405b736a6920d45831cd6b173520fdf34"): Account(
-                    code=bytes.fromhex(
-                        "7360da449405b736a6920d45831cd6b173520fdf34317360da449405b736a6920d45831cd6b173520fdf34311760005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.OR(
+                            Op.BALANCE(
+                                address=0x60DA449405B736A6920D45831CD6B173520FDF34  # noqa: E501
+                            ),
+                            Op.BALANCE(
+                                address=0x60DA449405B736A6920D45831CD6B173520FDF34  # noqa: E501
+                            ),
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -42,9 +52,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x60da449405b736a6920d45831cd6b173520fdf34"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "7360da449405b736a6920d45831cd6b173520fdf34317360da449405b736a6920d45831cd6b173520fdf34311760005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.OR(
+                            Op.BALANCE(
+                                address=0x60DA449405B736A6920D45831CD6B173520FDF34  # noqa: E501
+                            ),
+                            Op.BALANCE(
+                                address=0x60DA449405B736A6920D45831CD6B173520FDF34  # noqa: E501
+                            ),
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -76,9 +95,19 @@ def test_or_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "7360da449405b736a6920d45831cd6b173520fdf34317360da449405b736a6920d45831c"  # noqa: E501
-            "d6b173520fdf34311760005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.OR(
+                    Op.BALANCE(
+                        address=0x60DA449405B736A6920D45831CD6B173520FDF34
+                    ),
+                    Op.BALANCE(
+                        address=0x60DA449405B736A6920D45831CD6B173520FDF34
+                    ),
+                ),
+            )
+            + Op.STOP
         ),
     )
 

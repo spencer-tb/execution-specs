@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,15 +35,26 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x5be4b33890f720eff72be0019b122e0ff75cb937"): Account(
                     storage={1: 1},
-                    code=bytes.fromhex(
-                        "60006000600060006000739dea1ad5123f3d8b91cfc830b1c602597883e97c600035f160005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=Op.CALLDATALOAD(offset=0x0),
+                            address=0x9DEA1AD5123F3D8B91CFC830B1C602597883E97C,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
+                    )
+                    + Op.STOP,
                 ),
                 Address("0x9dea1ad5123f3d8b91cfc830b1c602597883e97c"): Account(
                     storage={1: 1},
-                    code=bytes.fromhex(
-                        "735be4b33890f720eff72be0019b122e0ff75cb937ff00"
-                    ),
+                    code=Op.SELFDESTRUCT(
+                        address=0x5BE4B33890F720EFF72BE0019B122E0FF75CB937
+                    )
+                    + Op.STOP,
                 ),
             },
         ),
@@ -51,15 +63,26 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x5be4b33890f720eff72be0019b122e0ff75cb937"): Account(
                     storage={0: 1, 1: 1},
-                    code=bytes.fromhex(
-                        "60006000600060006000739dea1ad5123f3d8b91cfc830b1c602597883e97c600035f160005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=Op.CALLDATALOAD(offset=0x0),
+                            address=0x9DEA1AD5123F3D8B91CFC830B1C602597883E97C,
+                            value=0x0,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
+                    )
+                    + Op.STOP,
                 ),
                 Address("0x9dea1ad5123f3d8b91cfc830b1c602597883e97c"): Account(
                     storage={1: 1},
-                    code=bytes.fromhex(
-                        "735be4b33890f720eff72be0019b122e0ff75cb937ff00"
-                    ),
+                    code=Op.SELFDESTRUCT(
+                        address=0x5BE4B33890F720EFF72BE0019B122E0FF75CB937
+                    )
+                    + Op.STOP,
                 ),
             },
         ),
@@ -91,16 +114,30 @@ def test_refund_call_to_suicide_storage(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "60006000600060006000739dea1ad5123f3d8b91cfc830b1c602597883e97c600035f160"  # noqa: E501
-            "005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=Op.CALLDATALOAD(offset=0x0),
+                    address=0x9DEA1AD5123F3D8B91CFC830B1C602597883E97C,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
         storage={0x1: 0x1},
     )
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("735be4b33890f720eff72be0019b122e0ff75cb937ff00"),
+        code=(
+            Op.SELFDESTRUCT(address=0x5BE4B33890F720EFF72BE0019B122E0FF75CB937)
+            + Op.STOP
+        ),
         storage={0x1: 0x1},
     )
     pre[sender] = Account(balance=0x2540BE400, nonce=0)

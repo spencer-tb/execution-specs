@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,14 +50,29 @@ def test_suicide_to_existing_contract(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("73e110d543aadc3060d6b9e80d3e16be7a828128ecff00"),
+        code=(
+            Op.SELFDESTRUCT(address=0xE110D543AADC3060D6B9E80D3E16BE7A828128EC)
+            + Op.STOP
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a600052600060006000600060007379968a94dbedb20475585e9dd4dae6333add4c0161"  # noqa: E501
-            "ea60f1505a6000510360015500"
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.POP(
+                Op.CALL(
+                    gas=0xEA60,
+                    address=0x79968A94DBEDB20475585E9DD4DAE6333ADD4C01,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -75,14 +91,32 @@ def test_suicide_to_existing_contract(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "73e110d543aadc3060d6b9e80d3e16be7a828128ecff00"
+            code=(
+                Op.SELFDESTRUCT(
+                    address=0xE110D543AADC3060D6B9E80D3E16BE7A828128EC,
+                )
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={1: 7637},
-            code=bytes.fromhex(
-                "5a600052600060006000600060007379968a94dbedb20475585e9dd4dae6333add4c0161ea60f1505a6000510360015500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.POP(
+                    Op.CALL(
+                        gas=0xEA60,
+                        address=0x79968A94DBEDB20475585E9DD4DAE6333ADD4C01,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.STOP
             ),
         ),
     }

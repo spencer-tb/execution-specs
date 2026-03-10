@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0xb2448deb71e9fd31ed854e3b856f729adbc0c288"): Account(
-                    code=bytes.fromhex("60005600")
+                    code=Op.JUMP(pc=0x0) + Op.STOP
                 )
             },
         ),
@@ -39,7 +40,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0xb2448deb71e9fd31ed854e3b856f729adbc0c288"): Account(
-                    code=bytes.fromhex("60005600")
+                    code=Op.JUMP(pc=0x0) + Op.STOP
                 )
             },
         ),
@@ -67,7 +68,7 @@ def test_jump_bounds(
         gas_limit=9223372036854775807,
     )
 
-    pre[contract] = Account(balance=0, nonce=0, code=bytes.fromhex("60005600"))
+    pre[contract] = Account(balance=0, nonce=0, code=Op.JUMP(pc=0x0) + Op.STOP)
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(

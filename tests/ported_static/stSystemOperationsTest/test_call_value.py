@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,7 +48,7 @@ def test_call_value(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("3460005500"),
+        code=Op.SSTORE(key=0x0, value=Op.CALLVALUE) + Op.STOP,
     )
 
     tx = Transaction(
@@ -65,7 +66,7 @@ def test_call_value(
     post = {
         contract: Account(
             storage={0: 0x186A0},
-            code=bytes.fromhex("3460005500"),
+            code=Op.SSTORE(key=0x0, value=Op.CALLVALUE) + Op.STOP,
         ),
     }
 

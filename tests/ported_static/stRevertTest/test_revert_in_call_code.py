@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,14 +48,32 @@ def test_revert_in_call_code(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("61223260005260206000fd00"),
+        code=(
+            Op.MSTORE(offset=0x0, value=0x2232)
+            + Op.REVERT(offset=0x0, size=0x20)
+            + Op.STOP
+        ),
     )
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=bytes.fromhex(
-            "60406000604060006103e87326bc42b8191ccb142cb8cbc3490bd3bdce46559161c350f2"  # noqa: E501
-            "6000553d6001556020600060403e60405160025500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALLCODE(
+                    gas=0xC350,
+                    address=0x26BC42B8191CCB142CB8CBC3490BD3BDCE465591,
+                    value=0x3E8,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.SSTORE(key=0x1, value=Op.RETURNDATASIZE)
+            + Op.RETURNDATACOPY(dest_offset=0x40, offset=0x0, size=0x20)
+            + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x40))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x5F5E100, nonce=0)
@@ -72,11 +91,32 @@ def test_revert_in_call_code(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("61223260005260206000fd00")),
+        callee: Account(
+            code=(
+                Op.MSTORE(offset=0x0, value=0x2232)
+                + Op.REVERT(offset=0x0, size=0x20)
+                + Op.STOP
+            ),
+        ),
         contract: Account(
             storage={1: 32, 2: 8754},
-            code=bytes.fromhex(
-                "60406000604060006103e87326bc42b8191ccb142cb8cbc3490bd3bdce46559161c350f26000553d6001556020600060403e60405160025500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALLCODE(
+                        gas=0xC350,
+                        address=0x26BC42B8191CCB142CB8CBC3490BD3BDCE465591,
+                        value=0x3E8,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.SSTORE(key=0x1, value=Op.RETURNDATASIZE)
+                + Op.RETURNDATACOPY(dest_offset=0x40, offset=0x0, size=0x20)
+                + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x40))
+                + Op.STOP
             ),
         ),
     }

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,9 +35,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x148f97630d3668441f1a33a5e509f268b64f998f"): Account(
-                    code=bytes.fromhex(
-                        "73148f97630d3668441f1a33a5e509f268b64f998f313560005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALLDATALOAD(
+                            offset=Op.BALANCE(
+                                address=0x148F97630D3668441F1A33A5E509F268B64F998F  # noqa: E501
+                            )
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -45,9 +52,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x148f97630d3668441f1a33a5e509f268b64f998f"): Account(
-                    code=bytes.fromhex(
-                        "73148f97630d3668441f1a33a5e509f268b64f998f313560005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALLDATALOAD(
+                            offset=Op.BALANCE(
+                                address=0x148F97630D3668441F1A33A5E509F268B64F998F  # noqa: E501
+                            )
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -59,9 +72,15 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x1122334400000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "73148f97630d3668441f1a33a5e509f268b64f998f313560005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALLDATALOAD(
+                            offset=Op.BALANCE(
+                                address=0x148F97630D3668441F1A33A5E509F268B64F998F  # noqa: E501
+                            )
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -73,9 +92,15 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0x2233440000000000000000000000000000000000000000000000000000000000  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "73148f97630d3668441f1a33a5e509f268b64f998f313560005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALLDATALOAD(
+                            offset=Op.BALANCE(
+                                address=0x148F97630D3668441F1A33A5E509F268B64F998F  # noqa: E501
+                            )
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -107,8 +132,16 @@ def test_calldataload_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73148f97630d3668441f1a33a5e509f268b64f998f313560005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALLDATALOAD(
+                    offset=Op.BALANCE(
+                        address=0x148F97630D3668441F1A33A5E509F268B64F998F,
+                    ),
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)

@@ -18,6 +18,7 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -53,7 +54,7 @@ def test_create_blobhash_tx(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("60004960005500"),
+        code=Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0)) + Op.STOP,
     )
 
     tx = Transaction(
@@ -90,7 +91,9 @@ def test_create_blobhash_tx(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("60004960005500")),
+        contract: Account(
+            code=Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0)) + Op.STOP,
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

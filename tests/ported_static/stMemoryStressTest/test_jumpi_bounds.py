@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,16 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9"): Account(
-                    code=bytes.fromhex(
-                        "600163ffffffff57600167ffffffffffffffff5760016fffffffffffffffffffffffffffffffff5760017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5700"  # noqa: E501
+                    code=Op.JUMPI(pc=0xFFFFFFFF, condition=0x1)
+                    + Op.JUMPI(pc=0xFFFFFFFFFFFFFFFF, condition=0x1)
+                    + Op.JUMPI(
+                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, condition=0x1
                     )
+                    + Op.JUMPI(
+                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        condition=0x1,
+                    )
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +49,16 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9"): Account(
-                    code=bytes.fromhex(
-                        "600163ffffffff57600167ffffffffffffffff5760016fffffffffffffffffffffffffffffffff5760017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5700"  # noqa: E501
+                    code=Op.JUMPI(pc=0xFFFFFFFF, condition=0x1)
+                    + Op.JUMPI(pc=0xFFFFFFFFFFFFFFFF, condition=0x1)
+                    + Op.JUMPI(
+                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, condition=0x1
                     )
+                    + Op.JUMPI(
+                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        condition=0x1,
+                    )
+                    + Op.STOP
                 )
             },
         ),
@@ -74,10 +89,15 @@ def test_jumpi_bounds(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600163ffffffff57600167ffffffffffffffff5760016fffffffffffffffffffffffffff"  # noqa: E501
-            "ffffff5760017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffff5700"
+        code=(
+            Op.JUMPI(pc=0xFFFFFFFF, condition=0x1)
+            + Op.JUMPI(pc=0xFFFFFFFFFFFFFFFF, condition=0x1)
+            + Op.JUMPI(pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, condition=0x1)
+            + Op.JUMPI(
+                pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                condition=0x1,
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,23 +52,46 @@ def test_callcodecallcode_11_suicide_end(
     pre[callee] = Account(
         balance=0x2540BE400,
         nonce=0,
-        code=bytes.fromhex(
-            "604060006040600073703b936fd4d674f0ff5d6957f61097152f8781b861c350f4600155"  # noqa: E501
-            "732b30b637f37e3f5b8ca4ab846331d0779a3f4671ff00"
+        code=(
+            Op.SSTORE(
+                key=0x1,
+                value=Op.DELEGATECALL(
+                    gas=0xC350,
+                    address=0x703B936FD4D674F0FF5D6957F61097152F8781B8,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.SELFDESTRUCT(
+                address=0x2B30B637F37E3F5B8CA4AB846331D0779A3F4671
+            )
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6040600060406000731cca6e93108ec94304ae5eb121d323e6c317fe7a620249f0f46000"  # noqa: E501
-            "5500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.DELEGATECALL(
+                    gas=0x249F0,
+                    address=0x1CCA6E93108EC94304AE5EB121D323E6C317FE7A,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=0x2540BE400,
         nonce=0,
-        code=bytes.fromhex("600160025500"),
+        code=Op.SSTORE(key=0x2, value=0x1) + Op.STOP,
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
@@ -85,17 +109,42 @@ def test_callcodecallcode_11_suicide_end(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "604060006040600073703b936fd4d674f0ff5d6957f61097152f8781b861c350f4600155732b30b637f37e3f5b8ca4ab846331d0779a3f4671ff00"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x1,
+                    value=Op.DELEGATECALL(
+                        gas=0xC350,
+                        address=0x703B936FD4D674F0FF5D6957F61097152F8781B8,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.SELFDESTRUCT(
+                    address=0x2B30B637F37E3F5B8CA4AB846331D0779A3F4671,
+                )
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={0: 1, 1: 1, 2: 1},
-            code=bytes.fromhex(
-                "6040600060406000731cca6e93108ec94304ae5eb121d323e6c317fe7a620249f0f460005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.DELEGATECALL(
+                        gas=0x249F0,
+                        address=0x1CCA6E93108EC94304AE5EB121D323E6C317FE7A,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
-        callee_1: Account(code=bytes.fromhex("600160025500")),
+        callee_1: Account(code=Op.SSTORE(key=0x2, value=0x1) + Op.STOP),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,8 +32,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0xde573d26b8c4a55fd9daa17e8f93347c269ee4f6"): Account(
-                    code=bytes.fromhex(
-                        "63ffffffff5667ffffffffffffffff566fffffffffffffffffffffffffffffffff567fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff56"  # noqa: E501
+                    code=Op.JUMP(pc=0xFFFFFFFF)
+                    + Op.JUMP(pc=0xFFFFFFFFFFFFFFFF)
+                    + Op.JUMP(pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+                    + Op.JUMP(
+                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
                     )
                 )
             },
@@ -41,8 +45,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0xde573d26b8c4a55fd9daa17e8f93347c269ee4f6"): Account(
-                    code=bytes.fromhex(
-                        "63ffffffff5667ffffffffffffffff566fffffffffffffffffffffffffffffffff567fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff56"  # noqa: E501
+                    code=Op.JUMP(pc=0xFFFFFFFF)
+                    + Op.JUMP(pc=0xFFFFFFFFFFFFFFFF)
+                    + Op.JUMP(pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+                    + Op.JUMP(
+                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
                     )
                 )
             },
@@ -74,9 +81,13 @@ def test_jump_bounds2(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "63ffffffff5667ffffffffffffffff566fffffffffffffffffffffffffffffffff567fff"  # noqa: E501
-            "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff56"
+        code=(
+            Op.JUMP(pc=0xFFFFFFFF)
+            + Op.JUMP(pc=0xFFFFFFFFFFFFFFFF)
+            + Op.JUMP(pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+            + Op.JUMP(
+                pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            )
         ),
     )
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)

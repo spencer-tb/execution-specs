@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,25 +52,51 @@ def test_call_goes_oog_on_second_level_with_mem_expanding_calls(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a600855600060006000f050600060006000f0505a6009555a600a55"
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.POP(Op.CREATE(value=0x0, offset=0x0, size=0x0))
+            + Op.POP(Op.CREATE(value=0x0, offset=0x0, size=0x0))
+            + Op.SSTORE(key=0x9, value=Op.GAS)
+            + Op.SSTORE(key=0xA, value=Op.GAS)
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a60085560ff60ff60ff60ff6000732ef686162bebf2542147767d5be471976860cceb62"  # noqa: E501
-            "0927c0f1600955"
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.CALL(
+                    gas=0x927C0,
+                    address=0x2EF686162BEBF2542147767D5BE471976860CCEB,
+                    value=0x0,
+                    args_offset=0xFF,
+                    args_size=0xFF,
+                    ret_offset=0xFF,
+                    ret_size=0xFF,
+                ),
+            )
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a60085560ff60ff60ff60ff600073a27e20572430916b3d6772b27329cc460224904d62"  # noqa: E501
-            "0927c0f1600955"
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.CALL(
+                    gas=0x927C0,
+                    address=0xA27E20572430916B3D6772B27329CC460224904D,
+                    value=0x0,
+                    args_offset=0xFF,
+                    args_size=0xFF,
+                    ret_offset=0xFF,
+                    ret_size=0xFF,
+                ),
+            )
         ),
     )
 
@@ -87,19 +114,47 @@ def test_call_goes_oog_on_second_level_with_mem_expanding_calls(
 
     post = {
         callee: Account(
-            code=bytes.fromhex(
-                "5a600855600060006000f050600060006000f0505a6009555a600a55"
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.POP(Op.CREATE(value=0x0, offset=0x0, size=0x0))
+                + Op.POP(Op.CREATE(value=0x0, offset=0x0, size=0x0))
+                + Op.SSTORE(key=0x9, value=Op.GAS)
+                + Op.SSTORE(key=0xA, value=Op.GAS)
             ),
         ),
         callee_1: Account(
-            code=bytes.fromhex(
-                "5a60085560ff60ff60ff60ff6000732ef686162bebf2542147767d5be471976860cceb620927c0f1600955"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.CALL(
+                        gas=0x927C0,
+                        address=0x2EF686162BEBF2542147767D5BE471976860CCEB,
+                        value=0x0,
+                        args_offset=0xFF,
+                        args_size=0xFF,
+                        ret_offset=0xFF,
+                        ret_size=0xFF,
+                    ),
+                )
             ),
         ),
         contract: Account(
             storage={8: 0x30956},
-            code=bytes.fromhex(
-                "5a60085560ff60ff60ff60ff600073a27e20572430916b3d6772b27329cc460224904d620927c0f1600955"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.CALL(
+                        gas=0x927C0,
+                        address=0xA27E20572430916B3D6772B27329CC460224904D,
+                        value=0x0,
+                        args_offset=0xFF,
+                        args_size=0xFF,
+                        ret_offset=0xFF,
+                        ret_size=0xFF,
+                    ),
+                )
             ),
         ),
     }

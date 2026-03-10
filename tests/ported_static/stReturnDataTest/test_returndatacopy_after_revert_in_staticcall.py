@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,14 +52,29 @@ def test_returndatacopy_after_revert_in_staticcall(
     pre[callee] = Account(
         balance=0x6400000000,
         nonce=0,
-        code=bytes.fromhex("3360005260206000fd00"),
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.CALLER)
+            + Op.REVERT(offset=0x0, size=0x20)
+            + Op.STOP
+        ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000733706580d60f246111e3848ffba4f4ab76c9a01e861ea60fa506020"  # noqa: E501
-            "600060003e60005160005500"
+        code=(
+            Op.POP(
+                Op.STATICCALL(
+                    gas=0xEA60,
+                    address=0x3706580D60F246111E3848FFBA4F4AB76C9A01E8,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+            + Op.STOP
         ),
         storage={
             0x0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
@@ -80,11 +96,29 @@ def test_returndatacopy_after_revert_in_staticcall(
     )
 
     post = {
-        callee: Account(code=bytes.fromhex("3360005260206000fd00")),
+        callee: Account(
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.CALLER)
+                + Op.REVERT(offset=0x0, size=0x20)
+                + Op.STOP
+            ),
+        ),
         contract: Account(
             storage={0: 0x4BEDF636CB41E5DCF09D038DE843004824DFBB3A},
-            code=bytes.fromhex(
-                "6000600060006000733706580d60f246111e3848ffba4f4ab76c9a01e861ea60fa506020600060003e60005160005500"  # noqa: E501
+            code=(
+                Op.POP(
+                    Op.STATICCALL(
+                        gas=0xEA60,
+                        address=0x3706580D60F246111E3848FFBA4F4AB76C9A01E8,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
+                + Op.STOP
             ),
         ),
     }

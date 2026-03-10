@@ -16,6 +16,7 @@ from execution_testing import (
     Transaction,
     TransactionException,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,7 @@ def test_tip_too_high(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("600260005500"),
+        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
     )
 
     tx = Transaction(
@@ -68,7 +69,7 @@ def test_tip_too_high(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("600260005500")),
+        contract: Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

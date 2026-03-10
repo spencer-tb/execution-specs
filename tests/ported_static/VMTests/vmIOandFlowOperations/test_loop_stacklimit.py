@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,17 +35,53 @@ REFERENCE_SPEC_VERSION = "N/A"
             "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
                 Address("0x15f0298e83391f673b708790f259f3f34dfbd788"): Account(
-                    code=bytes.fromhex(
-                        "6000345b60019003906001018180600357600052600152600059f300"  # noqa: E501
-                    )
+                    code=Op.PUSH1[0x0]
+                    + Op.CALLVALUE
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0x1]
+                    + Op.SWAP1
+                    + Op.SUB
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.ADD
+                    + Op.DUP2
+                    + Op.JUMPI(pc=0x3, condition=Op.DUP1)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x1]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=Op.MSIZE, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x3b20573c5048e5ba16083407e59fc0bbc044b6c0"): Account(
-                    code=bytes.fromhex(
-                        "6000345b60019003906001018180600357600052600152600059f300"  # noqa: E501
-                    )
+                    code=Op.PUSH1[0x0]
+                    + Op.CALLVALUE
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0x1]
+                    + Op.SWAP1
+                    + Op.SUB
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.ADD
+                    + Op.DUP2
+                    + Op.JUMPI(pc=0x3, condition=Op.DUP1)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x1]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=Op.MSIZE, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf9b46c1d708104b4e6007d17ae485b0a00d8e952"): Account(
-                    code=bytes.fromhex("6000600060006000600435611000015af400")
+                    code=Op.DELEGATECALL(
+                        gas=Op.GAS,
+                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    )
+                    + Op.STOP
                 ),
             },
         ),
@@ -52,17 +89,53 @@ REFERENCE_SPEC_VERSION = "N/A"
             "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x15f0298e83391f673b708790f259f3f34dfbd788"): Account(
-                    code=bytes.fromhex(
-                        "6000345b60019003906001018180600357600052600152600059f300"  # noqa: E501
-                    )
+                    code=Op.PUSH1[0x0]
+                    + Op.CALLVALUE
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0x1]
+                    + Op.SWAP1
+                    + Op.SUB
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.ADD
+                    + Op.DUP2
+                    + Op.JUMPI(pc=0x3, condition=Op.DUP1)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x1]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=Op.MSIZE, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0x3b20573c5048e5ba16083407e59fc0bbc044b6c0"): Account(
-                    code=bytes.fromhex(
-                        "6000345b60019003906001018180600357600052600152600059f300"  # noqa: E501
-                    )
+                    code=Op.PUSH1[0x0]
+                    + Op.CALLVALUE
+                    + Op.JUMPDEST
+                    + Op.PUSH1[0x1]
+                    + Op.SWAP1
+                    + Op.SUB
+                    + Op.SWAP1
+                    + Op.PUSH1[0x1]
+                    + Op.ADD
+                    + Op.DUP2
+                    + Op.JUMPI(pc=0x3, condition=Op.DUP1)
+                    + Op.PUSH1[0x0]
+                    + Op.MSTORE
+                    + Op.PUSH1[0x1]
+                    + Op.MSTORE
+                    + Op.RETURN(offset=Op.MSIZE, size=0x0)
+                    + Op.STOP
                 ),
                 Address("0xf9b46c1d708104b4e6007d17ae485b0a00d8e952"): Account(
-                    code=bytes.fromhex("6000600060006000600435611000015af400")
+                    code=Op.DELEGATECALL(
+                        gas=Op.GAS,
+                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    )
+                    + Op.STOP
                 ),
             },
         ),
@@ -95,22 +168,64 @@ def test_loop_stacklimit(
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex(
-            "6000345b60019003906001018180600357600052600152600059f300"
+        code=(
+            Op.PUSH1[0x0]
+            + Op.CALLVALUE
+            + Op.JUMPDEST
+            + Op.PUSH1[0x1]
+            + Op.SWAP1
+            + Op.SUB
+            + Op.SWAP1
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.DUP2
+            + Op.JUMPI(pc=0x3, condition=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.MSTORE
+            + Op.PUSH1[0x1]
+            + Op.MSTORE
+            + Op.RETURN(offset=Op.MSIZE, size=0x0)
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex(
-            "6000345b60019003906001018180600357600052600152600059f300"
+        code=(
+            Op.PUSH1[0x0]
+            + Op.CALLVALUE
+            + Op.JUMPDEST
+            + Op.PUSH1[0x1]
+            + Op.SWAP1
+            + Op.SUB
+            + Op.SWAP1
+            + Op.PUSH1[0x1]
+            + Op.ADD
+            + Op.DUP2
+            + Op.JUMPI(pc=0x3, condition=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.MSTORE
+            + Op.PUSH1[0x1]
+            + Op.MSTORE
+            + Op.RETURN(offset=Op.MSIZE, size=0x0)
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("6000600060006000600435611000015af400"),
+        code=(
+            Op.DELEGATECALL(
+                gas=Op.GAS,
+                address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
+        ),
         storage={0x0: 0x0},
     )
 

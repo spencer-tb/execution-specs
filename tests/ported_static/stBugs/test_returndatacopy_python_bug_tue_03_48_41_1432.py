@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,9 +51,28 @@ REFERENCE_SPEC_VERSION = "N/A"
                     )
                 ),
                 Address("0xf4c98e0dda63a5c89847ca3e6ddf34f23443370f"): Account(
-                    code=bytes.fromhex(
-                        "7b1db054ccc801c0666b34b3c6242bbfc5e98f20c14fb95e0118be9ad054326f33d50e215ff59297861847ea911a6a9d566103a560a860fb60cb6342a46f5073b94f5374fce5edbc8e2a8697c15331677e6ebf0b632c1e2816f26d135e2f826dc603850e0db21d105b778732a34b873c7d943050b8659794f0bd3e841d35a2231ef6027e97f8cde11728fa2051e87933cf858e4e5e91baa74fc1e9ffe4c7b15ba600e8678f095989dc68f47e67d704be2b41c7f8670a"  # noqa: E501
+                    code=Op.SLOAD(
+                        key=0x1DB054CCC801C0666B34B3C6242BBFC5E98F20C14FB95E0118BE9AD0  # noqa: E501
                     )
+                    + Op.ORIGIN
+                    + Op.JUMP(pc=0x33D50E215FF59297861847EA911A6A9D)
+                    + Op.CALLCODE(
+                        gas=0x2C1E2816,
+                        address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                        value=0x42A46F50,
+                        args_offset=0xCB,
+                        args_size=0xFB,
+                        ret_offset=0xA8,
+                        ret_size=0x3A5,
+                    )
+                    + Op.MUL(
+                        0x8732A34B873C7D943050B8659794F0BD3E841D35A2231EF6,
+                        0x135E2F826DC603850E0DB21D105B,
+                    )
+                    + Op.PUSH31[
+                        0x97F8CDE11728FA2051E87933CF858E4E5E91BAA74FC1E9FFE4C7B15BA600E8  # noqa: E501
+                    ]
+                    + Op.EXP(0xD704BE2B41C7F867, 0x8F095989DC68F47E)
                 ),
             },
         ),
@@ -76,9 +96,28 @@ REFERENCE_SPEC_VERSION = "N/A"
                     )
                 ),
                 Address("0xf4c98e0dda63a5c89847ca3e6ddf34f23443370f"): Account(
-                    code=bytes.fromhex(
-                        "7b1db054ccc801c0666b34b3c6242bbfc5e98f20c14fb95e0118be9ad054326f33d50e215ff59297861847ea911a6a9d566103a560a860fb60cb6342a46f5073b94f5374fce5edbc8e2a8697c15331677e6ebf0b632c1e2816f26d135e2f826dc603850e0db21d105b778732a34b873c7d943050b8659794f0bd3e841d35a2231ef6027e97f8cde11728fa2051e87933cf858e4e5e91baa74fc1e9ffe4c7b15ba600e8678f095989dc68f47e67d704be2b41c7f8670a"  # noqa: E501
+                    code=Op.SLOAD(
+                        key=0x1DB054CCC801C0666B34B3C6242BBFC5E98F20C14FB95E0118BE9AD0  # noqa: E501
                     )
+                    + Op.ORIGIN
+                    + Op.JUMP(pc=0x33D50E215FF59297861847EA911A6A9D)
+                    + Op.CALLCODE(
+                        gas=0x2C1E2816,
+                        address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                        value=0x42A46F50,
+                        args_offset=0xCB,
+                        args_size=0xFB,
+                        ret_offset=0xA8,
+                        ret_size=0x3A5,
+                    )
+                    + Op.MUL(
+                        0x8732A34B873C7D943050B8659794F0BD3E841D35A2231EF6,
+                        0x135E2F826DC603850E0DB21D105B,
+                    )
+                    + Op.PUSH31[
+                        0x97F8CDE11728FA2051E87933CF858E4E5E91BAA74FC1E9FFE4C7B15BA600E8  # noqa: E501
+                    ]
+                    + Op.EXP(0xD704BE2B41C7F867, 0x8F095989DC68F47E)
                 ),
             },
         ),
@@ -102,9 +141,28 @@ REFERENCE_SPEC_VERSION = "N/A"
                     )
                 ),
                 Address("0xf4c98e0dda63a5c89847ca3e6ddf34f23443370f"): Account(
-                    code=bytes.fromhex(
-                        "7b1db054ccc801c0666b34b3c6242bbfc5e98f20c14fb95e0118be9ad054326f33d50e215ff59297861847ea911a6a9d566103a560a860fb60cb6342a46f5073b94f5374fce5edbc8e2a8697c15331677e6ebf0b632c1e2816f26d135e2f826dc603850e0db21d105b778732a34b873c7d943050b8659794f0bd3e841d35a2231ef6027e97f8cde11728fa2051e87933cf858e4e5e91baa74fc1e9ffe4c7b15ba600e8678f095989dc68f47e67d704be2b41c7f8670a"  # noqa: E501
+                    code=Op.SLOAD(
+                        key=0x1DB054CCC801C0666B34B3C6242BBFC5E98F20C14FB95E0118BE9AD0  # noqa: E501
                     )
+                    + Op.ORIGIN
+                    + Op.JUMP(pc=0x33D50E215FF59297861847EA911A6A9D)
+                    + Op.CALLCODE(
+                        gas=0x2C1E2816,
+                        address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                        value=0x42A46F50,
+                        args_offset=0xCB,
+                        args_size=0xFB,
+                        ret_offset=0xA8,
+                        ret_size=0x3A5,
+                    )
+                    + Op.MUL(
+                        0x8732A34B873C7D943050B8659794F0BD3E841D35A2231EF6,
+                        0x135E2F826DC603850E0DB21D105B,
+                    )
+                    + Op.PUSH31[
+                        0x97F8CDE11728FA2051E87933CF858E4E5E91BAA74FC1E9FFE4C7B15BA600E8  # noqa: E501
+                    ]
+                    + Op.EXP(0xD704BE2B41C7F867, 0x8F095989DC68F47E)
                 ),
             },
         ),
@@ -128,9 +186,28 @@ REFERENCE_SPEC_VERSION = "N/A"
                     )
                 ),
                 Address("0xf4c98e0dda63a5c89847ca3e6ddf34f23443370f"): Account(
-                    code=bytes.fromhex(
-                        "7b1db054ccc801c0666b34b3c6242bbfc5e98f20c14fb95e0118be9ad054326f33d50e215ff59297861847ea911a6a9d566103a560a860fb60cb6342a46f5073b94f5374fce5edbc8e2a8697c15331677e6ebf0b632c1e2816f26d135e2f826dc603850e0db21d105b778732a34b873c7d943050b8659794f0bd3e841d35a2231ef6027e97f8cde11728fa2051e87933cf858e4e5e91baa74fc1e9ffe4c7b15ba600e8678f095989dc68f47e67d704be2b41c7f8670a"  # noqa: E501
+                    code=Op.SLOAD(
+                        key=0x1DB054CCC801C0666B34B3C6242BBFC5E98F20C14FB95E0118BE9AD0  # noqa: E501
                     )
+                    + Op.ORIGIN
+                    + Op.JUMP(pc=0x33D50E215FF59297861847EA911A6A9D)
+                    + Op.CALLCODE(
+                        gas=0x2C1E2816,
+                        address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                        value=0x42A46F50,
+                        args_offset=0xCB,
+                        args_size=0xFB,
+                        ret_offset=0xA8,
+                        ret_size=0x3A5,
+                    )
+                    + Op.MUL(
+                        0x8732A34B873C7D943050B8659794F0BD3E841D35A2231EF6,
+                        0x135E2F826DC603850E0DB21D105B,
+                    )
+                    + Op.PUSH31[
+                        0x97F8CDE11728FA2051E87933CF858E4E5E91BAA74FC1E9FFE4C7B15BA600E8  # noqa: E501
+                    ]
+                    + Op.EXP(0xD704BE2B41C7F867, 0x8F095989DC68F47E)
                 ),
             },
         ),
@@ -295,13 +372,29 @@ def test_returndatacopy_python_bug_tue_03_48_41_1432(
     pre[callee_2] = Account(
         balance=0x2CE99FC81ED55962,
         nonce=63,
-        code=bytes.fromhex(
-            "7b1db054ccc801c0666b34b3c6242bbfc5e98f20c14fb95e0118be9ad054326f33d50e21"  # noqa: E501
-            "5ff59297861847ea911a6a9d566103a560a860fb60cb6342a46f5073b94f5374fce5edbc"  # noqa: E501
-            "8e2a8697c15331677e6ebf0b632c1e2816f26d135e2f826dc603850e0db21d105b778732"  # noqa: E501
-            "a34b873c7d943050b8659794f0bd3e841d35a2231ef6027e97f8cde11728fa2051e87933"  # noqa: E501
-            "cf858e4e5e91baa74fc1e9ffe4c7b15ba600e8678f095989dc68f47e67d704be2b41c7f8"  # noqa: E501
-            "670a"
+        code=(
+            Op.SLOAD(
+                key=0x1DB054CCC801C0666B34B3C6242BBFC5E98F20C14FB95E0118BE9AD0,
+            )
+            + Op.ORIGIN
+            + Op.JUMP(pc=0x33D50E215FF59297861847EA911A6A9D)
+            + Op.CALLCODE(
+                gas=0x2C1E2816,
+                address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
+                value=0x42A46F50,
+                args_offset=0xCB,
+                args_size=0xFB,
+                ret_offset=0xA8,
+                ret_size=0x3A5,
+            )
+            + Op.MUL(
+                0x8732A34B873C7D943050B8659794F0BD3E841D35A2231EF6,
+                0x135E2F826DC603850E0DB21D105B,
+            )
+            + Op.PUSH31[
+                0x97F8CDE11728FA2051E87933CF858E4E5E91BAA74FC1E9FFE4C7B15BA600E8  # noqa: E501
+            ]
+            + Op.EXP(0xD704BE2B41C7F867, 0x8F095989DC68F47E)
         ),
     )
 

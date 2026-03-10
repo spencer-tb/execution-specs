@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0xc40d7523b9b65560be87507fd6ff17ab29dfcff0"): Account(
-                    code=bytes.fromhex(
-                        "73c40d7523b9b65560be87507fd6ff17ab29dfcff03173c40d7523b9b65560be87507fd6ff17ab29dfcff031f300"  # noqa: E501
+                    code=Op.RETURN(
+                        offset=Op.BALANCE(
+                            address=0xC40D7523B9B65560BE87507FD6FF17AB29DFCFF0
+                        ),
+                        size=Op.BALANCE(
+                            address=0xC40D7523B9B65560BE87507FD6FF17AB29DFCFF0
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +48,15 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0xc40d7523b9b65560be87507fd6ff17ab29dfcff0"): Account(
-                    code=bytes.fromhex(
-                        "73c40d7523b9b65560be87507fd6ff17ab29dfcff03173c40d7523b9b65560be87507fd6ff17ab29dfcff031f300"  # noqa: E501
+                    code=Op.RETURN(
+                        offset=Op.BALANCE(
+                            address=0xC40D7523B9B65560BE87507FD6FF17AB29DFCFF0
+                        ),
+                        size=Op.BALANCE(
+                            address=0xC40D7523B9B65560BE87507FD6FF17AB29DFCFF0
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -75,9 +88,16 @@ def test_return_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73c40d7523b9b65560be87507fd6ff17ab29dfcff03173c40d7523b9b65560be87507fd6"  # noqa: E501
-            "ff17ab29dfcff031f300"
+        code=(
+            Op.RETURN(
+                offset=Op.BALANCE(
+                    address=0xC40D7523B9B65560BE87507FD6FF17AB29DFCFF0,
+                ),
+                size=Op.BALANCE(
+                    address=0xC40D7523B9B65560BE87507FD6FF17AB29DFCFF0,
+                ),
+            )
+            + Op.STOP
         ),
     )
 

@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,12 +35,24 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x0896f13e800125c0ccec44f3c434335f0a97bc1b"): Account(
-                    code=bytes.fromhex("6001600155603760005360026000f3")
+                    code=Op.SSTORE(key=0x1, value=0x1)
+                    + Op.MSTORE8(offset=0x0, value=0x37)
+                    + Op.RETURN(offset=0x0, size=0x2)
                 ),
                 Address("0x9001fa64dbba07e3eb711a42cf25b34ccee2bd2b"): Account(
-                    code=bytes.fromhex(
-                        "6000600060006000620186a1730896f13e800125c0ccec44f3c434335f0a97bc1b622dc6c1f160005500"  # noqa: E501
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=0x2DC6C1,
+                            address=0x896F13E800125C0CCEC44F3C434335F0A97BC1B,
+                            value=0x186A1,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
                     )
+                    + Op.STOP
                 ),
             },
         ),
@@ -48,13 +61,25 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x0896f13e800125c0ccec44f3c434335f0a97bc1b"): Account(
                     storage={1: 1},
-                    code=bytes.fromhex("6001600155603760005360026000f3"),
+                    code=Op.SSTORE(key=0x1, value=0x1)
+                    + Op.MSTORE8(offset=0x0, value=0x37)
+                    + Op.RETURN(offset=0x0, size=0x2),
                 ),
                 Address("0x9001fa64dbba07e3eb711a42cf25b34ccee2bd2b"): Account(
                     storage={0: 1},
-                    code=bytes.fromhex(
-                        "6000600060006000620186a1730896f13e800125c0ccec44f3c434335f0a97bc1b622dc6c1f160005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.CALL(
+                            gas=0x2DC6C1,
+                            address=0x896F13E800125C0CCEC44F3C434335F0A97BC1B,
+                            value=0x186A1,
+                            args_offset=0x0,
+                            args_size=0x0,
+                            ret_offset=0x0,
+                            ret_size=0x0,
+                        ),
+                    )
+                    + Op.STOP,
                 ),
             },
         ),
@@ -86,14 +111,29 @@ def test_call_with_high_value_and_oo_gat_tx_level(
     pre[callee] = Account(
         balance=23,
         nonce=0,
-        code=bytes.fromhex("6001600155603760005360026000f3"),
+        code=(
+            Op.SSTORE(key=0x1, value=0x1)
+            + Op.MSTORE8(offset=0x0, value=0x37)
+            + Op.RETURN(offset=0x0, size=0x2)
+        ),
     )
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000620186a1730896f13e800125c0ccec44f3c434335f0a97bc1b622dc6"  # noqa: E501
-            "c1f160005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x2DC6C1,
+                    address=0x896F13E800125C0CCEC44F3C434335F0A97BC1B,
+                    value=0x186A1,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
         storage={0x0: 0x5},
     )

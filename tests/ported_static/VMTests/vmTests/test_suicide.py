@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,16 +32,25 @@ REFERENCE_SPEC_VERSION = "N/A"
             "693c61390000000000000000000000000000000000000000000000000000000000001000",  # noqa: E501
             {
                 Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=bytes.fromhex("33ff00")
+                    code=Op.SELFDESTRUCT(address=Op.CALLER) + Op.STOP
                 ),
                 Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=bytes.fromhex("61deadff00")
+                    code=Op.SELFDESTRUCT(address=0xDEAD) + Op.STOP
                 ),
                 Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=bytes.fromhex("30ff00")
+                    code=Op.SELFDESTRUCT(address=Op.ADDRESS) + Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=bytes.fromhex("600060006000600060006004355af100")
+                    code=Op.CALL(
+                        gas=Op.GAS,
+                        address=Op.CALLDATALOAD(offset=0x4),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    )
+                    + Op.STOP
                 ),
             },
         ),
@@ -48,16 +58,25 @@ REFERENCE_SPEC_VERSION = "N/A"
             "693c61390000000000000000000000000000000000000000000000000000000000001002",  # noqa: E501
             {
                 Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=bytes.fromhex("33ff00")
+                    code=Op.SELFDESTRUCT(address=Op.CALLER) + Op.STOP
                 ),
                 Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=bytes.fromhex("61deadff00")
+                    code=Op.SELFDESTRUCT(address=0xDEAD) + Op.STOP
                 ),
                 Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=bytes.fromhex("30ff00")
+                    code=Op.SELFDESTRUCT(address=Op.ADDRESS) + Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=bytes.fromhex("600060006000600060006004355af100")
+                    code=Op.CALL(
+                        gas=Op.GAS,
+                        address=Op.CALLDATALOAD(offset=0x4),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    )
+                    + Op.STOP
                 ),
             },
         ),
@@ -65,16 +84,25 @@ REFERENCE_SPEC_VERSION = "N/A"
             "693c61390000000000000000000000000000000000000000000000000000000000001001",  # noqa: E501
             {
                 Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=bytes.fromhex("33ff00")
+                    code=Op.SELFDESTRUCT(address=Op.CALLER) + Op.STOP
                 ),
                 Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=bytes.fromhex("61deadff00")
+                    code=Op.SELFDESTRUCT(address=0xDEAD) + Op.STOP
                 ),
                 Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=bytes.fromhex("30ff00")
+                    code=Op.SELFDESTRUCT(address=Op.ADDRESS) + Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=bytes.fromhex("600060006000600060006004355af100")
+                    code=Op.CALL(
+                        gas=Op.GAS,
+                        address=Op.CALLDATALOAD(offset=0x4),
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    )
+                    + Op.STOP
                 ),
             },
         ),
@@ -108,23 +136,34 @@ def test_suicide(
     pre[callee] = Account(
         balance=0xFF000000000000,
         nonce=0,
-        code=bytes.fromhex("33ff00"),
+        code=Op.SELFDESTRUCT(address=Op.CALLER) + Op.STOP,
     )
     pre[callee_1] = Account(
         balance=0x100000000000,
         nonce=0,
-        code=bytes.fromhex("61deadff00"),
+        code=Op.SELFDESTRUCT(address=0xDEAD) + Op.STOP,
     )
     pre[callee_2] = Account(
         balance=0x100000000000,
         nonce=0,
-        code=bytes.fromhex("30ff00"),
+        code=Op.SELFDESTRUCT(address=Op.ADDRESS) + Op.STOP,
     )
     pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
     pre[contract] = Account(
         balance=0x100000000000,
         nonce=0,
-        code=bytes.fromhex("600060006000600060006004355af100"),
+        code=(
+            Op.CALL(
+                gas=Op.GAS,
+                address=Op.CALLDATALOAD(offset=0x4),
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.STOP
+        ),
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

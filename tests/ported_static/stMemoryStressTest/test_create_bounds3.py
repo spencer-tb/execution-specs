@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,9 +32,80 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "7f6001600155601080600c6000396000f3006000355415600957005b60203560006000526035602053605560215367ffffffffffffffff60006001f0506fffffffffffffffffffffffffffffffff60006001f0507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60006001f0506000630fffffff6001f050600063ffffffff6001f050600067ffffffffffffffff6001f05060006fffffffffffffffffffffffffffffffff6001f05060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f050630fffffff630fffffff6001f05063ffffffff63ffffffff6001f05067ffffffffffffffff67ffffffffffffffff6001f0506fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff6001f0507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f000"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
                     )
+                    + Op.MSTORE8(offset=0x20, value=0x35)
+                    + Op.MSTORE8(offset=0x21, value=0x55)
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1, offset=0x0, size=0xFFFFFFFFFFFFFFFF
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0x0,
+                            size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0x0,
+                            size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        )
+                    )
+                    + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFF, size=0x0))
+                    + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFFF, size=0x0))
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1, offset=0xFFFFFFFFFFFFFFFF, size=0x0
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            size=0x0,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                            size=0x0,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(value=0x1, offset=0xFFFFFFF, size=0xFFFFFFF)
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1, offset=0xFFFFFFFF, size=0xFFFFFFFF
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFF,
+                            size=0xFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.CREATE(
+                        value=0x1,
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    )
+                    + Op.STOP
                 )
             },
         ),
@@ -41,9 +113,80 @@ REFERENCE_SPEC_VERSION = "N/A"
             1000000,
             {
                 Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "7f6001600155601080600c6000396000f3006000355415600957005b60203560006000526035602053605560215367ffffffffffffffff60006001f0506fffffffffffffffffffffffffffffffff60006001f0507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60006001f0506000630fffffff6001f050600063ffffffff6001f050600067ffffffffffffffff6001f05060006fffffffffffffffffffffffffffffffff6001f05060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f050630fffffff630fffffff6001f05063ffffffff63ffffffff6001f05067ffffffffffffffff67ffffffffffffffff6001f0506fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff6001f0507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f000"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
                     )
+                    + Op.MSTORE8(offset=0x20, value=0x35)
+                    + Op.MSTORE8(offset=0x21, value=0x55)
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1, offset=0x0, size=0xFFFFFFFFFFFFFFFF
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0x0,
+                            size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0x0,
+                            size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        )
+                    )
+                    + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFF, size=0x0))
+                    + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFFF, size=0x0))
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1, offset=0xFFFFFFFFFFFFFFFF, size=0x0
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            size=0x0,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                            size=0x0,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(value=0x1, offset=0xFFFFFFF, size=0xFFFFFFF)
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1, offset=0xFFFFFFFF, size=0xFFFFFFFF
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFF,
+                            size=0xFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.CREATE(
+                        value=0x1,
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    )
+                    + Op.STOP
                 )
             },
         ),
@@ -51,9 +194,80 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=bytes.fromhex(
-                        "7f6001600155601080600c6000396000f3006000355415600957005b60203560006000526035602053605560215367ffffffffffffffff60006001f0506fffffffffffffffffffffffffffffffff60006001f0507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60006001f0506000630fffffff6001f050600063ffffffff6001f050600067ffffffffffffffff6001f05060006fffffffffffffffffffffffffffffffff6001f05060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f050630fffffff630fffffff6001f05063ffffffff63ffffffff6001f05067ffffffffffffffff67ffffffffffffffff6001f0506fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff6001f0507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6001f000"  # noqa: E501
+                    code=Op.MSTORE(
+                        offset=0x0,
+                        value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
                     )
+                    + Op.MSTORE8(offset=0x20, value=0x35)
+                    + Op.MSTORE8(offset=0x21, value=0x55)
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1, offset=0x0, size=0xFFFFFFFFFFFFFFFF
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0x0,
+                            size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0x0,
+                            size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        )
+                    )
+                    + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFF, size=0x0))
+                    + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFFF, size=0x0))
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1, offset=0xFFFFFFFFFFFFFFFF, size=0x0
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            size=0x0,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                            size=0x0,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(value=0x1, offset=0xFFFFFFF, size=0xFFFFFFF)
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1, offset=0xFFFFFFFF, size=0xFFFFFFFF
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFF,
+                            size=0xFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.CREATE(
+                            value=0x1,
+                            offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.CREATE(
+                        value=0x1,
+                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    )
+                    + Op.STOP
                 )
             },
         ),
@@ -84,18 +298,67 @@ def test_create_bounds3(
     pre[contract] = Account(
         balance=100,
         nonce=0,
-        code=bytes.fromhex(
-            "7f6001600155601080600c6000396000f3006000355415600957005b6020356000600052"  # noqa: E501
-            "6035602053605560215367ffffffffffffffff60006001f0506fffffffffffffffffffff"  # noqa: E501
-            "ffffffffffff60006001f0507fffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffffffffffffffff60006001f0506000630fffffff6001f050600063ffffffff6001f0"  # noqa: E501
-            "50600067ffffffffffffffff6001f05060006fffffffffffffffffffffffffffffffff60"  # noqa: E501
-            "01f05060007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffff6001f050630fffffff630fffffff6001f05063ffffffff63ffffffff6001f05067ff"  # noqa: E501
-            "ffffffffffffff67ffffffffffffffff6001f0506fffffffffffffffffffffffffffffff"  # noqa: E501
-            "ff6fffffffffffffffffffffffffffffffff6001f0507fffffffffffffffffffffffffff"  # noqa: E501
-            "ffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffffffffffffffffffffffffffffff6001f000"
+        code=(
+            Op.MSTORE(
+                offset=0x0,
+                value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
+            )
+            + Op.MSTORE8(offset=0x20, value=0x35)
+            + Op.MSTORE8(offset=0x21, value=0x55)
+            + Op.POP(Op.CREATE(value=0x1, offset=0x0, size=0xFFFFFFFFFFFFFFFF))
+            + Op.POP(
+                Op.CREATE(
+                    value=0x1,
+                    offset=0x0,
+                    size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                ),
+            )
+            + Op.POP(
+                Op.CREATE(
+                    value=0x1,
+                    offset=0x0,
+                    size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                ),
+            )
+            + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFF, size=0x0))
+            + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFFF, size=0x0))
+            + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFFFFFFFFFFF, size=0x0))
+            + Op.POP(
+                Op.CREATE(
+                    value=0x1,
+                    offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                    size=0x0,
+                ),
+            )
+            + Op.POP(
+                Op.CREATE(
+                    value=0x1,
+                    offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    size=0x0,
+                ),
+            )
+            + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFF, size=0xFFFFFFF))
+            + Op.POP(Op.CREATE(value=0x1, offset=0xFFFFFFFF, size=0xFFFFFFFF))
+            + Op.POP(
+                Op.CREATE(
+                    value=0x1,
+                    offset=0xFFFFFFFFFFFFFFFF,
+                    size=0xFFFFFFFFFFFFFFFF,
+                ),
+            )
+            + Op.POP(
+                Op.CREATE(
+                    value=0x1,
+                    offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                    size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                ),
+            )
+            + Op.CREATE(
+                value=0x1,
+                offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(

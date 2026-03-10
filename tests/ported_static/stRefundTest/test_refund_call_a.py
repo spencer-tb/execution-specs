@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,9 +48,20 @@ def test_refund_call_a(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6000600060006000600073f4c9fc42faeda49049e3b8e2b97a17cc2fe9571861157cf160"  # noqa: E501
-            "005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALL(
+                    gas=0x157C,
+                    address=0xF4C9FC42FAEDA49049E3B8E2B97A17CC2FE95718,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
         storage={0x1: 0x1},
     )
@@ -58,7 +70,7 @@ def test_refund_call_a(
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("600060015500"),
+        code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP,
         storage={0x1: 0x1},
     )
 
@@ -77,11 +89,23 @@ def test_refund_call_a(
     post = {
         contract: Account(
             storage={0: 1, 1: 1},
-            code=bytes.fromhex(
-                "6000600060006000600073f4c9fc42faeda49049e3b8e2b97a17cc2fe9571861157cf160005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALL(
+                        gas=0x157C,
+                        address=0xF4C9FC42FAEDA49049E3B8E2B97A17CC2FE95718,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
-        callee: Account(code=bytes.fromhex("600060015500")),
+        callee: Account(code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

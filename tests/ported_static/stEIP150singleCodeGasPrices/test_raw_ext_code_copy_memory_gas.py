@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -57,9 +58,16 @@ def test_raw_ext_code_copy_memory_gas(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a600052612b7060006020734a84c43fba78ae75cbc15c5b63caa15da55f44643c5a6000"  # noqa: E501
-            "510360015500"
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.GAS)
+            + Op.EXTCODECOPY(
+                address=0x4A84C43FBA78AE75CBC15C5B63CAA15DA55F4464,
+                dest_offset=0x20,
+                offset=0x0,
+                size=0x2B70,
+            )
+            + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
@@ -84,8 +92,18 @@ def test_raw_ext_code_copy_memory_gas(
         ),
         contract: Account(
             storage={1: 4948},
-            code=bytes.fromhex(
-                "5a600052612b7060006020734a84c43fba78ae75cbc15c5b63caa15da55f44643c5a6000510360015500"  # noqa: E501
+            code=(
+                Op.MSTORE(offset=0x0, value=Op.GAS)
+                + Op.EXTCODECOPY(
+                    address=0x4A84C43FBA78AE75CBC15C5B63CAA15DA55F4464,
+                    dest_offset=0x20,
+                    offset=0x0,
+                    size=0x2B70,
+                )
+                + Op.SSTORE(
+                    key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
+                )
+                + Op.STOP
             ),
         ),
     }

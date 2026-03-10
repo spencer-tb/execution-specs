@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -50,23 +51,54 @@ def test_call_goes_oog_on_second_level(
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a6008556000600060006000600073ccc0159bd2ef7118b5e7b8d958e72237f02493fe62"  # noqa: E501
-            "0493e0f16009556001600c5500"
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.CALL(
+                    gas=0x493E0,
+                    address=0xCCC0159BD2EF7118B5E7B8D958E72237F02493FE,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.SSTORE(key=0xC, value=0x1)
+            + Op.STOP
         ),
     )
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "5a6008556000600060006000600073066f77b181e0e662e17d427c7320267adf2fd62462"  # noqa: E501
-            "0927c0f160095500"
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.SSTORE(
+                key=0x9,
+                value=Op.CALL(
+                    gas=0x927C0,
+                    address=0x66F77B181E0E662E17D427C7320267ADF2FD624,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("5a600855622fffff600020505a6009555a600a5500"),
+        code=(
+            Op.SSTORE(key=0x8, value=Op.GAS)
+            + Op.POP(Op.SHA3(offset=0x0, size=0x2FFFFF))
+            + Op.SSTORE(key=0x9, value=Op.GAS)
+            + Op.SSTORE(key=0xA, value=Op.GAS)
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
@@ -85,18 +117,51 @@ def test_call_goes_oog_on_second_level(
     post = {
         callee: Account(
             storage={8: 0x927BE, 12: 1},
-            code=bytes.fromhex(
-                "5a6008556000600060006000600073ccc0159bd2ef7118b5e7b8d958e72237f02493fe620493e0f16009556001600c5500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.CALL(
+                        gas=0x493E0,
+                        address=0xCCC0159BD2EF7118B5E7B8D958E72237F02493FE,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.SSTORE(key=0xC, value=0x1)
+                + Op.STOP
             ),
         ),
         contract: Account(
             storage={8: 0x213FB6, 9: 1},
-            code=bytes.fromhex(
-                "5a6008556000600060006000600073066f77b181e0e662e17d427c7320267adf2fd624620927c0f160095500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.SSTORE(
+                    key=0x9,
+                    value=Op.CALL(
+                        gas=0x927C0,
+                        address=0x66F77B181E0E662E17D427C7320267ADF2FD624,
+                        value=0x0,
+                        args_offset=0x0,
+                        args_size=0x0,
+                        ret_offset=0x0,
+                        ret_size=0x0,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
         callee_1: Account(
-            code=bytes.fromhex("5a600855622fffff600020505a6009555a600a5500"),
+            code=(
+                Op.SSTORE(key=0x8, value=Op.GAS)
+                + Op.POP(Op.SHA3(offset=0x0, size=0x2FFFFF))
+                + Op.SSTORE(key=0x9, value=Op.GAS)
+                + Op.SSTORE(key=0xA, value=Op.GAS)
+                + Op.STOP
+            ),
         ),
     }
 

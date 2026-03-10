@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,12 +34,81 @@ REFERENCE_SPEC_VERSION = "N/A"
             150000,
             {
                 Address("0x83143406093d1f3560dd269416596d3406f1c991"): Account(
-                    code=bytes.fromhex(
-                        "67ffffffffffffffff600067ffffffffffffffff600073cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa506fffffffffffffffffffffffffffffffff60006fffffffffffffffffffffffffffffffff600073cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600073cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa5063ffffffff63ffffffff63ffffffff63ffffffff73cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa5067ffffffffffffffff67ffffffffffffffff67ffffffffffffffff67ffffffffffffffff73cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa506fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff73cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff73cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa00"  # noqa: E501
+                    code=Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0x0,
+                            args_size=0xFFFFFFFFFFFFFFFF,
+                            ret_offset=0x0,
+                            ret_size=0xFFFFFFFFFFFFFFFF,
+                        )
                     )
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0x0,
+                            args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            ret_offset=0x0,
+                            ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0x0,
+                            args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                            ret_offset=0x0,
+                            ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        )
+                    )
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0xFFFFFFFF,
+                            args_size=0xFFFFFFFF,
+                            ret_offset=0xFFFFFFFF,
+                            ret_size=0xFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0xFFFFFFFFFFFFFFFF,
+                            args_size=0xFFFFFFFFFFFFFFFF,
+                            ret_offset=0xFFFFFFFFFFFFFFFF,
+                            ret_size=0xFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            ret_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.STATICCALL(
+                        gas=0x7FFFFFFFFFFFFFF,
+                        address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                        args_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        ret_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    )
+                    + Op.STOP
                 ),
                 Address("0xcc704d60c46b9c08aab4d15281184441ac7ed35c"): Account(
-                    code=bytes.fromhex("60005460010160005200")
+                    code=Op.MSTORE(
+                        offset=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))
+                    )
+                    + Op.STOP
                 ),
             },
         ),
@@ -46,12 +116,81 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             {
                 Address("0x83143406093d1f3560dd269416596d3406f1c991"): Account(
-                    code=bytes.fromhex(
-                        "67ffffffffffffffff600067ffffffffffffffff600073cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa506fffffffffffffffffffffffffffffffff60006fffffffffffffffffffffffffffffffff600073cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff600073cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa5063ffffffff63ffffffff63ffffffff63ffffffff73cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa5067ffffffffffffffff67ffffffffffffffff67ffffffffffffffff67ffffffffffffffff73cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa506fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffffff73cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff73cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa00"  # noqa: E501
+                    code=Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0x0,
+                            args_size=0xFFFFFFFFFFFFFFFF,
+                            ret_offset=0x0,
+                            ret_size=0xFFFFFFFFFFFFFFFF,
+                        )
                     )
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0x0,
+                            args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            ret_offset=0x0,
+                            ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0x0,
+                            args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                            ret_offset=0x0,
+                            ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        )
+                    )
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0xFFFFFFFF,
+                            args_size=0xFFFFFFFF,
+                            ret_offset=0xFFFFFFFF,
+                            ret_size=0xFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0xFFFFFFFFFFFFFFFF,
+                            args_size=0xFFFFFFFFFFFFFFFF,
+                            ret_offset=0xFFFFFFFFFFFFFFFF,
+                            ret_size=0xFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.POP(
+                        Op.STATICCALL(
+                            gas=0x7FFFFFFFFFFFFFF,
+                            address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                            args_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            ret_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                            ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                        )
+                    )
+                    + Op.STATICCALL(
+                        gas=0x7FFFFFFFFFFFFFF,
+                        address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                        args_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        ret_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                        ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    )
+                    + Op.STOP
                 ),
                 Address("0xcc704d60c46b9c08aab4d15281184441ac7ed35c"): Account(
-                    code=bytes.fromhex("60005460010160005200")
+                    code=Op.MSTORE(
+                        offset=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))
+                    )
+                    + Op.STOP
                 ),
             },
         ),
@@ -87,30 +226,85 @@ def test_static_call_bounds3(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "67ffffffffffffffff600067ffffffffffffffff600073cc704d60c46b9c08aab4d15281"  # noqa: E501
-            "184441ac7ed35c6707fffffffffffffffa506fffffffffffffffffffffffffffffffff60"  # noqa: E501
-            "006fffffffffffffffffffffffffffffffff600073cc704d60c46b9c08aab4d152811844"  # noqa: E501
-            "41ac7ed35c6707fffffffffffffffa507fffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffffffffffffffffffffffff60007fffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffffffffffffffffffffff600073cc704d60c46b9c08aab4d15281184441ac7ed35c67"  # noqa: E501
-            "07fffffffffffffffa5063ffffffff63ffffffff63ffffffff63ffffffff73cc704d60c4"  # noqa: E501
-            "6b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa5067ffffffffffffffff67"  # noqa: E501
-            "ffffffffffffffff67ffffffffffffffff67ffffffffffffffff73cc704d60c46b9c08aa"  # noqa: E501
-            "b4d15281184441ac7ed35c6707fffffffffffffffa506fffffffffffffffffffffffffff"  # noqa: E501
-            "ffffff6fffffffffffffffffffffffffffffffff6fffffffffffffffffffffffffffffff"  # noqa: E501
-            "ff6fffffffffffffffffffffffffffffffff73cc704d60c46b9c08aab4d15281184441ac"  # noqa: E501
-            "7ed35c6707fffffffffffffffa507fffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffff73cc704d60c46b9c08aab4d15281184441ac7ed35c6707fffffffffffffffa00"  # noqa: E501
+        code=(
+            Op.POP(
+                Op.STATICCALL(
+                    gas=0x7FFFFFFFFFFFFFF,
+                    address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                    args_offset=0x0,
+                    args_size=0xFFFFFFFFFFFFFFFF,
+                    ret_offset=0x0,
+                    ret_size=0xFFFFFFFFFFFFFFFF,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0x7FFFFFFFFFFFFFF,
+                    address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                    args_offset=0x0,
+                    args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                    ret_offset=0x0,
+                    ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0x7FFFFFFFFFFFFFF,
+                    address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                    args_offset=0x0,
+                    args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    ret_offset=0x0,
+                    ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0x7FFFFFFFFFFFFFF,
+                    address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                    args_offset=0xFFFFFFFF,
+                    args_size=0xFFFFFFFF,
+                    ret_offset=0xFFFFFFFF,
+                    ret_size=0xFFFFFFFF,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0x7FFFFFFFFFFFFFF,
+                    address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                    args_offset=0xFFFFFFFFFFFFFFFF,
+                    args_size=0xFFFFFFFFFFFFFFFF,
+                    ret_offset=0xFFFFFFFFFFFFFFFF,
+                    ret_size=0xFFFFFFFFFFFFFFFF,
+                ),
+            )
+            + Op.POP(
+                Op.STATICCALL(
+                    gas=0x7FFFFFFFFFFFFFF,
+                    address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                    args_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                    args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                    ret_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                    ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                ),
+            )
+            + Op.STATICCALL(
+                gas=0x7FFFFFFFFFFFFFF,
+                address=0xCC704D60C46B9C08AAB4D15281184441AC7ED35C,
+                args_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                args_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                ret_offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                ret_size=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+            )
+            + Op.STOP
         ),
     )
     pre[callee] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("60005460010160005200"),
+        code=(
+            Op.MSTORE(offset=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0)))
+            + Op.STOP
+        ),
     )
 
     tx = Transaction(

@@ -17,6 +17,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -51,10 +52,22 @@ def test_opcode_blobh_bounds(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "600049600055600a4960015563ffffffff4960025567ffffffffffffffff496003556fff"  # noqa: E501
-            "ffffffffffffffffffffffffffffff496004557fffffffffffffffffffffffffffffffff"  # noqa: E501
-            "ffffffffffffffffffffffffffffffff4960055500"
+        code=(
+            Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0))
+            + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xA))
+            + Op.SSTORE(key=0x2, value=Op.BLOBHASH(index=0xFFFFFFFF))
+            + Op.SSTORE(key=0x3, value=Op.BLOBHASH(index=0xFFFFFFFFFFFFFFFF))
+            + Op.SSTORE(
+                key=0x4,
+                value=Op.BLOBHASH(index=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF),
+            )
+            + Op.SSTORE(
+                key=0x5,
+                value=Op.BLOBHASH(
+                    index=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                ),
+            )
+            + Op.STOP
         ),
         storage={
             0x0: 0x1,
@@ -106,8 +119,26 @@ def test_opcode_blobh_bounds(
             storage={
                 0: 0x1A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "600049600055600a4960015563ffffffff4960025567ffffffffffffffff496003556fffffffffffffffffffffffffffffffff496004557fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff4960055500"  # noqa: E501
+            code=(
+                Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0))
+                + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xA))
+                + Op.SSTORE(key=0x2, value=Op.BLOBHASH(index=0xFFFFFFFF))
+                + Op.SSTORE(
+                    key=0x3, value=Op.BLOBHASH(index=0xFFFFFFFFFFFFFFFF)
+                )
+                + Op.SSTORE(
+                    key=0x4,
+                    value=Op.BLOBHASH(
+                        index=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                    ),
+                )
+                + Op.SSTORE(
+                    key=0x5,
+                    value=Op.BLOBHASH(
+                        index=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

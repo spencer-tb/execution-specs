@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -34,9 +35,15 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "73cb87599782f7101d77a9b56283a67cd13fa0d97e311960005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.NOT(
+                            Op.BALANCE(
+                                address=0xCB87599782F7101D77A9B56283A67CD13FA0D97E  # noqa: E501
+                            )
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -47,9 +54,15 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
                     },
-                    code=bytes.fromhex(
-                        "73cb87599782f7101d77a9b56283a67cd13fa0d97e311960005500"  # noqa: E501
-                    ),
+                    code=Op.SSTORE(
+                        key=0x0,
+                        value=Op.NOT(
+                            Op.BALANCE(
+                                address=0xCB87599782F7101D77A9B56283A67CD13FA0D97E  # noqa: E501
+                            )
+                        ),
+                    )
+                    + Op.STOP,
                 )
             },
         ),
@@ -81,8 +94,16 @@ def test_not_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73cb87599782f7101d77a9b56283a67cd13fa0d97e311960005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.NOT(
+                    Op.BALANCE(
+                        address=0xCB87599782F7101D77A9B56283A67CD13FA0D97E
+                    ),
+                ),
+            )
+            + Op.STOP
         ),
     )
 

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,161 +50,1232 @@ def test_exp_power256_of256(
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex(
-            "60006101000a6101000a600060100255600060ff0a6101000a6001600060100201556000"  # noqa: E501
-            "6101010a6101000a60026000601002015560006101000a60ff0a60036000601002015560"  # noqa: E501
-            "0060ff0a60ff0a60046000601002015560006101010a60ff0a6005600060100201556000"  # noqa: E501
-            "6101000a6101010a600660006010020155600060ff0a6101010a60076000601002015560"  # noqa: E501
-            "006101010a6101010a60086000601002015560016101000a6101000a6001601002556001"  # noqa: E501
-            "60ff0a6101000a60016001601002015560016101010a6101000a60026001601002015560"  # noqa: E501
-            "016101000a60ff0a600360016010020155600160ff0a60ff0a6004600160100201556001"  # noqa: E501
-            "6101010a60ff0a60056001601002015560016101000a6101010a60066001601002015560"  # noqa: E501
-            "0160ff0a6101010a60076001601002015560016101010a6101010a600860016010020155"  # noqa: E501
-            "60026101000a6101000a600260100255600260ff0a6101000a6001600260100201556002"  # noqa: E501
-            "6101010a6101000a60026002601002015560026101000a60ff0a60036002601002015560"  # noqa: E501
-            "0260ff0a60ff0a60046002601002015560026101010a60ff0a6005600260100201556002"  # noqa: E501
-            "6101000a6101010a600660026010020155600260ff0a6101010a60076002601002015560"  # noqa: E501
-            "026101010a6101010a60086002601002015560036101000a6101000a6003601002556003"  # noqa: E501
-            "60ff0a6101000a60016003601002015560036101010a6101000a60026003601002015560"  # noqa: E501
-            "036101000a60ff0a600360036010020155600360ff0a60ff0a6004600360100201556003"  # noqa: E501
-            "6101010a60ff0a60056003601002015560036101000a6101010a60066003601002015560"  # noqa: E501
-            "0360ff0a6101010a60076003601002015560036101010a6101010a600860036010020155"  # noqa: E501
-            "60046101000a6101000a600460100255600460ff0a6101000a6001600460100201556004"  # noqa: E501
-            "6101010a6101000a60026004601002015560046101000a60ff0a60036004601002015560"  # noqa: E501
-            "0460ff0a60ff0a60046004601002015560046101010a60ff0a6005600460100201556004"  # noqa: E501
-            "6101000a6101010a600660046010020155600460ff0a6101010a60076004601002015560"  # noqa: E501
-            "046101010a6101010a60086004601002015560056101000a6101000a6005601002556005"  # noqa: E501
-            "60ff0a6101000a60016005601002015560056101010a6101000a60026005601002015560"  # noqa: E501
-            "056101000a60ff0a600360056010020155600560ff0a60ff0a6004600560100201556005"  # noqa: E501
-            "6101010a60ff0a60056005601002015560056101000a6101010a60066005601002015560"  # noqa: E501
-            "0560ff0a6101010a60076005601002015560056101010a6101010a600860056010020155"  # noqa: E501
-            "60066101000a6101000a600660100255600660ff0a6101000a6001600660100201556006"  # noqa: E501
-            "6101010a6101000a60026006601002015560066101000a60ff0a60036006601002015560"  # noqa: E501
-            "0660ff0a60ff0a60046006601002015560066101010a60ff0a6005600660100201556006"  # noqa: E501
-            "6101000a6101010a600660066010020155600660ff0a6101010a60076006601002015560"  # noqa: E501
-            "066101010a6101010a60086006601002015560076101000a6101000a6007601002556007"  # noqa: E501
-            "60ff0a6101000a60016007601002015560076101010a6101000a60026007601002015560"  # noqa: E501
-            "076101000a60ff0a600360076010020155600760ff0a60ff0a6004600760100201556007"  # noqa: E501
-            "6101010a60ff0a60056007601002015560076101000a6101010a60066007601002015560"  # noqa: E501
-            "0760ff0a6101010a60076007601002015560076101010a6101010a600860076010020155"  # noqa: E501
-            "60086101000a6101000a600860100255600860ff0a6101000a6001600860100201556008"  # noqa: E501
-            "6101010a6101000a60026008601002015560086101000a60ff0a60036008601002015560"  # noqa: E501
-            "0860ff0a60ff0a60046008601002015560086101010a60ff0a6005600860100201556008"  # noqa: E501
-            "6101000a6101010a600660086010020155600860ff0a6101010a60076008601002015560"  # noqa: E501
-            "086101010a6101010a60086008601002015560096101000a6101000a6009601002556009"  # noqa: E501
-            "60ff0a6101000a60016009601002015560096101010a6101000a60026009601002015560"  # noqa: E501
-            "096101000a60ff0a600360096010020155600960ff0a60ff0a6004600960100201556009"  # noqa: E501
-            "6101010a60ff0a60056009601002015560096101000a6101010a60066009601002015560"  # noqa: E501
-            "0960ff0a6101010a60076009601002015560096101010a6101010a600860096010020155"  # noqa: E501
-            "600a6101000a6101000a600a60100255600a60ff0a6101000a6001600a6010020155600a"  # noqa: E501
-            "6101010a6101000a6002600a6010020155600a6101000a60ff0a6003600a601002015560"  # noqa: E501
-            "0a60ff0a60ff0a6004600a6010020155600a6101010a60ff0a6005600a6010020155600a"  # noqa: E501
-            "6101000a6101010a6006600a6010020155600a60ff0a6101010a6007600a601002015560"  # noqa: E501
-            "0a6101010a6101010a6008600a6010020155600b6101000a6101000a600b60100255600b"  # noqa: E501
-            "60ff0a6101000a6001600b6010020155600b6101010a6101000a6002600b601002015560"  # noqa: E501
-            "0b6101000a60ff0a6003600b6010020155600b60ff0a60ff0a6004600b6010020155600b"  # noqa: E501
-            "6101010a60ff0a6005600b6010020155600b6101000a6101010a6006600b601002015560"  # noqa: E501
-            "0b60ff0a6101010a6007600b6010020155600b6101010a6101010a6008600b6010020155"  # noqa: E501
-            "600c6101000a6101000a600c60100255600c60ff0a6101000a6001600c6010020155600c"  # noqa: E501
-            "6101010a6101000a6002600c6010020155600c6101000a60ff0a6003600c601002015560"  # noqa: E501
-            "0c60ff0a60ff0a6004600c6010020155600c6101010a60ff0a6005600c6010020155600c"  # noqa: E501
-            "6101000a6101010a6006600c6010020155600c60ff0a6101010a6007600c601002015560"  # noqa: E501
-            "0c6101010a6101010a6008600c6010020155600d6101000a6101000a600d60100255600d"  # noqa: E501
-            "60ff0a6101000a6001600d6010020155600d6101010a6101000a6002600d601002015560"  # noqa: E501
-            "0d6101000a60ff0a6003600d6010020155600d60ff0a60ff0a6004600d6010020155600d"  # noqa: E501
-            "6101010a60ff0a6005600d6010020155600d6101000a6101010a6006600d601002015560"  # noqa: E501
-            "0d60ff0a6101010a6007600d6010020155600d6101010a6101010a6008600d6010020155"  # noqa: E501
-            "600e6101000a6101000a600e60100255600e60ff0a6101000a6001600e6010020155600e"  # noqa: E501
-            "6101010a6101000a6002600e6010020155600e6101000a60ff0a6003600e601002015560"  # noqa: E501
-            "0e60ff0a60ff0a6004600e6010020155600e6101010a60ff0a6005600e6010020155600e"  # noqa: E501
-            "6101000a6101010a6006600e6010020155600e60ff0a6101010a6007600e601002015560"  # noqa: E501
-            "0e6101010a6101010a6008600e6010020155600f6101000a6101000a600f60100255600f"  # noqa: E501
-            "60ff0a6101000a6001600f6010020155600f6101010a6101000a6002600f601002015560"  # noqa: E501
-            "0f6101000a60ff0a6003600f6010020155600f60ff0a60ff0a6004600f6010020155600f"  # noqa: E501
-            "6101010a60ff0a6005600f6010020155600f6101000a6101010a6006600f601002015560"  # noqa: E501
-            "0f60ff0a6101010a6007600f6010020155600f6101010a6101010a6008600f6010020155"  # noqa: E501
-            "60106101000a6101000a601060100255601060ff0a6101000a6001601060100201556010"  # noqa: E501
-            "6101010a6101000a60026010601002015560106101000a60ff0a60036010601002015560"  # noqa: E501
-            "1060ff0a60ff0a60046010601002015560106101010a60ff0a6005601060100201556010"  # noqa: E501
-            "6101000a6101010a600660106010020155601060ff0a6101010a60076010601002015560"  # noqa: E501
-            "106101010a6101010a60086010601002015560116101000a6101000a6011601002556011"  # noqa: E501
-            "60ff0a6101000a60016011601002015560116101010a6101000a60026011601002015560"  # noqa: E501
-            "116101000a60ff0a600360116010020155601160ff0a60ff0a6004601160100201556011"  # noqa: E501
-            "6101010a60ff0a60056011601002015560116101000a6101010a60066011601002015560"  # noqa: E501
-            "1160ff0a6101010a60076011601002015560116101010a6101010a600860116010020155"  # noqa: E501
-            "60126101000a6101000a601260100255601260ff0a6101000a6001601260100201556012"  # noqa: E501
-            "6101010a6101000a60026012601002015560126101000a60ff0a60036012601002015560"  # noqa: E501
-            "1260ff0a60ff0a60046012601002015560126101010a60ff0a6005601260100201556012"  # noqa: E501
-            "6101000a6101010a600660126010020155601260ff0a6101010a60076012601002015560"  # noqa: E501
-            "126101010a6101010a60086012601002015560136101000a6101000a6013601002556013"  # noqa: E501
-            "60ff0a6101000a60016013601002015560136101010a6101000a60026013601002015560"  # noqa: E501
-            "136101000a60ff0a600360136010020155601360ff0a60ff0a6004601360100201556013"  # noqa: E501
-            "6101010a60ff0a60056013601002015560136101000a6101010a60066013601002015560"  # noqa: E501
-            "1360ff0a6101010a60076013601002015560136101010a6101010a600860136010020155"  # noqa: E501
-            "60146101000a6101000a601460100255601460ff0a6101000a6001601460100201556014"  # noqa: E501
-            "6101010a6101000a60026014601002015560146101000a60ff0a60036014601002015560"  # noqa: E501
-            "1460ff0a60ff0a60046014601002015560146101010a60ff0a6005601460100201556014"  # noqa: E501
-            "6101000a6101010a600660146010020155601460ff0a6101010a60076014601002015560"  # noqa: E501
-            "146101010a6101010a60086014601002015560156101000a6101000a6015601002556015"  # noqa: E501
-            "60ff0a6101000a60016015601002015560156101010a6101000a60026015601002015560"  # noqa: E501
-            "156101000a60ff0a600360156010020155601560ff0a60ff0a6004601560100201556015"  # noqa: E501
-            "6101010a60ff0a60056015601002015560156101000a6101010a60066015601002015560"  # noqa: E501
-            "1560ff0a6101010a60076015601002015560156101010a6101010a600860156010020155"  # noqa: E501
-            "60166101000a6101000a601660100255601660ff0a6101000a6001601660100201556016"  # noqa: E501
-            "6101010a6101000a60026016601002015560166101000a60ff0a60036016601002015560"  # noqa: E501
-            "1660ff0a60ff0a60046016601002015560166101010a60ff0a6005601660100201556016"  # noqa: E501
-            "6101000a6101010a600660166010020155601660ff0a6101010a60076016601002015560"  # noqa: E501
-            "166101010a6101010a60086016601002015560176101000a6101000a6017601002556017"  # noqa: E501
-            "60ff0a6101000a60016017601002015560176101010a6101000a60026017601002015560"  # noqa: E501
-            "176101000a60ff0a600360176010020155601760ff0a60ff0a6004601760100201556017"  # noqa: E501
-            "6101010a60ff0a60056017601002015560176101000a6101010a60066017601002015560"  # noqa: E501
-            "1760ff0a6101010a60076017601002015560176101010a6101010a600860176010020155"  # noqa: E501
-            "60186101000a6101000a601860100255601860ff0a6101000a6001601860100201556018"  # noqa: E501
-            "6101010a6101000a60026018601002015560186101000a60ff0a60036018601002015560"  # noqa: E501
-            "1860ff0a60ff0a60046018601002015560186101010a60ff0a6005601860100201556018"  # noqa: E501
-            "6101000a6101010a600660186010020155601860ff0a6101010a60076018601002015560"  # noqa: E501
-            "186101010a6101010a60086018601002015560196101000a6101000a6019601002556019"  # noqa: E501
-            "60ff0a6101000a60016019601002015560196101010a6101000a60026019601002015560"  # noqa: E501
-            "196101000a60ff0a600360196010020155601960ff0a60ff0a6004601960100201556019"  # noqa: E501
-            "6101010a60ff0a60056019601002015560196101000a6101010a60066019601002015560"  # noqa: E501
-            "1960ff0a6101010a60076019601002015560196101010a6101010a600860196010020155"  # noqa: E501
-            "601a6101000a6101000a601a60100255601a60ff0a6101000a6001601a6010020155601a"  # noqa: E501
-            "6101010a6101000a6002601a6010020155601a6101000a60ff0a6003601a601002015560"  # noqa: E501
-            "1a60ff0a60ff0a6004601a6010020155601a6101010a60ff0a6005601a6010020155601a"  # noqa: E501
-            "6101000a6101010a6006601a6010020155601a60ff0a6101010a6007601a601002015560"  # noqa: E501
-            "1a6101010a6101010a6008601a6010020155601b6101000a6101000a601b60100255601b"  # noqa: E501
-            "60ff0a6101000a6001601b6010020155601b6101010a6101000a6002601b601002015560"  # noqa: E501
-            "1b6101000a60ff0a6003601b6010020155601b60ff0a60ff0a6004601b6010020155601b"  # noqa: E501
-            "6101010a60ff0a6005601b6010020155601b6101000a6101010a6006601b601002015560"  # noqa: E501
-            "1b60ff0a6101010a6007601b6010020155601b6101010a6101010a6008601b6010020155"  # noqa: E501
-            "601c6101000a6101000a601c60100255601c60ff0a6101000a6001601c6010020155601c"  # noqa: E501
-            "6101010a6101000a6002601c6010020155601c6101000a60ff0a6003601c601002015560"  # noqa: E501
-            "1c60ff0a60ff0a6004601c6010020155601c6101010a60ff0a6005601c6010020155601c"  # noqa: E501
-            "6101000a6101010a6006601c6010020155601c60ff0a6101010a6007601c601002015560"  # noqa: E501
-            "1c6101010a6101010a6008601c6010020155601d6101000a6101000a601d60100255601d"  # noqa: E501
-            "60ff0a6101000a6001601d6010020155601d6101010a6101000a6002601d601002015560"  # noqa: E501
-            "1d6101000a60ff0a6003601d6010020155601d60ff0a60ff0a6004601d6010020155601d"  # noqa: E501
-            "6101010a60ff0a6005601d6010020155601d6101000a6101010a6006601d601002015560"  # noqa: E501
-            "1d60ff0a6101010a6007601d6010020155601d6101010a6101010a6008601d6010020155"  # noqa: E501
-            "601e6101000a6101000a601e60100255601e60ff0a6101000a6001601e6010020155601e"  # noqa: E501
-            "6101010a6101000a6002601e6010020155601e6101000a60ff0a6003601e601002015560"  # noqa: E501
-            "1e60ff0a60ff0a6004601e6010020155601e6101010a60ff0a6005601e6010020155601e"  # noqa: E501
-            "6101000a6101010a6006601e6010020155601e60ff0a6101010a6007601e601002015560"  # noqa: E501
-            "1e6101010a6101010a6008601e6010020155601f6101000a6101000a601f60100255601f"  # noqa: E501
-            "60ff0a6101000a6001601f6010020155601f6101010a6101000a6002601f601002015560"  # noqa: E501
-            "1f6101000a60ff0a6003601f6010020155601f60ff0a60ff0a6004601f6010020155601f"  # noqa: E501
-            "6101010a60ff0a6005601f6010020155601f6101000a6101010a6006601f601002015560"  # noqa: E501
-            "1f60ff0a6101010a6007601f6010020155601f6101010a6101010a6008601f6010020155"  # noqa: E501
-            "60206101000a6101000a602060100255602060ff0a6101000a6001602060100201556020"  # noqa: E501
-            "6101010a6101000a60026020601002015560206101000a60ff0a60036020601002015560"  # noqa: E501
-            "2060ff0a60ff0a60046020601002015560206101010a60ff0a6005602060100201556020"  # noqa: E501
-            "6101000a6101010a600660206010020155602060ff0a6101010a60076020601002015560"  # noqa: E501
-            "206101010a6101010a60086020601002015560216101000a6101000a6021601002556021"  # noqa: E501
-            "60ff0a6101000a60016021601002015560216101010a6101000a60026021601002015560"  # noqa: E501
-            "216101000a60ff0a600360216010020155602160ff0a60ff0a6004602160100201556021"  # noqa: E501
-            "6101010a60ff0a60056021601002015560216101000a6101010a60066021601002015560"  # noqa: E501
-            "2160ff0a6101010a60076021601002015560216101010a6101010a600860216010020155"  # noqa: E501
-            "00"
+        code=(
+            Op.SSTORE(
+                key=Op.MUL(0x10, 0x0),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x0)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x0), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x0)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x0), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x0)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x0), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x0)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x0), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x0)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x0), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x0)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x0), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x0)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x0), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x0)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x0), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x0)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x1),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x1)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x1)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x1)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x1)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x1)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x1)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x1)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x1)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x2)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x2), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x2)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x2), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x2)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x2), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x2)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x2), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x2)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x2), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x2)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x2), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x2)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x2), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x2)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x2), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x2)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x3),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x3)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x3), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x3)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x3), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x3)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x3), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x3)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x3), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x3)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x3), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x3)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x3), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x3)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x3), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x3)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x3), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x3)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x4),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x4)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x4), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x4)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x4), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x4)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x4), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x4)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x4), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x4)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x4), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x4)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x4), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x4)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x4), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x4)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x4), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x4)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x5),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x5)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x5), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x5)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x5), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x5)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x5), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x5)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x5), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x5)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x5), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x5)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x5), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x5)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x5), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x5)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x5), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x5)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x6),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x6)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x6), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x6)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x6), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x6)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x6), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x6)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x6), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x6)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x6), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x6)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x6), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x6)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x6), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x6)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x6), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x6)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x7),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x7)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x7), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x7)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x7), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x7)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x7), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x7)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x7), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x7)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x7), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x7)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x7), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x7)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x7), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x7)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x7), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x7)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x8),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x8)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x8), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x8)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x8), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x8)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x8), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x8)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x8), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x8)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x8), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x8)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x8), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x8)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x8), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x8)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x8), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x8)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x9),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x9)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x9), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x9)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x9), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x9)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x9), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x9)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x9), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x9)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x9), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x9)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x9), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x9)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x9), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x9)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x9), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x9)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0xA),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0xA)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xA), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0xA)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xA), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0xA)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xA), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0xA)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xA), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0xA)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xA), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0xA)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xA), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0xA)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xA), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0xA)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xA), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0xA)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0xB),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0xB)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xB), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0xB)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xB), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0xB)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xB), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0xB)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xB), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0xB)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xB), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0xB)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xB), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0xB)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xB), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0xB)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xB), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0xB)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0xC),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0xC)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xC), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0xC)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xC), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0xC)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xC), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0xC)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xC), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0xC)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xC), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0xC)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xC), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0xC)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xC), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0xC)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xC), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0xC)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0xD),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0xD)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xD), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0xD)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xD), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0xD)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xD), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0xD)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xD), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0xD)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xD), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0xD)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xD), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0xD)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xD), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0xD)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xD), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0xD)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0xE),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0xE)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xE), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0xE)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xE), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0xE)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xE), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0xE)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xE), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0xE)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xE), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0xE)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xE), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0xE)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xE), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0xE)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xE), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0xE)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0xF),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0xF)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xF), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0xF)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xF), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0xF)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xF), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0xF)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xF), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0xF)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xF), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0xF)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xF), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0xF)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xF), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0xF)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0xF), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0xF)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x10),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x10)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x10), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x10)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x10), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x10)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x10), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x10)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x10), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x10)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x10), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x10)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x10), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x10)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x10), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x10)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x10), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x10)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x11),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x11)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x11), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x11)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x11), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x11)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x11), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x11)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x11), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x11)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x11), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x11)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x11), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x11)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x11), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x11)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x11), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x11)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x12),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x12)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x12), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x12)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x12), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x12)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x12), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x12)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x12), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x12)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x12), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x12)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x12), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x12)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x12), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x12)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x12), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x12)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x13),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x13)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x13), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x13)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x13), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x13)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x13), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x13)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x13), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x13)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x13), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x13)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x13), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x13)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x13), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x13)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x13), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x13)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x14),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x14)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x14), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x14)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x14), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x14)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x14), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x14)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x14), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x14)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x14), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x14)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x14), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x14)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x14), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x14)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x14), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x14)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x15),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x15)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x15), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x15)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x15), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x15)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x15), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x15)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x15), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x15)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x15), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x15)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x15), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x15)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x15), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x15)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x15), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x15)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x16),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x16)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x16), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x16)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x16), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x16)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x16), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x16)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x16), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x16)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x16), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x16)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x16), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x16)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x16), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x16)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x16), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x16)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x17),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x17)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x17), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x17)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x17), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x17)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x17), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x17)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x17), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x17)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x17), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x17)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x17), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x17)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x17), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x17)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x17), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x17)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x18),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x18)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x18), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x18)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x18), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x18)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x18), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x18)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x18), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x18)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x18), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x18)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x18), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x18)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x18), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x18)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x18), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x18)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x19),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x19)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x19), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x19)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x19), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x19)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x19), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x19)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x19), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x19)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x19), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x19)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x19), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x19)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x19), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x19)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x19), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x19)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x1A),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x1A)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1A), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x1A)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1A), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x1A)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1A), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x1A)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1A), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1A)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1A), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x1A)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1A), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x1A)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1A), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x1A)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1A), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x1A)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x1B),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x1B)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1B), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x1B)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1B), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x1B)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1B), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x1B)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1B), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1B)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1B), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x1B)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1B), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x1B)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1B), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x1B)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1B), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x1B)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x1C),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x1C)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1C), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x1C)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1C), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x1C)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1C), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x1C)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1C), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1C)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1C), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x1C)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1C), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x1C)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1C), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x1C)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1C), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x1C)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x1D),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x1D)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1D), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x1D)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1D), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x1D)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1D), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x1D)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1D), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1D)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1D), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x1D)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1D), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x1D)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1D), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x1D)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1D), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x1D)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x1E),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x1E)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1E), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x1E)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1E), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x1E)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1E), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x1E)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1E), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1E)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1E), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x1E)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1E), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x1E)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1E), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x1E)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1E), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x1E)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x1F),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x1F)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1F), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x1F)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1F), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x1F)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1F), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x1F)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1F), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1F)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1F), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x1F)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1F), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x1F)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1F), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x1F)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x1F), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x1F)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x20),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x20)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x20), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x20)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x20), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x20)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x20), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x20)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x20), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x20)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x20), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x20)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x20), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x20)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x20), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x20)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x20), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x20)),
+            )
+            + Op.SSTORE(
+                key=Op.MUL(0x10, 0x21),
+                value=Op.EXP(0x100, Op.EXP(0x100, 0x21)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x21), 0x1),
+                value=Op.EXP(0x100, Op.EXP(0xFF, 0x21)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x21), 0x2),
+                value=Op.EXP(0x100, Op.EXP(0x101, 0x21)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x21), 0x3),
+                value=Op.EXP(0xFF, Op.EXP(0x100, 0x21)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x21), 0x4),
+                value=Op.EXP(0xFF, Op.EXP(0xFF, 0x21)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x21), 0x5),
+                value=Op.EXP(0xFF, Op.EXP(0x101, 0x21)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x21), 0x6),
+                value=Op.EXP(0x101, Op.EXP(0x100, 0x21)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x21), 0x7),
+                value=Op.EXP(0x101, Op.EXP(0xFF, 0x21)),
+            )
+            + Op.SSTORE(
+                key=Op.ADD(Op.MUL(0x10, 0x21), 0x8),
+                value=Op.EXP(0x101, Op.EXP(0x101, 0x21)),
+            )
+            + Op.STOP
         ),
     )
 
@@ -434,8 +1506,1232 @@ def test_exp_power256_of256(
                 535: 0xE678999AEFFD1F1F45081F64DE7F80AB083DD7DF04721ED64EE04C03BDA1FF01,  # noqa: E501
                 536: 0x39B68FB9898DD7568ABD178397251CE8226A25C1D305A4E79573333520A10101,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "60006101000a6101000a600060100255600060ff0a6101000a60016000601002015560006101010a6101000a60026000601002015560006101000a60ff0a600360006010020155600060ff0a60ff0a60046000601002015560006101010a60ff0a60056000601002015560006101000a6101010a600660006010020155600060ff0a6101010a60076000601002015560006101010a6101010a60086000601002015560016101000a6101000a600160100255600160ff0a6101000a60016001601002015560016101010a6101000a60026001601002015560016101000a60ff0a600360016010020155600160ff0a60ff0a60046001601002015560016101010a60ff0a60056001601002015560016101000a6101010a600660016010020155600160ff0a6101010a60076001601002015560016101010a6101010a60086001601002015560026101000a6101000a600260100255600260ff0a6101000a60016002601002015560026101010a6101000a60026002601002015560026101000a60ff0a600360026010020155600260ff0a60ff0a60046002601002015560026101010a60ff0a60056002601002015560026101000a6101010a600660026010020155600260ff0a6101010a60076002601002015560026101010a6101010a60086002601002015560036101000a6101000a600360100255600360ff0a6101000a60016003601002015560036101010a6101000a60026003601002015560036101000a60ff0a600360036010020155600360ff0a60ff0a60046003601002015560036101010a60ff0a60056003601002015560036101000a6101010a600660036010020155600360ff0a6101010a60076003601002015560036101010a6101010a60086003601002015560046101000a6101000a600460100255600460ff0a6101000a60016004601002015560046101010a6101000a60026004601002015560046101000a60ff0a600360046010020155600460ff0a60ff0a60046004601002015560046101010a60ff0a60056004601002015560046101000a6101010a600660046010020155600460ff0a6101010a60076004601002015560046101010a6101010a60086004601002015560056101000a6101000a600560100255600560ff0a6101000a60016005601002015560056101010a6101000a60026005601002015560056101000a60ff0a600360056010020155600560ff0a60ff0a60046005601002015560056101010a60ff0a60056005601002015560056101000a6101010a600660056010020155600560ff0a6101010a60076005601002015560056101010a6101010a60086005601002015560066101000a6101000a600660100255600660ff0a6101000a60016006601002015560066101010a6101000a60026006601002015560066101000a60ff0a600360066010020155600660ff0a60ff0a60046006601002015560066101010a60ff0a60056006601002015560066101000a6101010a600660066010020155600660ff0a6101010a60076006601002015560066101010a6101010a60086006601002015560076101000a6101000a600760100255600760ff0a6101000a60016007601002015560076101010a6101000a60026007601002015560076101000a60ff0a600360076010020155600760ff0a60ff0a60046007601002015560076101010a60ff0a60056007601002015560076101000a6101010a600660076010020155600760ff0a6101010a60076007601002015560076101010a6101010a60086007601002015560086101000a6101000a600860100255600860ff0a6101000a60016008601002015560086101010a6101000a60026008601002015560086101000a60ff0a600360086010020155600860ff0a60ff0a60046008601002015560086101010a60ff0a60056008601002015560086101000a6101010a600660086010020155600860ff0a6101010a60076008601002015560086101010a6101010a60086008601002015560096101000a6101000a600960100255600960ff0a6101000a60016009601002015560096101010a6101000a60026009601002015560096101000a60ff0a600360096010020155600960ff0a60ff0a60046009601002015560096101010a60ff0a60056009601002015560096101000a6101010a600660096010020155600960ff0a6101010a60076009601002015560096101010a6101010a600860096010020155600a6101000a6101000a600a60100255600a60ff0a6101000a6001600a6010020155600a6101010a6101000a6002600a6010020155600a6101000a60ff0a6003600a6010020155600a60ff0a60ff0a6004600a6010020155600a6101010a60ff0a6005600a6010020155600a6101000a6101010a6006600a6010020155600a60ff0a6101010a6007600a6010020155600a6101010a6101010a6008600a6010020155600b6101000a6101000a600b60100255600b60ff0a6101000a6001600b6010020155600b6101010a6101000a6002600b6010020155600b6101000a60ff0a6003600b6010020155600b60ff0a60ff0a6004600b6010020155600b6101010a60ff0a6005600b6010020155600b6101000a6101010a6006600b6010020155600b60ff0a6101010a6007600b6010020155600b6101010a6101010a6008600b6010020155600c6101000a6101000a600c60100255600c60ff0a6101000a6001600c6010020155600c6101010a6101000a6002600c6010020155600c6101000a60ff0a6003600c6010020155600c60ff0a60ff0a6004600c6010020155600c6101010a60ff0a6005600c6010020155600c6101000a6101010a6006600c6010020155600c60ff0a6101010a6007600c6010020155600c6101010a6101010a6008600c6010020155600d6101000a6101000a600d60100255600d60ff0a6101000a6001600d6010020155600d6101010a6101000a6002600d6010020155600d6101000a60ff0a6003600d6010020155600d60ff0a60ff0a6004600d6010020155600d6101010a60ff0a6005600d6010020155600d6101000a6101010a6006600d6010020155600d60ff0a6101010a6007600d6010020155600d6101010a6101010a6008600d6010020155600e6101000a6101000a600e60100255600e60ff0a6101000a6001600e6010020155600e6101010a6101000a6002600e6010020155600e6101000a60ff0a6003600e6010020155600e60ff0a60ff0a6004600e6010020155600e6101010a60ff0a6005600e6010020155600e6101000a6101010a6006600e6010020155600e60ff0a6101010a6007600e6010020155600e6101010a6101010a6008600e6010020155600f6101000a6101000a600f60100255600f60ff0a6101000a6001600f6010020155600f6101010a6101000a6002600f6010020155600f6101000a60ff0a6003600f6010020155600f60ff0a60ff0a6004600f6010020155600f6101010a60ff0a6005600f6010020155600f6101000a6101010a6006600f6010020155600f60ff0a6101010a6007600f6010020155600f6101010a6101010a6008600f601002015560106101000a6101000a601060100255601060ff0a6101000a60016010601002015560106101010a6101000a60026010601002015560106101000a60ff0a600360106010020155601060ff0a60ff0a60046010601002015560106101010a60ff0a60056010601002015560106101000a6101010a600660106010020155601060ff0a6101010a60076010601002015560106101010a6101010a60086010601002015560116101000a6101000a601160100255601160ff0a6101000a60016011601002015560116101010a6101000a60026011601002015560116101000a60ff0a600360116010020155601160ff0a60ff0a60046011601002015560116101010a60ff0a60056011601002015560116101000a6101010a600660116010020155601160ff0a6101010a60076011601002015560116101010a6101010a60086011601002015560126101000a6101000a601260100255601260ff0a6101000a60016012601002015560126101010a6101000a60026012601002015560126101000a60ff0a600360126010020155601260ff0a60ff0a60046012601002015560126101010a60ff0a60056012601002015560126101000a6101010a600660126010020155601260ff0a6101010a60076012601002015560126101010a6101010a60086012601002015560136101000a6101000a601360100255601360ff0a6101000a60016013601002015560136101010a6101000a60026013601002015560136101000a60ff0a600360136010020155601360ff0a60ff0a60046013601002015560136101010a60ff0a60056013601002015560136101000a6101010a600660136010020155601360ff0a6101010a60076013601002015560136101010a6101010a60086013601002015560146101000a6101000a601460100255601460ff0a6101000a60016014601002015560146101010a6101000a60026014601002015560146101000a60ff0a600360146010020155601460ff0a60ff0a60046014601002015560146101010a60ff0a60056014601002015560146101000a6101010a600660146010020155601460ff0a6101010a60076014601002015560146101010a6101010a60086014601002015560156101000a6101000a601560100255601560ff0a6101000a60016015601002015560156101010a6101000a60026015601002015560156101000a60ff0a600360156010020155601560ff0a60ff0a60046015601002015560156101010a60ff0a60056015601002015560156101000a6101010a600660156010020155601560ff0a6101010a60076015601002015560156101010a6101010a60086015601002015560166101000a6101000a601660100255601660ff0a6101000a60016016601002015560166101010a6101000a60026016601002015560166101000a60ff0a600360166010020155601660ff0a60ff0a60046016601002015560166101010a60ff0a60056016601002015560166101000a6101010a600660166010020155601660ff0a6101010a60076016601002015560166101010a6101010a60086016601002015560176101000a6101000a601760100255601760ff0a6101000a60016017601002015560176101010a6101000a60026017601002015560176101000a60ff0a600360176010020155601760ff0a60ff0a60046017601002015560176101010a60ff0a60056017601002015560176101000a6101010a600660176010020155601760ff0a6101010a60076017601002015560176101010a6101010a60086017601002015560186101000a6101000a601860100255601860ff0a6101000a60016018601002015560186101010a6101000a60026018601002015560186101000a60ff0a600360186010020155601860ff0a60ff0a60046018601002015560186101010a60ff0a60056018601002015560186101000a6101010a600660186010020155601860ff0a6101010a60076018601002015560186101010a6101010a60086018601002015560196101000a6101000a601960100255601960ff0a6101000a60016019601002015560196101010a6101000a60026019601002015560196101000a60ff0a600360196010020155601960ff0a60ff0a60046019601002015560196101010a60ff0a60056019601002015560196101000a6101010a600660196010020155601960ff0a6101010a60076019601002015560196101010a6101010a600860196010020155601a6101000a6101000a601a60100255601a60ff0a6101000a6001601a6010020155601a6101010a6101000a6002601a6010020155601a6101000a60ff0a6003601a6010020155601a60ff0a60ff0a6004601a6010020155601a6101010a60ff0a6005601a6010020155601a6101000a6101010a6006601a6010020155601a60ff0a6101010a6007601a6010020155601a6101010a6101010a6008601a6010020155601b6101000a6101000a601b60100255601b60ff0a6101000a6001601b6010020155601b6101010a6101000a6002601b6010020155601b6101000a60ff0a6003601b6010020155601b60ff0a60ff0a6004601b6010020155601b6101010a60ff0a6005601b6010020155601b6101000a6101010a6006601b6010020155601b60ff0a6101010a6007601b6010020155601b6101010a6101010a6008601b6010020155601c6101000a6101000a601c60100255601c60ff0a6101000a6001601c6010020155601c6101010a6101000a6002601c6010020155601c6101000a60ff0a6003601c6010020155601c60ff0a60ff0a6004601c6010020155601c6101010a60ff0a6005601c6010020155601c6101000a6101010a6006601c6010020155601c60ff0a6101010a6007601c6010020155601c6101010a6101010a6008601c6010020155601d6101000a6101000a601d60100255601d60ff0a6101000a6001601d6010020155601d6101010a6101000a6002601d6010020155601d6101000a60ff0a6003601d6010020155601d60ff0a60ff0a6004601d6010020155601d6101010a60ff0a6005601d6010020155601d6101000a6101010a6006601d6010020155601d60ff0a6101010a6007601d6010020155601d6101010a6101010a6008601d6010020155601e6101000a6101000a601e60100255601e60ff0a6101000a6001601e6010020155601e6101010a6101000a6002601e6010020155601e6101000a60ff0a6003601e6010020155601e60ff0a60ff0a6004601e6010020155601e6101010a60ff0a6005601e6010020155601e6101000a6101010a6006601e6010020155601e60ff0a6101010a6007601e6010020155601e6101010a6101010a6008601e6010020155601f6101000a6101000a601f60100255601f60ff0a6101000a6001601f6010020155601f6101010a6101000a6002601f6010020155601f6101000a60ff0a6003601f6010020155601f60ff0a60ff0a6004601f6010020155601f6101010a60ff0a6005601f6010020155601f6101000a6101010a6006601f6010020155601f60ff0a6101010a6007601f6010020155601f6101010a6101010a6008601f601002015560206101000a6101000a602060100255602060ff0a6101000a60016020601002015560206101010a6101000a60026020601002015560206101000a60ff0a600360206010020155602060ff0a60ff0a60046020601002015560206101010a60ff0a60056020601002015560206101000a6101010a600660206010020155602060ff0a6101010a60076020601002015560206101010a6101010a60086020601002015560216101000a6101000a602160100255602160ff0a6101000a60016021601002015560216101010a6101000a60026021601002015560216101000a60ff0a600360216010020155602160ff0a60ff0a60046021601002015560216101010a60ff0a60056021601002015560216101000a6101010a600660216010020155602160ff0a6101010a60076021601002015560216101010a6101010a60086021601002015500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=Op.MUL(0x10, 0x0),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x0)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x0), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x0)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x0), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x0)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x0), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x0)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x0), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x0)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x0), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x0)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x0), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x0)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x0), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x0)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x0), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x0)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x1)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x1)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x1)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x1)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x1)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x1)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x1)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x1)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x2)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x2), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x2)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x2), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x2)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x2), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x2)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x2), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x2)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x2), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x2)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x2), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x2)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x2), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x2)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x2), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x2)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x3),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x3)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x3), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x3)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x3), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x3)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x3), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x3)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x3), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x3)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x3), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x3)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x3), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x3)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x3), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x3)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x3), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x3)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x4),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x4)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x4), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x4)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x4), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x4)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x4), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x4)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x4), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x4)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x4), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x4)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x4), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x4)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x4), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x4)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x4), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x4)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x5),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x5)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x5), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x5)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x5), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x5)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x5), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x5)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x5), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x5)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x5), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x5)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x5), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x5)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x5), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x5)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x5), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x5)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x6),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x6)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x6), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x6)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x6), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x6)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x6), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x6)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x6), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x6)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x6), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x6)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x6), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x6)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x6), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x6)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x6), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x6)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x7),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x7)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x7), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x7)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x7), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x7)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x7), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x7)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x7), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x7)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x7), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x7)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x7), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x7)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x7), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x7)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x7), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x7)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x8),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x8)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x8), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x8)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x8), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x8)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x8), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x8)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x8), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x8)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x8), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x8)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x8), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x8)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x8), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x8)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x8), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x8)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x9),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x9)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x9), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x9)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x9), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x9)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x9), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x9)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x9), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x9)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x9), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x9)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x9), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x9)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x9), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x9)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x9), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x9)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0xA),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0xA)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xA), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0xA)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xA), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0xA)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xA), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0xA)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xA), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0xA)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xA), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0xA)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xA), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0xA)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xA), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0xA)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xA), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0xA)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0xB),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0xB)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xB), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0xB)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xB), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0xB)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xB), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0xB)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xB), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0xB)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xB), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0xB)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xB), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0xB)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xB), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0xB)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xB), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0xB)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0xC),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0xC)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xC), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0xC)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xC), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0xC)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xC), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0xC)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xC), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0xC)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xC), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0xC)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xC), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0xC)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xC), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0xC)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xC), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0xC)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0xD),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0xD)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xD), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0xD)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xD), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0xD)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xD), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0xD)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xD), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0xD)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xD), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0xD)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xD), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0xD)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xD), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0xD)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xD), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0xD)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0xE),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0xE)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xE), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0xE)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xE), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0xE)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xE), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0xE)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xE), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0xE)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xE), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0xE)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xE), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0xE)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xE), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0xE)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xE), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0xE)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0xF),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0xF)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xF), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0xF)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xF), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0xF)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xF), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0xF)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xF), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0xF)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xF), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0xF)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xF), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0xF)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xF), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0xF)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0xF), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0xF)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x10),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x10)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x10), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x10)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x10), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x10)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x10), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x10)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x10), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x10)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x10), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x10)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x10), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x10)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x10), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x10)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x10), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x10)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x11),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x11)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x11), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x11)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x11), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x11)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x11), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x11)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x11), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x11)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x11), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x11)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x11), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x11)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x11), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x11)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x11), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x11)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x12),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x12)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x12), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x12)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x12), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x12)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x12), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x12)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x12), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x12)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x12), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x12)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x12), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x12)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x12), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x12)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x12), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x12)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x13),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x13)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x13), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x13)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x13), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x13)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x13), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x13)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x13), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x13)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x13), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x13)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x13), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x13)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x13), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x13)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x13), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x13)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x14),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x14)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x14), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x14)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x14), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x14)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x14), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x14)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x14), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x14)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x14), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x14)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x14), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x14)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x14), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x14)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x14), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x14)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x15),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x15)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x15), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x15)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x15), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x15)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x15), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x15)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x15), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x15)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x15), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x15)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x15), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x15)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x15), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x15)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x15), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x15)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x16),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x16)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x16), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x16)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x16), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x16)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x16), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x16)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x16), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x16)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x16), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x16)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x16), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x16)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x16), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x16)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x16), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x16)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x17),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x17)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x17), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x17)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x17), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x17)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x17), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x17)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x17), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x17)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x17), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x17)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x17), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x17)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x17), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x17)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x17), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x17)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x18),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x18)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x18), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x18)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x18), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x18)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x18), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x18)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x18), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x18)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x18), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x18)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x18), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x18)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x18), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x18)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x18), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x18)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x19),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x19)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x19), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x19)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x19), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x19)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x19), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x19)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x19), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x19)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x19), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x19)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x19), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x19)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x19), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x19)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x19), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x19)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x1A),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x1A)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1A), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x1A)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1A), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x1A)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1A), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x1A)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1A), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1A)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1A), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x1A)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1A), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x1A)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1A), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x1A)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1A), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x1A)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x1B),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x1B)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1B), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x1B)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1B), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x1B)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1B), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x1B)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1B), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1B)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1B), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x1B)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1B), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x1B)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1B), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x1B)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1B), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x1B)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x1C),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x1C)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1C), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x1C)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1C), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x1C)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1C), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x1C)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1C), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1C)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1C), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x1C)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1C), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x1C)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1C), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x1C)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1C), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x1C)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x1D),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x1D)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1D), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x1D)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1D), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x1D)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1D), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x1D)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1D), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1D)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1D), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x1D)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1D), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x1D)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1D), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x1D)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1D), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x1D)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x1E),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x1E)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1E), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x1E)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1E), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x1E)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1E), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x1E)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1E), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1E)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1E), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x1E)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1E), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x1E)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1E), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x1E)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1E), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x1E)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x1F),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x1F)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1F), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x1F)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1F), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x1F)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1F), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x1F)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1F), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x1F)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1F), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x1F)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1F), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x1F)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1F), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x1F)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x1F), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x1F)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x20),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x20)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x20), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x20)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x20), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x20)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x20), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x20)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x20), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x20)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x20), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x20)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x20), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x20)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x20), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x20)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x20), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x20)),
+                )
+                + Op.SSTORE(
+                    key=Op.MUL(0x10, 0x21),
+                    value=Op.EXP(0x100, Op.EXP(0x100, 0x21)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x21), 0x1),
+                    value=Op.EXP(0x100, Op.EXP(0xFF, 0x21)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x21), 0x2),
+                    value=Op.EXP(0x100, Op.EXP(0x101, 0x21)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x21), 0x3),
+                    value=Op.EXP(0xFF, Op.EXP(0x100, 0x21)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x21), 0x4),
+                    value=Op.EXP(0xFF, Op.EXP(0xFF, 0x21)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x21), 0x5),
+                    value=Op.EXP(0xFF, Op.EXP(0x101, 0x21)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x21), 0x6),
+                    value=Op.EXP(0x101, Op.EXP(0x100, 0x21)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x21), 0x7),
+                    value=Op.EXP(0x101, Op.EXP(0xFF, 0x21)),
+                )
+                + Op.SSTORE(
+                    key=Op.ADD(Op.MUL(0x10, 0x21), 0x8),
+                    value=Op.EXP(0x101, Op.EXP(0x101, 0x21)),
+                )
+                + Op.STOP
             ),
         ),
     }

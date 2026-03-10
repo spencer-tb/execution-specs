@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -73,8 +74,38 @@ def test_vitalik_transaction_test_paris(
 
     post = {
         Address("0x51f9d7f98e997bdd6bebde4c2dd27be8c99303aa"): Account(
-            code=bytes.fromhex(
-                "6000603f5359610043806100135939610056566c010000000000000000000000007fee098e6c2a43d9e2c04f08f0c3a87b0ba59079d4d53532071d6cd0cb86facd5605ff6100008061003f60003961003f565b6000f35b816000f0905050fe"  # noqa: E501
+            code=(
+                Op.MSTORE8(offset=0x3F, value=0x0)
+                + Op.MSIZE
+                + Op.PUSH2[0x43]
+                + Op.CODECOPY(
+                    dest_offset=Op.MSIZE,
+                    offset=Op.PUSH2[0x13],
+                    size=Op.DUP1,
+                )
+                + Op.JUMP(pc=Op.PUSH2[0x56])
+                + Op.SELFDESTRUCT(
+                    address=Op.SDIV(
+                        0xEE098E6C2A43D9E2C04F08F0C3A87B0BA59079D4D53532071D6CD0CB86FACD56,  # noqa: E501
+                        0x1000000000000000000000000,
+                    ),
+                )
+                + Op.PUSH2[0x0]
+                + Op.CODECOPY(
+                    dest_offset=0x0, offset=Op.PUSH2[0x3F], size=Op.DUP1
+                )
+                + Op.JUMP(pc=Op.PUSH2[0x3F])
+                + Op.JUMPDEST
+                + Op.PUSH1[0x0]
+                + Op.RETURN
+                + Op.JUMPDEST
+                + Op.DUP2
+                + Op.PUSH1[0x0]
+                + Op.CREATE
+                + Op.SWAP1
+                + Op.POP
+                + Op.POP
+                + Op.INVALID
             ),
         ),
     }

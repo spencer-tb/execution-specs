@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -31,10 +32,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060006000600073b0409d84ab61455cb8bec14b94f635146ab55613610901f115604b5760006000600060006000734092b3905cfea2485ea53222f41eb26e67587802617530f1505b00",  # noqa: E501
             {
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=bytes.fromhex("600160015500")
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
             },
         ),
@@ -42,10 +44,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060006000600073b0409d84ab61455cb8bec14b94f635146ab55613610902f115604b5760006000600060006000734092b3905cfea2485ea53222f41eb26e67587802617530f1505b00",  # noqa: E501
             {
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=bytes.fromhex("600160015500")
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
             },
         ),
@@ -53,10 +56,12 @@ REFERENCE_SPEC_VERSION = "N/A"
             "6000600060006000600073b0409d84ab61455cb8bec14b94f635146ab55613610903f115604b5760006000600060006000734092b3905cfea2485ea53222f41eb26e67587802617530f1505b00",  # noqa: E501
             {
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
             },
         ),
@@ -67,10 +72,11 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=bytes.fromhex("600160015500")
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
             },
         ),
@@ -81,10 +87,11 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=bytes.fromhex("600160015500")
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
             },
         ),
@@ -95,10 +102,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
             },
         ),
@@ -109,10 +118,11 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=bytes.fromhex("600160015500")
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
             },
         ),
@@ -123,10 +133,11 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=bytes.fromhex("600160015500")
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
             },
         ),
@@ -137,10 +148,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1}, code=bytes.fromhex("600160015500")
+                    storage={1: 1},
+                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
                 ),
             },
         ),
@@ -182,12 +195,12 @@ def test_sstore_gas_left(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("600160015500"),
+        code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
     )
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("600160015500"),
+        code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
         storage={0x1: 0x1},
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)

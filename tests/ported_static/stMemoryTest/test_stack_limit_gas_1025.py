@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,8 +47,14 @@ def test_stack_limit_gas_1025(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex(
-            "6103ff6000525b5a6001600051036000526000516006570000"
+        code=(
+            Op.MSTORE(offset=0x0, value=0x3FF)
+            + Op.JUMPDEST
+            + Op.GAS
+            + Op.MSTORE(offset=0x0, value=Op.SUB(Op.MLOAD(offset=0x0), 0x1))
+            + Op.JUMPI(pc=0x6, condition=Op.MLOAD(offset=0x0))
+            + Op.STOP
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
@@ -66,8 +73,16 @@ def test_stack_limit_gas_1025(
 
     post = {
         contract: Account(
-            code=bytes.fromhex(
-                "6103ff6000525b5a6001600051036000526000516006570000"
+            code=(
+                Op.MSTORE(offset=0x0, value=0x3FF)
+                + Op.JUMPDEST
+                + Op.GAS
+                + Op.MSTORE(
+                    offset=0x0, value=Op.SUB(Op.MLOAD(offset=0x0), 0x1)
+                )
+                + Op.JUMPI(pc=0x6, condition=Op.MLOAD(offset=0x0))
+                + Op.STOP
+                + Op.STOP
             ),
         ),
     }

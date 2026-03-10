@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -47,7 +48,12 @@ def test_merge_test(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
-        code=bytes.fromhex("3a600055486001554460025500"),
+        code=(
+            Op.SSTORE(key=0x0, value=Op.GASPRICE)
+            + Op.SSTORE(key=0x1, value=Op.BASEFEE)
+            + Op.SSTORE(key=0x2, value=Op.PREVRANDAO)
+            + Op.STOP
+        ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
 
@@ -84,7 +90,12 @@ def test_merge_test(
                 1: 1000,
                 2: 0x1500000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
             },
-            code=bytes.fromhex("3a600055486001554460025500"),
+            code=(
+                Op.SSTORE(key=0x0, value=Op.GASPRICE)
+                + Op.SSTORE(key=0x1, value=Op.BASEFEE)
+                + Op.SSTORE(key=0x2, value=Op.PREVRANDAO)
+                + Op.STOP
+            ),
         ),
     }
 

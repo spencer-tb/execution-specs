@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,9 +47,20 @@ def test_callcode_emptycontract(
     pre[contract] = Account(
         balance=1000,
         nonce=0,
-        code=bytes.fromhex(
-            "60406000604060006103e873945304eb96065b2a98b57a48a06ae28d285a71b561c350f2"  # noqa: E501
-            "60005500"
+        code=(
+            Op.SSTORE(
+                key=0x0,
+                value=Op.CALLCODE(
+                    gas=0xC350,
+                    address=0x945304EB96065B2A98B57A48A06AE28D285A71B5,
+                    value=0x3E8,
+                    args_offset=0x0,
+                    args_size=0x40,
+                    ret_offset=0x0,
+                    ret_size=0x40,
+                ),
+            )
+            + Op.STOP
         ),
     )
     pre[sender] = Account(balance=0x5F5E100, nonce=0)
@@ -68,8 +80,20 @@ def test_callcode_emptycontract(
     post = {
         contract: Account(
             storage={0: 1},
-            code=bytes.fromhex(
-                "60406000604060006103e873945304eb96065b2a98b57a48a06ae28d285a71b561c350f260005500"  # noqa: E501
+            code=(
+                Op.SSTORE(
+                    key=0x0,
+                    value=Op.CALLCODE(
+                        gas=0xC350,
+                        address=0x945304EB96065B2A98B57A48A06AE28D285A71B5,
+                        value=0x3E8,
+                        args_offset=0x0,
+                        args_size=0x40,
+                        ret_offset=0x0,
+                        ret_size=0x40,
+                    ),
+                )
+                + Op.STOP
             ),
         ),
     }

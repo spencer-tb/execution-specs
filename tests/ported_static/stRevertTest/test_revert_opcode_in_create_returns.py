@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,8 +49,19 @@ def test_revert_opcode_in_create_returns(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "600d80601560003960006000f0503d6000550000fe6211223360005260206000fd00"  # noqa: E501
+        code=(
+            Op.PUSH1[0xD]
+            + Op.CODECOPY(dest_offset=0x0, offset=0x15, size=Op.DUP1)
+            + Op.PUSH1[0x0]
+            + Op.PUSH1[0x0]
+            + Op.POP(Op.CREATE)
+            + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+            + Op.STOP
+            + Op.STOP
+            + Op.INVALID
+            + Op.MSTORE(offset=0x0, value=0x112233)
+            + Op.REVERT(offset=0x0, size=0x20)
+            + Op.STOP
         ),
         storage={0x0: 0x1},
     )
@@ -70,8 +82,19 @@ def test_revert_opcode_in_create_returns(
     post = {
         contract: Account(
             storage={0: 32},
-            code=bytes.fromhex(
-                "600d80601560003960006000f0503d6000550000fe6211223360005260206000fd00"  # noqa: E501
+            code=(
+                Op.PUSH1[0xD]
+                + Op.CODECOPY(dest_offset=0x0, offset=0x15, size=Op.DUP1)
+                + Op.PUSH1[0x0]
+                + Op.PUSH1[0x0]
+                + Op.POP(Op.CREATE)
+                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
+                + Op.STOP
+                + Op.STOP
+                + Op.INVALID
+                + Op.MSTORE(offset=0x0, value=0x112233)
+                + Op.REVERT(offset=0x0, size=0x20)
+                + Op.STOP
             ),
         ),
     }

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,8 +49,18 @@ def test_call_sha256_0(
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,
-        code=bytes.fromhex(
-            "600160005260206000602060006000600260fff1600051600055"
+        code=(
+            Op.MSTORE(offset=0x0, value=0x1)
+            + Op.CALL(
+                gas=0xFF,
+                address=0x2,
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x20,
+                ret_offset=0x0,
+                ret_size=0x20,
+            )
+            + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
@@ -71,8 +82,18 @@ def test_call_sha256_0(
             storage={
                 0: 0xEC4916DD28FC4C10D78E287CA5D9CC51EE1AE73CBFDE08C6B37324CBFAAC8BC5,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "600160005260206000602060006000600260fff1600051600055"
+            code=(
+                Op.MSTORE(offset=0x0, value=0x1)
+                + Op.CALL(
+                    gas=0xFF,
+                    address=0x2,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x20,
+                    ret_offset=0x0,
+                    ret_size=0x20,
+                )
+                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
             ),
         ),
     }

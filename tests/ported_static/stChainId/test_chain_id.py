@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,7 +47,7 @@ def test_chain_id(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex("4660015500"),
+        code=Op.SSTORE(key=0x1, value=Op.CHAINID) + Op.STOP,
     )
     pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
 
@@ -63,7 +64,10 @@ def test_chain_id(
     )
 
     post = {
-        contract: Account(storage={1: 1}, code=bytes.fromhex("4660015500")),
+        contract: Account(
+            storage={1: 1},
+            code=Op.SSTORE(key=0x1, value=Op.CHAINID) + Op.STOP,
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

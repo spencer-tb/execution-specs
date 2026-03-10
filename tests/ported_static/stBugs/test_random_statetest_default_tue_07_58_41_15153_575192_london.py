@@ -16,6 +16,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,14 +50,24 @@ def test_random_statetest_default_tue_07_58_41_15153_575192_london(
     pre[contract] = Account(
         balance=0,
         nonce=28,
-        code=bytes.fromhex("62abcdefff"),
+        code=Op.SELFDESTRUCT(address=0xABCDEF),
     )
     pre[sender] = Account(balance=0x5D8FDD3FF54298B4, nonce=28)
     pre[coinbase] = Account(
         balance=0,
         nonce=28,
-        code=bytes.fromhex(
-            "61dead6000600060006000600061dead5af162abcdef3f600155"
+        code=(
+            Op.PUSH2[0xDEAD]
+            + Op.CALL(
+                gas=Op.GAS,
+                address=0xDEAD,
+                value=0x0,
+                args_offset=0x0,
+                args_size=0x0,
+                ret_offset=0x0,
+                ret_size=0x0,
+            )
+            + Op.SSTORE(key=0x1, value=Op.EXTCODEHASH(address=0xABCDEF))
         ),
     )
 
@@ -73,10 +84,20 @@ def test_random_statetest_default_tue_07_58_41_15153_575192_london(
     )
 
     post = {
-        contract: Account(code=bytes.fromhex("62abcdefff")),
+        contract: Account(code=Op.SELFDESTRUCT(address=0xABCDEF)),
         coinbase: Account(
-            code=bytes.fromhex(
-                "61dead6000600060006000600061dead5af162abcdef3f600155"
+            code=(
+                Op.PUSH2[0xDEAD]
+                + Op.CALL(
+                    gas=Op.GAS,
+                    address=0xDEAD,
+                    value=0x0,
+                    args_offset=0x0,
+                    args_size=0x0,
+                    ret_offset=0x0,
+                    ret_size=0x0,
+                )
+                + Op.SSTORE(key=0x1, value=Op.EXTCODEHASH(address=0xABCDEF))
             ),
         ),
     }

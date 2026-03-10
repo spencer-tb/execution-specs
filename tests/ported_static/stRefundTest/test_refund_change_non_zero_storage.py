@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -49,7 +50,7 @@ def test_refund_change_non_zero_storage(
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=bytes.fromhex("601760015500"),
+        code=Op.SSTORE(key=0x1, value=0x17) + Op.STOP,
         storage={0x1: 0x1},
     )
     pre[coinbase] = Account(balance=0, nonce=1)
@@ -67,7 +68,10 @@ def test_refund_change_non_zero_storage(
     )
 
     post = {
-        contract: Account(storage={1: 23}, code=bytes.fromhex("601760015500")),
+        contract: Account(
+            storage={1: 23},
+            code=Op.SSTORE(key=0x1, value=0x17) + Op.STOP,
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,7 +47,7 @@ def test_self_balance(
     pre[contract] = Account(
         balance=500,
         nonce=0,
-        code=bytes.fromhex("4760015500"),
+        code=Op.SSTORE(key=0x1, value=Op.SELFBALANCE) + Op.STOP,
     )
     pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
 
@@ -63,7 +64,10 @@ def test_self_balance(
     )
 
     post = {
-        contract: Account(storage={1: 500}, code=bytes.fromhex("4760015500")),
+        contract: Account(
+            storage={1: 500},
+            code=Op.SSTORE(key=0x1, value=Op.SELFBALANCE) + Op.STOP,
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

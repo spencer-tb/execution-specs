@@ -15,6 +15,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -33,9 +34,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0xedd4d7cdacb700ca3e28f8ddbcfb6aac31f64925"): Account(
-                    code=bytes.fromhex(
-                        "73edd4d7cdacb700ca3e28f8ddbcfb6aac31f649253173edd4d7cdacb700ca3e28f8ddbcfb6aac31f649253173edd4d7cdacb700ca3e28f8ddbcfb6aac31f64925313900"  # noqa: E501
+                    code=Op.CODECOPY(
+                        dest_offset=Op.BALANCE(
+                            address=0xEDD4D7CDACB700CA3E28F8DDBCFB6AAC31F64925
+                        ),
+                        offset=Op.BALANCE(
+                            address=0xEDD4D7CDACB700CA3E28F8DDBCFB6AAC31F64925
+                        ),
+                        size=Op.BALANCE(
+                            address=0xEDD4D7CDACB700CA3E28F8DDBCFB6AAC31F64925
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -43,9 +53,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0xedd4d7cdacb700ca3e28f8ddbcfb6aac31f64925"): Account(
-                    code=bytes.fromhex(
-                        "73edd4d7cdacb700ca3e28f8ddbcfb6aac31f649253173edd4d7cdacb700ca3e28f8ddbcfb6aac31f649253173edd4d7cdacb700ca3e28f8ddbcfb6aac31f64925313900"  # noqa: E501
+                    code=Op.CODECOPY(
+                        dest_offset=Op.BALANCE(
+                            address=0xEDD4D7CDACB700CA3E28F8DDBCFB6AAC31F64925
+                        ),
+                        offset=Op.BALANCE(
+                            address=0xEDD4D7CDACB700CA3E28F8DDBCFB6AAC31F64925
+                        ),
+                        size=Op.BALANCE(
+                            address=0xEDD4D7CDACB700CA3E28F8DDBCFB6AAC31F64925
+                        ),
                     )
+                    + Op.STOP
                 )
             },
         ),
@@ -77,9 +96,19 @@ def test_codecopy_non_const(
     pre[contract] = Account(
         balance=0,
         nonce=0,
-        code=bytes.fromhex(
-            "73edd4d7cdacb700ca3e28f8ddbcfb6aac31f649253173edd4d7cdacb700ca3e28f8ddbc"  # noqa: E501
-            "fb6aac31f649253173edd4d7cdacb700ca3e28f8ddbcfb6aac31f64925313900"
+        code=(
+            Op.CODECOPY(
+                dest_offset=Op.BALANCE(
+                    address=0xEDD4D7CDACB700CA3E28F8DDBCFB6AAC31F64925,
+                ),
+                offset=Op.BALANCE(
+                    address=0xEDD4D7CDACB700CA3E28F8DDBCFB6AAC31F64925,
+                ),
+                size=Op.BALANCE(
+                    address=0xEDD4D7CDACB700CA3E28F8DDBCFB6AAC31F64925,
+                ),
+            )
+            + Op.STOP
         ),
     )
 
