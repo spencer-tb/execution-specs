@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -4611,7 +4612,9 @@ def test_create2_high_nonce_delegatecall(
 ) -> None:
     """Delegate calls CREATE/CREATE2 from an account with max allowed..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xc4a2ca1058df329e5da4755f9921ddaf05cbaa06")
+    sender = EOA(
+        key=0xF79127A3004ABDE26A4CBD80C428CB10F829FA11B54D36E7B326F4F4A5927ACF
+    )
     contract = Address("0xd7d7b37fc131964cd181d47c9b705028776fe3d4")
     callee = Address("0xcf7dd310db9459fa2e6eec97d4b972ba24ff23eb")
     callee_1 = Address("0xe51bc07f90c9661fa42db3bde8dd52b942ac69e0")
@@ -4813,9 +4816,7 @@ def test_create2_high_nonce_delegatecall(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xf79127a3004abde26a4cbd80c428cb10f829fa11b54d36e7b326f4f4a5927acf"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=16777216,

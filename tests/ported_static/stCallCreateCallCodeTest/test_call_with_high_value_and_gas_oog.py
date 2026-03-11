@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -119,7 +120,9 @@ def test_call_with_high_value_and_gas_oog(
 ) -> None:
     """Call with value. call takes more gas then tx has, and more value..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xd187b36e8532efd7f15218fb1781d79330c0cda2")
+    sender = EOA(
+        key=0x897B12D02D588D8A4FE16FF831CBD4459C6F62F8C845B0CCDD31CAF068C84A26
+    )
     contract = Address("0xdfad372452688759edd82c422bf3976eafc89c2b")
     callee = Address("0x0896f13e800125c0ccec44f3c434335f0a97bc1b")
 
@@ -176,9 +179,7 @@ def test_call_with_high_value_and_gas_oog(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x897b12d02d588d8a4fe16ff831cbd4459c6f62f8c845b0ccdd31caf068c84a26"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=6000000,

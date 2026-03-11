@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -37,7 +38,9 @@ def test_transaction_colliding_with_non_empty_account_send_paris(
 ) -> None:
     """Account with non-empty code attempts to send tx to another..."""
     coinbase = Address("0xeb201d2887816e041f6e807e804f64f3a7a226fe")
-    sender = Address("0x2822eae5589c28b202c5ab4c9e07fb69edc8e65a")
+    sender = EOA(
+        key=0x402790500EA083A617EC567407D9EC3BBB3A5C8B812547D9F66E8D7878B8A75D
+    )
     contract = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
 
     env = Environment(
@@ -59,9 +62,7 @@ def test_transaction_colliding_with_non_empty_account_send_paris(
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x402790500ea083a617ec567407d9ec3bbb3a5c8b812547d9f66e8d7878b8a75d"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=400000,

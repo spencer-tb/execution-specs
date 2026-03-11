@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -507,7 +508,9 @@ def test_ecpairing_one_point_with_g2_zero_and_g1_invalid(
 ) -> None:
     """Use the ecpairing checker with one point, where g1 is not on the..."""
     coinbase = Address("0x3535353535353535353535353535353535353535")
-    sender = Address("0x82a978b3f5962a5b0957d9ee9eef472ee55b42f1")
+    sender = EOA(
+        key=0x044852B2A670ADE5407E78FB2863C51DE9FCB96542A07186FE3AEDA6BB8A116D
+    )
     contract = Address("0xc305c901078781c232a2a521c2af7980f8385ee9")
     callee = Address("0x0000000000000000000000000000000000000001")
     callee_1 = Address("0x0000000000000000000000000000000000000002")
@@ -662,9 +665,7 @@ def test_ecpairing_one_point_with_g2_zero_and_g1_invalid(
     pre[callee_16] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x044852b2a670ade5407e78fb2863c51de9fcb96542a07186fe3aeda6bb8a116d"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "30c8d1da0000000000000000000000000000000000000000000000000000000000000020"  # noqa: E501

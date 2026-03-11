@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_refund_single_suicide(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0xeb201d2887816e041f6e807e804f64f3a7a226fe")
-    sender = Address("0xdf2e264abeec114532b73774cfa1994aed66a9f6")
+    sender = EOA(
+        key=0x2B75D0C814EB07C075FCCBDD9A036FAF651D9C46D7477D6C4F30772CFCA90D38
+    )
     contract = Address("0xfc2c9403120f755b844fd30d99c231483e701631")
 
     env = Environment(
@@ -129,9 +132,7 @@ def test_refund_single_suicide(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x2b75d0c814eb07c075fccbdd9a036faf651d9c46d7477d6c4f30772cfca90d38"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=300000,

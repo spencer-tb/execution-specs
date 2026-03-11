@@ -12,6 +12,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -57,7 +58,9 @@ def test_create_transaction_call_data(
 ) -> None:
     """Tests if CALLDATALOAD, CALLDATACOPY, CODECOPY and CODESIZE work..."""
     coinbase = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    sender = EOA(
+        key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
+    )
 
     env = Environment(
         fee_recipient=coinbase,
@@ -73,9 +76,7 @@ def test_create_transaction_call_data(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
-        ),
+        sender=sender,
         to=None,
         data=tx_data,
         gas_limit=100000,

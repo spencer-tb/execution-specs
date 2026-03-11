@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -196,7 +197,9 @@ def test_revert_depth2(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xfaa10b404ab607779993c016cd5da73ae1f29d7e")
+    sender = EOA(
+        key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
+    )
     contract = Address("0x68ea09e164a8b66de117a2c306b3966e6d71ca93")
     callee = Address("0x0707f29673f05e46feeb7c4766419a222010ae45")
     callee_1 = Address("0x78ed2eb0809cd080c7837dc83afc388a2b98d200")
@@ -296,9 +299,7 @@ def test_revert_depth2(
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=tx_gas_limit,

@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_returndatasize_after_oog_after_deeper(
 ) -> None:
     """Transaction calls A (CALL B(CALL C(RETURN) OOG) 'check buffers')."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x73470b0c32d3f7811258f2bf112aa71e17b115c6")
+    sender = EOA(
+        key=0x987C63506890B18862BD2304513F21B726A7E35961C9214954326694141FDB46
+    )
     contract = Address("0x58eaa3041ad52c24e38e485222953f1cc19c7484")
     callee = Address("0x8e0c75135225713d8c9acbb889abba5a5f598920")
     callee_1 = Address("0xbda572e15071b6ab42cfec01423f1fbb1de68703")
@@ -114,9 +117,7 @@ def test_returndatasize_after_oog_after_deeper(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x987c63506890b18862bd2304513f21b726a7e35961c9214954326694141fdb46"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=200000,

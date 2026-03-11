@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -336379,7 +336380,9 @@ def test_precomps_eip2929_cancun(
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x2e3d0156d2b99a6eacba540c55f423c8f5a33143")
+    sender = EOA(
+        key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
+    )
     contract = Address("0x858295015aff9cfdb96c3c2ec19f7ac654871b6c")
     callee = Address("0x1338f76642a7a19cc50bdff45172cb6c2a7d20c0")
     callee_1 = Address("0x7be86ffab69b0af1ed862ae6d8e1efa3e8438b79")
@@ -337160,9 +337163,7 @@ def test_precomps_eip2929_cancun(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=16777216,

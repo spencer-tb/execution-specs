@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -6285,7 +6286,9 @@ def test_revert_precompiled_touch_exact_oog_paris(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x68795c4aa09d6f4ed3e5deddf8c2ad3049a601da")
-    sender = Address("0xadd22153059388891d82c6c8e08d80845352bbb0")
+    sender = EOA(
+        key=0x0FF8D58222F34F6890DDAA468C023B77D6691ED7D3C4DCDDAE38336212FAF54B
+    )
     contract = Address("0x6c7fac59c79986689878e37545df629f68278098")
     callee = Address("0x1688023d9ae9e25ea02a2447a77b9cc9d22ce57b")
     callee_1 = Address("0x33506407e929a3834ea7bfa65f86b41c7b7e57b9")
@@ -6402,9 +6405,7 @@ def test_revert_precompiled_touch_exact_oog_paris(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x0ff8d58222f34f6890ddaa468c023b77d6691ed7d3c4dcddae38336212faf54b"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=tx_gas_limit,

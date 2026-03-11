@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_sstore_call_to_self_sub_refund_below_zero(
 ) -> None:
     """Test where accnt has slot 1 value of '2', is cleared, then calls..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x2c4b3807d1cb27f33e74c7cd5be5b0d6b176414e")
+    sender = EOA(
+        key=0xAF50993BA9FD52F2A61FCD1DC6D59A44E7AF39F4289201CC19EA7D30E8E27E83
+    )
     contract = Address("0xb48023055b6c3d565a6f5488459d64efab79b6c7")
 
     env = Environment(
@@ -73,9 +76,7 @@ def test_sstore_call_to_self_sub_refund_below_zero(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xaf50993ba9fd52f2a61fcd1dc6d59a44e7af39f4289201cc19ea7d30e8e27e83"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=2367154,

@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_14_revert_after_nested_staticcall(
 ) -> None:
     """Transient storage can't be manipulated from nested staticcall."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xcef5f3b33e31360216fab2c61046840df9bd788e")
+    sender = EOA(
+        key=0xBE0E7D5FEA1604BF57E004B0B414DF8DE04816DBB1C8F8719B725D0D6619B531
+    )
     contract = Address("0x1150baff55fdcea5fd92b0995358ec0c416debe3")
 
     env = Environment(
@@ -139,9 +142,7 @@ def test_14_revert_after_nested_staticcall(
     pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xbe0e7d5fea1604bf57e004b0b414df8de04816dbb1c8f8719b725d0d6619b531"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex("f5f40590"),
         gas_limit=400000,

@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -52,7 +53,9 @@ def test_coinbase_t2(
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x7704d8a022a1ba8f3539fc82c7d7fb065abc0df3")
-    sender = Address("0x8dab845a8398167a1c204f0e79540d619be8b473")
+    sender = EOA(
+        key=0xDE0C95357363DA5C1C5A73BD7C2781CA5C9FECC1014103B5E1D1E990AE8208EC
+    )
     contract = Address("0x30873f83c35401e315e6e5994c012f1ee8119585")
 
     env = Environment(
@@ -104,9 +107,7 @@ def test_coinbase_t2(
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "693c61390000000000000000000000000000000000000000000000000000000000000000"  # noqa: E501

@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_suicides_and_internal_call_suicides_oog(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    sender = Address("0x7f3f285918d9b5e764174551e10b7539b97bbb27")
+    sender = EOA(
+        key=0xA2333EEF5630066B928DEA5FD85A239F511B5B067D1441EE7AC290D0122B917B
+    )
     contract = Address("0x78f15ba0abc5cc1aaa5a0ac6add5d28dd9ab8e1e")
     callee = Address("0x5f0d8cd21c9026a32a4e8d15257b1801458989f3")
 
@@ -77,9 +80,7 @@ def test_suicides_and_internal_call_suicides_oog(
     pre[sender] = Account(balance=0x5F5E100, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xa2333eef5630066b928dea5fd85a239f511b5b067d1441ee7ac290d0122b917b"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=50000,

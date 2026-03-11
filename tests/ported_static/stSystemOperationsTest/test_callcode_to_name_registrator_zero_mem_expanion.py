@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -128,7 +129,9 @@ def test_callcode_to_name_registrator_zero_mem_expanion(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
+    sender = EOA(
+        key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
+    )
     contract = Address("0x82f454dea4d0958bced42315a0e580848b2c440c")
     callee = Address("0x15eb18969e0925c8e4a76fd7cbce36a2b056b27e")
 
@@ -190,9 +193,7 @@ def test_callcode_to_name_registrator_zero_mem_expanion(
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=tx_gas_limit,

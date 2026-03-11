@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -36,7 +37,9 @@ def test_call_recursive_bomb_pre_call(
 ) -> None:
     """Recursive call."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x9f583f1fdfa7e94974bff973b2abcd0ad513af0b")
+    sender = EOA(
+        key=0x77F65B71F1F16A75476F469F7106D1B60BFEC266AE25B8DA16A9091D223AA24A
+    )
     contract = Address("0x55bd941930d381e552d261d75ed997be59e36350")
     callee = Address("0x1b3f200856856edc2e98efcd637775c6e341e3c0")
 
@@ -101,9 +104,7 @@ def test_call_recursive_bomb_pre_call(
     pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x77f65b71f1f16a75476f469f7106d1b60bfec266ae25b8da16a9091d223aa24a"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=9214364837600034817,

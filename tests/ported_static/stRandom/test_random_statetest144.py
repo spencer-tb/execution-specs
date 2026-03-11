@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_random_statetest144(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0xb0085a57673c8f7d78fb870418f622e42fd686e4")
-    sender = Address("0x094419ff21b7d5a0f465fd0fae324dc95c5a97e9")
+    sender = EOA(
+        key=0x102DA5C19454BAF64E4F417E04AC2551245F3F217FFE9197F0C1D80FC2B16CFF
+    )
     contract = Address("0xea1cd1b117b10ac33fd7bbf18889624625ede7d4")
     callee = Address("0x19bcdbcd094c63df253c825b4b8e6dffc45c21a4")
 
@@ -109,9 +112,7 @@ def test_random_statetest144(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x102da5c19454baf64e4f417e04ac2551245f3f217ffe9197f0c1d80fc2b16cff"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "166e31b12700cdefa7a0591398d415023175d1e5a1eca036986533972cab6625e976572e"  # noqa: E501

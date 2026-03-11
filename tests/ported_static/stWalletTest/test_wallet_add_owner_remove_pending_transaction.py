@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -34,7 +35,9 @@ def test_wallet_add_owner_remove_pending_transaction(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x3fb1cd2cd96c6d5c0b5eb3322d807b34482481d4")
+    sender = EOA(
+        key=0xA95DEFE70EBEA7804F9C3BE42D20D24375E2A92B9D9666B832069C5F3CD423DD
+    )
     contract = Address("0xec0e71ad0a90ffe1909d27dac207f7680abba42d")
     callee = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
@@ -184,9 +187,7 @@ def test_wallet_add_owner_remove_pending_transaction(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xa95defe70ebea7804f9c3be42d20d24375e2a92b9d9666b832069c5f3cd423dd"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "7065cb48000000000000000000000000bbb1cd2cd96c6d5c0b5eb3322d807b34482481d4"  # noqa: E501

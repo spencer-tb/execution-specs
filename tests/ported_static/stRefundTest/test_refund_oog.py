@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_refund_oog(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0xeb201d2887816e041f6e807e804f64f3a7a226fe")
-    sender = Address("0x82e87048f69c54e96b3943452da0d472e0e51260")
+    sender = EOA(
+        key=0x8518C6B13163F88376ADBDE956B3D6C1E4E027E25E20994C1AD0D78B8FD7FAC9
+    )
     contract = Address("0xf4c9fc42faeda49049e3b8e2b97a17cc2fe95718")
 
     env = Environment(
@@ -56,9 +59,7 @@ def test_refund_oog(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x8518c6b13163f88376adbde956b3d6c1e4e027e25e20994c1ad0d78b8fd7fac9"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=26005,

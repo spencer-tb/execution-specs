@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_delegatecall_emptycontract(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x739cba7753b12ea8d3a364e609b7a5cec9c4c320")
+    sender = EOA(
+        key=0x11489F9B076D3F3185EBE5C6E2DBEDBE9E283A6CE75895780134252B3DD5DBCC
+    )
     contract = Address("0x4a88cf3b3f1dabdd27e62fcb5df86d7d685e0044")
 
     env = Environment(
@@ -70,9 +73,7 @@ def test_delegatecall_emptycontract(
     pre[sender] = Account(balance=0x10C8E0, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x11489f9b076d3f3185ebe5c6e2dbedbe9e283a6ce75895780134252b3dd5dbcc"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=105044,

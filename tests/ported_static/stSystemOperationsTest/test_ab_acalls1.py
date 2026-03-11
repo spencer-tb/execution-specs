@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -33,7 +34,9 @@ def test_ab_acalls1(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
+    sender = EOA(
+        key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
+    )
     contract = Address("0x572a88ed686beb6c9b71dc491ba1e120b327a85f")
     callee = Address("0x6236ea4ea8f3e5263acb65a97abe8683ab54d03a")
 
@@ -92,9 +95,7 @@ def test_ab_acalls1(
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=1000000000,

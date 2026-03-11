@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_callcode_output3partial_fail(
 ) -> None:
     """Check output memory after callcode. callcode fails with underflow..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x2e3d0156d2b99a6eacba540c55f423c8f5a33143")
+    sender = EOA(
+        key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
+    )
     contract = Address("0xee172f045cfa9101ee8c62faf6975d8f4c1e2099")
     callee = Address("0x834abc2c68c5f44ea9ae82b67aaf92044901cdc6")
 
@@ -82,9 +85,7 @@ def test_callcode_output3partial_fail(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=1000000,

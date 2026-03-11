@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -128,7 +129,9 @@ def test_callcode_lose_gas_oog(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    sender = Address("0x4768b5e50b0ebe91ae38d84a47e3179e615f9c40")
+    sender = EOA(
+        key=0xE7C72B378297589ACEE4E0BA3272841BCFC5E220F86DE253F890274CFEE9E474
+    )
     contract = Address("0xbe855315b63d137b74d5eed6be5cd9dde6e2478d")
     callee = Address("0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0")
 
@@ -170,9 +173,7 @@ def test_callcode_lose_gas_oog(
     pre[callee] = Account(balance=7000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xe7c72b378297589acee4e0ba3272841bcfc5e220f86de253f890274cfee9e474"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=tx_gas_limit,

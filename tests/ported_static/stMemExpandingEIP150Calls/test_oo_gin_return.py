@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -342,7 +343,9 @@ def test_oo_gin_return(
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x56724d001b4f2a2888a81971a64aad37cd43f881")
+    sender = EOA(
+        key=0x40AC0FC28C27E961EE46EC43355A094DE205856EDBD4654CF2577C2608D4EC1E
+    )
     contract = Address("0xebd3191dd8150f47e30f87927db4592163ee9224")
     callee = Address("0x9f5c4c430e37b429d18f8aba147e2302af08f210")
     callee_1 = Address("0xcee9f0c6117cc881ad7b4c378c2bebee8fcd04a9")
@@ -433,9 +436,7 @@ def test_oo_gin_return(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x40ac0fc28c27e961ee46ec43355a094de205856edbd4654cf2577c2608d4ec1e"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=9437184,

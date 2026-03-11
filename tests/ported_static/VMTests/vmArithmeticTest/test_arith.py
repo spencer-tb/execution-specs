@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_arith(
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x56724d001b4f2a2888a81971a64aad37cd43f881")
+    sender = EOA(
+        key=0x40AC0FC28C27E961EE46EC43355A094DE205856EDBD4654CF2577C2608D4EC1E
+    )
     contract = Address("0x14814d06e93efb1102a15d5881432c9ff6c91362")
 
     env = Environment(
@@ -71,9 +74,7 @@ def test_arith(
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x40ac0fc28c27e961ee46ec43355a094de205856edbd4654cf2577c2608d4ec1e"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=16777216,

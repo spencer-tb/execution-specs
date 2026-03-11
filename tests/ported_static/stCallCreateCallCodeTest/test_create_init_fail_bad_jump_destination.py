@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_create_init_fail_bad_jump_destination(
 ) -> None:
     """Create fails because init code has bad jump dest (underflow)."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
+    sender = EOA(
+        key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
+    )
     contract = Address("0x866b704865d7d80842e1d7c2c1c8bf682a3a437c")
 
     env = Environment(
@@ -63,9 +66,7 @@ def test_create_init_fail_bad_jump_destination(
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=2200000,

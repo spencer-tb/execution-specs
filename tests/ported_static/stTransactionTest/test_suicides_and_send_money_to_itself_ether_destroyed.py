@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_suicides_and_send_money_to_itself_ether_destroyed(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0xeb201d2887816e041f6e807e804f64f3a7a226fe")
-    sender = Address("0xcb5d1586e89fa40127518afab992de32dd3b7434")
+    sender = EOA(
+        key=0xD066C5DB28BDA8940CFC5CBEFD1556CBC89C69B19F6D1AAA9FAC69AEE4B4A1BF
+    )
     contract = Address("0xccbd97bed823989bf91c6ac4ceac020b2881f3a5")
 
     env = Environment(
@@ -61,9 +64,7 @@ def test_suicides_and_send_money_to_itself_ether_destroyed(
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xd066c5db28bda8940cfc5cbefd1556cbc89c69b19f6d1aaa9fac69aee4b4a1bf"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=31700,

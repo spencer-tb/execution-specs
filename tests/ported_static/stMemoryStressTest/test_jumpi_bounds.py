@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -74,7 +75,9 @@ def test_jumpi_bounds(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xf2f6c03017e58b15115443223a6a0f8a4363b5c1")
+    sender = EOA(
+        key=0x31B5AF02B012484AE954B3A43943242EDE546A2E76FC0A6ACC17435107C385EB
+    )
     contract = Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9")
 
     env = Environment(
@@ -105,9 +108,7 @@ def test_jumpi_bounds(
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x31b5af02b012484ae954b3a43943242ede546a2e76fc0a6acc17435107c385eb"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=tx_gas_limit,

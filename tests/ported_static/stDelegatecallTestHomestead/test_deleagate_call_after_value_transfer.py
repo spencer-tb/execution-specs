@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_deleagate_call_after_value_transfer(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x6fda566d1950d7e0a4dac1de87109b2ca7d12da4")
+    sender = EOA(
+        key=0x3722FAAB4D25B944622D559EA4BCF38B4BCF3CAF07A6D2C6FD99321C1A66C974
+    )
     contract = Address("0xdd657898b318b3d967472eaa82bb75c4141b6735")
     callee = Address("0x0346aa231cb52f55ddf201dc19ca469cc73e6495")
 
@@ -79,9 +82,7 @@ def test_deleagate_call_after_value_transfer(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x3722faab4d25b944622d559ea4bcf38b4bcf3caf07a6d2c6fd99321c1a66c974"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=453081,

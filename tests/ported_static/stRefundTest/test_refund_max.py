@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_refund_max(
 ) -> None:
     """Ori Pomerantz   qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xe9d050af4e864e83c38a83b4b69407e6ff3c70c5")
+    sender = EOA(
+        key=0xB5555C6F8171A6EB3C0A84ED8F01AF5CE65A85A096A824A60EE5E2C2C2E076D1
+    )
     contract = Address("0x7e9d1ff50f8eb9591a0434abfe3230054a934124")
 
     env = Environment(
@@ -89,9 +92,7 @@ def test_refund_max(
     pre[sender] = Account(balance=0xE8D848C3A0, nonce=1)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xb5555c6f8171a6eb3c0a84ed8f01af5ce65a85a096a824a60ee5e2c2c2e076d1"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=2601000,

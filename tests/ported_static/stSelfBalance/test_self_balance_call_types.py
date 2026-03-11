@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -431,7 +432,9 @@ def test_self_balance_call_types(
 ) -> None:
     """SELFBALANCE tests inside CALL, DELEGATECALL, and CALLCODE."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xd187b36e8532efd7f15218fb1781d79330c0cda2")
+    sender = EOA(
+        key=0x897B12D02D588D8A4FE16FF831CBD4459C6F62F8C845B0CCDD31CAF068C84A26
+    )
     contract = Address("0x84bf87fbef135afea15330fdf5847eb504cff901")
     callee = Address("0x76bac61ee2056f42f6cc29f5400adae3e5705237")
     callee_1 = Address("0x8537ce29429ea557e3903c255ee6554dd8d21d26")
@@ -580,9 +583,7 @@ def test_self_balance_call_types(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x897b12d02d588d8a4fe16ff831cbd4459c6f62f8c845b0ccdd31caf068c84a26"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=1000000,

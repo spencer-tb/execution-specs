@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -1482,7 +1483,9 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
 ) -> None:
     """Test checks that the returndata buffer is changed when a subcall..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xfaa10b404ab607779993c016cd5da73ae1f29d7e")
+    sender = EOA(
+        key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
+    )
     contract = Address("0x172a8f572404293aa810685dfdc6f740c300cc4b")
     callee = Address("0x127eaf7e31d691a8393b7a2f84a6e94372190c01")
     callee_1 = Address("0x6bacdfa8216dbb2a09819f8739e57ae3574c9fff")
@@ -1712,9 +1715,7 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=tx_gas_limit,

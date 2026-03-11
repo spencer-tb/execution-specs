@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_random_statetest643(
 ) -> None:
     """Return ~1 MB out of bounds of the init code. should throw..."""
     coinbase = Address("0x02a81f3b6340ef03047f2e09f2126aa8334233bd")
-    sender = Address("0x02a81f3b6340ef03047f2e09f2126aa8334233bd")
+    sender = EOA(
+        key=0x2C6BEC15D915620A88056CC6BFB70707AFA902ABD52C7DFEAB0864BE472CB8AF
+    )
     contract = Address("0x6e40c70f8be9a7633e8a31580c85f275b86362ef")
     callee_1 = Address("0x971ab94b9c20484b37b157476a9f106f639779ed")
 
@@ -95,9 +98,7 @@ def test_random_statetest643(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x2c6bec15d915620a88056cc6bfb70707afa902abd52c7dfeab0864be472cb8af"  # noqa: E501
-        ),
+        sender=sender,
         to=None,
         data=bytes.fromhex(
             "620d15bc62074ac2f3789b4ff89d27fb5018b60a3730731819c16c8a1e6513c3c2703e63"  # noqa: E501

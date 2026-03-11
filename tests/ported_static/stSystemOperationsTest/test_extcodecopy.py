@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_extcodecopy(
 ) -> None:
     """God knows what is happening in this test."""
     coinbase = Address("0x4401fcaf7d64d53fb1cfc5c9045c32aa919a8c82")
-    sender = Address("0x6a3c158cfb89cd1c76fe54bc718c35f90ffe95ca")
+    sender = EOA(
+        key=0x7446B5F5F4C3994BA600DA46B6CA0E5DBD71BCE76740B040BA716507ECB75BB9
+    )
     contract = Address("0x0614253558ab9d138504425f7c247229db2c5baf")
     callee = Address("0x5b400827141a956ceb3e889ad3e1707aee1a575c")
 
@@ -147,9 +150,7 @@ def test_extcodecopy(
     pre[sender] = Account(balance=0x4F6CA7B90CEB5FD4, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x7446b5f5f4c3994ba600da46b6ca0e5dbd71bce76740b040ba716507ecb75bb9"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "6e27b0577f2549e5fa01e3db96e7b03a62e489115538620295677faf15040c1c1796bad1"  # noqa: E501

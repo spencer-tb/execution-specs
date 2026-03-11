@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -425,7 +426,9 @@ def test_transaction_costs(
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x35324d848f3c56aec54254818cfc30dbeba73046")
+    sender = EOA(
+        key=0x7778A3B885EA30938725C6E00831943A454477163CDBC252DEBEB9612B4FA5F7
+    )
     contract = Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a")
 
     env = Environment(
@@ -446,9 +449,7 @@ def test_transaction_costs(
     pre[sender] = Account(balance=0x5FA9C18, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x7778a3b885ea30938725c6e00831943a454477163cdbc252debeb9612b4fa5f7"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=400000,

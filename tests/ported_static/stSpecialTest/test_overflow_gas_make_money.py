@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -31,7 +32,9 @@ def test_overflow_gas_make_money(
 ) -> None:
     """Apparently this test was testing theoretical issue occur when tr..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xde1dfd9a06b67489748eeab5f2ae651c85bc1654")
+    sender = EOA(
+        key=0x4C30106C229CD77A61E9EAB5FCEE11CC912BF94F785EE56F406817744BB6A074
+    )
     contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
@@ -46,9 +49,7 @@ def test_overflow_gas_make_money(
     pre[sender] = Account(balance=0x4FEC000000000139C, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x4c30106c229cd77a61e9eab5fcee11cc912bf94f785ee56f406817744bb6a074"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=100000,

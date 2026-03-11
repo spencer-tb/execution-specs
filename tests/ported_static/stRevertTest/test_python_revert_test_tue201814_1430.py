@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -34,7 +35,9 @@ def test_python_revert_test_tue201814_1430(
 ) -> None:
     """A random test that had failed in Python ethereum implementation."""
     coinbase = Address("0xf7b2e80637a148b5e46945e29388928dafd5aa25")
-    sender = Address("0x80fb51c1799682acdc5353bd0f344a74c81209b9")
+    sender = EOA(
+        key=0x3E297DF41E49C542F54718BBEE92D449778686880729C852F6D2C3C40D135341
+    )
     contract = Address("0x843e0b83d4d70dede90d9a4d93fa3f10bb5011c7")
     callee = Address("0x69859649e8a52de717592b881508371f8a8ed6b9")
     callee_1 = Address("0xe7e620c9cf6045209edcad4d6ef43413bedf0949")
@@ -444,9 +447,7 @@ def test_python_revert_test_tue201814_1430(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x3e297df41e49c542f54718bbee92d449778686880729c852f6d2c3c40d135341"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "66a9b45d44c78cfe774333fe0c49418dd61f183d41132f5340e48ababb825a26eb0a75c0"  # noqa: E501

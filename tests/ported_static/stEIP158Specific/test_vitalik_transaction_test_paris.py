@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_vitalik_transaction_test_paris(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xcd2a3d9f938e13cd947ec05abc7fe734df8dd826")
+    sender = EOA(
+        key=0xC85EF7D79691FE79573B1A7064C19C1A9819EBDBD1FAAAB1A8EC92344438AAF4
+    )
     contract = Address("0xee098e6c2a43d9e2c04f08f0c3a87b0ba59079d4")
 
     env = Environment(
@@ -52,9 +55,7 @@ def test_vitalik_transaction_test_paris(
     pre[contract] = Account(balance=10, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xc85ef7d79691fe79573b1a7064c19c1a9819ebdbd1faaab1a8ec92344438aaf4"  # noqa: E501
-        ),
+        sender=sender,
         to=None,
         data=bytes.fromhex(
             "6000607f5359610043806100135939610056566c010000000000000000000000007fee09"  # noqa: E501

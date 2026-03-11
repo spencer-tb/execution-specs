@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_ext_code_copy_target_range_longer_than_code_tests(
 ) -> None:
     """Uses EXTCODECOPY to copy 32 bytes of code into a 64 byte range of..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x4768b5e50b0ebe91ae38d84a47e3179e615f9c40")
+    sender = EOA(
+        key=0xE7C72B378297589ACEE4E0BA3272841BCFC5E220F86DE253F890274CFEE9E474
+    )
     contract = Address("0x48d8f710ab8cb48f77b602d24696926e31787a17")
     callee = Address("0x7ac02e797f450c7ea62753383f618e1903cd6bba")
 
@@ -86,9 +89,7 @@ def test_ext_code_copy_target_range_longer_than_code_tests(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xe7c72b378297589acee4e0ba3272841bcfc5e220f86de253f890274cfee9e474"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=400000,

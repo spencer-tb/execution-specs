@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -77,7 +78,9 @@ def test_revert_opcode_create(
 ) -> None:
     """RevertOpcodeCreate for CREATE2."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    sender = EOA(
+        key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
+    )
     contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
@@ -107,9 +110,7 @@ def test_revert_opcode_create(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex("600160005560016000fe6011600155"),
         gas_limit=tx_gas_limit,

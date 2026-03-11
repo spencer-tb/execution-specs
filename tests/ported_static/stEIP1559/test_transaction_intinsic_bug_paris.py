@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_transaction_intinsic_bug_paris(
 ) -> None:
     """Bug discovered on ropsten..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x090e11fe4ad84eb49bb6ed74fcdedb27cee38121")
+    sender = EOA(
+        key=0x91E0C3C68D9DE64B3299188625BEBD08C8B66D1C7E853E155F997C465E8F5F47
+    )
     contract = Address("0x85b89db0e2aef2a23f50801209a3de4c65c58d9d")
 
     env = Environment(
@@ -51,9 +54,7 @@ def test_transaction_intinsic_bug_paris(
     pre[contract] = Account(balance=10, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x91e0c3c68d9de64b3299188625bebd08c8b66d1c7e853e155f997c465e8f5f47"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=50000,

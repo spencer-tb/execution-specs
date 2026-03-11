@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -224,7 +225,9 @@ def test_returndatacopy_python_bug_tue_03_48_41_1432(
 ) -> None:
     """Fuzzer generated bug. No code source."""
     coinbase = Address("0x1000000000000000000000000000000000000000")
-    sender = Address("0x0ccf46aa401537077f81fa0010b4d5db7608a3e1")
+    sender = EOA(
+        key=0x7B8E1B8983BDCF0DF1A8A35F27CE0D6E94E340D0C15BD288E587771F560B3570
+    )
     contract = Address("0xd1f0befc94d951fb4b787ada0927f60a9a94ce12")
     callee = Address("0x47a24dd3a5f1a6a8238efdb32782a0b56ab9a1dd")
     callee_1 = Address("0x786208c0f93dac2045bec6a3f8a41b73ab845593")
@@ -403,9 +406,7 @@ def test_returndatacopy_python_bug_tue_03_48_41_1432(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x7b8e1b8983bdcf0df1a8a35f27ce0d6e94e340d0c15bd288e587771f560b3570"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "79b94053bf1fb725756225cde415738a99e1a7690cbe409744b73761038f5277367dedc8"  # noqa: E501

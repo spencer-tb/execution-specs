@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_random_statetest_default_tue_07_58_41_15153_575192_london(
 ) -> None:
     """Is a canon example of a test found by fuzzing with EVMlab,..."""
     coinbase = Address("0xdf5277352f687058bec2d433f2e2d1b7f0c970ae")
-    sender = Address("0x739940fcce39246c4bfe61029c0abd378f93a2ac")
+    sender = EOA(
+        key=0xEDDB5B1A0109F06919449A6279E9DE92A892086BDD851894EB8FFA6C8FF4E563
+    )
     contract = Address("0x589d1b72331c25effee38732d79f48f729681853")
 
     env = Environment(
@@ -74,9 +77,7 @@ def test_random_statetest_default_tue_07_58_41_15153_575192_london(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xeddb5b1a0109f06919449a6279e9de92a892086bdd851894eb8ffa6c8ff4e563"  # noqa: E501
-        ),
+        sender=sender,
         to=coinbase,
         data=b"",
         gas_limit=6282759,

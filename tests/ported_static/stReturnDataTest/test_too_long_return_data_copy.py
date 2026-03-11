@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -1703,7 +1704,9 @@ def test_too_long_return_data_copy(
 ) -> None:
     """Ori Pomerantz   qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x2462945f21bb3b46ed8b2a975227d838bd1c8038")
+    sender = EOA(
+        key=0x04DC42D61413D4DED993826AC4D6ED7A4A970C60335D2B285C60A4274E792FF1
+    )
     contract = Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1")
     callee = Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881")
     callee_1 = Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba")
@@ -1828,9 +1831,7 @@ def test_too_long_return_data_copy(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x04dc42d61413d4ded993826ac4d6ed7a4a970c60335d2b285c60a4274e792ff1"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=16777216,

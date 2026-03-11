@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -34,7 +35,9 @@ def test_call_output2(
 ) -> None:
     """Check the output memory after call."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x2e3d0156d2b99a6eacba540c55f423c8f5a33143")
+    sender = EOA(
+        key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
+    )
     contract = Address("0x7eceed6f6dd8b5ed0637dc20761945256e2bafc7")
     callee = Address("0xbcc1197ccd23a97607f2f96d031f3432e0d16a02")
 
@@ -81,9 +84,7 @@ def test_call_output2(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xb1f4cbc3a50042184425a6f9e996d0910f7ba879457ce5dac5c71e498ad3c005"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=1000000,

@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_refund_sstore(
 ) -> None:
     """Ori Pomerantz   qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xddc3963f450ae1a9db51c77d80166de70ce99cee")
+    sender = EOA(
+        key=0x8C45B94DCA330650C0392398FB2097BB64764E973720A845EE67605FFABF0C7C
+    )
     contract = Address("0xf5f86b947fc07a75e19106a6b7e4953d431ad57f")
 
     env = Environment(
@@ -57,9 +60,7 @@ def test_refund_sstore(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x8c45b94dca330650c0392398fb2097bb64764e973720a845ee67605ffabf0c7c"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=2601000,

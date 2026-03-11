@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -33,7 +34,9 @@ def test_contract_inheritance(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x73c241c3bc4fdf83b6ff3ae73735fddf7c9d711d")
+    sender = EOA(
+        key=0xA9AE12CB2700C0214F86B9796881BC03A1FD5605D0E76D2DA2CA592E62D53E52
+    )
     contract = Address("0x3809b123c157b2d0d3b998255f35b5f8b8ae4789")
 
     env = Environment(
@@ -215,9 +218,7 @@ def test_contract_inheritance(
     pre[sender] = Account(balance=0x12A05F200, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xa9ae12cb2700c0214f86b9796881bc03a1fd5605d0e76d2da2ca592e62d53e52"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=35000000,

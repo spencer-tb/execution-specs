@@ -1326,6 +1326,7 @@ def generate_test_file(
 
     # Use first case's tx for shared fields (secret_key, to, gas_price, nonce)
     tx = first_test["transaction"]
+    secret_key_hex = tx["secretKey"]  # e.g. "0x45a915e4d..."
 
     # Determine test name
     filler_stem = Path(filler_path).stem  # e.g. "callcode_checkPCFiller"
@@ -1470,6 +1471,7 @@ def generate_test_file(
             "    Account,",
             "    Address,",
             "    Alloc,",
+            "    EOA,",
             "    Environment,",
             "    Hash,",
             "    StateTestFiller,",
@@ -1531,9 +1533,7 @@ def generate_test_file(
 
     # Build tx
     tx_parts = []
-    tx_parts.append(
-        f'secret_key=Hash(\n            "0x{tx["secretKey"][2:]}"\n        )'
-    )
+    tx_parts.append("sender=sender")
 
     if to_addr:
         q = chr(34)
@@ -1907,7 +1907,12 @@ def generate_test_file(
             or var in all_code  # used in post or tx
         )
         if used:
-            out.append(f'    {var} = Address("{addr}")')
+            if var == "sender":
+                out.append(
+                    f"    sender = EOA(\n        key={secret_key_hex}\n    )"
+                )
+            else:
+                out.append(f'    {var} = Address("{addr}")')
     out.append("")
 
     # Environment

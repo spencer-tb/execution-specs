@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -151,7 +152,9 @@ def test_loop_stacklimit(
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x64a703f9294edbbf778201f3c2a87c7f91be5a8c")
+    sender = EOA(
+        key=0xA62D63F95900B04CCD3FEE13360DE78966F24695945E8B2C09E646352BC5AF94
+    )
     contract = Address("0xf9b46c1d708104b4e6007d17ae485b0a00d8e952")
     callee = Address("0x15f0298e83391f673b708790f259f3f34dfbd788")
     callee_1 = Address("0x3b20573c5048e5ba16083407e59fc0bbc044b6c0")
@@ -238,9 +241,7 @@ def test_loop_stacklimit(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xa62d63f95900b04ccd3fee13360de78966f24695945e8b2c09e646352bc5af94"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=16777216,

@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_random_statetest647(
 ) -> None:
     """Malicious bytecode found by fuzztest tool: returndatacopy(0,-1)."""
     coinbase = Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    sender = Address("0xcfff6235759a3209f2cb8e3e2dd6ea4c2b96e325")
+    sender = EOA(
+        key=0x5B7B8EFB6D003CD481E408D8759A25ADC79955092F1A380D8F8B57346C1D1342
+    )
     contract = Address("0x782b7c65205e1c08192df7357e2fe778c81256a9")
 
     env = Environment(
@@ -58,9 +61,7 @@ def test_random_statetest647(
     pre[sender] = Account(balance=0x174876E800, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x5b7b8efb6d003cd481e408d8759a25adc79955092f1a380d8f8b57346c1d1342"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=5786929,

@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_create_js_example_contract(
 ) -> None:
     """Deploy legacy contract normally."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xbcc416d85e26124ea4ec199a92cf495584a99831")
+    sender = EOA(
+        key=0x6600370D1F9991E2D92FFE661C84E7C8C6ECAFC094774F0F3DB0F8DD663590E9
+    )
     contract = Address("0x1119d4ccf86b65812d85f2ff3e9b2d851e40ba5a")
 
     env = Environment(
@@ -420,9 +423,7 @@ def test_create_js_example_contract(
     pre[sender] = Account(balance=0x9184E72A000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x6600370d1f9991e2d92ffe661c84e7c8c6ecafc094774f0f3db0f8dd663590e9"  # noqa: E501
-        ),
+        sender=sender,
         to=None,
         data=bytes.fromhex(
             "60406103ca60043960045160245133600081905550600060048190555081600181905550"  # noqa: E501

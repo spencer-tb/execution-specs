@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_random_statetest646(
 ) -> None:
     """Geth Failed this test on all networks."""
     coinbase = Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    sender = EOA(
+        key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
+    )
     contract = Address("0xffffffffffffffffffffffffffffffffffffffff")
     callee = Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
@@ -65,9 +68,7 @@ def test_random_statetest646(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "785196fdcb5d7e54c4b381e68c7eaeae2735e5537830130057f554672e70a6b867385ea2"  # noqa: E501

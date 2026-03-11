@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -277925,7 +277926,9 @@ def test_underflow_test(
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x56724d001b4f2a2888a81971a64aad37cd43f881")
+    sender = EOA(
+        key=0x40AC0FC28C27E961EE46EC43355A094DE205856EDBD4654CF2577C2608D4EC1E
+    )
     contract = Address("0x4c5f839d523e76fc3837e085a3e1538cd36e288a")
     callee = Address("0x029d8125096a81237be857845270ab34afab88ac")
     callee_1 = Address("0x0824de5bb894849fcdd60634275d6bcb8157d4a0")
@@ -280373,9 +280376,7 @@ def test_underflow_test(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x40ac0fc28c27e961ee46ec43355a094de205856edbd4654cf2577c2608d4ec1e"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=8000000,

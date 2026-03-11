@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -309,7 +310,9 @@ def test_callcode_bounds4(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xa99635038e8d9ab237a31179dd5c9087713f723a")
+    sender = EOA(
+        key=0x50EADFB1030587AB3A993A6ECC073041FC3B45E119DAA31A13D78C7E209631A5
+    )
     contract = Address("0xc0479fbac15cb575e66ded014fd60ceb98749b04")
     callee = Address("0x849f53126ade5f72469029537296f2b6644d4d41")
 
@@ -419,9 +422,7 @@ def test_callcode_bounds4(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x50eadfb1030587ab3a993a6ecc073041fc3b45e119daa31a13d78c7e209631a5"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=tx_gas_limit,

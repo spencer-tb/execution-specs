@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_callcodecallcall_100_oogm_before(
 ) -> None:
     """DELEGATE -> CALL -> OOG CALL -> CODE."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
+    sender = EOA(
+        key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
+    )
     contract = Address("0x0e7163a4a90126c4a13e52f48e84c74600e844da")
     callee = Address("0x471072d55a5a95044c2326f0e94a6d8df5b8089e")
     callee_1 = Address("0x4a780315e172db6c0a08fe70ff4362b0e061b668")
@@ -118,9 +121,7 @@ def test_callcodecallcall_100_oogm_before(
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=1000000,

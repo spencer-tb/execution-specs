@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_zero_value_suicide_to_one_storage_key_oog_revert_paris(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xfaa10b404ab607779993c016cd5da73ae1f29d7e")
+    sender = EOA(
+        key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
+    )
     contract = Address("0x1d63510fcd4f3069306ebae45ec6910c0bc944c8")
     callee = Address("0x4757608f18b70777ae788dd4056eeed52f7aa68f")
     callee_1 = Address("0x8d444744833c9b79fdfe630f155cf1f3bbeb92e3")
@@ -86,9 +89,7 @@ def test_zero_value_suicide_to_one_storage_key_oog_revert_paris(
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x4f31b3206fbf0e0e598b9b1a7d8ac86302a0ff1d8930738f1bebae9b67173e52"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=75000,

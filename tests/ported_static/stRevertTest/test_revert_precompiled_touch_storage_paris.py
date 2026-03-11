@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -46,7 +47,9 @@ def test_revert_precompiled_touch_storage_paris(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x68795c4aa09d6f4ed3e5deddf8c2ad3049a601da")
-    sender = Address("0xadd22153059388891d82c6c8e08d80845352bbb0")
+    sender = EOA(
+        key=0x0FF8D58222F34F6890DDAA468C023B77D6691ED7D3C4DCDDAE38336212FAF54B
+    )
     contract = Address("0xe7c596de24ccc387daa5c017066aeb25ea8d2f3f")
     callee = Address("0x0dc4b229346287fe9fa441960081a9886b71c42d")
     callee_1 = Address("0x10ef6d6218ada53728683cec4d5160c8c72159bd")
@@ -477,9 +480,7 @@ def test_revert_precompiled_touch_storage_paris(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x0ff8d58222f34f6890ddaa468c023b77d6691ed7d3c4dcddae38336212faf54b"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=100000,

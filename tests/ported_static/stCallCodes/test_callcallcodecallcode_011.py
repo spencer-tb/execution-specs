@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -34,7 +35,9 @@ def test_callcallcodecallcode_011(
 ) -> None:
     """Call -> callcode ->  callcode -> code, check params."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
+    sender = EOA(
+        key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
+    )
     contract = Address("0xeb09ff15547417853f6f4b240b8804769c37b0f1")
     callee = Address("0x0ffffaeb931552e5f094ca96a70be612da56b887")
     callee_1 = Address("0x181b4ed322e192361633cc3c0a418f259ab0cf4b")
@@ -126,9 +129,7 @@ def test_callcallcodecallcode_011(
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=3000000,

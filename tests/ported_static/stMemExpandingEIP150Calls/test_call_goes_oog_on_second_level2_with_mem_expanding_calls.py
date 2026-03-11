@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_call_goes_oog_on_second_level2_with_mem_expanding_calls(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xadc699577c950fccb53e02805bf25c44939cda20")
+    sender = EOA(
+        key=0x0B51075BB33D347A23B516E327E1B71C54F63FAA192D1D94B62C76E0C26CF98A
+    )
     contract = Address("0x0700bb425d7d4c412ac658014015bd6c98652dc4")
     callee = Address("0x96983de02bfbcb5d0f4e0ee98fdde6d6f0c75fe0")
     callee_1 = Address("0xc10a98222464b07008ceb5a0ec44ed49920addda")
@@ -101,9 +104,7 @@ def test_call_goes_oog_on_second_level2_with_mem_expanding_calls(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x0b51075bb33d347a23b516e327e1b71c54f63faa192d1d94b62c76e0c26cf98a"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=160000,

@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -31,7 +32,9 @@ def test_push32without_byte(
 ) -> None:
     """Push expect 32 bytes. but we have only 10 byte."""
     coinbase = Address("0x68795c4aa09d6f4ed3e5deddf8c2ad3049a601da")
-    sender = Address("0x77f53e97f087927e147467450e9dedd02b0f79e1")
+    sender = EOA(
+        key=0x043F683FF58B5310699989DD19A4E1439E5333E2E3445374F7BC1446BAEDDD80
+    )
     contract = Address("0xc46ea1c1ad6c8ee63711d0377ef63e51c05d38a0")
 
     env = Environment(
@@ -52,9 +55,7 @@ def test_push32without_byte(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x043f683ff58b5310699989dd19a4e1439e5333e2e3445374f7bc1446baeddd80"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=500000,

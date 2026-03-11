@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -39481,7 +39482,9 @@ def test_invalid_addr(
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x56724d001b4f2a2888a81971a64aad37cd43f881")
+    sender = EOA(
+        key=0x40AC0FC28C27E961EE46EC43355A094DE205856EDBD4654CF2577C2608D4EC1E
+    )
     contract = Address("0x2d876fd03a90703f170c256363ba225f9494e604")
     callee = Address("0x1c60a961cff23c82b2f809e76b815d003898e196")
     callee_1 = Address("0x9cb657c71386d578195b90da7de545482e0a9440")
@@ -39994,9 +39997,7 @@ def test_invalid_addr(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x40ac0fc28c27e961ee46ec43355a094de205856edbd4654cf2577c2608d4ec1e"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=16777216,

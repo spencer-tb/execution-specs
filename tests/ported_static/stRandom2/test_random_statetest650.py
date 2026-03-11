@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_random_statetest650(
 ) -> None:
     """Consensus issue test produced by fuzz testing team..."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    sender = Address("0x7bb14be81eb9266df1c09994a1bc1d483057d3f0")
+    sender = EOA(
+        key=0x61EC5E5029A151E121E39AE4D7546D549EA4B130F645F6F650CEEC0416FE27F4
+    )
     contract = Address("0x9d258197de5279a844b4be3d23547ca4233a70bc")
 
     env = Environment(
@@ -3306,9 +3309,7 @@ def test_random_statetest650(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x61ec5e5029a151e121e39ae4d7546d549ea4b130f645f6f650ceec0416fe27f4"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "000000d514029599b459ce6d7f5a430010f6730aefbfbdefbfbdefbfbdefbfbd03000000"  # noqa: E501

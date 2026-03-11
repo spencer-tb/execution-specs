@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -87,7 +88,9 @@ def test_low_gas_limit(
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x8dab845a8398167a1c204f0e79540d619be8b473")
+    sender = EOA(
+        key=0xDE0C95357363DA5C1C5A73BD7C2781CA5C9FECC1014103B5E1D1E990AE8208EC
+    )
     contract = Address("0xef0454d0376d1921b9a83868282725853c293ab5")
 
     env = Environment(
@@ -112,9 +115,7 @@ def test_low_gas_limit(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xde0c95357363da5c1c5a73bd7c2781ca5c9fecc1014103b5e1d1e990ae8208ec"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=tx_gas_limit,

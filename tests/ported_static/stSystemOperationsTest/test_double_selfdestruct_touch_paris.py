@@ -14,6 +14,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -166,7 +167,9 @@ def test_double_selfdestruct_touch_paris(
 ) -> None:
     """A single contract can execute SELFDESTRUCT multiple times using..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x3a164fee089b5ce1f6f7071e90f56caeb7f19b1d")
+    sender = EOA(
+        key=0xE92C121432830128CA66D3D8C4E6D8D96CC4BEFA7C612D28415082EB3C8339C5
+    )
     contract = Address("0x8ec7465877d3957084dc907c0f6d8f2911a17a52")
     callee = Address("0x29e4504a3d2a0e0ae0ebbbefedd4570639b3ebee")
     callee_1 = Address("0x68fa59e127b7526718eb0a4e113df5793628cb91")
@@ -237,9 +240,7 @@ def test_double_selfdestruct_touch_paris(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xe92c121432830128ca66d3d8c4e6d8d96cc4befa7c612d28415082eb3c8339c5"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=10000000,

@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_random_statetest644(
 ) -> None:
     """Geth Failed this test on Frontier and Homestead."""
     coinbase = Address("0x02ebba385bd7f6dde6c57e2d3929a11a1ea0da7e")
-    sender = Address("0xc1c850561ed7cf000973d0bd66c9a11a519af7cc")
+    sender = EOA(
+        key=0x0A10C9449493A34FD272F4BF6FC827C5B46ECE7D0253518E71286F47EC3AE23A
+    )
     contract = Address("0x0000000000000000000000000000000000000001")
     callee = Address("0x0346ad0b28ea31b7c3d398881dc11ebc97869461")
     callee_1 = Address("0xe4882ba8527df19159e6536f4aee12c298d28f33")
@@ -151,9 +154,7 @@ def test_random_statetest644(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x0a10c9449493a34fd272f4bf6fc827c5b46ece7d0253518e71286f47ec3ae23a"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "7300000000000000000000000000000000000000013b7ea30da9ff11bd5f11e4529c93ce"  # noqa: E501

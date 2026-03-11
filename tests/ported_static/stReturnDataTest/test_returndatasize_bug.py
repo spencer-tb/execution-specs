@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -34,7 +35,9 @@ def test_returndatasize_bug(
 ) -> None:
     """RETURNDATASIZE after a failing CALL (due to insufficient balance)..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xc102734f6a1e4747310179c0a0fc16e674aa901d")
+    sender = EOA(
+        key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
+    )
     contract = Address("0x0d7bc2fbd330f7d4ec71764551a8b9cfb11619f5")
     callee = Address("0x0a6de4978faa392285cc6411dfe442872304deb1")
 
@@ -91,9 +94,7 @@ def test_returndatasize_bug(
     pre[sender] = Account(balance=0x6400000000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x834185262e53584684bf2b72c64e510013c235d0f45e462db65900455df45a35"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=100000,

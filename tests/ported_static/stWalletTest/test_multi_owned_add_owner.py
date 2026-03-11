@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -31,7 +32,9 @@ def test_multi_owned_add_owner(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    sender = EOA(
+        key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
+    )
     contract = Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f")
 
     env = Environment(
@@ -124,9 +127,7 @@ def test_multi_owned_add_owner(
     pre[sender] = Account(balance=0xDE0B6B3A75EF08F, nonce=1)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=bytes.fromhex(
             "7065cb480000000000000000000000003fb1cd2cd96c6d5c0b5eb3322d807b34482481d4"  # noqa: E501

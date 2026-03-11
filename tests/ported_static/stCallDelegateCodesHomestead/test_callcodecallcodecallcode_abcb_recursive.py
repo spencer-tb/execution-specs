@@ -11,6 +11,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -35,7 +36,9 @@ def test_callcodecallcodecallcode_abcb_recursive(
 ) -> None:
     """DELEGATECALL -> DELEGATECALL2 -> DELEGATECALl3 -> DELEGATECALL2..."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0xebaf50debf10e08302fe4280c32df010463ca297")
+    sender = EOA(
+        key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
+    )
     contract = Address("0x15600a91a7af84b8c85782714b3391ed5d73f9a0")
     callee = Address("0xa72f0e2f2fc5fd0878af9b8e4aaed09983670929")
     callee_1 = Address("0xe0b280638526cecd3ec29969b517aeb3fcbb31fa")
@@ -108,9 +111,7 @@ def test_callcodecallcodecallcode_abcb_recursive(
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xe04d1ac7ddda0c98397d56a0b501e960d4cd325a39286919ac23c1a07009a869"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=600000,

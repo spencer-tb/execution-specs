@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -295,7 +296,9 @@ def test_val_causes_oof(
 ) -> None:
     """Ori Pomerantz qbzzt1@gmail.com."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x1ed74322ae94e1786967b2bde918d4f6ea77b152")
+    sender = EOA(
+        key=0x7608AB0A661408930040C5E3EB5B0C6520ACBB6CE5B28DDBE53676109E8EA24B
+    )
     contract = Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e")
 
     env = Environment(
@@ -335,9 +338,7 @@ def test_val_causes_oof(
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x7608ab0a661408930040c5e3eb5b0c6520acbb6ce5b28ddbe53676109e8ea24b"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=tx_data,
         gas_limit=tx_gas_limit,

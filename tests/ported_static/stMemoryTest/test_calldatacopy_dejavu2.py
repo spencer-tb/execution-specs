@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_calldatacopy_dejavu2(
 ) -> None:
     """Test ported from static filler."""
     coinbase = Address("0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba")
-    sender = Address("0x894d19064bdc4e212b2e634e18a2b765d52e9b54")
+    sender = EOA(
+        key=0x7DD1D0EC78FE936B0E88F8C21226F51F048579915C7BAFF1C5D7FD84B2139BF1
+    )
     contract = Address("0xd6a7f80046f7576fa76ee5198426097f149e60ff")
 
     env = Environment(
@@ -61,9 +64,7 @@ def test_calldatacopy_dejavu2(
     )
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x7dd1d0ec78fe936b0e88f8c21226f51f048579915c7baff1c5d7fd84b2139bf1"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=100000,

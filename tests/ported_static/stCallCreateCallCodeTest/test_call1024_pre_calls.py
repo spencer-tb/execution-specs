@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -44,7 +45,9 @@ def test_call1024_pre_calls(
 ) -> None:
     """Calldepth with subcall."""
     coinbase = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    sender = Address("0x3f13d7fc49b91cdc388f79f861c0f1a0e708dfbf")
+    sender = EOA(
+        key=0xCC381C83857B17CA629268ED418E2915A0287B84EFE9CF2204C020302E83CDA0
+    )
     contract = Address("0x48c20cd83ddbd3908712f4d31c51b3cdaae287ce")
     callee = Address("0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0")
 
@@ -107,9 +110,7 @@ def test_call1024_pre_calls(
     pre[callee] = Account(balance=7000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0xcc381c83857b17ca629268ed418e2915a0287b84efe9cf2204c020302e83cda0"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=tx_gas_limit,

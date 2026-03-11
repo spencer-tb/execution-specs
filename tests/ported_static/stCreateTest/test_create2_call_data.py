@@ -10,6 +10,7 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -32,7 +33,9 @@ def test_create2_call_data(
 ) -> None:
     """Test if calldata is empty in initcode context."""
     coinbase = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    sender = EOA(
+        key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
+    )
     contract = Address("0x000000000000000000000000000000000c5ea705")
 
     env = Environment(
@@ -83,9 +86,7 @@ def test_create2_call_data(
     pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
 
     tx = Transaction(
-        secret_key=Hash(
-            "0x45a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
-        ),
+        sender=sender,
         to=contract,
         data=b"",
         gas_limit=100000,
