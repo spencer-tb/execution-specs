@@ -28,6 +28,16 @@ from pathlib import Path
 from typing import Any
 
 # ---------------------------------------------------------------------------
+# Categories that are prohibitively slow to fill — mark with @pytest.mark.slow
+# ---------------------------------------------------------------------------
+
+SLOW_CATEGORIES = {
+    "stQuadraticComplexityTest",
+    "stStaticCall",
+    "stTimeConsuming",
+}
+
+# ---------------------------------------------------------------------------
 # Fork ordering (earliest to latest)
 # ---------------------------------------------------------------------------
 
@@ -105,11 +115,16 @@ def filler_name_to_test_name(filler_stem: str) -> str:
 
     e.g. 'callcode_checkPCFiller' -> 'test_callcode_check_pc'
     e.g. 'ContractCreationSpamFiller' -> 'test_contract_creation_spam'
+    e.g. 'mem32kb+1Filler' -> 'test_mem32kb_plus_1'
+    e.g. 'mem32kb-1Filler' -> 'test_mem32kb_minus_1'
     """
     # Strip 'Filler' suffix
     name = re.sub(r"Filler$", "", filler_stem)
     result = "test_" + camel_to_snake(name)
-    # Replace hyphens and other invalid chars with underscores
+    # Replace + and - with descriptive words before general cleanup
+    result = result.replace("+", "_plus_")
+    result = result.replace("-", "_minus_")
+    # Replace remaining non-alphanumeric chars with underscores
     result = re.sub(r"[^a-z0-9_]", "_", result)
     # Collapse multiple underscores
     result = re.sub(r"_+", "_", result)
@@ -899,13 +914,19 @@ def generate_code_expr(
 
 
 def generate_account_setup(
-    address: str,  # noqa: ARG001
+    address: str,
     account: dict[str, Any],
     var_name: str,
     indent: str = "    ",
     source_comment: str = "",
+    is_sender: bool = False,
 ) -> str:
-    """Generate pre[addr] = Account(...) code."""
+    """Generate pre-state account setup code.
+
+    For EOAs and the sender, emit pre[var] = Account(...).
+    For contracts, emit var = pre.deploy_contract(...).
+    For oversized contracts (>24576 bytes), keep pre[var] = Account(...).
+    """
     lines = []
     code_hex = account.get("code", "0x")
     balance = hex_to_int(account.get("balance", "0x00"))
@@ -915,11 +936,20 @@ def generate_account_setup(
     # Determine if this is an EOA (no code) or contract
     is_eoa = code_hex in ("0x", "")
 
-    parts = []
-    parts.append(f"balance={format_balance(balance)}")
-    parts.append(f"nonce={nonce}")
+    # Check if contract code is oversized (>24576 bytes = >49152 hex chars)
+    raw_hex = code_hex[2:] if code_hex.startswith("0x") else code_hex
+    is_oversized = len(raw_hex) > 49152
 
-    if not is_eoa:
+    # Use deploy_contract for contracts (not sender, not coinbase, not oversized)
+    use_deploy = (
+        not is_eoa
+        and not is_sender
+        and var_name != "coinbase"
+        and not is_oversized
+    )
+
+    if use_deploy:
+        # Build deploy_contract call
         code_expr, code_comment = generate_code_expr(
             code_hex,
             indent=indent + "    ",
@@ -927,20 +957,70 @@ def generate_account_setup(
         )
         if code_comment:
             lines.append(code_comment.rstrip())
-        parts.append(f"code={code_expr}")
 
-    if storage:
-        parts.append(f"storage={format_storage(storage)}")
+        deploy_parts = []
+        deploy_parts.append(f"code={code_expr}")
+        if storage:
+            deploy_parts.append(
+                f"storage={format_storage(storage)}"
+            )
+        # balance: omit if 0 (deploy_contract default)
+        if balance != 0:
+            deploy_parts.append(f"balance={format_balance(balance)}")
+        # nonce: omit if 1 (deploy_contract default), emit otherwise
+        if nonce != 1:
+            deploy_parts.append(f"nonce={nonce}")
+        padded = _pad_address(address)
+        addr_part = f'address=Address("{padded}")'
 
-    # Format as single line or multi-line
-    single = f"{indent}pre[{var_name}] = Account({', '.join(parts)})"
-    if len(single) <= 79 and "\n" not in "".join(parts):
-        lines.append(single)
-    else:
-        lines.append(f"{indent}pre[{var_name}] = Account(")
-        for part in parts:
-            lines.append(f"{indent}    {part},")
+        # Always use multi-line for deploy_contract (address line needs
+        # noqa: E501 and the call is almost always long).
+        deploy_parts.append(addr_part)
+        lines.append(
+            f"{indent}{var_name} = pre.deploy_contract("
+        )
+        for i, part in enumerate(deploy_parts):
+            if i == len(deploy_parts) - 1 and part == addr_part:
+                # Last part is address — add noqa: E501
+                lines.append(
+                    f"{indent}    {part},  # noqa: E501"
+                )
+            else:
+                lines.append(f"{indent}    {part},")
         lines.append(f"{indent})")
+    else:
+        # Standard pre[var] = Account(...) form
+        parts = []
+        parts.append(f"balance={format_balance(balance)}")
+        # Omit nonce=0 for sender (it's the default)
+        if is_sender:
+            if nonce != 0:
+                parts.append(f"nonce={nonce}")
+        else:
+            parts.append(f"nonce={nonce}")
+
+        if not is_eoa:
+            code_expr, code_comment = generate_code_expr(
+                code_hex, indent=indent + "    "
+            )
+            if code_comment:
+                lines.append(code_comment.rstrip())
+            parts.append(f"code={code_expr}")
+
+        if storage:
+            parts.append(f"storage={format_storage(storage)}")
+
+        # Format as single line or multi-line
+        single = (
+            f"{indent}pre[{var_name}] = Account({', '.join(parts)})"
+        )
+        if len(single) <= 79 and "\n" not in "".join(parts):
+            lines.append(single)
+        else:
+            lines.append(f"{indent}pre[{var_name}] = Account(")
+            for part in parts:
+                lines.append(f"{indent}    {part},")
+            lines.append(f"{indent})")
 
     return "\n".join(lines)
 
@@ -1037,20 +1117,6 @@ def generate_post_dict(
         if "balance" in fields:
             val = _parse_result_int(fields["balance"])
             parts.append(f"balance={format_balance(val)}")
-        if "code" in fields:
-            code_hex = str(fields["code"])
-            if code_hex in ("0x", ""):
-                parts.append('code=b""')
-            else:
-                op_str = bytecode_to_op_string(code_hex)
-                if op_str is not None:
-                    parts.append(f"code={op_str}")
-                else:
-                    raw = (
-                        code_hex[2:] if code_hex.startswith("0x") else code_hex
-                    )
-                    parts.append(f'code=bytes.fromhex("{raw}")')
-
         if parts:
             parts_str = ", ".join(parts)
             single = f"        {var}: Account({parts_str}),"
@@ -1122,21 +1188,6 @@ def generate_post_value_string(result: dict | None) -> str:
         if "balance" in fields:
             val = _parse_result_int(fields["balance"])
             acct_parts.append(f"balance={format_balance(val)}")
-        if "code" in fields:
-            code_hex = str(fields["code"])
-            if "<" in code_hex:
-                pass  # Skip unresolved label references
-            elif code_hex in ("0x", ""):
-                acct_parts.append('code=b""')
-            else:
-                op_str = bytecode_to_op_string(code_hex)
-                if op_str is not None:
-                    acct_parts.append(f"code={op_str}")
-                else:
-                    raw = (
-                        code_hex[2:] if code_hex.startswith("0x") else code_hex
-                    )
-                    acct_parts.append(f'code=bytes.fromhex("{raw}")')
 
         if acct_parts:
             acct_str = ", ".join(acct_parts)
@@ -1173,29 +1224,13 @@ def _generate_post_from_fixture_state(
         if addr_l == COINBASE_ADDRESS:
             continue
         padded = _pad_address(addr_l)
-        var = addr_vars.get(padded, f'Address("{padded}")')
+        var = addr_vars.get(addr_l, f'Address("{padded}")')
 
         parts = []
         if "storage" in fields and fields["storage"]:
             parts.append(
                 f"storage={_format_storage_from_result(fields['storage'])}"
             )
-        if "code" in fields:
-            code_hex = str(fields["code"])
-            if code_hex not in ("0x", ""):
-                op_str = bytecode_to_op_string(code_hex)
-                if op_str is not None:
-                    wrapped = _wrap_op_chain(
-                        op_str,
-                        indent="            ",
-                        prefix="code=",
-                    )
-                    parts.append(f"code={wrapped}")
-                else:
-                    raw = (
-                        code_hex[2:] if code_hex.startswith("0x") else code_hex
-                    )
-                    parts.append(f'code=bytes.fromhex("{raw}")')
 
         if parts:
             parts_str = ", ".join(parts)
@@ -1241,17 +1276,6 @@ def _generate_post_value_from_fixture_state(
             acct_parts.append(
                 f"storage={_format_storage_flat(fields['storage'])}"
             )
-        if "code" in fields:
-            code_hex = str(fields["code"])
-            if code_hex not in ("0x", ""):
-                op_str = bytecode_to_op_string(code_hex)
-                if op_str is not None:
-                    acct_parts.append(f"code={op_str}")
-                else:
-                    raw = (
-                        code_hex[2:] if code_hex.startswith("0x") else code_hex
-                    )
-                    acct_parts.append(f'code=bytes.fromhex("{raw}")')
 
         if acct_parts:
             acct_str = ", ".join(acct_parts)
@@ -1278,6 +1302,7 @@ def generate_test_file(
     valid_until: str | None = None,
     filler_full_path: Path | None = None,  # noqa: ARG001
     code_sources: _FillerCodeSources | None = None,
+    slow: bool = False,
 ) -> str:
     """Generate a complete Python test file from fixture data."""
     # Compiled fixtures have one top-level key per (case × fork).
@@ -1326,7 +1351,6 @@ def generate_test_file(
 
     # Use first case's tx for shared fields (secret_key, to, gas_price, nonce)
     tx = first_test["transaction"]
-    secret_key_hex = tx["secretKey"]  # e.g. "0x45a915e4d..."
 
     # Determine test name
     filler_stem = Path(filler_path).stem  # e.g. "callcode_checkPCFiller"
@@ -1459,6 +1483,30 @@ def generate_test_file(
     # Check if we need TransactionException import
     needs_tx_exception = any(c.get("expect_exception") for c in cases_for_fork)
 
+    # Check if Hash is needed (e.g. in access_list entries or blob hashes)
+    needs_hash = False
+    blob_hashes = tx.get("blobVersionedHashes")
+    if blob_hashes:
+        needs_hash = True
+    if not needs_hash and is_multi:
+        # Check if any access list entries use Hash
+        for c in cases_for_fork:
+            al = c.get("access_list")
+            if al:
+                for entry in al:
+                    if entry.get("storageKeys"):
+                        needs_hash = True
+                        break
+            if needs_hash:
+                break
+    if not needs_hash and not is_multi:
+        al = cases_for_fork[0].get("access_list")
+        if al:
+            for entry in al:
+                if entry.get("storageKeys"):
+                    needs_hash = True
+                    break
+
     # Build imports
     imports = [
         "import pytest",
@@ -1473,7 +1521,12 @@ def generate_test_file(
             "    Alloc,",
             "    EOA,",
             "    Environment,",
-            "    Hash,",
+        ]
+    )
+    if needs_hash:
+        imports.append("    Hash,")
+    imports.extend(
+        [
             "    StateTestFiller,",
             "    Transaction,",
         ]
@@ -1531,6 +1584,11 @@ def generate_test_file(
         al_varies = len(set(all_al)) > 1
         exc_varies = len(set(all_exc)) > 1
 
+    # Extract secret key for EOA
+    secret_key_hex = tx["secretKey"]
+    if secret_key_hex.startswith("0x"):
+        secret_key_hex = secret_key_hex[2:]
+
     # Build tx
     tx_parts = []
     tx_parts.append("sender=sender")
@@ -1561,8 +1619,7 @@ def generate_test_file(
                 tx_parts.append(fromhex)
             else:
                 tx_parts.append(f'data=bytes.fromhex("{data_raw}")')
-        else:
-            tx_parts.append('data=b""')
+        # Omit data=b"" (default)
         tx_parts.append(f"gas_limit={case['gas_limit']}")
     else:
         if data_varies:
@@ -1585,8 +1642,7 @@ def generate_test_file(
                     tx_parts.append(fromhex)
                 else:
                     tx_parts.append(f'data=bytes.fromhex("{data_raw}")')
-            else:
-                tx_parts.append('data=b""')
+            # Omit data=b"" (default)
         if gas_varies:
             tx_parts.append("gas_limit=tx_gas_limit")
         else:
@@ -1626,26 +1682,29 @@ def generate_test_file(
             tx_parts.append("blob_versioned_hashes=[]")
 
     tx_nonce = hex_to_int(tx.get("nonce", "0x00"))
-    tx_parts.append(f"nonce={tx_nonce}")
+    if tx_nonce != 0:
+        tx_parts.append(f"nonce={tx_nonce}")
 
     if not is_multi:
-        tx_parts.append(f"value={cases_for_fork[0]['value']}")
-        # Access list for single case
+        if cases_for_fork[0]["value"] != 0:
+            tx_parts.append(f"value={cases_for_fork[0]['value']}")
+        # Access list for single case (omit empty list, it's the default)
         al = cases_for_fork[0]["access_list"]
-        if al is not None:
+        if al:
             tx_parts.append(f"access_list={_format_access_list(al)}")
     elif value_varies:
         tx_parts.append("value=tx_value")
     else:
-        tx_parts.append(f"value={cases_for_fork[0]['value']}")
+        if cases_for_fork[0]["value"] != 0:
+            tx_parts.append(f"value={cases_for_fork[0]['value']}")
 
-    # Access list for multi-case
+    # Access list for multi-case (omit empty list, it's the default)
     if is_multi:
         if al_varies:
             tx_parts.append("access_list=tx_access_list")
         else:
             al = cases_for_fork[0]["access_list"]
-            if al is not None:
+            if al:
                 tx_parts.append(f"access_list={_format_access_list(al)}")
 
     # Expected transaction error (e.g. blob tx with to=None)
@@ -1856,6 +1915,9 @@ def generate_test_file(
     # pre_alloc_mutable since generated tests assign pre[addr] = Account(...)
     out.append("@pytest.mark.pre_alloc_mutable")
 
+    if slow:
+        out.append("@pytest.mark.slow")
+
     # Add exception_test marker if ALL cases expect transaction failure
     # (when exc_varies, some cases succeed so the global marker can't be used)
     if needs_tx_exception and not (is_multi and exc_varies):
@@ -1883,36 +1945,73 @@ def generate_test_file(
 
     # Function docstring — single-line, with punctuation (D400/D415)
     func_doc = filler_comment.split("\n")[0].rstrip() if filler_comment else ""
-    if not func_doc:
-        func_doc = "Test ported from static filler"
-    if func_doc[-1] not in ".?!":
-        func_doc += "."
     # D404: first word should not be "This"
     if func_doc.startswith("This "):
         func_doc = func_doc[5:]
+    if not func_doc:
+        func_doc = "Test ported from static filler"
     # Capitalize first letter (D403)
-    func_doc = func_doc[0].upper() + func_doc[1:] if func_doc else func_doc
+    func_doc = func_doc[0].upper() + func_doc[1:]
+    if func_doc[-1] not in ".?!":
+        func_doc += "."
     # Truncate if too long for single-line docstring (79 - 4 - 6 = 69)
     if len(func_doc) > 69:
         func_doc = _truncate_at_word(func_doc, 69)
     out.append(f'    """{func_doc}"""')
 
+    # Determine which accounts will use deploy_contract (so we skip
+    # emitting a separate Address variable for them — deploy_contract
+    # assigns the variable directly).
+    deploy_contract_vars: set[str] = set()
+    for addr in sorted(pre.keys()):
+        addr_l = addr.lower()
+        var = addr_vars.get(addr_l, "")
+        code_hex = pre[addr].get("code", "0x")
+        raw_hex = (
+            code_hex[2:] if code_hex.startswith("0x") else code_hex
+        )
+        is_eoa_acct = code_hex in ("0x", "")
+        is_oversized_acct = len(raw_hex) > 49152
+        is_sender_acct = var == "sender"
+        if (
+            not is_eoa_acct
+            and not is_sender_acct
+            and var != "coinbase"
+            and not is_oversized_acct
+        ):
+            deploy_contract_vars.add(var)
+
     # Address variables — only emit if used somewhere
     pre_addrs = {a.lower() for a in pre.keys()}
     all_code = post_code + " ".join(str(p) for p in tx_parts)
+    sender_emitted = False
     for addr, var, _ in var_names:
+        # Skip vars that will be assigned by deploy_contract
+        if var in deploy_contract_vars:
+            continue
         used = (
             addr in pre_addrs
             or var == "coinbase"  # fee_recipient=coinbase
+            or var == "sender"  # always used (Transaction sender=sender)
             or var in all_code  # used in post or tx
         )
         if used:
             if var == "sender":
                 out.append(
-                    f"    sender = EOA(\n        key={secret_key_hex}\n    )"
+                    f"    sender = EOA(\n"
+                    f"        key=0x{secret_key_hex}\n"
+                    f"    )"
                 )
+                sender_emitted = True
             else:
-                out.append(f'    {var} = Address("{addr}")')
+                out.append(f'    {var} = Address("{_pad_address(addr)}")')
+    # Handle "no sender" tests: sender not in var_names but we still need it
+    if not sender_emitted:
+        out.append(
+            f"    sender = EOA(\n"
+            f"        key=0x{secret_key_hex}\n"
+            f"    )"
+        )
     out.append("")
 
     # Environment
@@ -1933,12 +2032,14 @@ def generate_test_file(
             code_hex,
             is_to_addr=(addr_l == to_addr),
         )
+        is_sender_acct = (addr_l == sender_addr)
         account_code = generate_account_setup(
-            addr,
+            addr_l,
             pre[addr],
             var,
             indent="    ",
             source_comment=src_comment,
+            is_sender=is_sender_acct,
         )
         out.append(account_code)
 
@@ -2019,19 +2120,6 @@ def process_single_fixture(
     upper_bound = load_filler_network_upper_bound(filler_full_path)
     valid_until = fork_before(upper_bound) if upper_bound else None
 
-    # Generate Python test
-    try:
-        python_code = generate_test_file(
-            fixture_data,
-            filler_path,
-            filler_comment,
-            valid_until=valid_until,
-            filler_full_path=filler_full_path,
-            code_sources=code_sources,
-        )
-    except Exception as e:
-        return False, f"Error generating {fixture_path}: {e}"
-
     # Determine output path
     filler_stem = Path(filler_path).stem  # e.g. "callcode_checkPCFiller"
     test_name = filler_name_to_test_name(filler_stem)
@@ -2047,6 +2135,24 @@ def process_single_fixture(
             remaining = filler_parts[i + 1 : -1]
             category = str(Path(*remaining)) if remaining else ""
             break
+
+    # Check if the top-level category is slow
+    top_category = Path(category).parts[0] if category else ""
+    is_slow = top_category in SLOW_CATEGORIES
+
+    # Generate Python test
+    try:
+        python_code = generate_test_file(
+            fixture_data,
+            filler_path,
+            filler_comment,
+            valid_until=valid_until,
+            filler_full_path=filler_full_path,
+            code_sources=code_sources,
+            slow=is_slow,
+        )
+    except Exception as e:
+        return False, f"Error generating {fixture_path}: {e}"
 
     out_dir = output_dir / category if category else output_dir
     out_dir.mkdir(parents=True, exist_ok=True)

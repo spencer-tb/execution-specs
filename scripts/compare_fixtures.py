@@ -49,7 +49,10 @@ def _normalize_name(name: str) -> str:
     s = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name)
     s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", s)
     s = s.lower()
-    # Replace non-alphanumeric (except _) with _
+    # Replace + and - with descriptive words before general cleanup
+    s = s.replace("+", "_plus_")
+    s = s.replace("-", "_minus_")
+    # Replace remaining non-alphanumeric (except _) with _
     s = re.sub(r"[^a-z0-9_]", "_", s)
     # Collapse multiple underscores
     s = re.sub(r"_+", "_", s)
