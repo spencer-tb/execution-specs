@@ -8,12 +8,11 @@ ExecuteCallThatAskForeGasThenTrabsactionHasFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_execute_call_that_ask_fore_gas_then_trabsaction_has(
     sender = EOA(
         key=0xA2333EEF5630066B928DEA5FD85A239F511B5B067D1441EE7AC290D0122B917B
     )
-    contract = Address("0x1819cf5bff62f0d379f146b85baaf9bd18239832")
-    callee = Address("0xbfdd294028701b119d416c68eff7dd9f7effd249")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +50,7 @@ def test_execute_call_that_ask_fore_gas_then_trabsaction_has(
 
     # Source: LLL
     # { [[1]] (CALL 600000 <contract:0x1000000000000000000000000000000000000001> 0 0 0 0 0) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -71,47 +66,27 @@ def test_execute_call_that_ask_fore_gas_then_trabsaction_has(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x1819cf5bff62f0d379f146b85baaf9bd18239832"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x5F5E100, nonce=0)
-    pre[callee] = Account(
+    pre[sender] = Account(balance=0x5F5E100)
+    callee = pre.deploy_contract(
+        code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP,
         balance=0x186A0,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP,
+        address=Address("0xbfdd294028701b119d416c68eff7dd9f7effd249"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={1: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALL(
-                        gas=0x927C0,
-                        address=0xBFDD294028701B119D416C68EFF7DD9F7EFFD249,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            storage={1: 12},
-            code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP,
-        ),
+        contract: Account(storage={1: 1}),
+        callee: Account(storage={1: 12}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

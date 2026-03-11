@@ -7,12 +7,11 @@ tests/static/state_tests/VMTests/vmArithmeticTest/arithFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_arith(
     sender = EOA(
         key=0x40AC0FC28C27E961EE46EC43355A094DE205856EDBD4654CF2577C2608D4EC1E
     )
-    contract = Address("0x14814d06e93efb1102a15d5881432c9ff6c91362")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,9 +46,7 @@ def test_arith(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0x1]
             + Op.PUSH1[0x1]
@@ -70,8 +66,11 @@ def test_arith(
             + Op.SSTORE(key=0x0, value=Op.EXP(0x11, 0x9))
             + Op.RETURN(offset=0x0, size=0x8)
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x14814d06e93efb1102a15d5881432c9ff6c91362"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE)
 
     tx = Transaction(
         sender=sender,
@@ -79,33 +78,11 @@ def test_arith(
         data=bytes.fromhex("00"),
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
     post = {
-        contract: Account(
-            storage={0: 0x1B9C636491},
-            code=(
-                Op.PUSH1[0x1]
-                + Op.PUSH1[0x1]
-                + Op.SWAP1
-                + Op.ADD(0x5, Op.MUL(0x7, Op.ADD))
-                + Op.PUSH1[0x2]
-                + Op.SWAP1
-                + Op.DIV
-                + Op.PUSH1[0x4]
-                + Op.SWAP1
-                + Op.PUSH1[0x21]
-                + Op.SWAP1
-                + Op.MUL(0x3, Op.ADD(0x17, Op.SDIV))
-                + Op.PUSH1[0x5]
-                + Op.SWAP1
-                + Op.SUB(0x3, Op.SMOD)
-                + Op.SSTORE(key=0x0, value=Op.EXP(0x11, 0x9))
-                + Op.RETURN(offset=0x0, size=0x8)
-            ),
-        ),
+        contract: Account(storage={0: 0x1B9C636491}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

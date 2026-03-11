@@ -7,12 +7,11 @@ tests/static/state_tests/stSystemOperationsTest/callerAccountBalanceFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_caller_account_balance(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x13ab36baf5501d0a3c5cd05be4788496f99a4e34")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,31 +49,24 @@ def test_caller_account_balance(
 
     # Source: LLL
     # { [[0]] (balance (caller)) }
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.SSTORE(key=0x0, value=Op.BALANCE(address=Op.CALLER)) + Op.STOP,
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.BALANCE(address=Op.CALLER)) + Op.STOP,
+        address=Address("0x13ab36baf5501d0a3c5cd05be4788496f99a4e34"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=10000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        contract: Account(
-            storage={0: 0xDE0B6B3A16C9860},
-            code=(
-                Op.SSTORE(key=0x0, value=Op.BALANCE(address=Op.CALLER))
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 0xDE0B6B3A16C9860}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

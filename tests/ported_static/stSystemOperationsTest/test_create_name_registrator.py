@@ -8,12 +8,11 @@ createNameRegistratorFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_create_name_registrator(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_create_name_registrator(
 
     # Source: LLL
     # { (MSTORE 0 0x601080600c6000396000f3006000355415600957005b60203560003555) [[ 0 ]] (CREATE 23 3 29) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -66,47 +62,23 @@ def test_create_name_registrator(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=300000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
         contract: Account(
             storage={0: 0xD2571607E241ECF590ED94B12D87C94BABE36DB6},
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0x601080600C6000396000F3006000355415600957005B60203560003555,  # noqa: E501
-                )
-                + Op.SSTORE(
-                    key=0x0,
-                    value=Op.CREATE(value=0x17, offset=0x3, size=0x1D),
-                )
-                + Op.STOP
-            ),
-        ),
-        Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.CALLDATALOAD(offset=0x20)
-                + Op.CALLDATALOAD(offset=0x0)
-            ),
         ),
     }
 

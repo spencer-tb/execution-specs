@@ -8,12 +8,11 @@ TransactionCreateSuicideInInitcodeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -49,7 +48,7 @@ def test_transaction_create_suicide_in_initcode(
     )
 
     pre[coinbase] = Account(balance=0, nonce=1)
-    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00)
 
     tx = Transaction(
         sender=sender,
@@ -57,7 +56,6 @@ def test_transaction_create_suicide_in_initcode(
         data=bytes.fromhex("30ff00"),
         gas_limit=155000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

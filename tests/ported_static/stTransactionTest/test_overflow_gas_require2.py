@@ -7,12 +7,11 @@ tests/static/state_tests/stTransactionTest/OverflowGasRequire2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -51,7 +50,6 @@ def test_overflow_gas_require2(
 
     pre[sender] = Account(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-        nonce=0,
     )
 
     tx = Transaction(
@@ -60,8 +58,6 @@ def test_overflow_gas_require2(
         data=bytes.fromhex("3240349548983454"),
         gas_limit=1152921504606846976,
         gas_price=80,
-        nonce=0,
-        value=0,
     )
 
     post: dict = {}

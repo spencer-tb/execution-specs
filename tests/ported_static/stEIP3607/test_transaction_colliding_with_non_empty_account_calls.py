@@ -8,12 +8,11 @@ transactionCollidingWithNonEmptyAccount_callsFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -41,7 +40,6 @@ def test_transaction_colliding_with_non_empty_account_calls(
     sender = EOA(
         key=0x402790500EA083A617EC567407D9EC3BBB3A5C8B812547D9F66E8D7878B8A75D
     )
-    contract = Address("0xd857dad5866e190fd86b79f027fb8ee8e60fbda7")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,34 +50,27 @@ def test_transaction_colliding_with_non_empty_account_calls(
         gas_limit=71794957647893862,
     )
 
-    # Source: raw bytecode
     pre[sender] = Account(
         balance=0xDE0B6B3A7640000,
-        nonce=0,
         code=Op.SSTORE(key=0x1, value=0x0),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=Op.SSTORE(key=0x1, value=0x0),
+        nonce=0,
+        address=Address("0xd857dad5866e190fd86b79f027fb8ee8e60fbda7"),  # noqa: E501
     )
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
         error=TransactionException.SENDER_NOT_EOA,
     )
 
-    post = {
-        sender: Account(code=Op.SSTORE(key=0x1, value=0x0)),
-        contract: Account(code=Op.SSTORE(key=0x1, value=0x0)),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

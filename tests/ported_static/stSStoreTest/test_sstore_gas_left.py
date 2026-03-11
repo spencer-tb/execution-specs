@@ -7,12 +7,11 @@ tests/static/state_tests/stSStoreTest/sstore_gasLeftFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -32,37 +31,27 @@ REFERENCE_SPEC_VERSION = "N/A"
         (
             "6000600060006000600073b0409d84ab61455cb8bec14b94f635146ab55613610901f115604b5760006000600060006000734092b3905cfea2485ea53222f41eb26e67587802617530f1505b00",  # noqa: E501
             {
-                Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
-                ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
-                ),
+                    storage={1: 1}
+                )
             },
         ),
         (
             "6000600060006000600073b0409d84ab61455cb8bec14b94f635146ab55613610902f115604b5760006000600060006000734092b3905cfea2485ea53222f41eb26e67587802617530f1505b00",  # noqa: E501
             {
-                Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
-                ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
-                ),
+                    storage={1: 1}
+                )
             },
         ),
         (
             "6000600060006000600073b0409d84ab61455cb8bec14b94f635146ab55613610903f115604b5760006000600060006000734092b3905cfea2485ea53222f41eb26e67587802617530f1505b00",  # noqa: E501
             {
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+                    storage={1: 1}
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+                    storage={1: 1}
                 ),
             },
         ),
@@ -72,12 +61,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0x21b8a1d7e6f995ece38f302d2981ac0793c37fbd"): Account(
                     storage={1: 1}
                 ),
-                Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
-                ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+                    storage={1: 1}
                 ),
             },
         ),
@@ -87,12 +72,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0x21b8a1d7e6f995ece38f302d2981ac0793c37fbd"): Account(
                     storage={1: 1}
                 ),
-                Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
-                ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+                    storage={1: 1}
                 ),
             },
         ),
@@ -103,12 +84,10 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+                    storage={1: 1}
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+                    storage={1: 1}
                 ),
             },
         ),
@@ -118,12 +97,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0x21b8a1d7e6f995ece38f302d2981ac0793c37fbd"): Account(
                     storage={1: 1}
                 ),
-                Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
-                ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+                    storage={1: 1}
                 ),
             },
         ),
@@ -133,12 +108,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0x21b8a1d7e6f995ece38f302d2981ac0793c37fbd"): Account(
                     storage={1: 1}
                 ),
-                Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
-                ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+                    storage={1: 1}
                 ),
             },
         ),
@@ -149,12 +120,10 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
                 Address("0x4092b3905cfea2485ea53222f41eb26e67587802"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+                    storage={1: 1}
                 ),
                 Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+                    storage={1: 1}
                 ),
             },
         ),
@@ -183,8 +152,6 @@ def test_sstore_gas_left(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0x4092b3905cfea2485ea53222f41eb26e67587802")
-    callee_1 = Address("0xb0409d84ab61455cb8bec14b94f635146ab55613")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -195,18 +162,18 @@ def test_sstore_gas_left(
         gas_limit=10000000,
     )
 
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
-    )
-    pre[callee_1] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0x4092b3905cfea2485ea53222f41eb26e67587802"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
         storage={0x1: 0x1},
+        nonce=0,
+        address=Address("0xb0409d84ab61455cb8bec14b94f635146ab55613"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -216,7 +183,6 @@ def test_sstore_gas_left(
         data=tx_data,
         gas_limit=200000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

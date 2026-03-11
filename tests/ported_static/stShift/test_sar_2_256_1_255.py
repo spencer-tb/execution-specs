@@ -7,12 +7,11 @@ tests/static/state_tests/stShift/sar_2^256-1_255Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )

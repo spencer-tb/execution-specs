@@ -8,12 +8,11 @@ CallSha256_3_postfix0Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_call_sha256_3_postfix0(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xdb90d5cd1bd42ce94a38b9d293ac7a1be96adef9")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_call_sha256_3_postfix0(
 
     # Source: LLL
     # { (MSTORE 0 0xf34578907f00) [[ 2 ]] (CALL 500 2 0 0 37 0 32) [[ 0 ]] (MLOAD 0)}  # noqa: E501
-    pre[contract] = Account(
-        balance=0x1312D00,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0xF34578907F00)
             + Op.SSTORE(
@@ -72,16 +68,17 @@ def test_call_sha256_3_postfix0(
             + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
             + Op.STOP
         ),
+        balance=0x1312D00,
+        nonce=0,
+        address=Address("0xdb90d5cd1bd42ce94a38b9d293ac7a1be96adef9"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=365224,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
@@ -91,23 +88,6 @@ def test_call_sha256_3_postfix0(
                 0: 0x3B745A1C00D035C334F358D007A430E4CF0AE63AA0556FB05529706DE546464D,  # noqa: E501
                 2: 1,
             },
-            code=(
-                Op.MSTORE(offset=0x0, value=0xF34578907F00)
-                + Op.SSTORE(
-                    key=0x2,
-                    value=Op.CALL(
-                        gas=0x1F4,
-                        address=0x2,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x25,
-                        ret_offset=0x0,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-                + Op.STOP
-            ),
         ),
     }
 

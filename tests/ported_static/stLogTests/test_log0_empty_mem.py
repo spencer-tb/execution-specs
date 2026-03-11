@@ -7,12 +7,11 @@ tests/static/state_tests/stLogTests/log0_emptyMemFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,8 +35,6 @@ def test_log0_empty_mem(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x1e5597b6168fe79952cb2de7af91c3449bc95bd4")
-    callee = Address("0xc2a943e837808399d9c1b946c6188739d4d4475e")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,9 +47,7 @@ def test_log0_empty_mem(
 
     # Source: LLL
     # { [[ 0 ]] (CALL 1000 <contract:0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6> 23 0 0 0 0) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -68,44 +63,28 @@ def test_log0_empty_mem(
             )
             + Op.STOP
         ),
-    )
-    pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.LOG0(offset=0x0, size=0x0) + Op.STOP,
+        address=Address("0x1e5597b6168fe79952cb2de7af91c3449bc95bd4"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre.deploy_contract(
+        code=Op.LOG0(offset=0x0, size=0x0) + Op.STOP,
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xc2a943e837808399d9c1b946c6188739d4d4475e"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=210000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        contract: Account(
-            storage={0: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0x3E8,
-                        address=0xC2A943E837808399D9C1B946C6188739D4D4475E,
-                        value=0x17,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(code=Op.LOG0(offset=0x0, size=0x0) + Op.STOP),
+        contract: Account(storage={0: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

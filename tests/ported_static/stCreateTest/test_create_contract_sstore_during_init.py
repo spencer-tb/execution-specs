@@ -8,12 +8,11 @@ CREATE_ContractSSTOREDuringInitFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -48,7 +47,7 @@ def test_create_contract_sstore_during_init(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0x174876E800, nonce=0)
+    pre[sender] = Account(balance=0x174876E800)
 
     tx = Transaction(
         sender=sender,
@@ -56,8 +55,6 @@ def test_create_contract_sstore_during_init(
         data=bytes.fromhex("60ff600055"),
         gas_limit=150000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {

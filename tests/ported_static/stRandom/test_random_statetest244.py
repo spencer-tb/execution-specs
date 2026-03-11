@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest244Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest244(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xf02cc5c5e85bb5e8da6bdc897cc5da6e3aade8ae")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,8 +45,7 @@ def test_random_statetest244(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -66,9 +63,7 @@ def test_random_statetest244(
         ),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SMOD(Op.TIMESTAMP, Op.GASLIMIT)
             + Op.NUMBER
@@ -79,6 +74,9 @@ def test_random_statetest244(
                 value=Op.COINBASE,
             )
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xf02cc5c5e85bb5e8da6bdc897cc5da6e3aade8ae"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -87,39 +85,12 @@ def test_random_statetest244(
         data=bytes.fromhex("42"),
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
         contract: Account(
             storage={0: 0x4F3F701464972E74606D6EA82D4D3080599A0E79},
-            code=(
-                Op.SMOD(Op.TIMESTAMP, Op.GASLIMIT)
-                + Op.NUMBER
-                + Op.NUMBER
-                + Op.TIMESTAMP
-                + Op.SSTORE(
-                    key=Op.MLOAD(offset=Op.BALANCE(address=Op.COINBASE)),
-                    value=Op.COINBASE,
-                )
-            ),
         ),
     }
 

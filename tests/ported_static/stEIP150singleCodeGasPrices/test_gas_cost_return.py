@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP150singleCodeGasPrices/gasCostReturnFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,9 +37,6 @@ def test_gas_cost_return(
     sender = EOA(
         key=0x40AC0FC28C27E961EE46EC43355A094DE205856EDBD4654CF2577C2608D4EC1E
     )
-    contract = Address("0x155665fb22995bb5b9dc1d8d9d57a00ac64dc1e0")
-    callee = Address("0x35cd99e56b0f9ac243172a86bef4d042dfdbc166")
-    callee_1 = Address("0xeb0e68b88a12fc84ad4a1eeb07b289638c4d9f3c")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -83,9 +79,7 @@ def test_gas_cost_return(
     #   (call 0x10000 0x2000 0 0 0 0 0)
     #   [gasRETURN] (- @gasB4 (gas))
     # ... (11 more lines)
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x60A7)
             + Op.MSTORE(offset=0x20, value=0x60A7)
@@ -127,19 +121,24 @@ def test_gas_cost_return(
             + Op.STOP
         ),
         storage={0x0: 0x60A7},
-    )
-    # Source: raw bytecode
-    pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x155665fb22995bb5b9dc1d8d9d57a00ac64dc1e0"),  # noqa: E501
+    )
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=Op.RETURN(offset=0xFF, size=0x0),
-    )
-    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
-    # Source: raw bytecode
-    pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x35cd99e56b0f9ac243172a86bef4d042dfdbc166"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE)
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP,
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0xeb0e68b88a12fc84ad4a1eeb07b289638c4d9f3c"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -148,57 +147,9 @@ def test_gas_cost_return(
         data=bytes.fromhex("00"),
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(offset=0x0, value=0x60A7)
-                + Op.MSTORE(offset=0x20, value=0x60A7)
-                + Op.MSTORE(offset=0x40, value=0x60A7)
-                + Op.MSTORE(offset=0x0, value=Op.GAS)
-                + Op.POP(
-                    Op.CALL(
-                        gas=0x10000,
-                        address=0x1000,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.MSTORE(
-                    offset=0x20,
-                    value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS),
-                )
-                + Op.MSTORE(offset=0x0, value=Op.GAS)
-                + Op.POP(
-                    Op.CALL(
-                        gas=0x10000,
-                        address=0x2000,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.MSTORE(
-                    offset=0x40,
-                    value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS),
-                )
-                + Op.SSTORE(
-                    key=0x0,
-                    value=Op.SUB(Op.MLOAD(offset=0x20), Op.MLOAD(offset=0x40)),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(code=Op.RETURN(offset=0xFF, size=0x0)),
-        callee_1: Account(code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

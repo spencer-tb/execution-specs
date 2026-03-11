@@ -8,12 +8,11 @@ NonZeroValue_TransactionCALLwithData_ToNonNonZeroBalanceFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -50,7 +49,7 @@ def test_non_zero_value_transaction_cal_lwith_data_to_non_non_zero_balance(
     )
 
     pre[contract] = Account(balance=100, nonce=0)
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
@@ -58,7 +57,6 @@ def test_non_zero_value_transaction_cal_lwith_data_to_non_non_zero_balance(
         data=bytes.fromhex("1122334455667788991011121314151617181920"),
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

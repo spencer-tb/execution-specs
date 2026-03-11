@@ -7,12 +7,11 @@ tests/static/state_tests/stSolidityTest/AmbiguousMethodFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_ambiguous_method(
     sender = EOA(
         key=0xA9AE12CB2700C0214F86B9796881BC03A1FD5605D0E76D2DA2CA592E62D53E52
     )
-    contract = Address("0x235c9320b0f4d30204334c1ddb008dfe1d75b1b9")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,9 +46,7 @@ def test_ambiguous_method(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0x186A0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALLDATALOAD(offset=0x0)
             + Op.EXP(0x2, 0xE0)
@@ -72,8 +68,11 @@ def test_ambiguous_method(
             + Op.POP
             + Op.JUMP
         ),
+        balance=0x186A0,
+        nonce=0,
+        address=Address("0x235c9320b0f4d30204334c1ddb008dfe1d75b1b9"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x12A05F200, nonce=0)
+    pre[sender] = Account(balance=0x12A05F200)
 
     tx = Transaction(
         sender=sender,
@@ -81,35 +80,11 @@ def test_ambiguous_method(
         data=bytes.fromhex("c0406226"),
         gas_limit=300000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
     post = {
-        contract: Account(
-            storage={0: 335},
-            code=(
-                Op.CALLDATALOAD(offset=0x0)
-                + Op.EXP(0x2, 0xE0)
-                + Op.SWAP1
-                + Op.DIV
-                + Op.JUMPI(pc=0x15, condition=Op.EQ(0xC0406226, Op.DUP1))
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.PUSH1[0x1B]
-                + Op.JUMP(pc=0x21)
-                + Op.JUMPDEST
-                + Op.RETURN(offset=0x0, size=0x0)
-                + Op.JUMPDEST
-                + Op.PUSH2[0x14F]
-                + Op.PUSH1[0x0]
-                + Op.DUP2
-                + Op.SWAP1
-                + Op.SSTORE
-                + Op.POP
-                + Op.JUMP
-            ),
-        ),
+        contract: Account(storage={0: 335}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/RevertOpcodeDirectCallFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -34,88 +33,12 @@ REFERENCE_SPEC_VERSION = "N/A"
         (
             460000,
             {
-                Address("0x93a599bde9a3b6390afdb06952aa5ec0b8c44f3b"): Account(
-                    code=Op.SSTORE(key=0x1, value=0xC)
-                    + Op.REVERT(offset=0x0, size=0x1)
-                    + Op.SSTORE(key=0x3, value=0xD)
-                    + Op.STOP
-                ),
                 Address("0xceb48d108c874b5b014acdd1a2466d65a3d01de6"): Account(
-                    storage={2: 14},
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0xC350,
-                            address=0x93A599BDE9A3B6390AFDB06952AA5EC0B8C44F3B,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x2, value=0xE)
-                    + Op.STOP,
-                ),
-                Address("0xf94d87faf19d8c731e70e1b0a25f9668718f6e17"): Account(
-                    code=Op.SSTORE(
-                        key=0xA,
-                        value=Op.CALL(
-                            gas=0xEA60,
-                            address=Op.CALLDATALOAD(offset=0x0),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
+                    storage={2: 14}
+                )
             },
         ),
-        (
-            62912,
-            {
-                Address("0x93a599bde9a3b6390afdb06952aa5ec0b8c44f3b"): Account(
-                    code=Op.SSTORE(key=0x1, value=0xC)
-                    + Op.REVERT(offset=0x0, size=0x1)
-                    + Op.SSTORE(key=0x3, value=0xD)
-                    + Op.STOP
-                ),
-                Address("0xceb48d108c874b5b014acdd1a2466d65a3d01de6"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0xC350,
-                            address=0x93A599BDE9A3B6390AFDB06952AA5EC0B8C44F3B,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x2, value=0xE)
-                    + Op.STOP
-                ),
-                Address("0xf94d87faf19d8c731e70e1b0a25f9668718f6e17"): Account(
-                    code=Op.SSTORE(
-                        key=0xA,
-                        value=Op.CALL(
-                            gas=0xEA60,
-                            address=Op.CALLDATALOAD(offset=0x0),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
-        ),
+        (62912, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -131,9 +54,6 @@ def test_revert_opcode_direct_call(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0xceb48d108c874b5b014acdd1a2466d65a3d01de6")
-    callee = Address("0x93a599bde9a3b6390afdb06952aa5ec0b8c44f3b")
-    callee_1 = Address("0xf94d87faf19d8c731e70e1b0a25f9668718f6e17")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -144,21 +64,20 @@ def test_revert_opcode_direct_call(
         gas_limit=10000000,
     )
 
-    pre[callee] = Account(
-        balance=1,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x1, value=0xC)
             + Op.REVERT(offset=0x0, size=0x1)
             + Op.SSTORE(key=0x3, value=0xD)
             + Op.STOP
         ),
+        balance=1,
+        nonce=0,
+        address=Address("0x93a599bde9a3b6390afdb06952aa5ec0b8c44f3b"),  # noqa: E501
     )
     # Source: LLL
     # { [[0]] (CALL 50000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[2]] 14 }  # noqa: E501
-    pre[contract] = Account(
-        balance=1,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -175,10 +94,11 @@ def test_revert_opcode_direct_call(
             + Op.SSTORE(key=0x2, value=0xE)
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
         balance=1,
         nonce=0,
+        address=Address("0xceb48d108c874b5b014acdd1a2466d65a3d01de6"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0xA,
@@ -194,8 +114,11 @@ def test_revert_opcode_direct_call(
             )
             + Op.STOP
         ),
+        balance=1,
+        nonce=0,
+        address=Address("0xf94d87faf19d8c731e70e1b0a25f9668718f6e17"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
@@ -205,8 +128,6 @@ def test_revert_opcode_direct_call(
         ),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/FillStackFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,88 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            3141592,
-            {
-                Address("0x4f3f701464972e74606d6ea82d4d3080599a0e79"): Account(
-                    code=Op.JUMPI(
-                        pc=0x9,
-                        condition=Op.ISZERO(
-                            Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                        ),
-                    )
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(
-                        key=Op.CALLDATALOAD(offset=0x0),
-                        value=Op.CALLDATALOAD(offset=0x20),
-                    )
-                ),
-                Address("0x709ee68118ab00ce0bab659c9aa89744b35703fa"): Account(
-                    code=Op.JUMPDEST
-                    + Op.PUSH32[
-                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    ]
-                    + Op.PUSH32[
-                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
-                    ]
-                    + Op.GASLIMIT
-                    + Op.PUSH32[0x10000000000000000000000000000000000000000]
-                    + Op.PUSH32[0x1]
-                    + Op.JUMPI(pc=Op.NUMBER, condition=Op.PUSH32[0xC350])
-                    + Op.ISZERO
-                    + Op.MSTORE8
-                    + Op.SHA3
-                    + Op.DUP1
-                    + Op.GASPRICE
-                    + Op.SWAP8
-                    + Op.SSTORE
-                    + Op.MLOAD(offset=0x0)
-                    + Op.SSTORE
-                ),
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0x4f3f701464972e74606d6ea82d4d3080599a0e79"): Account(
-                    code=Op.JUMPI(
-                        pc=0x9,
-                        condition=Op.ISZERO(
-                            Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                        ),
-                    )
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(
-                        key=Op.CALLDATALOAD(offset=0x0),
-                        value=Op.CALLDATALOAD(offset=0x20),
-                    )
-                ),
-                Address("0x709ee68118ab00ce0bab659c9aa89744b35703fa"): Account(
-                    code=Op.JUMPDEST
-                    + Op.PUSH32[
-                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    ]
-                    + Op.PUSH32[
-                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
-                    ]
-                    + Op.GASLIMIT
-                    + Op.PUSH32[0x10000000000000000000000000000000000000000]
-                    + Op.PUSH32[0x1]
-                    + Op.JUMPI(pc=Op.NUMBER, condition=Op.PUSH32[0xC350])
-                    + Op.ISZERO
-                    + Op.MSTORE8
-                    + Op.SHA3
-                    + Op.DUP1
-                    + Op.GASPRICE
-                    + Op.SWAP8
-                    + Op.SSTORE
-                    + Op.MLOAD(offset=0x0)
-                    + Op.SSTORE
-                ),
-            },
-        ),
+        (3141592, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -126,7 +45,6 @@ def test_fill_stack(
     sender = EOA(
         key=0x23000FE3D08CDEBA75EB2E2E2909F842DBF48AA0C566F49101E8285C8DEC62D6
     )
-    contract = Address("0x709ee68118ab00ce0bab659c9aa89744b35703fa")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -137,7 +55,6 @@ def test_fill_stack(
         gas_limit=9223372036854775807,
     )
 
-    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -155,9 +72,7 @@ def test_fill_stack(
         ),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.JUMPDEST
             + Op.PUSH32[
@@ -180,8 +95,10 @@ def test_fill_stack(
             + Op.MLOAD(offset=0x0)
             + Op.SSTORE
         ),
+        nonce=0,
+        address=Address("0x709ee68118ab00ce0bab659c9aa89744b35703fa"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x152D02C7E14AF6800000, nonce=0)
+    pre[sender] = Account(balance=0x152D02C7E14AF6800000)
 
     tx = Transaction(
         sender=sender,
@@ -195,7 +112,6 @@ def test_fill_stack(
         ),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=264050067,
     )
 

@@ -8,12 +8,11 @@ returndatasize_after_successful_delegatecallFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_returndatasize_after_successful_delegatecall(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x1c7cce7753e67952a031524e6505e53f170520be")
-    callee = Address("0x7c17dbbfa29dc8391bfa19022ecb4fda54fc826a")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +50,7 @@ def test_returndatasize_after_successful_delegatecall(
 
     # Source: LLL
     # { (seq (DELEGATECALL 60000 <contract:0x1000000000000000000000000000000000000002> 0 0 0 0) (SSTORE 0 (RETURNDATASIZE)))}  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.POP(
                 Op.DELEGATECALL(
@@ -73,53 +68,30 @@ def test_returndatasize_after_successful_delegatecall(
         storage={
             0x0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
         },
-    )
-    pre[callee] = Account(
-        balance=0x6400000000,
         nonce=0,
+        address=Address("0x1c7cce7753e67952a031524e6505e53f170520be"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=Op.CALLER)
             + Op.RETURN(offset=0x0, size=0x14)
             + Op.STOP
         ),
+        balance=0x6400000000,
+        nonce=0,
+        address=Address("0x7c17dbbfa29dc8391bfa19022ecb4fda54fc826a"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 20},
-            code=(
-                Op.POP(
-                    Op.DELEGATECALL(
-                        gas=0xEA60,
-                        address=0x7C17DBBFA29DC8391BFA19022ECB4FDA54FC826A,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.MSTORE(offset=0x0, value=Op.CALLER)
-                + Op.RETURN(offset=0x0, size=0x14)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 20}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

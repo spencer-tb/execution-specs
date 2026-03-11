@@ -7,12 +7,11 @@ tests/static/state_tests/stCallCodes/callcallcodecallcode_011Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,10 +37,6 @@ def test_callcallcodecallcode_011(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xeb09ff15547417853f6f4b240b8804769c37b0f1")
-    callee = Address("0x0ffffaeb931552e5f094ca96a70be612da56b887")
-    callee_1 = Address("0x181b4ed322e192361633cc3c0a418f259ab0cf4b")
-    callee_2 = Address("0x4c0de71b93de6b7055a3686e4bf93add02b39ed8")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +47,7 @@ def test_callcallcodecallcode_011(
         gas_limit=30000000,
     )
 
-    pre[callee] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x2,
@@ -70,10 +63,11 @@ def test_callcallcodecallcode_011(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
-        balance=0,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
+        address=Address("0x0ffffaeb931552e5f094ca96a70be612da56b887"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x3, value=0x1)
             + Op.SSTORE(key=0x4, value=Op.CALLER)
@@ -85,10 +79,10 @@ def test_callcallcodecallcode_011(
             + Op.SSTORE(key=0x154, value=Op.GASPRICE)
             + Op.STOP
         ),
-    )
-    pre[callee_2] = Account(
-        balance=0xDE0B6B3A7640000,
         nonce=0,
+        address=Address("0x181b4ed322e192361633cc3c0a418f259ab0cf4b"),  # noqa: E501
+    )
+    callee_2 = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -104,12 +98,13 @@ def test_callcallcodecallcode_011(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x4c0de71b93de6b7055a3686e4bf93add02b39ed8"),  # noqa: E501
     )
     # Source: LLL
     # {  [[ 0 ]] (CALL 350000 <contract:0x1000000000000000000000000000000000000001> 1 0 64 0 64 ) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -125,50 +120,20 @@ def test_callcallcodecallcode_011(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xeb09ff15547417853f6f4b240b8804769c37b0f1"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=3000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        callee: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x2,
-                    value=Op.CALLCODE(
-                        gas=0x3D090,
-                        address=0x181B4ED322E192361633CC3C0A418F259AB0CF4B,
-                        value=0x3,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(
-            code=(
-                Op.SSTORE(key=0x3, value=0x1)
-                + Op.SSTORE(key=0x4, value=Op.CALLER)
-                + Op.SSTORE(key=0x7, value=Op.CALLVALUE)
-                + Op.SSTORE(key=0x14A, value=Op.ADDRESS)
-                + Op.SSTORE(key=0x14C, value=Op.ORIGIN)
-                + Op.SSTORE(key=0x150, value=Op.CALLDATASIZE)
-                + Op.SSTORE(key=0x152, value=Op.CODESIZE)
-                + Op.SSTORE(key=0x154, value=Op.GASPRICE)
-                + Op.STOP
-            ),
-        ),
         callee_2: Account(
             storage={
                 1: 1,
@@ -182,40 +147,8 @@ def test_callcallcodecallcode_011(
                 338: 39,
                 340: 10,
             },
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALLCODE(
-                        gas=0x493E0,
-                        address=0xFFFFAEB931552E5F094CA96A70BE612DA56B887,
-                        value=0x2,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
         ),
-        contract: Account(
-            storage={0: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0x55730,
-                        address=0x4C0DE71B93DE6B7055A3686E4BF93ADD02B39ED8,
-                        value=0x1,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

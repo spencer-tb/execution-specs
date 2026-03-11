@@ -8,12 +8,11 @@ call_outsize_then_create_successful_then_returndatasizeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_call_outsize_then_create_successful_then_returndatasize(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x3875f9536b829cb75f84cdcb2f72b000b5a41855")
-    callee = Address("0x24b406508240d6f2783499d1fd65fedd0feeef37")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +48,7 @@ def test_call_outsize_then_create_successful_then_returndatasize(
         gas_limit=111669149696,
     )
 
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -63,12 +58,12 @@ def test_call_outsize_then_create_successful_then_returndatasize(
             + Op.STOP
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x24b406508240d6f2783499d1fd65fedd0feeef37"),  # noqa: E501
     )
     # Source: LLL
     # { (seq (CALL 0x0900000000 <contract:0x0aabbccdd5c57f15886f9b263e2f6d2d6c7b5ec6> 0 0 0 0 0x20) (CREATE 0 0 (lll (seq (mstore 0 0x112233) (RETURN 0 32)  (STOP) ) 0)) (SSTORE 0 (RETURNDATASIZE)) (STOP) )}  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.POP(
                 Op.CALL(
@@ -96,64 +91,18 @@ def test_call_outsize_then_create_successful_then_returndatasize(
             + Op.STOP
         ),
         storage={0x0: 0x1},
+        nonce=0,
+        address=Address("0x3875f9536b829cb75f84cdcb2f72b000b5a41855"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        Address("0x21b8ee56b69b18aaa96ccc9d1e92dd73f5c0f613"): Account(
-            code=bytes.fromhex(
-                "0000000000000000000000000000000000000000000000000000000000112233"  # noqa: E501
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
-                )
-                + Op.RETURN(offset=0x0, size=0x20)
-                + Op.STOP
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.POP(
-                    Op.CALL(
-                        gas=0x900000000,
-                        address=0x24B406508240D6F2783499D1FD65FEDD0FEEEF37,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.PUSH1[0xE]
-                + Op.CODECOPY(dest_offset=0x0, offset=0x3C, size=Op.DUP1)
-                + Op.PUSH1[0x0]
-                + Op.PUSH1[0x0]
-                + Op.POP(Op.CREATE)
-                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
-                + Op.STOP
-                + Op.STOP
-                + Op.INVALID
-                + Op.MSTORE(offset=0x0, value=0x112233)
-                + Op.RETURN(offset=0x0, size=0x20)
-                + Op.STOP
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

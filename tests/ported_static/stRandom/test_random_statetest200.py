@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest200Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest200(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x16c2d1c5a69fa047f6c8f529ee8d728246515fa9")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,9 +46,7 @@ def test_random_statetest200(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.NUMBER
             + Op.PUSH32[0xC350]
@@ -60,9 +56,10 @@ def test_random_statetest200(
             + Op.CALLVALUE
             + Op.SSTORE(key=Op.DUP1, value=0x42051AF2A24050039E9D3A678B028A0A)
         ),
+        nonce=0,
+        address=Address("0x16c2d1c5a69fa047f6c8f529ee8d728246515fa9"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -92,7 +89,6 @@ def test_random_statetest200(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=1062273821,
     )
 
@@ -101,33 +97,6 @@ def test_random_statetest200(
             storage={
                 0x42051AF2A24050039E9D3A678B028A0A: 0x42051AF2A24050039E9D3A678B028A0A,  # noqa: E501
             },
-            code=(
-                Op.NUMBER
-                + Op.PUSH32[0xC350]
-                + Op.PUSH32[0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF]
-                + Op.PUSH32[0x10000000000000000000000000000000000000000]
-                + Op.PUSH32[0x4F3F701464972E74606D6EA82D4D3080599A0E79]
-                + Op.CALLVALUE
-                + Op.SSTORE(
-                    key=Op.DUP1, value=0x42051AF2A24050039E9D3A678B028A0A
-                )
-            ),
-        ),
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
         ),
     }
 

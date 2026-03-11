@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/CREATE_Bounds2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,36 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0,
-                        value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
-                    )
-                    + Op.MSTORE8(offset=0x20, value=0x35)
-                    + Op.MSTORE8(offset=0x21, value=0x55)
-                    + Op.CREATE(value=0x1, offset=0x0, size=0xFFFFFFFF)
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0,
-                        value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
-                    )
-                    + Op.MSTORE8(offset=0x20, value=0x35)
-                    + Op.MSTORE8(offset=0x21, value=0x55)
-                    + Op.CREATE(value=0x1, offset=0x0, size=0xFFFFFFFF)
-                    + Op.STOP
-                )
-            },
-        ),
+        (150000, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -74,7 +45,6 @@ def test_create_bounds2(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x1000000000000000000000000000000000000000")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -87,9 +57,7 @@ def test_create_bounds2(
 
     # Source: LLL
     # {  (MSTORE 0 0x6001600155601080600c6000396000f3006000355415600957005b6020356000 )  (MSTORE8 32 0x35) (MSTORE8 33 0x55) (CREATE 1 0 0xffffffff) }  # noqa: E501
-    pre[contract] = Account(
-        balance=100,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -100,20 +68,19 @@ def test_create_bounds2(
             + Op.CREATE(value=0x1, offset=0x0, size=0xFFFFFFFF)
             + Op.STOP
         ),
+        balance=100,
+        nonce=0,
+        address=Address("0x1000000000000000000000000000000000000000"),  # noqa: E501
     )
     pre[sender] = Account(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
-        nonce=0,
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

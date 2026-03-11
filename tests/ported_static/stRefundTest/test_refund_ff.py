@@ -7,12 +7,11 @@ tests/static/state_tests/stRefundTest/refundFFFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_refund_ff(
     sender = EOA(
         key=0xD6B0676AFDE099A078F9D00F24D2C1CB4278546E1734927015023DB0980A92C5
     )
-    contract = Address("0xa45b53c7b70adf8ea2e910d0e826df8d895b2b49")
     callee = Address("0x7704d8a022a1ba8f3539fc82c7d7fb065abc0df3")
 
     env = Environment(
@@ -54,12 +52,11 @@ def test_refund_ff(
     # {
     #    selfdestruct(<eoa:0xdddddddddddddddddddddddddddddddddddddddd>)
     # }
-    pre[contract] = Account(
-        balance=0,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(address=0x7704D8A022A1BA8F3539FC82C7D7FB065ABC0DF3)
         ),
+        address=Address("0xa45b53c7b70adf8ea2e910d0e826df8d895b2b49"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -69,18 +66,8 @@ def test_refund_ff(
         gas_limit=2601000,
         gas_price=1000,
         nonce=1,
-        value=0,
-        access_list=[],
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SELFDESTRUCT(
-                    address=0x7704D8A022A1BA8F3539FC82C7D7FB065ABC0DF3,
-                )
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

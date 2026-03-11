@@ -7,16 +7,14 @@ tests/static/state_tests/stSpecialTest/StackDepthLimitSECFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -46,7 +44,7 @@ def test_stack_depth_limit_sec(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x2540BE400, nonce=0)
+    pre[sender] = Account(balance=0x2540BE400)
 
     tx = Transaction(
         sender=sender,
@@ -57,24 +55,9 @@ def test_stack_depth_limit_sec(
         ),
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
-    post = {
-        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-            code=(
-                Op.CALL(
-                    gas=Op.SUB(Op.GAS, 0x40),
-                    address=Op.ADDRESS,
-                    value=0x0,
-                    args_offset=0x0,
-                    args_size=0x0,
-                    ret_offset=0x0,
-                    ret_size=0x0,
-                )
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

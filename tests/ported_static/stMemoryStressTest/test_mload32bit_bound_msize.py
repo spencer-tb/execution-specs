@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/mload32bitBound_MsizeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -31,26 +30,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0x15d5a32351458ff3dca214bd202c21f066031ae1"): Account(
-                    code=Op.MSTORE(offset=0xFFFFFFFF, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0x15d5a32351458ff3dca214bd202c21f066031ae1"): Account(
-                    code=Op.MSTORE(offset=0xFFFFFFFF, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                )
-            },
-        ),
+        (150000, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -66,7 +47,6 @@ def test_mload32bit_bound_msize(
     sender = EOA(
         key=0x7DD14755C573E37C1F649B0C53B9815F76AEBD636DF7CCFA97F4579F33BA59A0
     )
-    contract = Address("0x15d5a32351458ff3dca214bd202c21f066031ae1")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -79,25 +59,23 @@ def test_mload32bit_bound_msize(
 
     # Source: LLL
     # { [4294967295] 1 [[ 0 ]] (MSIZE)}
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0xFFFFFFFF, value=0x1)
             + Op.SSTORE(key=0x0, value=Op.MSIZE)
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x15d5a32351458ff3dca214bd202c21f066031ae1"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x186A0C3B1E19A180, nonce=0)
+    pre[sender] = Account(balance=0x186A0C3B1E19A180)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

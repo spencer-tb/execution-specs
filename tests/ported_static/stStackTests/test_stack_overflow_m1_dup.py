@@ -7,12 +7,11 @@ tests/static/state_tests/stStackTests/stackOverflowM1DUPFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -135,7 +134,7 @@ def test_stack_overflow_m1_dup(
         gas_limit=42949672960,
     )
 
-    pre[sender] = Account(balance=0xE8D4A5100000000000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A5100000000000)
     pre[contract] = Account(balance=0xE8D4A5100000000000, nonce=0)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -146,7 +145,6 @@ def test_stack_overflow_m1_dup(
         data=tx_data,
         gas_limit=6000000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

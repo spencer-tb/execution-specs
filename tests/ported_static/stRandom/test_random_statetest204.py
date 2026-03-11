@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest204Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest204(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xb8147a5aaed0750fdd9ac0d29f0a0e668fa3d30c")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,8 +45,7 @@ def test_random_statetest204(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -66,9 +63,7 @@ def test_random_statetest204(
         ),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH32[0xC350]
             + Op.PUSH32[0x1]
@@ -84,6 +79,8 @@ def test_random_statetest204(
                 ),
             )
         ),
+        nonce=0,
+        address=Address("0xb8147a5aaed0750fdd9ac0d29f0a0e668fa3d30c"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -101,46 +98,14 @@ def test_random_statetest204(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=1983843477,
     )
 
     post = {
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
         contract: Account(
             storage={
                 0: 0xFFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000FFFFFFFFFFFFFFFF,  # noqa: E501
             },
-            code=(
-                Op.PUSH32[0xC350]
-                + Op.PUSH32[0x1]
-                + Op.PUSH32[0x4F3F701464972E74606D6EA82D4D3080599A0E79]
-                + Op.PUSH32[0x0]
-                + Op.PUSH32[0x1]
-                + Op.SSTORE(
-                    key=Op.DUP3,
-                    value=Op.MULMOD(
-                        Op.PUSH32[0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF],
-                        Op.PUSH32[0x10000000000000000000000000000000000000000],
-                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                    ),
-                )
-            ),
         ),
     }
 

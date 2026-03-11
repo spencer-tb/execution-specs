@@ -8,12 +8,11 @@ delegatecallEmptycontractFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_delegatecall_emptycontract(
     sender = EOA(
         key=0x11489F9B076D3F3185EBE5C6E2DBEDBE9E283A6CE75895780134252B3DD5DBCC
     )
-    contract = Address("0x4a88cf3b3f1dabdd27e62fcb5df86d7d685e0044")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_delegatecall_emptycontract(
 
     # Source: LLL
     # { [[ 0 ]] (DELEGATECALL 50000 0x945304eb96065b2a98b57a48a06ae28d285a71b5 0 64 0 64 )}  # noqa: E501
-    pre[contract] = Account(
-        balance=1000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -69,37 +65,21 @@ def test_delegatecall_emptycontract(
             )
             + Op.STOP
         ),
+        balance=1000,
+        nonce=0,
+        address=Address("0x4a88cf3b3f1dabdd27e62fcb5df86d7d685e0044"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x10C8E0, nonce=0)
+    pre[sender] = Account(balance=0x10C8E0)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=105044,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.DELEGATECALL(
-                        gas=0xC350,
-                        address=0x945304EB96065B2A98B57A48A06AE28D285A71B5,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

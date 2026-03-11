@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom2/randomStatetest588Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest588(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x2c3d41995b7f3d32e08c6575e2ddaa1ae5cf2067")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,9 +46,7 @@ def test_random_statetest588(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH32[
                 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
@@ -69,9 +65,10 @@ def test_random_statetest588(
             + Op.MLOAD(offset=0x0)
             + Op.SSTORE
         ),
+        nonce=0,
+        address=Address("0x2c3d41995b7f3d32e08c6575e2ddaa1ae5cf2067"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -101,7 +98,6 @@ def test_random_statetest588(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=1725348983,
     )
 
@@ -110,40 +106,6 @@ def test_random_statetest588(
             storage={
                 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: 1,  # noqa: E501
             },
-            code=(
-                Op.PUSH32[
-                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                ]
-                + Op.COINBASE
-                + Op.NUMBER
-                + Op.PUSH32[0x1]
-                + Op.CALLDATACOPY(
-                    dest_offset=Op.MOD(
-                        Op.NUMBER,
-                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                    ),
-                    offset=Op.PUSH32[0x1],
-                    size=Op.PUSH32[0xC350],
-                )
-                + Op.MLOAD(offset=0x0)
-                + Op.SSTORE
-            ),
-        ),
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
         ),
     }
 

@@ -7,11 +7,10 @@ tests/static/state_tests/stTransactionTest/NoSrcAccount1559Filler.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     AccessList,
-    Account,
     Address,
     Alloc,
-    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -343,7 +342,6 @@ def test_no_src_account1559(
     sender = EOA(
         key=0x4A2FFC8867FD8D1773481CF13F36E44F033133C579520D2745E46C3BBBF21E6A
     )
-    contract = Address("0x4d7b154e5bf8310a4d8220c8eed80020e4b8f86f")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -355,7 +353,11 @@ def test_no_src_account1559(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(balance=0, nonce=0, code=bytes.fromhex("00"))
+    contract = pre.deploy_contract(
+        code=bytes.fromhex("00"),
+        nonce=0,
+        address=Address("0x4d7b154e5bf8310a4d8220c8eed80020e4b8f86f"),  # noqa: E501
+    )
 
     tx = Transaction(
         sender=sender,
@@ -364,14 +366,11 @@ def test_no_src_account1559(
         gas_limit=tx_gas_limit,
         max_fee_per_gas=2000,
         max_priority_fee_per_gas=10,
-        nonce=0,
         value=tx_value,
         access_list=tx_access_list,
         error=tx_error,
     )
 
-    post = {
-        contract: Account(code=bytes.fromhex("00")),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

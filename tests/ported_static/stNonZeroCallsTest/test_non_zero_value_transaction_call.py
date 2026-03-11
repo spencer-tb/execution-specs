@@ -8,12 +8,11 @@ NonZeroValue_TransactionCALLFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -49,15 +48,13 @@ def test_non_zero_value_transaction_call(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

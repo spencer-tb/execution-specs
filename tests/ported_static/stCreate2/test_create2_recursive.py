@@ -7,12 +7,11 @@ tests/static/state_tests/stCreate2/Create2RecursiveFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -30,45 +29,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            9151314442816847871,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0,
-                        value=0x606460006000396103E85A10601B576000606460006000F5601D565B5A5B,  # noqa: E501
-                    )
-                    + Op.CREATE2(value=0x0, offset=0x2, size=0x1E, salt=0x0)
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            20070000000000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0,
-                        value=0x606460006000396103E85A10601B576000606460006000F5601D565B5A5B,  # noqa: E501
-                    )
-                    + Op.CREATE2(value=0x0, offset=0x2, size=0x1E, salt=0x0)
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            20080000000000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0,
-                        value=0x606460006000396103E85A10601B576000606460006000F5601D565B5A5B,  # noqa: E501
-                    )
-                    + Op.CREATE2(value=0x0, offset=0x2, size=0x1E, salt=0x0)
-                    + Op.STOP
-                )
-            },
-        ),
+        (9151314442816847871, {}),
+        (20070000000000, {}),
+        (20080000000000, {}),
     ],
     ids=["case0", "case1", "case2"],
 )
@@ -84,7 +47,6 @@ def test_create2_recursive(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -97,13 +59,10 @@ def test_create2_recursive(
 
     pre[sender] = Account(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-        nonce=0,
     )
     # Source: LLL
     # { (MSTORE 0 0x606460006000396103e85a10601b576000606460006000f5601d565b5a5b)  (CREATE2 0 2 30 0) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -112,16 +71,15 @@ def test_create2_recursive(
             + Op.CREATE2(value=0x0, offset=0x2, size=0x1E, salt=0x0)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

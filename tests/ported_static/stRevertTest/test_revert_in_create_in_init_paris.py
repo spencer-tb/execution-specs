@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/RevertInCreateInInit_ParisFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -49,7 +48,7 @@ def test_revert_in_create_in_init_paris(
     )
 
     pre[contract] = Account(balance=10, nonce=0, storage={0x0: 0x1})
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
@@ -60,8 +59,6 @@ def test_revert_in_create_in_init_paris(
         ),
         gas_limit=200000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {

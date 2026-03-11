@@ -7,12 +7,11 @@ tests/static/state_tests/VMTests/vmIOandFlowOperations/msizeFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -33,319 +32,49 @@ REFERENCE_SPEC_VERSION = "N/A"
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000004",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x20, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x5A, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.MSTORE8(offset=0x1F, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x1)
-                    + Op.SSTORE(key=0x1, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x0)
-                    + Op.SSTORE(key=0x2, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.MSTORE8(offset=0xB00000, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 32, 1: 64, 2: 64},
-                    code=Op.DELEGATECALL(
-                        gas=Op.GAS,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP,
-                ),
+                    storage={0: 32, 1: 64, 2: 64}
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000005",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x20, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x5A, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.MSTORE8(offset=0x1F, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x1)
-                    + Op.SSTORE(key=0x1, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x0)
-                    + Op.SSTORE(key=0x2, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.MSTORE8(offset=0xB00000, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 0xB00020},
-                    code=Op.DELEGATECALL(
-                        gas=Op.GAS,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP,
-                ),
+                    storage={0: 0xB00020}
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x20, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x5A, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.MSTORE8(offset=0x1F, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x1)
-                    + Op.SSTORE(key=0x1, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x0)
-                    + Op.SSTORE(key=0x2, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.MSTORE8(offset=0xB00000, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 32},
-                    code=Op.DELEGATECALL(
-                        gas=Op.GAS,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP,
-                ),
+                    storage={0: 32}
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x20, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x5A, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.MSTORE8(offset=0x1F, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x1)
-                    + Op.SSTORE(key=0x1, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x0)
-                    + Op.SSTORE(key=0x2, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.MSTORE8(offset=0xB00000, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 32},
-                    code=Op.DELEGATECALL(
-                        gas=Op.GAS,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP,
-                ),
+                    storage={0: 32}
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x20, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x5A, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.MSTORE8(offset=0x1F, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x1)
-                    + Op.SSTORE(key=0x1, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x0)
-                    + Op.SSTORE(key=0x2, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.MSTORE8(offset=0xB00000, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 64},
-                    code=Op.DELEGATECALL(
-                        gas=Op.GAS,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP,
-                ),
+                    storage={0: 64}
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000003",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x20, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
-                    + Op.MSTORE(offset=0x5A, value=0xEEEE)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.MSTORE8(offset=0x1F, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x1)
-                    + Op.SSTORE(key=0x1, value=Op.MSIZE)
-                    + Op.MSTORE8(offset=0x20, value=0x0)
-                    + Op.SSTORE(key=0x2, value=Op.MSIZE)
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.MSTORE8(offset=0xB00000, value=0x1)
-                    + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 128},
-                    code=Op.DELEGATECALL(
-                        gas=Op.GAS,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP,
-                ),
+                    storage={0: 128}
+                )
             },
         ),
     ],
@@ -363,13 +92,6 @@ def test_msize(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xcccccccccccccccccccccccccccccccccccccccc")
-    callee = Address("0x0000000000000000000000000000000000001000")
-    callee_1 = Address("0x0000000000000000000000000000000000001001")
-    callee_2 = Address("0x0000000000000000000000000000000000001002")
-    callee_3 = Address("0x0000000000000000000000000000000000001003")
-    callee_4 = Address("0x0000000000000000000000000000000000001004")
-    callee_5 = Address("0x0000000000000000000000000000000000001005")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -380,47 +102,49 @@ def test_msize(
         gas_limit=4294967296,
     )
 
-    pre[callee] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0xFF)
             + Op.SSTORE(key=0x0, value=Op.MSIZE)
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001000"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
             + Op.SSTORE(key=0x0, value=Op.MSIZE)
             + Op.STOP
         ),
-    )
-    pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001001"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
             + Op.MSTORE(offset=0x20, value=0xEEEE)
             + Op.SSTORE(key=0x0, value=Op.MSIZE)
             + Op.STOP
         ),
-    )
-    pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001002"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0xFFFFFFFFFF)
             + Op.MSTORE(offset=0x5A, value=0xEEEE)
             + Op.SSTORE(key=0x0, value=Op.MSIZE)
             + Op.STOP
         ),
-    )
-    pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001003"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.MSTORE8(offset=0x1F, value=0x1)
             + Op.SSTORE(key=0x0, value=Op.MSIZE)
@@ -430,24 +154,26 @@ def test_msize(
             + Op.SSTORE(key=0x2, value=Op.MSIZE)
             + Op.STOP
         ),
-    )
-    pre[callee_5] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001004"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.MSTORE8(offset=0xB00000, value=0x1)
             + Op.SSTORE(key=0x0, value=Op.MSIZE)
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x0000000000000000000000000000000000001005"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x100000000000, nonce=0)
+    pre[sender] = Account(balance=0x100000000000)
     # Source: LLL
     # {
     #     (delegatecall (gas) (+ 0x1000 $4) 0 0 0 0)
     # }
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.DELEGATECALL(
                 gas=Op.GAS,
@@ -459,6 +185,9 @@ def test_msize(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0xcccccccccccccccccccccccccccccccccccccccc"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -469,7 +198,6 @@ def test_msize(
         data=tx_data,
         gas_limit=268435456,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

@@ -8,12 +8,11 @@ TransactionCollisionToEmptyButCodeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -31,42 +30,10 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, tx_value, expected_post",
     [
-        (
-            600000,
-            0,
-            {
-                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-                    code=bytes.fromhex("1122334455")
-                )
-            },
-        ),
-        (
-            600000,
-            1,
-            {
-                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-                    code=bytes.fromhex("1122334455")
-                )
-            },
-        ),
-        (
-            54000,
-            0,
-            {
-                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-                    code=bytes.fromhex("1122334455")
-                )
-            },
-        ),
-        (
-            54000,
-            1,
-            {
-                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-                    code=bytes.fromhex("1122334455")
-                )
-            },
-        ),
+        (600000, 0, {}),
+        (600000, 1, {}),
+        (54000, 0, {}),
+        (54000, 1, {}),
     ],
     ids=["case0", "case1", "case2", "case3"],
 )
@@ -83,7 +50,6 @@ def test_transaction_collision_to_empty_but_code(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -95,12 +61,12 @@ def test_transaction_collision_to_empty_but_code(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=bytes.fromhex("1122334455"),
+        nonce=0,
+        address=Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
@@ -108,7 +74,6 @@ def test_transaction_collision_to_empty_but_code(
         data=bytes.fromhex("6001600155"),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

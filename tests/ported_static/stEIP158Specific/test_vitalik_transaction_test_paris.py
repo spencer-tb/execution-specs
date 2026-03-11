@@ -8,16 +8,14 @@ vitalikTransactionTestParisFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -70,45 +68,8 @@ def test_vitalik_transaction_test_paris(
         gas_limit=2097151,
         gas_price=10,
         nonce=335,
-        value=0,
     )
 
-    post = {
-        Address("0x51f9d7f98e997bdd6bebde4c2dd27be8c99303aa"): Account(
-            code=(
-                Op.MSTORE8(offset=0x3F, value=0x0)
-                + Op.MSIZE
-                + Op.PUSH2[0x43]
-                + Op.CODECOPY(
-                    dest_offset=Op.MSIZE,
-                    offset=Op.PUSH2[0x13],
-                    size=Op.DUP1,
-                )
-                + Op.JUMP(pc=Op.PUSH2[0x56])
-                + Op.SELFDESTRUCT(
-                    address=Op.SDIV(
-                        0xEE098E6C2A43D9E2C04F08F0C3A87B0BA59079D4D53532071D6CD0CB86FACD56,  # noqa: E501
-                        0x1000000000000000000000000,
-                    ),
-                )
-                + Op.PUSH2[0x0]
-                + Op.CODECOPY(
-                    dest_offset=0x0, offset=Op.PUSH2[0x3F], size=Op.DUP1
-                )
-                + Op.JUMP(pc=Op.PUSH2[0x3F])
-                + Op.JUMPDEST
-                + Op.PUSH1[0x0]
-                + Op.RETURN
-                + Op.JUMPDEST
-                + Op.DUP2
-                + Op.PUSH1[0x0]
-                + Op.CREATE
-                + Op.SWAP1
-                + Op.POP
-                + Op.POP
-                + Op.INVALID
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

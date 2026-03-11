@@ -8,12 +8,11 @@ CallContractToCreateContractOOGFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_call_contract_to_create_contract_oog(
     sender = EOA(
         key=0xF79127A3004ABDE26A4CBD80C428CB10F829FA11B54D36E7B326F4F4A5927ACF
     )
-    contract = Address("0x1bc6342e077e772b0f4cc48116bc171f9a35d09e")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_call_contract_to_create_contract_oog(
 
     # Source: LLL
     # {(MSTORE 0 0x600c60005566602060406000f060205260076039f3)[[0]](CREATE 1 11 21)(CALL 0 (SLOAD 0) 0 0 0 0 0)}  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -74,8 +70,10 @@ def test_call_contract_to_create_contract_oog(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x1bc6342e077e772b0f4cc48116bc171f9a35d09e"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00)
 
     tx = Transaction(
         sender=sender,
@@ -83,33 +81,8 @@ def test_call_contract_to_create_contract_oog(
         data=bytes.fromhex("00"),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0x600C60005566602060406000F060205260076039F3,
-                )
-                + Op.SSTORE(
-                    key=0x0,
-                    value=Op.CREATE(value=0x1, offset=0xB, size=0x15),
-                )
-                + Op.CALL(
-                    gas=0x0,
-                    address=Op.SLOAD(key=0x0),
-                    value=0x0,
-                    args_offset=0x0,
-                    args_size=0x0,
-                    ret_offset=0x0,
-                    ret_size=0x0,
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

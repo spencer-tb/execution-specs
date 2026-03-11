@@ -7,12 +7,11 @@ tests/static/state_tests/stCreateTest/CREATE_HighNonceMinus1Filler.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_create_high_nonce_minus1(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,7 +45,7 @@ def test_create_high_nonce_minus1(
         gas_limit=89128960,
     )
 
-    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00)
     # Source: Yul
     # {
     #   // initcode: { return(0, 1) }
@@ -57,9 +55,7 @@ def test_create_high_nonce_minus1(
     #
     #   let noOptimization := msize()
     # }
-    pre[contract] = Account(
-        balance=0,
-        nonce=18446744073709551614,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -72,16 +68,15 @@ def test_create_high_nonce_minus1(
             + Op.SSTORE(key=Op.DUP1, value=0x1)
             + Op.STOP
         ),
+        nonce=18446744073709551614,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
@@ -90,21 +85,6 @@ def test_create_high_nonce_minus1(
                 0: 0xD061B08A84EBC70FE797F9BD62F4269EF8274A13,
                 1: 1,
             },
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0x60016000F3000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                )
-                + Op.SSTORE(
-                    key=0x0,
-                    value=Op.CREATE(value=Op.DUP1, offset=0x0, size=0x5),
-                )
-                + Op.SSTORE(key=Op.DUP1, value=0x1)
-                + Op.STOP
-            ),
-        ),
-        Address("0xd061b08a84ebc70fe797f9bd62f4269ef8274a13"): Account(
-            code=bytes.fromhex("00"),
         ),
     }
 

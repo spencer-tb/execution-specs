@@ -7,11 +7,11 @@ tests/static/state_tests/stEIP2930/manualCreateFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     AccessList,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -120,7 +120,6 @@ def test_manual_create(
         gas_limit=400000,
         gas_price=10,
         nonce=1,
-        value=0,
         access_list=tx_access_list,
     )
 

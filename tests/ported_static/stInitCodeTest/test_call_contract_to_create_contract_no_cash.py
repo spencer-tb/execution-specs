@@ -8,12 +8,11 @@ CallContractToCreateContractNoCashFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_call_contract_to_create_contract_no_cash(
     sender = EOA(
         key=0xF79127A3004ABDE26A4CBD80C428CB10F829FA11B54D36E7B326F4F4A5927ACF
     )
-    contract = Address("0x985aca92559c5b1b9cd7897fec0f7c7993ad0d60")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_call_contract_to_create_contract_no_cash(
 
     # Source: LLL
     # {(MSTORE 0 0x600c60005566602060406000f060205260076039f3)[[0]](CREATE 100000 11 21)}  # noqa: E501
-    pre[contract] = Account(
-        balance=0x2710,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -66,8 +62,11 @@ def test_call_contract_to_create_contract_no_cash(
             )
             + Op.STOP
         ),
+        balance=0x2710,
+        nonce=0,
+        address=Address("0x985aca92559c5b1b9cd7897fec0f7c7993ad0d60"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00)
 
     tx = Transaction(
         sender=sender,
@@ -75,24 +74,8 @@ def test_call_contract_to_create_contract_no_cash(
         data=bytes.fromhex("00"),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0x600C60005566602060406000F060205260076039F3,
-                )
-                + Op.SSTORE(
-                    key=0x0,
-                    value=Op.CREATE(value=0x186A0, offset=0xB, size=0x15),
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -8,12 +8,11 @@ NonZeroValue_SUICIDE_ToEmpty_ParisFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_non_zero_value_suicide_to_empty_paris(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0xeb9a4c7a191790631d13fc4927446f5ef9d201fc")
     callee = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
 
     env = Environment(
@@ -54,35 +52,24 @@ def test_non_zero_value_suicide_to_empty_paris(
     pre[callee] = Account(balance=10, nonce=0)
     # Source: LLL
     # { (SELFDESTRUCT <eoa:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b>) }
-    pre[contract] = Account(
-        balance=1,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(address=0x76FAE819612A29489A1A43208613D8F8557B8898)
             + Op.STOP
         ),
+        balance=1,
+        nonce=0,
+        address=Address("0xeb9a4c7a191790631d13fc4927446f5ef9d201fc"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SELFDESTRUCT(
-                    address=0x76FAE819612A29489A1A43208613D8F8557B8898,
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

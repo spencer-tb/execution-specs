@@ -7,12 +7,11 @@ tests/static/state_tests/stRefundTest/refund_OOGFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_refund_oog(
     sender = EOA(
         key=0x8518C6B13163F88376ADBDE956B3D6C1E4E027E25E20994C1AD0D78B8FD7FAC9
     )
-    contract = Address("0xf4c9fc42faeda49049e3b8e2b97a17cc2fe95718")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,32 +45,28 @@ def test_refund_oog(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x7A120, nonce=0)
+    pre[sender] = Account(balance=0x7A120)
     pre[coinbase] = Account(balance=0, nonce=1)
     # Source: LLL
     # { [[ 1 ]] 0 }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP,
         storage={0x1: 0x1},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xf4c9fc42faeda49049e3b8e2b97a17cc2fe95718"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=26005,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
     post = {
-        contract: Account(
-            storage={1: 1},
-            code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP,
-        ),
+        contract: Account(storage={1: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

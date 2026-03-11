@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/RevertSubCallStorageOOGFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -30,51 +29,18 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, tx_value, expected_post",
     [
-        (
-            81000,
-            0,
-            {
-                Address("0xdfa0378009e95c6b0e668db83477627c9b1e5d01"): Account(
-                    code=bytes.fromhex(
-                        "60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063b28175c4146046578063c0406226146052575b6000565b3460005760506076565b005b34600057605c6081565b604051808215151515815260200191505060405180910390f35b600c6000819055505b565b600060896076565b600d600181905550600e600281905550600190505b905600a165627a7a723058202a8a75d7d795b5bcb9042fb18b283daa90b999a11ddec892f548732235342eb60029"  # noqa: E501
-                    )
-                )
-            },
-        ),
-        (
-            81000,
-            1,
-            {
-                Address("0xdfa0378009e95c6b0e668db83477627c9b1e5d01"): Account(
-                    code=bytes.fromhex(
-                        "60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063b28175c4146046578063c0406226146052575b6000565b3460005760506076565b005b34600057605c6081565b604051808215151515815260200191505060405180910390f35b600c6000819055505b565b600060896076565b600d600181905550600e600281905550600190505b905600a165627a7a723058202a8a75d7d795b5bcb9042fb18b283daa90b999a11ddec892f548732235342eb60029"  # noqa: E501
-                    )
-                )
-            },
-        ),
+        (81000, 0, {}),
+        (81000, 1, {}),
         (
             181000,
             0,
             {
                 Address("0xdfa0378009e95c6b0e668db83477627c9b1e5d01"): Account(
-                    storage={0: 12, 1: 13, 2: 14},
-                    code=bytes.fromhex(
-                        "60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063b28175c4146046578063c0406226146052575b6000565b3460005760506076565b005b34600057605c6081565b604051808215151515815260200191505060405180910390f35b600c6000819055505b565b600060896076565b600d600181905550600e600281905550600190505b905600a165627a7a723058202a8a75d7d795b5bcb9042fb18b283daa90b999a11ddec892f548732235342eb60029"  # noqa: E501
-                    ),
+                    storage={0: 12, 1: 13, 2: 14}
                 )
             },
         ),
-        (
-            181000,
-            1,
-            {
-                Address("0xdfa0378009e95c6b0e668db83477627c9b1e5d01"): Account(
-                    code=bytes.fromhex(
-                        "60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063b28175c4146046578063c0406226146052575b6000565b3460005760506076565b005b34600057605c6081565b604051808215151515815260200191505060405180910390f35b600c6000819055505b565b600060896076565b600d600181905550600e600281905550600190505b905600a165627a7a723058202a8a75d7d795b5bcb9042fb18b283daa90b999a11ddec892f548732235342eb60029"  # noqa: E501
-                    )
-                )
-            },
-        ),
+        (181000, 1, {}),
     ],
     ids=["case0", "case1", "case2", "case3"],
 )
@@ -91,7 +57,6 @@ def test_revert_sub_call_storage_oog(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0xdfa0378009e95c6b0e668db83477627c9b1e5d01")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -103,9 +68,7 @@ def test_revert_sub_call_storage_oog(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=1,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=bytes.fromhex(
             "60606040526000357c010000000000000000000000000000000000000000000000000000"  # noqa: E501
             "0000900463ffffffff168063b28175c4146046578063c0406226146052575b6000565b34"  # noqa: E501
@@ -114,8 +77,11 @@ def test_revert_sub_call_storage_oog(
             "5550600e600281905550600190505b905600a165627a7a723058202a8a75d7d795b5bcb9"  # noqa: E501
             "042fb18b283daa90b999a11ddec892f548732235342eb60029"
         ),
+        balance=1,
+        nonce=0,
+        address=Address("0xdfa0378009e95c6b0e668db83477627c9b1e5d01"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
@@ -123,7 +89,6 @@ def test_revert_sub_call_storage_oog(
         data=bytes.fromhex("c0406226"),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

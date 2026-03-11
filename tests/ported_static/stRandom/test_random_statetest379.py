@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest379Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest379(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x2295ef51f8519c010ab5c25f25866bc0ab5ec2ee")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,13 +46,13 @@ def test_random_statetest379(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.SSTORE(key=Op.TIMESTAMP, value=Op.TIMESTAMP),
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=Op.TIMESTAMP, value=Op.TIMESTAMP),
+        address=Address("0x2295ef51f8519c010ab5c25f25866bc0ab5ec2ee"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -78,31 +76,11 @@ def test_random_statetest379(
         data=bytes.fromhex("42"),
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        contract: Account(
-            storage={1000: 1000},
-            code=Op.SSTORE(key=Op.TIMESTAMP, value=Op.TIMESTAMP),
-        ),
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
+        contract: Account(storage={1000: 1000}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

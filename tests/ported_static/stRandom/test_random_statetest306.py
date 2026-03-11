@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest306Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -37,7 +36,6 @@ def test_random_statetest306(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xce8d3e84f685b2eed55366547289ac4d314de277")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,8 +46,7 @@ def test_random_statetest306(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -67,9 +64,7 @@ def test_random_statetest306(
         ),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SIGNEXTEND(0x84517B3285B0867CD4144FF5F688D6, 0xD3)
             + Op.LOG3(
@@ -145,6 +140,8 @@ def test_random_statetest306(
             ]
             + Op.SWAP9
         ),
+        nonce=0,
+        address=Address("0xce8d3e84f685b2eed55366547289ac4d314de277"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -185,108 +182,9 @@ def test_random_statetest306(
         ),
         gas_limit=1970726856,
         gas_price=10,
-        nonce=0,
         value=1525687154,
     )
 
-    post = {
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.SIGNEXTEND(0x84517B3285B0867CD4144FF5F688D6, 0xD3)
-                + Op.LOG3(
-                    offset=0x7DF7,
-                    size=0x19,
-                    topic_1=0xD169CDA4FC3C11E9A6F0B4CEC2F5,
-                    topic_2=0x78C9FA9E4B5E5DB5A4B6AC4CED,
-                    topic_3=0x7592395D95E37246C0673,
-                )
-                + Op.SGT(
-                    0x412582D556F06C6D5864CF4BE6A2D1318B8E40BA, 0x788C1554
-                )
-                + Op.SDIV(
-                    0x2B9D3E28F05FAF2587C4465094,
-                    0x454CC8D0510823591DEE680D7DDDC8C149BFCC24C65C69E6,
-                )
-                + Op.SGT(
-                    0x71A29FBE89F77C340DCBD7D67AEDF852,
-                    0x9901EC0946BF3D786827225FAF5DA81E158CD9B2B466,
-                )
-                + Op.PUSH12[0x6C76AFFB38BEB802E0AF269E]
-                + Op.PUSH6[0xC22F52807C67]
-                + Op.PUSH28[
-                    0x5E2C7D8C473AFF18FE912C7ED21AB60FE5D4916A76C93539332C6AB1
-                ]
-                + Op.PUSH12[0x3F81B990F4B34B0228C7F5B1]
-                + Op.PUSH6[0x6BDD21D45871]
-                + Op.PUSH20[0x30E4BE7D7BB91CC95818140EEF086CD82D2D6F0D]
-                + Op.PUSH7[0xC92A7FFB27125A]
-                + Op.PUSH3[0x5C77A8]
-                + Op.SWAP7
-                + Op.SDIV(
-                    0x2460EC0DCB4BA3B84A4DB899C29F08EF1B0F506B4F3C,
-                    0x68F212339508D6F60D9C93A9E201F2AE883CB9,
-                )
-                + Op.CALL(
-                    gas=0xA4EB375,
-                    address=0xCE8D3E84F685B2EED55366547289AC4D314DE277,
-                    value=0x28B0EB5F,
-                    args_offset=0x11,
-                    args_size=0x10,
-                    ret_offset=0x1,
-                    ret_size=0x1F,
-                )
-                + Op.PUSH30[
-                    0xF238E15D7D51240301521F173D628E7A68D01354FAAF406CE541F753DB89  # noqa: E501
-                ]
-                + Op.PUSH8[0x1F6AEDCF261F632E]
-                + Op.PUSH3[0x44E8C3]
-                + Op.PUSH26[
-                    0x9A2DE002F15BA4681FD3C609C0F522DFD964F95DEF9926F81232
-                ]
-                + Op.PUSH24[0x81B2DE33196CC22776E9B26D8A0D65C57BDAC987D0B3E0DB]
-                + Op.PUSH7[0xC0F1232C7ADD33]
-                + Op.PUSH6[0xF209CC53592F]
-                + Op.PUSH20[0x502D0C5889B1BBF131F8BB6A6B5E2E067B9EF676]
-                + Op.PUSH23[0x8D48B3F5790C3304E046F0A9C8A838A0596583D6258F19]
-                + Op.PUSH14[0xCF982A9DE5CEC4F871470E7A6C92]
-                + Op.DUP10
-                + Op.PUSH2[0x5E1E]
-                + Op.PUSH30[
-                    0x140FDC038972916223FB8012E29350295F3919CB28A36411845930D5E91B  # noqa: E501
-                ]
-                + Op.PUSH9[0x510FAAC5E067795346]
-                + Op.PUSH29[
-                    0xEDB653F73818749E8CBAF15A5D64BA7EE5CABC98137167B924A2AAC914  # noqa: E501
-                ]
-                + Op.PUSH32[
-                    0x159713D115E0225A84A54D6471DC7A01A7E4E814145305C9D04D2880C5BE42FC  # noqa: E501
-                ]
-                + Op.PUSH13[0x52CED3E983D91A580A4142021B]
-                + Op.PUSH20[0xE99C3180117914B9AD03C580A8DAC862BE9B599A]
-                + Op.PUSH20[0xCCFCFB230BCFFC425C13C265F3B06B8C9F104C10]
-                + Op.PUSH22[0x2740765567374C211601A5F51501D18C48081998FF7B]
-                + Op.PUSH27[
-                    0x8BFDF0BEC9EB4385B554870A996E0CAB662D991D0E5F9357F2F99F
-                ]
-                + Op.SWAP9
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

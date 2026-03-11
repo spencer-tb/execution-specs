@@ -7,12 +7,11 @@ tests/static/state_tests/stSystemOperationsTest/testRandomTestFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_test_random_test(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,9 +48,7 @@ def test_test_random_test(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.TIMESTAMP
             + Op.PREVRANDAO
@@ -71,42 +67,23 @@ def test_test_random_test(
                 value=Op.TIMESTAMP,
             )
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=300000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
         contract: Account(
             storage={0xEBCCE5F60530275EE9318CE1EFF9E4BFEE810172: 1000},
-            code=(
-                Op.TIMESTAMP
-                + Op.PREVRANDAO
-                + Op.NUMBER
-                + Op.PREVRANDAO
-                + Op.SSTORE(
-                    key=Op.CREATE(
-                        value=Op.GAS,
-                        offset=Op.ISZERO(
-                            Op.CREATE(
-                                value=Op.DUP4,
-                                offset=Op.NUMBER,
-                                size=Op.NUMBER,
-                            ),
-                        ),
-                        size=Op.NUMBER,
-                    ),
-                    value=Op.TIMESTAMP,
-                )
-            ),
         ),
     }
 

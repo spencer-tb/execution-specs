@@ -7,12 +7,11 @@ tests/static/state_tests/stChainId/chainIdFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_chain_id(
     sender = EOA(
         key=0x897B12D02D588D8A4FE16FF831CBD4459C6F62F8C845B0CCDD31CAF068C84A26
     )
-    contract = Address("0x103e5381df5048a8827bb6ff5d2860ed88635718")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,28 +47,22 @@ def test_chain_id(
 
     # Source: LLL
     # { [[ 1 ]] (CHAINID) }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=Op.SSTORE(key=0x1, value=Op.CHAINID) + Op.STOP,
+        nonce=0,
+        address=Address("0x103e5381df5048a8827bb6ff5d2860ed88635718"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
+    pre[sender] = Account(balance=0x3635C9ADC5DEA00000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={1: 1},
-            code=Op.SSTORE(key=0x1, value=Op.CHAINID) + Op.STOP,
-        ),
+        contract: Account(storage={1: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

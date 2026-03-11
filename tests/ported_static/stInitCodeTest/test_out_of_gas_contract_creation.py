@@ -7,12 +7,11 @@ tests/static/state_tests/stInitCodeTest/OutOfGasContractCreationFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -74,7 +73,6 @@ def test_out_of_gas_contract_creation(
 
     pre[sender] = Account(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-        nonce=0,
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -85,7 +83,6 @@ def test_out_of_gas_contract_creation(
         data=tx_data,
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

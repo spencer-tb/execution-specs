@@ -8,12 +8,11 @@ ZeroValue_CALLCODE_ToNonZeroBalanceFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_zero_value_callcode_to_non_zero_balance(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0xa93ae635b4fa4d618045c019ac32ed9adc8f54ea")
     callee = Address("0x9089da66e8bbc08846842a301905501bc8525dc4")
 
     env = Environment(
@@ -54,9 +52,7 @@ def test_zero_value_callcode_to_non_zero_balance(
     pre[callee] = Account(balance=100, nonce=0)
     # Source: LLL
     # { [[0]](GAS) [[1]] (CALLCODE 60000 <eoa:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[100]] 1 }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.GAS)
             + Op.SSTORE(
@@ -74,40 +70,20 @@ def test_zero_value_callcode_to_non_zero_balance(
             + Op.SSTORE(key=0x64, value=0x1)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xa93ae635b4fa4d618045c019ac32ed9adc8f54ea"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 0x8D5B6, 1: 1, 100: 1},
-            code=(
-                Op.SSTORE(key=0x0, value=Op.GAS)
-                + Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALLCODE(
-                        gas=0xEA60,
-                        address=0x9089DA66E8BBC08846842A301905501BC8525DC4,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.SSTORE(key=0x64, value=0x1)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 0x8D5B6, 1: 1, 100: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

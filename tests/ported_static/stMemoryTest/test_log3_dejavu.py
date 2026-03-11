@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/log3_dejavuFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_log3_dejavu(
     sender = EOA(
         key=0x7DD1D0EC78FE936B0E88F8C21226F51F048579915C7BAFF1C5D7FD84B2139BF1
     )
-    contract = Address("0xd1d57042b5af54c18e8ad98b2756c1c30c08d5c1")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,32 +45,23 @@ def test_log3_dejavu(
         gas_limit=52949672960,
     )
 
-    pre[sender] = Account(balance=0x271000000000, nonce=0)
+    pre[sender] = Account(balance=0x271000000000)
     # Source: raw bytecode
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.LOG2(offset=0xFFFFFFF, size=0xFF, topic_1=0xFF, topic_2=0xFF),
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.LOG2(offset=0xFFFFFFF, size=0xFF, topic_1=0xFF, topic_2=0xFF),
+        address=Address("0xd1d57042b5af54c18e8ad98b2756c1c30c08d5c1"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.LOG2(
-                    offset=0xFFFFFFF, size=0xFF, topic_1=0xFF, topic_2=0xFF
-                )
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

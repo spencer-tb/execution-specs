@@ -8,12 +8,11 @@ ZeroValue_SUICIDE_OOGRevertFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_zero_value_suicide_oog_revert(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0x3f9709b08071257d9b49276abf1787b5bdccf0c4")
-    callee = Address("0xda2eb5512889130c4af686a291b08665b889cb22")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +50,7 @@ def test_zero_value_suicide_oog_revert(
 
     # Source: LLL
     # { (CALL 40000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[2]]12 [[3]]12 [[4]]12 [[100]](GAS) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.POP(
                 Op.CALL(
@@ -74,56 +69,26 @@ def test_zero_value_suicide_oog_revert(
             + Op.SSTORE(key=0x64, value=Op.GAS)
             + Op.STOP
         ),
-    )
-    pre[callee] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0x3f9709b08071257d9b49276abf1787b5bdccf0c4"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(address=0xDA2EB5512889130C4AF686A291B08665B889CB22)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xda2eb5512889130c4af686a291b08665b889cb22"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.POP(
-                    Op.CALL(
-                        gas=0x9C40,
-                        address=0xDA2EB5512889130C4AF686A291B08665B889CB22,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.SSTORE(key=0x2, value=0xC)
-                + Op.SSTORE(key=0x3, value=0xC)
-                + Op.SSTORE(key=0x4, value=0xC)
-                + Op.SSTORE(key=0x64, value=Op.GAS)
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.SELFDESTRUCT(
-                    address=0xDA2EB5512889130C4AF686A291B08665B889CB22,
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

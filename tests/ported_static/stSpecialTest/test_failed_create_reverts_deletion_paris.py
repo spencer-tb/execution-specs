@@ -8,12 +8,11 @@ FailedCreateRevertsDeletionParisFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -50,7 +49,7 @@ def test_failed_create_reverts_deletion_paris(
     )
 
     pre[contract] = Account(balance=10, nonce=0, storage={0x0: 0x1})
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
@@ -60,8 +59,6 @@ def test_failed_create_reverts_deletion_paris(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {

@@ -8,12 +8,11 @@ RawExtCodeCopyGasFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_raw_ext_code_copy_gas(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0x3d74e06fe0af85e65c8b2f5dcff3fa076f5b5bb8")
-    callee = Address("0x4a84c43fba78ae75cbc15c5b63caa15da55f4464")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +50,7 @@ def test_raw_ext_code_copy_gas(
 
     # Source: LLL
     # { [0] (GAS) (EXTCODECOPY <contract:0x094f5374fce5edbc8e2a8697c15331677e6ebf0b> 32 0 20) [[1]] (SUB @0 (GAS)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=Op.GAS)
             + Op.EXTCODECOPY(
@@ -67,49 +62,28 @@ def test_raw_ext_code_copy_gas(
             + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x3d74e06fe0af85e65c8b2f5dcff3fa076f5b5bb8"),  # noqa: E501
     )
     # Source: raw bytecode
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=bytes.fromhex(
             "0112233445566778899101112131415161718191202122232425"
         ),
+        nonce=0,
+        address=Address("0x4a84c43fba78ae75cbc15c5b63caa15da55f4464"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={1: 2629},
-            code=(
-                Op.MSTORE(offset=0x0, value=Op.GAS)
-                + Op.EXTCODECOPY(
-                    address=0x4A84C43FBA78AE75CBC15C5B63CAA15DA55F4464,
-                    dest_offset=0x20,
-                    offset=0x0,
-                    size=0x14,
-                )
-                + Op.SSTORE(
-                    key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            code=bytes.fromhex(
-                "0112233445566778899101112131415161718191202122232425"
-            ),
-        ),
+        contract: Account(storage={1: 2629}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

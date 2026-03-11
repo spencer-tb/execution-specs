@@ -7,12 +7,11 @@ tests/static/state_tests/stPreCompiledContracts2/CALLCODEEcrecover3Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_callcode_ecrecover3(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xfbedf77edb387c8e6d9b016f522d38201f4de408")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,12 +47,10 @@ def test_callcode_ecrecover3(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: LLL
     # { (MSTORE 0 0x2f380a2dea7e778d81affc2443403b8fe4644db442ae4862ff5bb3732829cdb9) (MSTORE 32 27) (MSTORE 64 0x6b65ccb0558806e9b097f27a396d08f964e37b8b7af6ceeb516ff86739fbea0a) (MSTORE 96 0x37cbc8d883e129a4b1ef9d5f1df53c4f21a3ef147cf2a50a4ede0eb06ce092d4) [[ 2 ]] (CALLCODE 100000 1 0 0 128 128 32) [[ 0 ]] (MOD (MLOAD 128) (EXP 2 160)) [[ 1 ]] (EQ (ORIGIN) (SLOAD 0))  }  # noqa: E501
-    pre[contract] = Account(
-        balance=0x1312D00,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -88,15 +84,16 @@ def test_callcode_ecrecover3(
             + Op.SSTORE(key=0x1, value=Op.EQ(Op.ORIGIN, Op.SLOAD(key=0x0)))
             + Op.STOP
         ),
+        balance=0x1312D00,
+        nonce=0,
+        address=Address("0xfbedf77edb387c8e6d9b016f522d38201f4de408"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=365224,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
@@ -106,39 +103,6 @@ def test_callcode_ecrecover3(
                 0: 0xE4319F4B631C6D0FCFC84045DBCB676865FE5E13,
                 2: 1,
             },
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0x2F380A2DEA7E778D81AFFC2443403B8FE4644DB442AE4862FF5BB3732829CDB9,  # noqa: E501
-                )
-                + Op.MSTORE(offset=0x20, value=0x1B)
-                + Op.MSTORE(
-                    offset=0x40,
-                    value=0x6B65CCB0558806E9B097F27A396D08F964E37B8B7AF6CEEB516FF86739FBEA0A,  # noqa: E501
-                )
-                + Op.MSTORE(
-                    offset=0x60,
-                    value=0x37CBC8D883E129A4B1EF9D5F1DF53C4F21A3EF147CF2A50A4EDE0EB06CE092D4,  # noqa: E501
-                )
-                + Op.SSTORE(
-                    key=0x2,
-                    value=Op.CALLCODE(
-                        gas=0x186A0,
-                        address=0x1,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x80,
-                        ret_offset=0x80,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.SSTORE(
-                    key=0x0,
-                    value=Op.MOD(Op.MLOAD(offset=0x80), Op.EXP(0x2, 0xA0)),
-                )
-                + Op.SSTORE(key=0x1, value=Op.EQ(Op.ORIGIN, Op.SLOAD(key=0x0)))
-                + Op.STOP
-            ),
         ),
     }
 

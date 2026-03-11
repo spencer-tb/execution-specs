@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest26Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest26(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x40c94440235e91bd2d3e4555b8663698dc80d6ca")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,11 +45,9 @@ def test_random_statetest26(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.NUMBER
             + Op.TIMESTAMP
@@ -60,8 +56,10 @@ def test_random_statetest26(
             + Op.JUMPDEST
             + Op.SSTORE(key=Op.SMOD, value=Op.BALANCE(address=Op.COINBASE))
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x40c94440235e91bd2d3e4555b8663698dc80d6ca"),  # noqa: E501
     )
-    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -85,38 +83,11 @@ def test_random_statetest26(
         data=bytes.fromhex("42"),
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        contract: Account(
-            storage={46: 1000},
-            code=(
-                Op.NUMBER
-                + Op.TIMESTAMP
-                + Op.TIMESTAMP
-                + Op.PREVRANDAO
-                + Op.JUMPDEST
-                + Op.SSTORE(key=Op.SMOD, value=Op.BALANCE(address=Op.COINBASE))
-            ),
-        ),
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
+        contract: Account(storage={46: 1000}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -8,11 +8,11 @@ opcodeBlobhBoundsFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     AccessList,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -40,7 +40,6 @@ def test_opcode_blobh_bounds(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xc8126e943c569c35df09619f8e1e67460acff695")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,7 +50,7 @@ def test_opcode_blobh_bounds(
         gas_limit=68719476736,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: LLL
     # {
     #    ; Can also add lll style comments here
@@ -62,9 +61,7 @@ def test_opcode_blobh_bounds(
     #    [[4]] (BLOBHASH 0xffffffffffffffffffffffffffffffff) ; 128
     #    [[5]] (BLOBHASH 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) ; 256  # noqa: E501
     # }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0))
             + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xA))
@@ -90,6 +87,9 @@ def test_opcode_blobh_bounds(
             0x4: 0x1,
             0x5: 0x1,
         },
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xc8126e943c569c35df09619f8e1e67460acff695"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -108,7 +108,6 @@ def test_opcode_blobh_bounds(
                 "0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
             ),
         ],
-        nonce=0,
         value=100000,
         access_list=[
             AccessList(
@@ -130,27 +129,6 @@ def test_opcode_blobh_bounds(
             storage={
                 0: 0x1A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8,  # noqa: E501
             },
-            code=(
-                Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0))
-                + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xA))
-                + Op.SSTORE(key=0x2, value=Op.BLOBHASH(index=0xFFFFFFFF))
-                + Op.SSTORE(
-                    key=0x3, value=Op.BLOBHASH(index=0xFFFFFFFFFFFFFFFF)
-                )
-                + Op.SSTORE(
-                    key=0x4,
-                    value=Op.BLOBHASH(
-                        index=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                    ),
-                )
-                + Op.SSTORE(
-                    key=0x5,
-                    value=Op.BLOBHASH(
-                        index=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                    ),
-                )
-                + Op.STOP
-            ),
         ),
     }
 

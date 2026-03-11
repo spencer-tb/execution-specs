@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest98Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest98(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x471b3ef5770a3fdbdbf9dbcde26dfee32181a61b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,11 +45,9 @@ def test_random_statetest98(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH32[0x0]
             + Op.PUSH32[0x4F3F701464972E74606D6EA82D4D3080599A0E79]
@@ -70,8 +66,9 @@ def test_random_statetest98(
             + Op.MLOAD(offset=0x0)
             + Op.SSTORE
         ),
+        nonce=0,
+        address=Address("0x471b3ef5770a3fdbdbf9dbcde26dfee32181a61b"),  # noqa: E501
     )
-    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -103,7 +100,6 @@ def test_random_statetest98(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=588937108,
     )
 
@@ -113,40 +109,6 @@ def test_random_statetest98(
                 0: 0x4F3F701464972E74606D6EA82D4D3080599A0E79,
                 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
             },
-            code=(
-                Op.PUSH32[0x0]
-                + Op.PUSH32[0x4F3F701464972E74606D6EA82D4D3080599A0E79]
-                + Op.COINBASE
-                + Op.SSTORE(
-                    key=Op.ADDMOD(
-                        Op.SIGNEXTEND(
-                            Op.PUSH32[0x0],
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE,  # noqa: E501
-                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                    ),
-                    value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                )
-                + Op.MLOAD(offset=0x0)
-                + Op.SSTORE
-            ),
-        ),
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
         ),
     }
 

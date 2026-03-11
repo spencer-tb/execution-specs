@@ -8,12 +8,11 @@ DelegateCallOnEIPWithMemExpandingCallsFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_delegate_call_on_eip_with_mem_expanding_calls(
     sender = EOA(
         key=0x8D19F2B0D2F5689C1771FBCA70476CA6E877A81EE15C3733DE87FAE38E5ABCEF
     )
-    contract = Address("0x3fc906a124d4054023be5dd8666ce29aa3712ccb")
-    callee = Address("0xa1f6e75a455896613053d45331763a07f4718969")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +49,7 @@ def test_delegate_call_on_eip_with_mem_expanding_calls(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x8, value=Op.GAS)
             + Op.SSTORE(
@@ -69,44 +64,26 @@ def test_delegate_call_on_eip_with_mem_expanding_calls(
                 ),
             )
         ),
-    )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
-    # Source: raw bytecode
-    pre[callee] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0x3fc906a124d4054023be5dd8666ce29aa3712ccb"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0xE8D4A51000)
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x0, value=0x12),
+        nonce=0,
+        address=Address("0xa1f6e75a455896613053d45331763a07f4718969"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 18, 8: 0x8D5B6, 9: 1},
-            code=(
-                Op.SSTORE(key=0x8, value=Op.GAS)
-                + Op.SSTORE(
-                    key=0x9,
-                    value=Op.DELEGATECALL(
-                        gas=0x927C0,
-                        address=0xA1F6E75A455896613053D45331763A07F4718969,
-                        args_offset=0xFF,
-                        args_size=0xFF,
-                        ret_offset=0xFF,
-                        ret_size=0xFF,
-                    ),
-                )
-            ),
-        ),
-        callee: Account(code=Op.SSTORE(key=0x0, value=0x12)),
+        contract: Account(storage={0: 18, 8: 0x8D5B6, 9: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

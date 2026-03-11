@@ -7,12 +7,11 @@ tests/static/state_tests/stRefundTest/refundMaxFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_refund_max(
     sender = EOA(
         key=0xB5555C6F8171A6EB3C0A84ED8F01AF5CE65A85A096A824A60EE5E2C2C2E076D1
     )
-    contract = Address("0x7e9d1ff50f8eb9591a0434abfe3230054a934124")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -62,9 +60,7 @@ def test_refund_max(
     #    // Get rid of Yul optimizations
     #    newVal := msize()
     # }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0x0]
             + Op.SSTORE(key=0x0, value=Op.DUP1)
@@ -88,6 +84,8 @@ def test_refund_max(
             0x6: 0x60A7,
             0x7: 0x60A7,
         },
+        balance=0xDE0B6B3A7640000,
+        address=Address("0x7e9d1ff50f8eb9591a0434abfe3230054a934124"),  # noqa: E501
     )
     pre[sender] = Account(balance=0xE8D848C3A0, nonce=1)
 
@@ -98,26 +96,8 @@ def test_refund_max(
         gas_limit=2601000,
         gas_price=1000,
         nonce=1,
-        value=0,
-        access_list=[],
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.PUSH1[0x0]
-                + Op.SSTORE(key=0x0, value=Op.DUP1)
-                + Op.SSTORE(key=0x1, value=Op.DUP1)
-                + Op.SSTORE(key=0x2, value=Op.DUP1)
-                + Op.SSTORE(key=0x3, value=Op.DUP1)
-                + Op.SSTORE(key=0x4, value=Op.DUP1)
-                + Op.SSTORE(key=0x5, value=Op.DUP1)
-                + Op.SSTORE(key=0x6, value=Op.DUP1)
-                + Op.PUSH1[0x7]
-                + Op.SSTORE
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

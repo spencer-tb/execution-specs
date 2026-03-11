@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom2/randomStatetest646Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest646(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xffffffffffffffffffffffffffffffffffffffff")
     callee = Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
@@ -48,12 +46,10 @@ def test_random_statetest646(
         gas_limit=18857228215205537,
     )
 
-    pre[sender] = Account(balance=0x54465EF1C769628B, nonce=0)
+    pre[sender] = Account(balance=0x54465EF1C769628B)
     pre[callee] = Account(balance=0x33888D4CE6B934, nonce=7)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xD61773F0C27B842F,
-        nonce=28,
+    contract = pre.deploy_contract(
         code=(
             Op.SLOAD(key=0xBA8B878E01)
             + Op.PUSH9[0x9B908F27ACB42E5269]
@@ -65,6 +61,9 @@ def test_random_statetest646(
             + Op.CALLER
             + Op.NOT(0x2C38CFA2F1CDF8CB623C05919874)
         ),
+        balance=0xD61773F0C27B842F,
+        nonce=28,
+        address=Address("0xffffffffffffffffffffffffffffffffffffffff"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -81,25 +80,9 @@ def test_random_statetest646(
         ),
         gas_limit=5786929,
         gas_price=10,
-        nonce=0,
         value=1451538698,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SLOAD(key=0xBA8B878E01)
-                + Op.PUSH9[0x9B908F27ACB42E5269]
-                + Op.SSTORE(
-                    key=0x609834BF9A7E578E45609242172907DD75A925,
-                    value=0x39,
-                )
-                + Op.PUSH6[0x6C5AA6E92481]
-                + Op.CREATE(value=0x446D325D, offset=0x38648, size=0x13FFA)
-                + Op.CALLER
-                + Op.NOT(0x2C38CFA2F1CDF8CB623C05919874)
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

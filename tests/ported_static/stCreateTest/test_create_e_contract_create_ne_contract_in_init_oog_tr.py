@@ -8,12 +8,11 @@ CREATE_EContractCreateNEContractInInitOOG_TrFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -35,23 +34,12 @@ REFERENCE_SPEC_VERSION = "N/A"
         (
             160000,
             {
-                Address("0x64e2ebd6405af8cb348aec519084d3fff42ebba6"): Account(
-                    code=Op.SSTORE(key=0x0, value=0xC)
-                ),
                 Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={1: 12},
-                    code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP,
-                ),
-            },
-        ),
-        (
-            60000,
-            {
-                Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP
+                    storage={1: 12}
                 )
             },
         ),
+        (60000, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -67,7 +55,6 @@ def test_create_e_contract_create_ne_contract_in_init_oog_tr(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -78,13 +65,14 @@ def test_create_e_contract_create_ne_contract_in_init_oog_tr(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
     # Source: LLL
     # {[[1]]12}
-    pre[contract] = Account(
+    pre.deploy_contract(
+        code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP,
         balance=0xE8D4A51000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=0xC) + Op.STOP,
+        address=Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -96,8 +84,6 @@ def test_create_e_contract_create_ne_contract_in_init_oog_tr(
         ),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

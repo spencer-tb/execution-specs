@@ -8,12 +8,11 @@ create2InitCodeSizeLimitFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,103 +35,21 @@ REFERENCE_SPEC_VERSION = "N/A"
             "000000000000000000000000000000000000000000000000000000000000c001",
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={1: 1},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0x989680,
-                            address=0xC94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP2,
-                            args_size=Op.CALLDATASIZE,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=Op.DUP1, value=0x1)
-                    + Op.STOP,
-                ),
-                Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.SHL(0xB0, 0x600A80600080396000F3)
-                    + Op.PUSH1[0x0]
-                    + Op.SWAP1
-                    + Op.DUP2
-                    + Op.MSTORE
-                    + Op.CALLDATALOAD
-                    + Op.PUSH4[0xDEADBEEF]
-                    + Op.GAS
-                    + Op.SWAP2
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.CREATE2
-                    + Op.SWAP1
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xA, value=Op.SUB)
-                    + Op.PUSH1[0x0]
-                    + Op.SSTORE
-                    + Op.STOP
-                ),
+                    storage={1: 1}
+                )
             },
         ),
         (
             "000000000000000000000000000000000000000000000000000000000000c000",
             {
-                Address("0x9e7a3337d18c31fe4c1fe51ab2da6cfd3629923d"): Account(
-                    code=Op.PUSH1[0xA]
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1, offset=0x0, size=Op.DUP1
-                    )
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1, 1: 1},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0x989680,
-                            address=0xC94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP2,
-                            args_size=Op.CALLDATASIZE,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=Op.DUP1, value=0x1)
-                    + Op.STOP,
+                    storage={0: 1, 1: 1}
                 ),
                 Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
                     storage={
                         0: 0x9E7A3337D18C31FE4C1FE51AB2DA6CFD3629923D,
                         10: 55539,
-                    },
-                    code=Op.SHL(0xB0, 0x600A80600080396000F3)
-                    + Op.PUSH1[0x0]
-                    + Op.SWAP1
-                    + Op.DUP2
-                    + Op.MSTORE
-                    + Op.CALLDATALOAD
-                    + Op.PUSH4[0xDEADBEEF]
-                    + Op.GAS
-                    + Op.SWAP2
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.CREATE2
-                    + Op.SWAP1
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xA, value=Op.SUB)
-                    + Op.PUSH1[0x0]
-                    + Op.SSTORE
-                    + Op.STOP,
+                    }
                 ),
             },
         ),
@@ -151,8 +68,6 @@ def test_create2_init_code_size_limit(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    callee = Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -163,7 +78,7 @@ def test_create2_init_code_size_limit(
         gas_limit=20000000,
     )
 
-    pre[sender] = Account(balance=0xBEBC200, nonce=0)
+    pre[sender] = Account(balance=0xBEBC200)
     # Source: Yul
     # {
     #   mstore(0, calldataload(0))
@@ -171,9 +86,7 @@ def test_create2_init_code_size_limit(
     #   sstore(0, call_result)
     #   sstore(1, 1)
     # }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
             + Op.SSTORE(
@@ -191,6 +104,8 @@ def test_create2_init_code_size_limit(
             + Op.SSTORE(key=Op.DUP1, value=0x1)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
     # Source: Yul
     # {
@@ -203,9 +118,7 @@ def test_create2_init_code_size_limit(
     #   sstore(10, sub(gas_before, gas()))
     #   sstore(0, create_result)
     # }
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SHL(0xB0, 0x600A80600080396000F3)
             + Op.PUSH1[0x0]
@@ -227,6 +140,8 @@ def test_create2_init_code_size_limit(
             + Op.SSTORE
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -237,8 +152,6 @@ def test_create2_init_code_size_limit(
         data=tx_data,
         gas_limit=15000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

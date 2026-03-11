@@ -7,12 +7,11 @@ tests/static/state_tests/VMTests/vmArithmeticTest/expPower2Filler.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_exp_power2(
     sender = EOA(
         key=0x40AC0FC28C27E961EE46EC43355A094DE205856EDBD4654CF2577C2608D4EC1E
     )
-    contract = Address("0x5a18b275908ad6766155191a40654188fe012dc6")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,7 +45,7 @@ def test_exp_power2(
         gas_limit=100000000,
     )
 
-    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE)
     # Source: LLL
     # {
     #     (def 'storageJump 0x10)
@@ -70,9 +68,7 @@ def test_exp_power2(
     #     (calc 7)
     #     (calc 8)
     # }
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=Op.MUL(0x10, 0x1), value=Op.EXP(0x2, Op.EXP(0x2, 0x1))
@@ -164,6 +160,9 @@ def test_exp_power2(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x5a18b275908ad6766155191a40654188fe012dc6"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -174,7 +173,6 @@ def test_exp_power2(
         ),
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
@@ -204,105 +202,6 @@ def test_exp_power2(
                 114: 0x200000000000000000000000000000000,
                 129: 0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
             },
-            code=(
-                Op.SSTORE(
-                    key=Op.MUL(0x10, 0x1),
-                    value=Op.EXP(0x2, Op.EXP(0x2, 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x1), 0x1),
-                    value=Op.EXP(0x2, Op.SUB(Op.EXP(0x2, 0x1), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x1), 0x2),
-                    value=Op.EXP(0x2, Op.ADD(Op.EXP(0x2, 0x1), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.MUL(0x10, 0x2),
-                    value=Op.EXP(0x2, Op.EXP(0x2, 0x2)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x2), 0x1),
-                    value=Op.EXP(0x2, Op.SUB(Op.EXP(0x2, 0x2), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x2), 0x2),
-                    value=Op.EXP(0x2, Op.ADD(Op.EXP(0x2, 0x2), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.MUL(0x10, 0x3),
-                    value=Op.EXP(0x2, Op.EXP(0x2, 0x3)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x3), 0x1),
-                    value=Op.EXP(0x2, Op.SUB(Op.EXP(0x2, 0x3), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x3), 0x2),
-                    value=Op.EXP(0x2, Op.ADD(Op.EXP(0x2, 0x3), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.MUL(0x10, 0x4),
-                    value=Op.EXP(0x2, Op.EXP(0x2, 0x4)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x4), 0x1),
-                    value=Op.EXP(0x2, Op.SUB(Op.EXP(0x2, 0x4), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x4), 0x2),
-                    value=Op.EXP(0x2, Op.ADD(Op.EXP(0x2, 0x4), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.MUL(0x10, 0x5),
-                    value=Op.EXP(0x2, Op.EXP(0x2, 0x5)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x5), 0x1),
-                    value=Op.EXP(0x2, Op.SUB(Op.EXP(0x2, 0x5), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x5), 0x2),
-                    value=Op.EXP(0x2, Op.ADD(Op.EXP(0x2, 0x5), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.MUL(0x10, 0x6),
-                    value=Op.EXP(0x2, Op.EXP(0x2, 0x6)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x6), 0x1),
-                    value=Op.EXP(0x2, Op.SUB(Op.EXP(0x2, 0x6), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x6), 0x2),
-                    value=Op.EXP(0x2, Op.ADD(Op.EXP(0x2, 0x6), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.MUL(0x10, 0x7),
-                    value=Op.EXP(0x2, Op.EXP(0x2, 0x7)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x7), 0x1),
-                    value=Op.EXP(0x2, Op.SUB(Op.EXP(0x2, 0x7), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x7), 0x2),
-                    value=Op.EXP(0x2, Op.ADD(Op.EXP(0x2, 0x7), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.MUL(0x10, 0x8),
-                    value=Op.EXP(0x2, Op.EXP(0x2, 0x8)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x8), 0x1),
-                    value=Op.EXP(0x2, Op.SUB(Op.EXP(0x2, 0x8), 0x1)),
-                )
-                + Op.SSTORE(
-                    key=Op.ADD(Op.MUL(0x10, 0x8), 0x2),
-                    value=Op.EXP(0x2, Op.ADD(Op.EXP(0x2, 0x8), 0x1)),
-                )
-                + Op.STOP
-            ),
         ),
     }
 

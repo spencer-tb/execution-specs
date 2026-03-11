@@ -7,12 +7,11 @@ tests/static/state_tests/stRefundTest/refund_TxToSuicideOOGFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_refund_tx_to_suicide_oog(
     sender = EOA(
         key=0xA2333EEF5630066B928DEA5FD85A239F511B5B067D1441EE7AC290D0122B917B
     )
-    contract = Address("0x2bc33a472f0fba1e30bf2317d07910367908c7f6")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,38 +47,29 @@ def test_refund_tx_to_suicide_oog(
 
     # Source: LLL
     # { (SELFDESTRUCT 0x095e7baea6a6c7c4c2dfeb977efac326af552d87) }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(address=0x95E7BAEA6A6C7C4C2DFEB977EFAC326AF552D87)
             + Op.STOP
         ),
         storage={0x1: 0x1},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x2bc33a472f0fba1e30bf2317d07910367908c7f6"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x5F5E100, nonce=0)
+    pre[sender] = Account(balance=0x5F5E100)
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=21002,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
     post = {
-        contract: Account(
-            storage={1: 1},
-            code=(
-                Op.SELFDESTRUCT(
-                    address=0x95E7BAEA6A6C7C4C2DFEB977EFAC326AF552D87,
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={1: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

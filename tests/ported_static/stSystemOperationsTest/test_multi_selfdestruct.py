@@ -7,12 +7,11 @@ tests/static/state_tests/stSystemOperationsTest/multiSelfdestructFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -34,621 +33,41 @@ REFERENCE_SPEC_VERSION = "N/A"
         (
             "01",
             {
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
-                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
-                    + Op.JUMPI(pc=0x34, condition=Op.EQ(Op.DUP3, 0x0))
-                    + Op.JUMPI(pc=0x32, condition=Op.EQ(Op.DUP3, 0xFF))
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.SWAP5
-                    + Op.DUP2
-                    + Op.SWAP5
-                    + Op.JUMPI(pc=0x2D, condition=Op.EQ(Op.CALL, Op.GAS))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.REVERT(offset=Op.DUP1, size=0x0)
-                    + Op.JUMPDEST
-                    + Op.SELFDESTRUCT
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 1, 1: 3, 16: 1, 17: 3, 18: 2},
-                    code=Op.MSTORE8(offset=0x0, value=0xFF)
-                    + Op.MSTORE8(offset=0x1, value=0x10)
-                    + Op.MSTORE8(offset=0x2, value=0x0)
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP2,
-                            args_size=0x3,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.BALANCE(address=0x1000))
-                    + Op.SSTORE(key=0x2, value=Op.BALANCE(address=0xDEAD))
-                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
-                    + Op.JUMPI(pc=0xCE, condition=Op.EQ(0x1, Op.DUP1))
-                    + Op.JUMPI(pc=0xBC, condition=Op.EQ(0x2, Op.DUP1))
-                    + Op.JUMPI(pc=0xA5, condition=Op.EQ(0x3, Op.DUP1))
-                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
-                    + Op.PUSH1[0x5]
-                    + Op.JUMPI(pc=0x58, condition=Op.EQ)
-                    + Op.REVERT(offset=Op.DUP1, size=0x0)
-                    + Op.JUMPDEST
-                    + Op.MSTORE8(offset=0x0, value=0x1)
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMPDEST
-                    + Op.PUSH1[0x10]
-                    + Op.SSTORE
-                    + Op.SSTORE(key=0x11, value=Op.BALANCE(address=0x1000))
-                    + Op.SSTORE(key=0x12, value=Op.BALANCE(address=0xDEAD))
-                    + Op.SSTORE(key=0x13, value=Op.BALANCE(address=0x1001))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.MSTORE8(offset=0x0, value=0x1)
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=Op.DUP1,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP1,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70),
-                ),
+                    storage={0: 1, 1: 3, 16: 1, 17: 3, 18: 2}
+                )
             },
         ),
         (
             "02",
             {
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
-                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
-                    + Op.JUMPI(pc=0x34, condition=Op.EQ(Op.DUP3, 0x0))
-                    + Op.JUMPI(pc=0x32, condition=Op.EQ(Op.DUP3, 0xFF))
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.SWAP5
-                    + Op.DUP2
-                    + Op.SWAP5
-                    + Op.JUMPI(pc=0x2D, condition=Op.EQ(Op.CALL, Op.GAS))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.REVERT(offset=Op.DUP1, size=0x0)
-                    + Op.JUMPDEST
-                    + Op.SELFDESTRUCT
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 1, 1: 3, 16: 1, 17: 5},
-                    code=Op.MSTORE8(offset=0x0, value=0xFF)
-                    + Op.MSTORE8(offset=0x1, value=0x10)
-                    + Op.MSTORE8(offset=0x2, value=0x0)
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP2,
-                            args_size=0x3,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.BALANCE(address=0x1000))
-                    + Op.SSTORE(key=0x2, value=Op.BALANCE(address=0xDEAD))
-                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
-                    + Op.JUMPI(pc=0xCE, condition=Op.EQ(0x1, Op.DUP1))
-                    + Op.JUMPI(pc=0xBC, condition=Op.EQ(0x2, Op.DUP1))
-                    + Op.JUMPI(pc=0xA5, condition=Op.EQ(0x3, Op.DUP1))
-                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
-                    + Op.PUSH1[0x5]
-                    + Op.JUMPI(pc=0x58, condition=Op.EQ)
-                    + Op.REVERT(offset=Op.DUP1, size=0x0)
-                    + Op.JUMPDEST
-                    + Op.MSTORE8(offset=0x0, value=0x1)
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMPDEST
-                    + Op.PUSH1[0x10]
-                    + Op.SSTORE
-                    + Op.SSTORE(key=0x11, value=Op.BALANCE(address=0x1000))
-                    + Op.SSTORE(key=0x12, value=Op.BALANCE(address=0xDEAD))
-                    + Op.SSTORE(key=0x13, value=Op.BALANCE(address=0x1001))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.MSTORE8(offset=0x0, value=0x1)
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=Op.DUP1,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP1,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70),
-                ),
+                    storage={0: 1, 1: 3, 16: 1, 17: 5}
+                )
             },
         ),
         (
             "03",
             {
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
-                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
-                    + Op.JUMPI(pc=0x34, condition=Op.EQ(Op.DUP3, 0x0))
-                    + Op.JUMPI(pc=0x32, condition=Op.EQ(Op.DUP3, 0xFF))
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.SWAP5
-                    + Op.DUP2
-                    + Op.SWAP5
-                    + Op.JUMPI(pc=0x2D, condition=Op.EQ(Op.CALL, Op.GAS))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.REVERT(offset=Op.DUP1, size=0x0)
-                    + Op.JUMPDEST
-                    + Op.SELFDESTRUCT
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 1, 1: 3, 16: 1, 17: 3, 19: 2},
-                    code=Op.MSTORE8(offset=0x0, value=0xFF)
-                    + Op.MSTORE8(offset=0x1, value=0x10)
-                    + Op.MSTORE8(offset=0x2, value=0x0)
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP2,
-                            args_size=0x3,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.BALANCE(address=0x1000))
-                    + Op.SSTORE(key=0x2, value=Op.BALANCE(address=0xDEAD))
-                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
-                    + Op.JUMPI(pc=0xCE, condition=Op.EQ(0x1, Op.DUP1))
-                    + Op.JUMPI(pc=0xBC, condition=Op.EQ(0x2, Op.DUP1))
-                    + Op.JUMPI(pc=0xA5, condition=Op.EQ(0x3, Op.DUP1))
-                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
-                    + Op.PUSH1[0x5]
-                    + Op.JUMPI(pc=0x58, condition=Op.EQ)
-                    + Op.REVERT(offset=Op.DUP1, size=0x0)
-                    + Op.JUMPDEST
-                    + Op.MSTORE8(offset=0x0, value=0x1)
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMPDEST
-                    + Op.PUSH1[0x10]
-                    + Op.SSTORE
-                    + Op.SSTORE(key=0x11, value=Op.BALANCE(address=0x1000))
-                    + Op.SSTORE(key=0x12, value=Op.BALANCE(address=0xDEAD))
-                    + Op.SSTORE(key=0x13, value=Op.BALANCE(address=0x1001))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.MSTORE8(offset=0x0, value=0x1)
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=Op.DUP1,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP1,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70),
-                ),
+                    storage={0: 1, 1: 3, 16: 1, 17: 3, 19: 2}
+                )
             },
         ),
         (
             "04",
             {
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
-                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
-                    + Op.JUMPI(pc=0x34, condition=Op.EQ(Op.DUP3, 0x0))
-                    + Op.JUMPI(pc=0x32, condition=Op.EQ(Op.DUP3, 0xFF))
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.SWAP5
-                    + Op.DUP2
-                    + Op.SWAP5
-                    + Op.JUMPI(pc=0x2D, condition=Op.EQ(Op.CALL, Op.GAS))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.REVERT(offset=Op.DUP1, size=0x0)
-                    + Op.JUMPDEST
-                    + Op.SELFDESTRUCT
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 1, 1: 3, 17: 3},
-                    code=Op.MSTORE8(offset=0x0, value=0xFF)
-                    + Op.MSTORE8(offset=0x1, value=0x10)
-                    + Op.MSTORE8(offset=0x2, value=0x0)
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP2,
-                            args_size=0x3,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.BALANCE(address=0x1000))
-                    + Op.SSTORE(key=0x2, value=Op.BALANCE(address=0xDEAD))
-                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
-                    + Op.JUMPI(pc=0xCE, condition=Op.EQ(0x1, Op.DUP1))
-                    + Op.JUMPI(pc=0xBC, condition=Op.EQ(0x2, Op.DUP1))
-                    + Op.JUMPI(pc=0xA5, condition=Op.EQ(0x3, Op.DUP1))
-                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
-                    + Op.PUSH1[0x5]
-                    + Op.JUMPI(pc=0x58, condition=Op.EQ)
-                    + Op.REVERT(offset=Op.DUP1, size=0x0)
-                    + Op.JUMPDEST
-                    + Op.MSTORE8(offset=0x0, value=0x1)
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMPDEST
-                    + Op.PUSH1[0x10]
-                    + Op.SSTORE
-                    + Op.SSTORE(key=0x11, value=Op.BALANCE(address=0x1000))
-                    + Op.SSTORE(key=0x12, value=Op.BALANCE(address=0xDEAD))
-                    + Op.SSTORE(key=0x13, value=Op.BALANCE(address=0x1001))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.MSTORE8(offset=0x0, value=0x1)
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=Op.DUP1,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP1,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70),
-                ),
+                    storage={0: 1, 1: 3, 17: 3}
+                )
             },
         ),
         (
             "05",
             {
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
-                    + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
-                    + Op.JUMPI(pc=0x34, condition=Op.EQ(Op.DUP3, 0x0))
-                    + Op.JUMPI(pc=0x32, condition=Op.EQ(Op.DUP3, 0xFF))
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.SWAP5
-                    + Op.DUP2
-                    + Op.SWAP5
-                    + Op.JUMPI(pc=0x2D, condition=Op.EQ(Op.CALL, Op.GAS))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.REVERT(offset=Op.DUP1, size=0x0)
-                    + Op.JUMPDEST
-                    + Op.SELFDESTRUCT
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={0: 1, 1: 3, 16: 1, 17: 3, 18: 1, 19: 1},
-                    code=Op.MSTORE8(offset=0x0, value=0xFF)
-                    + Op.MSTORE8(offset=0x1, value=0x10)
-                    + Op.MSTORE8(offset=0x2, value=0x0)
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP2,
-                            args_size=0x3,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.BALANCE(address=0x1000))
-                    + Op.SSTORE(key=0x2, value=Op.BALANCE(address=0xDEAD))
-                    + Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
-                    + Op.JUMPI(pc=0xCE, condition=Op.EQ(0x1, Op.DUP1))
-                    + Op.JUMPI(pc=0xBC, condition=Op.EQ(0x2, Op.DUP1))
-                    + Op.JUMPI(pc=0xA5, condition=Op.EQ(0x3, Op.DUP1))
-                    + Op.JUMPI(pc=0x8A, condition=Op.EQ(0x4, Op.DUP1))
-                    + Op.PUSH1[0x5]
-                    + Op.JUMPI(pc=0x58, condition=Op.EQ)
-                    + Op.REVERT(offset=Op.DUP1, size=0x0)
-                    + Op.JUMPDEST
-                    + Op.MSTORE8(offset=0x0, value=0x1)
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMPDEST
-                    + Op.PUSH1[0x10]
-                    + Op.SSTORE
-                    + Op.SSTORE(key=0x11, value=Op.BALANCE(address=0x1000))
-                    + Op.SSTORE(key=0x12, value=Op.BALANCE(address=0xDEAD))
-                    + Op.SSTORE(key=0x13, value=Op.BALANCE(address=0x1001))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.MSTORE8(offset=0x0, value=0x1)
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=Op.DUP1,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.MSTORE8(offset=0x2, value=0x1)
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP2,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70)
-                    + Op.JUMPDEST
-                    + Op.POP
-                    + Op.CALL(
-                        gas=Op.GAS,
-                        address=0xDEAD,
-                        value=0x2,
-                        args_offset=Op.DUP1,
-                        args_size=0x3,
-                        ret_offset=Op.DUP1,
-                        ret_size=0x0,
-                    )
-                    + Op.JUMP(pc=0x70),
-                ),
+                    storage={0: 1, 1: 3, 16: 1, 17: 3, 18: 1, 19: 1}
+                )
             },
         ),
     ],
@@ -666,8 +85,6 @@ def test_multi_selfdestruct(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xcccccccccccccccccccccccccccccccccccccccc")
-    callee = Address("0x000000000000000000000000000000000000dead")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -700,9 +117,7 @@ def test_multi_selfdestruct(
     #    }
     #
     # }
-    pre[callee] = Account(
-        balance=3,
-        nonce=1,
+    pre.deploy_contract(
         code=(
             Op.SHR(0xF8, Op.CALLDATALOAD(offset=0x0))
             + Op.AND(Op.SHR(0xE8, Op.CALLDATALOAD(offset=0x0)), 0xFFFF)
@@ -724,6 +139,8 @@ def test_multi_selfdestruct(
             + Op.JUMPDEST
             + Op.STOP
         ),
+        balance=3,
+        address=Address("0x000000000000000000000000000000000000dead"),  # noqa: E501
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
     # Source: Yul
@@ -758,9 +175,7 @@ def test_multi_selfdestruct(
     #    case 4 {
     #        // Attempt to transfer WEI you don't have to 0x1001
     # ... (21 more lines)
-    pre[contract] = Account(
-        balance=0x5F5E100,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE8(offset=0x0, value=0xFF)
             + Op.MSTORE8(offset=0x1, value=0x10)
@@ -866,6 +281,8 @@ def test_multi_selfdestruct(
             0x12: 0x60A7,
             0x13: 0x60A7,
         },
+        balance=0x5F5E100,
+        address=Address("0xcccccccccccccccccccccccccccccccccccccccc"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -877,7 +294,6 @@ def test_multi_selfdestruct(
         gas_limit=10000000,
         gas_price=1000,
         nonce=1,
-        value=0,
     )
 
     post = expected_post

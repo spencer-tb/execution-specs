@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/mload32bitBound2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -31,24 +30,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0xc287e277d2163771e55d630bdd96c6405a6fe251"): Account(
-                    code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x177359400))
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0xc287e277d2163771e55d630bdd96c6405a6fe251"): Account(
-                    code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x177359400))
-                    + Op.STOP
-                )
-            },
-        ),
+        (150000, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -64,7 +47,6 @@ def test_mload32bit_bound2(
     sender = EOA(
         key=0xD566533F0CCAB46749AC8725E15DA8CE513758257002A8B481F6F5F96484C5ED
     )
-    contract = Address("0xc287e277d2163771e55d630bdd96c6405a6fe251")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -75,22 +57,21 @@ def test_mload32bit_bound2(
         gas_limit=37791080412587,
     )
 
-    pre[sender] = Account(balance=0x157B5373E07CA, nonce=0)
+    pre[sender] = Account(balance=0x157B5373E07CA)
     # Source: LLL
     # { [[ 1 ]] (MLOAD 6294967296) }
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x177359400)) + Op.STOP,
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x177359400)) + Op.STOP,
+        address=Address("0xc287e277d2163771e55d630bdd96c6405a6fe251"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 

@@ -7,12 +7,11 @@ tests/static/state_tests/stInitCodeTest/CallRecursiveContractFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_call_recursive_contract(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,17 +49,17 @@ def test_call_recursive_contract(
 
     # Source: LLL
     # {[[ 2 ]](ADDRESS)(CODECOPY 0 0 32)(CREATE 0 0 32)}
-    pre[contract] = Account(
-        balance=0,
-        nonce=40,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x2, value=Op.ADDRESS)
             + Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20)
             + Op.CREATE(value=0x0, offset=0x0, size=0x20)
             + Op.STOP
         ),
+        nonce=40,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x989680, nonce=0)
+    pre[sender] = Account(balance=0x989680)
 
     tx = Transaction(
         sender=sender,
@@ -69,19 +67,12 @@ def test_call_recursive_contract(
         data=bytes.fromhex("00"),
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
     post = {
         contract: Account(
             storage={2: 0x95E7BAEA6A6C7C4C2DFEB977EFAC326AF552D87},
-            code=(
-                Op.SSTORE(key=0x2, value=Op.ADDRESS)
-                + Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20)
-                + Op.CREATE(value=0x0, offset=0x0, size=0x20)
-                + Op.STOP
-            ),
         ),
         Address("0x4b0b4b3c7fd3dd5cea1d04dcf027dea29f84acb1"): Account(
             storage={2: 0x4B0B4B3C7FD3DD5CEA1D04DCF027DEA29F84ACB1},

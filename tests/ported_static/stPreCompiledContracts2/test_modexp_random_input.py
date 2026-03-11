@@ -7,12 +7,11 @@ tests/static/state_tests/stPreCompiledContracts2/modexpRandomInputFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -87,7 +86,7 @@ def test_modexp_random_input(
         gas_limit=100000000,
     )
 
-    pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
+    pre[sender] = Account(balance=0x3635C9ADC5DEA00000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -97,8 +96,6 @@ def test_modexp_random_input(
         data=tx_data,
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

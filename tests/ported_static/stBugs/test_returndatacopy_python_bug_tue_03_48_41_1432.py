@@ -8,12 +8,11 @@ returndatacopyPythonBug_Tue_03_48_41-1432Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )

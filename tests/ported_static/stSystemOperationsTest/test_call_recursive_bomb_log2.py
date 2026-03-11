@@ -8,12 +8,11 @@ CallRecursiveBombLog2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -40,8 +39,6 @@ def test_call_recursive_bomb_log2(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xd2e8fbe36bd16b24a1d34e4c06ec0741bd71c452")
-    callee = Address("0x4f046f9952c30de8430278a978358e998784a4ca")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +49,7 @@ def test_call_recursive_bomb_log2(
         gas_limit=11000000000,
     )
 
-    pre[callee] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    callee = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=Op.GAS)
             + Op.LOG0(offset=0x0, size=0x20)
@@ -73,12 +68,13 @@ def test_call_recursive_bomb_log2(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x4f046f9952c30de8430278a978358e998784a4ca"),  # noqa: E501
     )
     # Source: LLL
     # {  (CALL 100000000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 23 0 0 0 0)  }  # noqa: E501
-    pre[contract] = Account(
-        balance=0x1312D00,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALL(
                 gas=0x5F5E100,
@@ -91,55 +87,22 @@ def test_call_recursive_bomb_log2(
             )
             + Op.STOP
         ),
+        balance=0x1312D00,
+        nonce=0,
+        address=Address("0xd2e8fbe36bd16b24a1d34e4c06ec0741bd71c452"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=10000000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        callee: Account(
-            storage={0: 322, 1: 1},
-            code=(
-                Op.MSTORE(offset=0x0, value=Op.GAS)
-                + Op.LOG0(offset=0x0, size=0x20)
-                + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-                + Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALL(
-                        gas=Op.SUB(Op.GAS, 0x61A8),
-                        address=Op.ADDRESS,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.CALL(
-                    gas=0x5F5E100,
-                    address=0x4F046F9952C30DE8430278A978358E998784A4CA,
-                    value=0x17,
-                    args_offset=0x0,
-                    args_size=0x0,
-                    ret_offset=0x0,
-                    ret_size=0x0,
-                )
-                + Op.STOP
-            ),
-        ),
+        callee: Account(storage={0: 322, 1: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

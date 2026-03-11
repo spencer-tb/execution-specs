@@ -7,12 +7,11 @@ tests/static/state_tests/stArgsZeroOneBalance/sha3NonConstFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -35,19 +34,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4"): Account(
                     storage={
                         0: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SHA3(
-                            offset=Op.BALANCE(
-                                address=0x8F7ECEEA4B37C6F7FAF5D64D64FBFFBCD14B79A4  # noqa: E501
-                            ),
-                            size=Op.BALANCE(
-                                address=0x8F7ECEEA4B37C6F7FAF5D64D64FBFFBCD14B79A4  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -57,19 +44,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4"): Account(
                     storage={
                         0: 0xBC36789E7A1E281436464229828F817D6612F7B477D66591FF96A9E064BCC98A  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SHA3(
-                            offset=Op.BALANCE(
-                                address=0x8F7ECEEA4B37C6F7FAF5D64D64FBFFBCD14B79A4  # noqa: E501
-                            ),
-                            size=Op.BALANCE(
-                                address=0x8F7ECEEA4B37C6F7FAF5D64D64FBFFBCD14B79A4  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -88,7 +63,6 @@ def test_sha3_non_const(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -99,12 +73,10 @@ def test_sha3_non_const(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: LLL
     # { [[ 0 ]](KECCAK256 (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>) (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -119,15 +91,15 @@ def test_sha3_non_const(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x8f7eceea4b37c6f7faf5d64d64fbffbcd14b79a4"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

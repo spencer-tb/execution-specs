@@ -7,12 +7,11 @@ tests/static/state_tests/Shanghai/stEIP3855_push0/push0Gas2Filler.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -32,45 +31,11 @@ REFERENCE_SPEC_VERSION = "N/A"
         (
             "0000000000000000000000000000000000001000",
             {
-                Address("0x0000000000000000000000000000000000000200"): Account(
-                    code=Op.GAS
-                    + Op.PUSH1[0x0]
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SWAP2
-                    + Op.SUB
-                    + Op.SWAP1
-                    + Op.SSTORE
-                ),
                 Address("0x0000000000000000000000000000000000001000"): Account(
-                    storage={0: 4},
-                    code=Op.GAS
-                    + Op.PUSH0
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SWAP2
-                    + Op.SUB
-                    + Op.SWAP1
-                    + Op.SSTORE,
+                    storage={0: 4}
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1, 1: 1},
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0x186A0,
-                            address=Op.SHR(
-                                0x60, Op.CALLDATALOAD(offset=Op.DUP1)
-                            ),
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=Op.DUP1, value=0x1)
-                    + Op.STOP,
+                    storage={0: 1, 1: 1}
                 ),
             },
         ),
@@ -78,44 +43,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "0000000000000000000000000000000000000200",
             {
                 Address("0x0000000000000000000000000000000000000200"): Account(
-                    storage={0: 5},
-                    code=Op.GAS
-                    + Op.PUSH1[0x0]
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SWAP2
-                    + Op.SUB
-                    + Op.SWAP1
-                    + Op.SSTORE,
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.GAS
-                    + Op.PUSH0
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SWAP2
-                    + Op.SUB
-                    + Op.SWAP1
-                    + Op.SSTORE
+                    storage={0: 5}
                 ),
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1, 1: 1},
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0x186A0,
-                            address=Op.SHR(
-                                0x60, Op.CALLDATALOAD(offset=Op.DUP1)
-                            ),
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=Op.DUP1, value=0x1)
-                    + Op.STOP,
+                    storage={0: 1, 1: 1}
                 ),
             },
         ),
@@ -134,9 +65,6 @@ def test_push0_gas2(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    callee = Address("0x0000000000000000000000000000000000000200")
-    callee_1 = Address("0x0000000000000000000000000000000000001000")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -148,9 +76,7 @@ def test_push0_gas2(
     )
 
     # Source: raw bytecode
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.GAS
             + Op.PUSH1[0x0]
@@ -161,11 +87,11 @@ def test_push0_gas2(
             + Op.SWAP1
             + Op.SSTORE
         ),
+        nonce=0,
+        address=Address("0x0000000000000000000000000000000000000200"),  # noqa: E501
     )
     # Source: raw bytecode
-    pre[callee_1] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.GAS
             + Op.PUSH0
@@ -176,16 +102,16 @@ def test_push0_gas2(
             + Op.SWAP1
             + Op.SSTORE
         ),
+        nonce=0,
+        address=Address("0x0000000000000000000000000000000000001000"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x989680, nonce=0)
+    pre[sender] = Account(balance=0x989680)
     # Source: Yul
     # {
     #    sstore(0, call(100000, shr(96, calldataload(0)), 0, 0, 0, 0, 0))
     #    sstore(1, 1)
     # }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -202,6 +128,8 @@ def test_push0_gas2(
             + Op.SSTORE(key=Op.DUP1, value=0x1)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -212,8 +140,6 @@ def test_push0_gas2(
         data=tx_data,
         gas_limit=300000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

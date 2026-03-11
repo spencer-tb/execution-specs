@@ -8,12 +8,11 @@ StackUnderFlowContractCreationFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -49,7 +48,7 @@ def test_stack_under_flow_contract_creation(
     )
 
     pre[coinbase] = Account(balance=0, nonce=1)
-    pre[sender] = Account(balance=0xAE9F7BCC00, nonce=0)
+    pre[sender] = Account(balance=0xAE9F7BCC00)
 
     tx = Transaction(
         sender=sender,
@@ -57,8 +56,6 @@ def test_stack_under_flow_contract_creation(
         data=bytes.fromhex("6000f1"),
         gas_limit=72000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post: dict = {}

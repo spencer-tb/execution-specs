@@ -8,12 +8,11 @@ CallTheContractToCreateEmptyContractFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_call_the_contract_to_create_empty_contract(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,12 +50,12 @@ def test_call_the_contract_to_create_empty_contract(
 
     # Source: LLL
     # {(CREATE 0 0 32)}
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=Op.CREATE(value=0x0, offset=0x0, size=0x20) + Op.STOP,
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x989680, nonce=0)
+    pre[sender] = Account(balance=0x989680)
 
     tx = Transaction(
         sender=sender,
@@ -65,14 +63,9 @@ def test_call_the_contract_to_create_empty_contract(
         data=bytes.fromhex("00"),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
-    post = {
-        contract: Account(
-            code=Op.CREATE(value=0x0, offset=0x0, size=0x20) + Op.STOP,
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -7,12 +7,11 @@ tests/static/state_tests/stNonZeroCallsTest/NonZeroValue_SUICIDEFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_non_zero_value_suicide(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,37 +47,26 @@ def test_non_zero_value_suicide(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
     # Source: LLL
     # { (SELFDESTRUCT 0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b) }
-    pre[contract] = Account(
-        balance=1,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(address=0xC94F5374FCE5EDBC8E2A8697C15331677E6EBF0B)
             + Op.STOP
         ),
+        balance=1,
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SELFDESTRUCT(
-                    address=0xC94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

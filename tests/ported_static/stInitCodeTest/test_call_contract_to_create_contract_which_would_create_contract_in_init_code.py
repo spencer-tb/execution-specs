@@ -8,12 +8,11 @@ CallContractToCreateContractWhichWouldCreateContractInInitCodeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_call_contract_to_create_contract_which_would_create_contract_in_init_co
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,16 +50,17 @@ def test_call_contract_to_create_contract_which_would_create_contract_in_init_co
 
     # Source: LLL
     # {(MSTORE 0 0x600c600055602060406000f0)(CREATE 0 20 12)}
-    pre[contract] = Account(
-        balance=1,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x600C600055602060406000F0)
             + Op.CREATE(value=0x0, offset=0x14, size=0xC)
             + Op.STOP
         ),
+        balance=1,
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00)
 
     tx = Transaction(
         sender=sender,
@@ -69,18 +68,9 @@ def test_call_contract_to_create_contract_which_would_create_contract_in_init_co
         data=bytes.fromhex("00"),
         gas_limit=200000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(offset=0x0, value=0x600C600055602060406000F0)
-                + Op.CREATE(value=0x0, offset=0x14, size=0xC)
-                + Op.STOP
-            ),
-        ),
         Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(
             storage={0: 12},
         ),

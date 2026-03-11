@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest143Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest143(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xfcc847f31e7e75eaec0b29ceae4e989c97f49fb7")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,8 +45,7 @@ def test_random_statetest143(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -66,9 +63,7 @@ def test_random_statetest143(
         ),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.COINBASE
             + Op.NUMBER
@@ -81,6 +76,9 @@ def test_random_statetest143(
                 value=Op.COINBASE,
             )
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xfcc847f31e7e75eaec0b29ceae4e989c97f49fb7"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -89,43 +87,14 @@ def test_random_statetest143(
         data=bytes.fromhex("42"),
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
         contract: Account(
             storage={
                 0xAE72E2BF2302EBCD309E003E5BE58830F96DEDDAF87BB89EEEA159388BFE3EC1: 0x4F3F701464972E74606D6EA82D4D3080599A0E79,  # noqa: E501
             },
-            code=(
-                Op.COINBASE
-                + Op.NUMBER
-                + Op.COINBASE
-                + Op.SSTORE(
-                    key=Op.SHA3(
-                        offset=Op.BYTE(Op.TIMESTAMP, Op.NUMBER),
-                        size=Op.TIMESTAMP,
-                    ),
-                    value=Op.COINBASE,
-                )
-            ),
         ),
     }
 

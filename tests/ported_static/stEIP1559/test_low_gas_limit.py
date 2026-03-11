@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP1559/lowGasLimitFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -35,8 +34,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.GAS_ALLOWANCE_EXCEEDED,
             {
                 Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
-                    storage={0: 24743},
-                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
+                    storage={0: 24743}
                 )
             },
             id="case0",
@@ -47,8 +45,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
-                    storage={0: 2},
-                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
+                    storage={0: 2}
                 )
             },
             id="case1",
@@ -58,8 +55,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
-                    storage={0: 24743},
-                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
+                    storage={0: 24743}
                 )
             },
             id="case2",
@@ -69,8 +65,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             TransactionException.INTRINSIC_GAS_TOO_LOW,
             {
                 Address("0xef0454d0376d1921b9a83868282725853c293ab5"): Account(
-                    storage={0: 24743},
-                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
+                    storage={0: 24743}
                 )
             },
             id="case3",
@@ -91,7 +86,6 @@ def test_low_gas_limit(
     sender = EOA(
         key=0xDE0C95357363DA5C1C5A73BD7C2781CA5C9FECC1014103B5E1D1E990AE8208EC
     )
-    contract = Address("0xef0454d0376d1921b9a83868282725853c293ab5")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -107,11 +101,12 @@ def test_low_gas_limit(
     # {
     #     sstore(0, add(1,1))
     # }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
         storage={0x0: 0x60A7},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xef0454d0376d1921b9a83868282725853c293ab5"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -122,8 +117,6 @@ def test_low_gas_limit(
         max_fee_per_gas=1000,
         max_priority_fee_per_gas=1000,
         nonce=1,
-        value=0,
-        access_list=[],
         error=tx_error,
     )
 

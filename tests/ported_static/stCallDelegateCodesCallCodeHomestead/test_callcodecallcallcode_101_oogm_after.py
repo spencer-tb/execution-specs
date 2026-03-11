@@ -8,12 +8,11 @@ callcodecallcallcode_101_OOGMAfterFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,10 +38,6 @@ def test_callcodecallcallcode_101_oogm_after(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x5afccf55d80f6c4c95515cffd8e7d51d2c4c9f4a")
-    callee = Address("0x37e72dd6ff3c2ac8c1ddab092a26164a2ad5988c")
-    callee_1 = Address("0xb126c622075b1189fb6c45e851641cfaddf65b36")
-    callee_2 = Address("0xda11fdf0ce02240c6b4711f56afcd9763b44d3dc")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +48,7 @@ def test_callcodecallcallcode_101_oogm_after(
         gas_limit=30000000,
     )
 
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -72,12 +65,12 @@ def test_callcodecallcallcode_101_oogm_after(
             + Op.SHA3(offset=0x0, size=0x2FFFFF)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x37e72dd6ff3c2ac8c1ddab092a26164a2ad5988c"),  # noqa: E501
     )
     # Source: LLL
     # {  [[ 0 ]] (DELEGATECALL 800000 <contract:0x1000000000000000000000000000000000000001> 0 64 0 64 ) [[11]] 1}  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -93,15 +86,16 @@ def test_callcodecallcallcode_101_oogm_after(
             + Op.SSTORE(key=0xB, value=0x1)
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
-        balance=0,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
+        address=Address("0x5afccf55d80f6c4c95515cffd8e7d51d2c4c9f4a"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x3, value=0x1) + Op.STOP,
-    )
-    pre[callee_2] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0xb126c622075b1189fb6c45e851641cfaddf65b36"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x2,
@@ -116,73 +110,20 @@ def test_callcodecallcallcode_101_oogm_after(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xda11fdf0ce02240c6b4711f56afcd9763b44d3dc"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        callee: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALLCODE(
-                        gas=0x927C0,
-                        address=0xDA11FDF0CE02240C6B4711F56AFCD9763B44D3DC,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.SHA3(offset=0x0, size=0x2FFFFF)
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            storage={11: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.DELEGATECALL(
-                        gas=0xC3500,
-                        address=0x37E72DD6FF3C2AC8C1DDAB092A26164A2AD5988C,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.SSTORE(key=0xB, value=0x1)
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(code=Op.SSTORE(key=0x3, value=0x1) + Op.STOP),
-        callee_2: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x2,
-                    value=Op.DELEGATECALL(
-                        gas=0x61A80,
-                        address=0xB126C622075B1189FB6C45E851641CFADDF65B36,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={11: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

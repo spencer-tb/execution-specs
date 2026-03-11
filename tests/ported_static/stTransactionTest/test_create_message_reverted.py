@@ -7,12 +7,11 @@ tests/static/state_tests/stTransactionTest/CreateMessageRevertedFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_create_message_reverted(
     sender = EOA(
         key=0x2B75D0C814EB07C075FCCBDD9A036FAF651D9C46D7477D6C4F30772CFCA90D38
     )
-    contract = Address("0xc9b0ca064c8b73a1d845547cd28d4e97fe4ec8a0")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,35 +49,25 @@ def test_create_message_reverted(
 
     # Source: LLL
     # {(MSTORE 0 0x600c600055) (CREATE 0 27 5)}
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x600C600055)
             + Op.CREATE(value=0x0, offset=0x1B, size=0x5)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xc9b0ca064c8b73a1d845547cd28d4e97fe4ec8a0"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x1C9C380, nonce=0)
+    pre[sender] = Account(balance=0x1C9C380)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=21882,
         gas_price=10,
-        nonce=0,
         value=100,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(offset=0x0, value=0x600C600055)
-                + Op.CREATE(value=0x0, offset=0x1B, size=0x5)
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

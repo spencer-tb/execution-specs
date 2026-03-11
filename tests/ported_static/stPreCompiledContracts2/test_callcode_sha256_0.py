@@ -7,12 +7,11 @@ tests/static/state_tests/stPreCompiledContracts2/CALLCODESha256_0Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_callcode_sha256_0(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xfac135cdecd64b72cda12c2b4764e9d4e474de3e")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,11 +47,9 @@ def test_callcode_sha256_0(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0x1312D00,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x1)
             + Op.CALLCODE(
@@ -67,15 +63,16 @@ def test_callcode_sha256_0(
             )
             + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
         ),
+        balance=0x1312D00,
+        nonce=0,
+        address=Address("0xfac135cdecd64b72cda12c2b4764e9d4e474de3e"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=365224,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
@@ -84,19 +81,6 @@ def test_callcode_sha256_0(
             storage={
                 0: 0xEC4916DD28FC4C10D78E287CA5D9CC51EE1AE73CBFDE08C6B37324CBFAAC8BC5,  # noqa: E501
             },
-            code=(
-                Op.MSTORE(offset=0x0, value=0x1)
-                + Op.CALLCODE(
-                    gas=0xFF,
-                    address=0x2,
-                    value=0x0,
-                    args_offset=0x0,
-                    args_size=0x20,
-                    ret_offset=0x0,
-                    ret_size=0x20,
-                )
-                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-            ),
         ),
     }
 

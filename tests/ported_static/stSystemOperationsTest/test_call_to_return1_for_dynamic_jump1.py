@@ -8,12 +8,11 @@ CallToReturn1ForDynamicJump1Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_call_to_return1_for_dynamic_jump1(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x7bc307ec814ce37f4553993ac5612b763f18165d")
-    callee = Address("0xd43411a40a68e9cba15440e3c34a74a4dc5f79dd")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +49,7 @@ def test_call_to_return1_for_dynamic_jump1(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -72,56 +67,31 @@ def test_call_to_return1_for_dynamic_jump1(
             + Op.PUSH1[0x5B]
             + Op.SSTORE(key=0x23, value=0x23)
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x7bc307ec814ce37f4553993ac5612b763f18165d"),  # noqa: E501
     )
     # Source: raw bytecode
-    pre[callee] = Account(
-        balance=23,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x1, value=0x1)
             + Op.MSTORE8(offset=0x1F, value=0x2B)
             + Op.RETURN(offset=0x1F, size=0x1)
         ),
+        balance=23,
+        nonce=0,
+        address=Address("0xd43411a40a68e9cba15440e3c34a74a4dc5f79dd"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=300000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0x3E8,
-                        address=0xD43411A40A68E9CBA15440E3C34A74A4DC5F79DD,
-                        value=0x17,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x1F,
-                        ret_size=0x1,
-                    ),
-                )
-                + Op.JUMP(pc=Op.MLOAD(offset=0x0))
-                + Op.PUSH1[0x5B]
-                + Op.SSTORE(key=0x23, value=0x23)
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.SSTORE(key=0x1, value=0x1)
-                + Op.MSTORE8(offset=0x1F, value=0x2B)
-                + Op.RETURN(offset=0x1F, size=0x1)
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

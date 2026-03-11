@@ -8,12 +8,11 @@ createInitFail_OOGduringInitFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_create_init_fail_oo_gduring_init(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_create_init_fail_oo_gduring_init(
 
     # Source: LLL
     # {(MSTORE8 0 0x5a ) (SELFDESTRUCT (CREATE 1 0 1)) }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE8(offset=0x0, value=0x5A)
             + Op.SELFDESTRUCT(
@@ -62,29 +58,20 @@ def test_create_init_fail_oo_gduring_init(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=53021,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE8(offset=0x0, value=0x5A)
-                + Op.SELFDESTRUCT(
-                    address=Op.CREATE(value=0x1, offset=0x0, size=0x1),
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

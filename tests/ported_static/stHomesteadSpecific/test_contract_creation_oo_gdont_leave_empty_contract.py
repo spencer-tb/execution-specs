@@ -8,12 +8,11 @@ contractCreationOOGdontLeaveEmptyContractFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_contract_creation_oo_gdont_leave_empty_contract(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x1000000000000000000000000000000000000001")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_contract_creation_oo_gdont_leave_empty_contract(
 
     # Source: LLL
     # { (SSTORE 1 0x10) (MSTORE 0 0x6001600155601080600c6000396000f3006000355415600957005b6020356000 ) (CREATE 0 0 32)}  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x1, value=0x10)
             + Op.MSTORE(
@@ -64,32 +60,20 @@ def test_contract_creation_oo_gdont_leave_empty_contract(
             + Op.CREATE(value=0x0, offset=0x0, size=0x20)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x1000000000000000000000000000000000000001"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xF4240, nonce=0)
+    pre[sender] = Account(balance=0xF4240)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=93056,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={1: 16},
-            code=(
-                Op.SSTORE(key=0x1, value=0x10)
-                + Op.MSTORE(
-                    offset=0x0,
-                    value=0x6001600155601080600C6000396000F3006000355415600957005B6020356000,  # noqa: E501
-                )
-                + Op.CREATE(value=0x0, offset=0x0, size=0x20)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={1: 16}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

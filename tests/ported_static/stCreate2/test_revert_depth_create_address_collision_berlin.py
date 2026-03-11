@@ -8,12 +8,11 @@ RevertDepthCreateAddressCollisionBerlinFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,65 +35,13 @@ REFERENCE_SPEC_VERSION = "N/A"
             "000000000000000000000000000000000000000000000000000000000000ea60",
             110000,
             1,
-            {
-                Address("0x3e180b1862f9d158abb5e519a6d8605540c23682"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x1)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0xB000000000000000000000000000000000000000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x4, value=0xC)
-                    + Op.STOP
-                ),
-                Address("0xb000000000000000000000000000000000000000"): Account(
-                    code=Op.SSTORE(key=0x2, value=0x8)
-                    + Op.POP(
-                        Op.CREATE2(value=0x0, offset=0x0, size=0x0, salt=0x0)
-                    )
-                    + Op.SSTORE(key=0x3, value=0xC)
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "000000000000000000000000000000000000000000000000000000000000ea60",
             110000,
             0,
-            {
-                Address("0x3e180b1862f9d158abb5e519a6d8605540c23682"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x1)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0xB000000000000000000000000000000000000000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x4, value=0xC)
-                    + Op.STOP
-                ),
-                Address("0xb000000000000000000000000000000000000000"): Account(
-                    code=Op.SSTORE(key=0x2, value=0x8)
-                    + Op.POP(
-                        Op.CREATE2(value=0x0, offset=0x0, size=0x0, salt=0x0)
-                    )
-                    + Op.SSTORE(key=0x3, value=0xC)
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "000000000000000000000000000000000000000000000000000000000000ea60",
@@ -102,31 +49,8 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x3e180b1862f9d158abb5e519a6d8605540c23682"): Account(
-                    storage={0: 1, 4: 12},
-                    code=Op.SSTORE(key=0x0, value=0x1)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0xB000000000000000000000000000000000000000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x4, value=0xC)
-                    + Op.STOP,
-                ),
-                Address("0xb000000000000000000000000000000000000000"): Account(
-                    code=Op.SSTORE(key=0x2, value=0x8)
-                    + Op.POP(
-                        Op.CREATE2(value=0x0, offset=0x0, size=0x0, salt=0x0)
-                    )
-                    + Op.SSTORE(key=0x3, value=0xC)
-                    + Op.STOP
-                ),
+                    storage={0: 1, 4: 12}
+                )
             },
         ),
         (
@@ -135,96 +59,21 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x3e180b1862f9d158abb5e519a6d8605540c23682"): Account(
-                    storage={0: 1, 4: 12},
-                    code=Op.SSTORE(key=0x0, value=0x1)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0xB000000000000000000000000000000000000000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x4, value=0xC)
-                    + Op.STOP,
-                ),
-                Address("0xb000000000000000000000000000000000000000"): Account(
-                    code=Op.SSTORE(key=0x2, value=0x8)
-                    + Op.POP(
-                        Op.CREATE2(value=0x0, offset=0x0, size=0x0, salt=0x0)
-                    )
-                    + Op.SSTORE(key=0x3, value=0xC)
-                    + Op.STOP
-                ),
+                    storage={0: 1, 4: 12}
+                )
             },
         ),
         (
             "000000000000000000000000000000000000000000000000000000000001ea60",
             110000,
             1,
-            {
-                Address("0x3e180b1862f9d158abb5e519a6d8605540c23682"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x1)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0xB000000000000000000000000000000000000000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x4, value=0xC)
-                    + Op.STOP
-                ),
-                Address("0xb000000000000000000000000000000000000000"): Account(
-                    code=Op.SSTORE(key=0x2, value=0x8)
-                    + Op.POP(
-                        Op.CREATE2(value=0x0, offset=0x0, size=0x0, salt=0x0)
-                    )
-                    + Op.SSTORE(key=0x3, value=0xC)
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "000000000000000000000000000000000000000000000000000000000001ea60",
             110000,
             0,
-            {
-                Address("0x3e180b1862f9d158abb5e519a6d8605540c23682"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x1)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0xB000000000000000000000000000000000000000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x4, value=0xC)
-                    + Op.STOP
-                ),
-                Address("0xb000000000000000000000000000000000000000"): Account(
-                    code=Op.SSTORE(key=0x2, value=0x8)
-                    + Op.POP(
-                        Op.CREATE2(value=0x0, offset=0x0, size=0x0, salt=0x0)
-                    )
-                    + Op.SSTORE(key=0x3, value=0xC)
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "000000000000000000000000000000000000000000000000000000000001ea60",
@@ -232,31 +81,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x3e180b1862f9d158abb5e519a6d8605540c23682"): Account(
-                    storage={0: 1, 1: 1, 4: 12},
-                    code=Op.SSTORE(key=0x0, value=0x1)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0xB000000000000000000000000000000000000000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x4, value=0xC)
-                    + Op.STOP,
+                    storage={0: 1, 1: 1, 4: 12}
                 ),
                 Address("0xb000000000000000000000000000000000000000"): Account(
-                    storage={2: 8, 3: 12},
-                    code=Op.SSTORE(key=0x2, value=0x8)
-                    + Op.POP(
-                        Op.CREATE2(value=0x0, offset=0x0, size=0x0, salt=0x0)
-                    )
-                    + Op.SSTORE(key=0x3, value=0xC)
-                    + Op.STOP,
+                    storage={2: 8, 3: 12}
                 ),
             },
         ),
@@ -266,31 +94,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x3e180b1862f9d158abb5e519a6d8605540c23682"): Account(
-                    storage={0: 1, 1: 1, 4: 12},
-                    code=Op.SSTORE(key=0x0, value=0x1)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0xB000000000000000000000000000000000000000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x4, value=0xC)
-                    + Op.STOP,
+                    storage={0: 1, 1: 1, 4: 12}
                 ),
                 Address("0xb000000000000000000000000000000000000000"): Account(
-                    storage={2: 8, 3: 12},
-                    code=Op.SSTORE(key=0x2, value=0x8)
-                    + Op.POP(
-                        Op.CREATE2(value=0x0, offset=0x0, size=0x0, salt=0x0)
-                    )
-                    + Op.SSTORE(key=0x3, value=0xC)
-                    + Op.STOP,
+                    storage={2: 8, 3: 12}
                 ),
             },
         ),
@@ -320,8 +127,6 @@ def test_revert_depth_create_address_collision_berlin(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x3e180b1862f9d158abb5e519a6d8605540c23682")
-    callee = Address("0xb000000000000000000000000000000000000000")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -334,9 +139,7 @@ def test_revert_depth_create_address_collision_berlin(
 
     # Source: LLL
     # { [[0]] 1 [[1]] (CALL (CALLDATALOAD 0) 0xb000000000000000000000000000000000000000 0 0 0 0 0) [[4]] 12 }  # noqa: E501
-    pre[contract] = Account(
-        balance=5,
-        nonce=54,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=0x1)
             + Op.SSTORE(
@@ -354,19 +157,22 @@ def test_revert_depth_create_address_collision_berlin(
             + Op.SSTORE(key=0x4, value=0xC)
             + Op.STOP
         ),
+        balance=5,
+        nonce=54,
+        address=Address("0x3e180b1862f9d158abb5e519a6d8605540c23682"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
     # Source: LLL
     # { [[2]] 8 (CREATE2 0 0 0 0) [[3]] 12}
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x2, value=0x8)
             + Op.POP(Op.CREATE2(value=0x0, offset=0x0, size=0x0, salt=0x0))
             + Op.SSTORE(key=0x3, value=0xC)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb000000000000000000000000000000000000000"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -377,7 +183,6 @@ def test_revert_depth_create_address_collision_berlin(
         data=tx_data,
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

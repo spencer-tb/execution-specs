@@ -7,12 +7,11 @@ tests/static/state_tests/stArgsZeroOneBalance/jumpNonConstFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -45,7 +44,6 @@ def test_jump_non_const(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xa82ae24d0d34b26fcb664dacd3e18371c9315e79")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -56,12 +54,10 @@ def test_jump_non_const(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: LLL
     # { (JUMP (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.JUMP(
                 pc=Op.BALANCE(
@@ -70,29 +66,18 @@ def test_jump_non_const(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xa82ae24d0d34b26fcb664dacd3e18371c9315e79"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.JUMP(
-                    pc=Op.BALANCE(
-                        address=0xA82AE24D0D34B26FCB664DACD3E18371C9315E79,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

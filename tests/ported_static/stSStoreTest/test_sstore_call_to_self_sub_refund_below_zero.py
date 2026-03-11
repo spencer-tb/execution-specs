@@ -8,12 +8,11 @@ SstoreCallToSelfSubRefundBelowZeroFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_sstore_call_to_self_sub_refund_below_zero(
     sender = EOA(
         key=0xAF50993BA9FD52F2A61FCD1DC6D59A44E7AF39F4289201CC19EA7D30E8E27E83
     )
-    contract = Address("0xb48023055b6c3d565a6f5488459d64efab79b6c7")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,11 +48,9 @@ def test_sstore_call_to_self_sub_refund_below_zero(
         gas_limit=68719476736,
     )
 
-    pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFF, nonce=0)
+    pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFF)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.JUMPI(pc=0x15, condition=Op.EQ(Op.ADDRESS, Op.CALLER))
             + Op.SSTORE(key=0x1, value=0x0)
@@ -73,39 +69,19 @@ def test_sstore_call_to_self_sub_refund_below_zero(
             + Op.STOP
         ),
         storage={0x1: 0x2},
+        nonce=0,
+        address=Address("0xb48023055b6c3d565a6f5488459d64efab79b6c7"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=2367154,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={1: 3},
-            code=(
-                Op.JUMPI(pc=0x15, condition=Op.EQ(Op.ADDRESS, Op.CALLER))
-                + Op.SSTORE(key=0x1, value=0x0)
-                + Op.CALL(
-                    gas=Op.GAS,
-                    address=Op.ADDRESS,
-                    value=Op.DUP1,
-                    args_offset=Op.DUP1,
-                    args_size=Op.DUP1,
-                    ret_offset=Op.DUP1,
-                    ret_size=0x0,
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(key=0x1, value=0x3)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={1: 3}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

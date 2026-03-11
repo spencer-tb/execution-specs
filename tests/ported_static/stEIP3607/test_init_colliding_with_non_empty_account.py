@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP3607/initCollidingWithNonEmptyAccountFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -50,8 +49,6 @@ def test_init_colliding_with_non_empty_account(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f")
-    callee_1 = Address("0xd0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -64,14 +61,19 @@ def test_init_colliding_with_non_empty_account(
 
     pre[coinbase] = Account(balance=0, nonce=1)
     # Source: raw bytecode
-    pre[contract] = Account(
+    pre.deploy_contract(
+        code=Op.SSTORE(key=0x1, value=0x0),
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=0x0),
+        address=Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[callee_1] = Account(balance=0, nonce=0, code=bytes.fromhex("00"))
+    pre.deploy_contract(
+        code=bytes.fromhex("00"),
+        nonce=0,
+        address=Address("0xd0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0"),  # noqa: E501
+    )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -81,13 +83,9 @@ def test_init_colliding_with_non_empty_account(
         data=tx_data,
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        contract: Account(code=Op.SSTORE(key=0x1, value=0x0)),
-        callee_1: Account(code=bytes.fromhex("00")),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

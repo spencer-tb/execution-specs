@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/SSTORE_BoundsFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,32 +28,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0x1f2aee312c3c47bdeb27ff5275fddb33c543e394"): Account(
-                    code=Op.SSTORE(key=0xFFFFFFFF, value=0x1)
-                    + Op.SSTORE(key=0xFFFFFFFFFFFFFFFF, value=0x1)
-                    + Op.SSTORE(
-                        key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, value=0x1
-                    )
-                    + Op.SSTORE(
-                        key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        value=0x1,
-                    )
-                    + Op.SSTORE(key=0x20, value=0xFFFFFFFF)
-                    + Op.SSTORE(key=0x40, value=0xFFFFFFFFFFFFFFFF)
-                    + Op.SSTORE(
-                        key=0x80, value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                    )
-                    + Op.SSTORE(
-                        key=0x100,
-                        value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
+        (150000, {}),
         (
             16777216,
             {
@@ -68,26 +42,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0xFFFFFFFFFFFFFFFF: 1,
                         0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: 1,
                         0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: 1,  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0xFFFFFFFF, value=0x1)
-                    + Op.SSTORE(key=0xFFFFFFFFFFFFFFFF, value=0x1)
-                    + Op.SSTORE(
-                        key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, value=0x1
-                    )
-                    + Op.SSTORE(
-                        key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        value=0x1,
-                    )
-                    + Op.SSTORE(key=0x20, value=0xFFFFFFFF)
-                    + Op.SSTORE(key=0x40, value=0xFFFFFFFFFFFFFFFF)
-                    + Op.SSTORE(
-                        key=0x80, value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                    )
-                    + Op.SSTORE(
-                        key=0x100,
-                        value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                    )
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -106,7 +61,6 @@ def test_sstore_bounds(
     sender = EOA(
         key=0xFE5BE118AD5955E30E0FFC4E1F1BBDCAA7F5A67CB1426C4AC19E32C80ECCDC06
     )
-    contract = Address("0x1f2aee312c3c47bdeb27ff5275fddb33c543e394")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -119,9 +73,7 @@ def test_sstore_bounds(
 
     # Source: LLL
     # { (SSTORE 0xffffffff 1) (SSTORE 0xffffffffffffffff 1) (SSTORE 0xffffffffffffffffffffffffffffffff 1) (SSTORE 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 1) (SSTORE 32 0xffffffff) (SSTORE 64 0xffffffffffffffff) (SSTORE 128 0xffffffffffffffffffffffffffffffff) (SSTORE 256 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0xFFFFFFFF, value=0x1)
             + Op.SSTORE(key=0xFFFFFFFFFFFFFFFF, value=0x1)
@@ -139,16 +91,16 @@ def test_sstore_bounds(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x1f2aee312c3c47bdeb27ff5275fddb33c543e394"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

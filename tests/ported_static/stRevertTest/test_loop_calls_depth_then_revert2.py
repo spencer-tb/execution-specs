@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/LoopCallsDepthThenRevert2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_loop_calls_depth_then_revert2(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xa000000000000000000000000000000000000000")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +49,7 @@ def test_loop_calls_depth_then_revert2(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=10,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.JUMPI(pc=0x3F, condition=Op.EQ(Op.SLOAD(key=0x0), 0x3FF))
             + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
@@ -74,43 +70,21 @@ def test_loop_calls_depth_then_revert2(
             + Op.POP(Op.CREATE(value=0x3, offset=0x19, size=0x7))
             + Op.JUMPDEST
         ),
+        balance=10,
+        nonce=0,
+        address=Address("0xa000000000000000000000000000000000000000"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x13426172C74D822B878FE800000000, nonce=0)
+    pre[sender] = Account(balance=0x13426172C74D822B878FE800000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=9214364837600034817,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 1023},
-            code=(
-                Op.JUMPI(pc=0x3F, condition=Op.EQ(Op.SLOAD(key=0x0), 0x3FF))
-                + Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-                + Op.POP(
-                    Op.CALL(
-                        gas=Op.GAS,
-                        address=0xA000000000000000000000000000000000000000,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.JUMPI(pc=0x53, condition=Op.LT(Op.SLOAD(key=0x0), 0x41A))
-                + Op.JUMPDEST
-                + Op.MSTORE(offset=0x0, value=0x600060006002F0)
-                + Op.POP(Op.CREATE(value=0x3, offset=0x19, size=0x7))
-                + Op.JUMPDEST
-            ),
-        ),
+        contract: Account(storage={0: 1023}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

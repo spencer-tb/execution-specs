@@ -8,12 +8,11 @@ delegatecodeDynamicCode2SelfCallFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_delegatecode_dynamic_code2_self_call(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x1000000000000000000000000000000000000000")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_delegatecode_dynamic_code2_self_call(
 
     # Source: LLL
     # {(MSTORE 0 0x60406000604060007313136008b64ff592819b2fa6d43f2835c452020e620186) (MSTORE 32 0xa0f4600b5533600c550000000000000000000000000000000000000000000000) (CREATE 1 0 64) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0x10C8E0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -67,34 +63,20 @@ def test_delegatecode_dynamic_code2_self_call(
             + Op.CREATE(value=0x1, offset=0x0, size=0x40)
             + Op.STOP
         ),
+        balance=0x10C8E0,
+        nonce=0,
+        address=Address("0x1000000000000000000000000000000000000000"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x2386F26FC10000, nonce=0)
+    pre[sender] = Account(balance=0x2386F26FC10000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=453081,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0x60406000604060007313136008B64FF592819B2FA6D43F2835C452020E620186,  # noqa: E501
-                )
-                + Op.MSTORE(
-                    offset=0x20,
-                    value=0xA0F4600B5533600C550000000000000000000000000000000000000000000000,  # noqa: E501
-                )
-                + Op.CREATE(value=0x1, offset=0x0, size=0x40)
-                + Op.STOP
-            ),
-        ),
         Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(
             storage={
                 11: 1,

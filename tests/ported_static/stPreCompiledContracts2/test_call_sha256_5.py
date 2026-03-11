@@ -7,12 +7,11 @@ tests/static/state_tests/stPreCompiledContracts2/CallSha256_5Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_call_sha256_5(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x66088f99c73ae9e87363561b19c69011205344d0")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +49,7 @@ def test_call_sha256_5(
 
     # Source: LLL
     # { (MSTORE 0 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) [[ 2 ]] (CALL 600 2 0 0 1000000 0 32) [[ 0 ]] (MLOAD 0)}  # noqa: E501
-    pre[contract] = Account(
-        balance=0x1312D00,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -74,16 +70,17 @@ def test_call_sha256_5(
             + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
             + Op.STOP
         ),
+        balance=0x1312D00,
+        nonce=0,
+        address=Address("0x66088f99c73ae9e87363561b19c69011205344d0"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=10000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
@@ -92,26 +89,6 @@ def test_call_sha256_5(
             storage={
                 0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
             },
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                )
-                + Op.SSTORE(
-                    key=0x2,
-                    value=Op.CALL(
-                        gas=0x258,
-                        address=0x2,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0xF4240,
-                        ret_offset=0x0,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-                + Op.STOP
-            ),
         ),
     }
 

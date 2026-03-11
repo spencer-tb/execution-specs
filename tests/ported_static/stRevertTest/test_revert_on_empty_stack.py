@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/RevertOnEmptyStackFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_revert_on_empty_stack(
     sender = EOA(
         key=0x3327048BBC0B8C348A6352BE62994144E64B8FF2CEC68D9FF4CA4E911ECD5D22
     )
-    contract = Address("0x3141bb954e8294e47a14ebd08229f30e6294ba83")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,21 +46,20 @@ def test_revert_on_empty_stack(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(balance=0, nonce=0, code=Op.REVERT)
-    pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
+    contract = pre.deploy_contract(
+        code=Op.REVERT,
+        nonce=0,
+        address=Address("0x3141bb954e8294e47a14ebd08229f30e6294ba83"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0x5AF3107A4000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=2000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(code=Op.REVERT),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

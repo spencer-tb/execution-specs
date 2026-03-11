@@ -7,12 +7,11 @@ tests/static/state_tests/stCallCodes/callcodecallcode_11_OOGEFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,9 +37,6 @@ def test_callcodecallcode_11_ooge(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x9e57433afaff8a546fbc43cf0330afb6561dc550")
-    callee = Address("0x766b2cf0691f51029181fc511395b7ab71353a88")
-    callee_1 = Address("0x8e6e134402f2eeca8e910e8ec62b45b36ee31f30")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,18 +47,16 @@ def test_callcodecallcode_11_ooge(
         gas_limit=30000000,
     )
 
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x2, value=0x1)
             + Op.SHA3(offset=0x0, size=0x2FFFFF)
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0x766b2cf0691f51029181fc511395b7ab71353a88"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -79,12 +73,12 @@ def test_callcodecallcode_11_ooge(
             + Op.SSTORE(key=0xB, value=0x1)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x8e6e134402f2eeca8e910e8ec62b45b36ee31f30"),  # noqa: E501
     )
     # Source: LLL
     # {  [[ 0 ]] (CALLCODE 800000 <contract:0x1000000000000000000000000000000000000001> 0 0 64 0 64 ) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -100,63 +94,21 @@ def test_callcodecallcode_11_ooge(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x9e57433afaff8a546fbc43cf0330afb6561dc550"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        callee: Account(
-            code=(
-                Op.SSTORE(key=0x2, value=0x1)
-                + Op.SHA3(offset=0x0, size=0x2FFFFF)
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALLCODE(
-                        gas=0x927C0,
-                        address=0x766B2CF0691F51029181FC511395B7AB71353A88,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.SSTORE(key=0xB, value=0x1)
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            storage={0: 1, 11: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALLCODE(
-                        gas=0xC3500,
-                        address=0x8E6E134402F2EECA8E910E8EC62B45B36EE31F30,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 1, 11: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

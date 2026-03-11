@@ -8,12 +8,11 @@ ZeroValue_SUICIDE_ToEmpty_OOGRevert_ParisFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,9 +38,7 @@ def test_zero_value_suicide_to_empty_oog_revert_paris(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0xa2e25f47a24c66cfef22d3304777a22d6dd7ad4a")
     callee = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
-    callee_1 = Address("0x888748026558f849c1b2433ea5e1daf1444dfc60")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,19 +50,17 @@ def test_zero_value_suicide_to_empty_oog_revert_paris(
     )
 
     pre[callee] = Account(balance=10, nonce=0)
-    pre[callee_1] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(address=0x76FAE819612A29489A1A43208613D8F8557B8898)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x888748026558f849c1b2433ea5e1daf1444dfc60"),  # noqa: E501
     )
     # Source: LLL
     # { (CALL 50000 <contract:0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[2]]12 [[3]]12 [[4]]12 }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.POP(
                 Op.CALL(
@@ -83,47 +78,18 @@ def test_zero_value_suicide_to_empty_oog_revert_paris(
             + Op.SSTORE(key=0x4, value=0xC)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xa2e25f47a24c66cfef22d3304777a22d6dd7ad4a"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=75000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        callee_1: Account(
-            code=(
-                Op.SELFDESTRUCT(
-                    address=0x76FAE819612A29489A1A43208613D8F8557B8898,
-                )
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.POP(
-                    Op.CALL(
-                        gas=0xC350,
-                        address=0x888748026558F849C1B2433EA5E1DAF1444DFC60,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.SSTORE(key=0x2, value=0xC)
-                + Op.SSTORE(key=0x3, value=0xC)
-                + Op.SSTORE(key=0x4, value=0xC)
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -7,12 +7,11 @@ tests/static/state_tests/stCreate2/create2collisionNonceFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -59,7 +58,7 @@ def test_create2collision_nonce(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[contract] = Account(balance=0, nonce=1)
     pre[callee_1] = Account(balance=0, nonce=1)
     pre[callee_2] = Account(balance=0, nonce=1)
@@ -72,7 +71,6 @@ def test_create2collision_nonce(
         data=tx_data,
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

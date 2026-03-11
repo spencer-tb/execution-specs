@@ -7,12 +7,11 @@ tests/static/state_tests/stCreateTest/CREATE_ContractRETURNBigOffsetFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -58,7 +57,7 @@ def test_create_contract_return_big_offset(
         gas_limit=89128960,
     )
 
-    pre[sender] = Account(balance=0x9184E72A000, nonce=0)
+    pre[sender] = Account(balance=0x9184E72A000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -68,8 +67,6 @@ def test_create_contract_return_big_offset(
         data=tx_data,
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post: dict = {}

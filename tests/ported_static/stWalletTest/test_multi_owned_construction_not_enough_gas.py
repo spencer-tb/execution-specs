@@ -8,12 +8,11 @@ multiOwnedConstructionNotEnoughGasFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -48,7 +47,7 @@ def test_multi_owned_construction_not_enough_gas(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
@@ -123,8 +122,6 @@ def test_multi_owned_construction_not_enough_gas(
         ),
         gas_limit=256449,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post: dict = {}

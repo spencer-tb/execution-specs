@@ -8,12 +8,11 @@ suicideNotExistingAccountFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_suicide_not_existing_account(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x70c22830049f2678c8aa93d0060683cd67696495")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,35 +50,25 @@ def test_suicide_not_existing_account(
 
     # Source: LLL
     # { (SELFDESTRUCT 0xaa1722f3947def4cf144679da39c4c32bdc35681 )}
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(address=0xAA1722F3947DEF4CF144679DA39C4C32BDC35681)
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x70c22830049f2678c8aa93d0060683cd67696495"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SELFDESTRUCT(
-                    address=0xAA1722F3947DEF4CF144679DA39C4C32BDC35681,
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

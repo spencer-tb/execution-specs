@@ -8,12 +8,11 @@ ZeroValue_SUICIDE_ToNonZeroBalanceFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_zero_value_suicide_to_non_zero_balance(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0x888748026558f849c1b2433ea5e1daf1444dfc60")
     callee = Address("0x9089da66e8bbc08846842a301905501bc8525dc4")
 
     env = Environment(
@@ -53,36 +51,24 @@ def test_zero_value_suicide_to_non_zero_balance(
 
     # Source: LLL
     # { (SELFDESTRUCT <eoa:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b>) }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(address=0x9089DA66E8BBC08846842A301905501BC8525DC4)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x888748026558f849c1b2433ea5e1daf1444dfc60"),  # noqa: E501
     )
     pre[callee] = Account(balance=100, nonce=0)
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SELFDESTRUCT(
-                    address=0x9089DA66E8BBC08846842A301905501BC8525DC4,
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

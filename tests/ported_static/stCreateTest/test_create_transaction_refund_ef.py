@@ -7,12 +7,11 @@ tests/static/state_tests/stCreateTest/CreateTransactionRefundEFFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_create_transaction_refund_ef(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x00000000000000000000000000000000005ef94d")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,13 +51,13 @@ def test_create_transaction_refund_ef(
     # {
     #   sstore(0,0)
     # }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP,
         storage={0x0: 0x1},
+        nonce=0,
+        address=Address("0x00000000000000000000000000000000005ef94d"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
+    pre[sender] = Account(balance=0x5AF3107A4000)
 
     tx = Transaction(
         sender=sender,
@@ -69,15 +67,10 @@ def test_create_transaction_refund_ef(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 1},
-            code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP,
-        ),
+        contract: Account(storage={0: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

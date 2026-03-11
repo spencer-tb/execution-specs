@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/RevertInStaticCallFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,8 +35,6 @@ def test_revert_in_static_call(
     sender = EOA(
         key=0xA2333EEF5630066B928DEA5FD85A239F511B5B067D1441EE7AC290D0122B917B
     )
-    contract = Address("0x30f7398d20afe518491069c036185caf69d5aae9")
-    callee = Address("0x33fcf0576ab8b4527c9426094e2e355a7ffc7e71")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,9 +47,7 @@ def test_revert_in_static_call(
 
     # Source: LLL
     # { [[ 0 ]] (STATICCALL 50000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 0 64 0 64 )}  # noqa: E501
-    pre[contract] = Account(
-        balance=1000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -67,42 +62,24 @@ def test_revert_in_static_call(
             )
             + Op.STOP
         ),
-    )
-    pre[callee] = Account(
-        balance=0,
+        balance=1000,
         nonce=0,
-        code=Op.REVERT(offset=0x0, size=0x0) + Op.STOP,
+        address=Address("0x30f7398d20afe518491069c036185caf69d5aae9"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x5F5E100, nonce=0)
+    pre.deploy_contract(
+        code=Op.REVERT(offset=0x0, size=0x0) + Op.STOP,
+        nonce=0,
+        address=Address("0x33fcf0576ab8b4527c9426094e2e355a7ffc7e71"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0x5F5E100)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=105044,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.STATICCALL(
-                        gas=0xC350,
-                        address=0x33FCF0576AB8B4527C9426094E2E355A7FFC7E71,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(code=Op.REVERT(offset=0x0, size=0x0) + Op.STOP),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

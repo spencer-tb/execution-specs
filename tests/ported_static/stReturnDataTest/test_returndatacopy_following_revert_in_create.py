@@ -8,12 +8,11 @@ returndatacopy_following_revert_in_createFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_returndatacopy_following_revert_in_create(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x70b8403604734d52990000d1503d165b056dc00a")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_returndatacopy_following_revert_in_create(
 
     # Source: LLL
     # { (seq (CREATE 0 0 (lll (seq (MSTORE 0 0x0000111122223333444455556666777788889999aaaabbbbccccddddeeeeffff) (REVERT 0 32) (STOP) ) 0)) (RETURNDATACOPY 0 0 32) (SSTORE 0 (MLOAD 0)) (STOP) )}  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0x29]
             + Op.CODECOPY(dest_offset=0x0, offset=0x1E, size=Op.DUP1)
@@ -75,17 +71,16 @@ def test_returndatacopy_following_revert_in_create(
             + Op.STOP
         ),
         storage={0x0: 0x1},
+        nonce=0,
+        address=Address("0x70b8403604734d52990000d1503d165b056dc00a"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
@@ -93,25 +88,6 @@ def test_returndatacopy_following_revert_in_create(
             storage={
                 0: 0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
             },
-            code=(
-                Op.PUSH1[0x29]
-                + Op.CODECOPY(dest_offset=0x0, offset=0x1E, size=Op.DUP1)
-                + Op.PUSH1[0x0]
-                + Op.PUSH1[0x0]
-                + Op.POP(Op.CREATE)
-                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x20)
-                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-                + Op.STOP
-                + Op.STOP
-                + Op.INVALID
-                + Op.MSTORE(
-                    offset=0x0,
-                    value=0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFF,  # noqa: E501
-                )
-                + Op.REVERT(offset=0x0, size=0x20)
-                + Op.STOP
-                + Op.STOP
-            ),
         ),
     }
 

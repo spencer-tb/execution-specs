@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/mem64kb_singleByteFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_mem64kb_single_byte(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x6c0cf9e7fba0563117dbf01f9126777d60bc54b4")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,36 +47,28 @@ def test_mem64kb_single_byte(
 
     # Source: LLL
     # { (MSTORE8 63999 42) [[ 0 ]] (MSIZE) }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE8(offset=0xF9FF, value=0x2A)
             + Op.SSTORE(key=0x0, value=Op.MSIZE)
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x6c0cf9e7fba0563117dbf01f9126777d60bc54b4"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
     post = {
-        contract: Account(
-            storage={0: 64000},
-            code=(
-                Op.MSTORE8(offset=0xF9FF, value=0x2A)
-                + Op.SSTORE(key=0x0, value=Op.MSIZE)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 64000}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

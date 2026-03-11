@@ -7,12 +7,11 @@ tests/static/state_tests/stTransactionTest/TransactionDataCosts652Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -57,7 +56,7 @@ def test_transaction_data_costs652(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0x989680, nonce=0)
+    pre[sender] = Account(balance=0x989680)
 
     tx = Transaction(
         sender=sender,
@@ -65,8 +64,6 @@ def test_transaction_data_costs652(
         data=bytes.fromhex("00000000000000000000112233445566778f32"),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post: dict = {}

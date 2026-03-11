@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP150singleCodeGasPrices/gasCostJumpFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -33,375 +32,15 @@ REFERENCE_SPEC_VERSION = "N/A"
     [
         (
             "c5b5a1ae00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000004",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0]
-                    + Op.PUSH1[0x0]
-                    + Op.JUMPDEST
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000002000"): Account(
-                    code=Op.PUSH1[0x0]
-                    + Op.JUMP(pc=0x5)
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000003000"): Account(
-                    code=Op.JUMPI(pc=0x5, condition=0x1)
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000004000"): Account(
-                    code=Op.JUMPI(pc=0x5, condition=0x0)
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
-                    code=Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x1000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPI(
-                        pc=0x2E,
-                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x1),
-                    )
-                    + Op.POP(0x0)
-                    + Op.JUMP(pc=0x4E)
-                    + Op.JUMPDEST
-                    + Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x2000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPDEST
-                    + Op.JUMPI(
-                        pc=0x5E,
-                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x2),
-                    )
-                    + Op.POP(0x0)
-                    + Op.JUMP(pc=0x7E)
-                    + Op.JUMPDEST
-                    + Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x3000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPDEST
-                    + Op.JUMPI(
-                        pc=0x8E,
-                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x3),
-                    )
-                    + Op.POP(0x0)
-                    + Op.JUMP(pc=0xAE)
-                    + Op.JUMPDEST
-                    + Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x4000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPDEST
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.SUB(
-                            Op.SUB(
-                                Op.MLOAD(offset=0x40), Op.MLOAD(offset=0x20)
-                            ),
-                            Op.CALLDATALOAD(offset=0x24),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "c5b5a1ae00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0]
-                    + Op.PUSH1[0x0]
-                    + Op.JUMPDEST
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000002000"): Account(
-                    code=Op.PUSH1[0x0]
-                    + Op.JUMP(pc=0x5)
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000003000"): Account(
-                    code=Op.JUMPI(pc=0x5, condition=0x1)
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000004000"): Account(
-                    code=Op.JUMPI(pc=0x5, condition=0x0)
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
-                    code=Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x1000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPI(
-                        pc=0x2E,
-                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x1),
-                    )
-                    + Op.POP(0x0)
-                    + Op.JUMP(pc=0x4E)
-                    + Op.JUMPDEST
-                    + Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x2000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPDEST
-                    + Op.JUMPI(
-                        pc=0x5E,
-                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x2),
-                    )
-                    + Op.POP(0x0)
-                    + Op.JUMP(pc=0x7E)
-                    + Op.JUMPDEST
-                    + Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x3000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPDEST
-                    + Op.JUMPI(
-                        pc=0x8E,
-                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x3),
-                    )
-                    + Op.POP(0x0)
-                    + Op.JUMP(pc=0xAE)
-                    + Op.JUMPDEST
-                    + Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x4000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPDEST
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.SUB(
-                            Op.SUB(
-                                Op.MLOAD(offset=0x40), Op.MLOAD(offset=0x20)
-                            ),
-                            Op.CALLDATALOAD(offset=0x24),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "c5b5a1ae00000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000006",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0]
-                    + Op.PUSH1[0x0]
-                    + Op.JUMPDEST
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000002000"): Account(
-                    code=Op.PUSH1[0x0]
-                    + Op.JUMP(pc=0x5)
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000003000"): Account(
-                    code=Op.JUMPI(pc=0x5, condition=0x1)
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000004000"): Account(
-                    code=Op.JUMPI(pc=0x5, condition=0x0)
-                    + Op.JUMPDEST
-                    + Op.STOP
-                ),
-                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
-                    code=Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x1000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPI(
-                        pc=0x2E,
-                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x1),
-                    )
-                    + Op.POP(0x0)
-                    + Op.JUMP(pc=0x4E)
-                    + Op.JUMPDEST
-                    + Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x2000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPDEST
-                    + Op.JUMPI(
-                        pc=0x5E,
-                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x2),
-                    )
-                    + Op.POP(0x0)
-                    + Op.JUMP(pc=0x7E)
-                    + Op.JUMPDEST
-                    + Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x3000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPDEST
-                    + Op.JUMPI(
-                        pc=0x8E,
-                        condition=Op.EQ(Op.CALLDATALOAD(offset=0x4), 0x3),
-                    )
-                    + Op.POP(0x0)
-                    + Op.JUMP(pc=0xAE)
-                    + Op.JUMPDEST
-                    + Op.MSTORE(offset=0x0, value=Op.GAS)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x10000,
-                            address=0x4000,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                    )
-                    + Op.JUMPDEST
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.SUB(
-                            Op.SUB(
-                                Op.MLOAD(offset=0x40), Op.MLOAD(offset=0x20)
-                            ),
-                            Op.CALLDATALOAD(offset=0x24),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
     ],
     ids=["case0", "case1", "case2"],
@@ -418,11 +57,6 @@ def test_gas_cost_jump(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
-    callee = Address("0x0000000000000000000000000000000000001000")
-    callee_1 = Address("0x0000000000000000000000000000000000002000")
-    callee_2 = Address("0x0000000000000000000000000000000000003000")
-    callee_3 = Address("0x0000000000000000000000000000000000004000")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -434,30 +68,34 @@ def test_gas_cost_jump(
     )
 
     # Source: raw bytecode
-    pre[callee] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.JUMPDEST + Op.JUMPDEST + Op.STOP
         ),
-    )
-    # Source: raw bytecode
-    pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001000"),  # noqa: E501
+    )
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=Op.PUSH1[0x0] + Op.JUMP(pc=0x5) + Op.JUMPDEST + Op.STOP,
-    )
-    # Source: raw bytecode
-    pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000002000"),  # noqa: E501
+    )
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=Op.JUMPI(pc=0x5, condition=0x1) + Op.JUMPDEST + Op.STOP,
-    )
-    # Source: raw bytecode
-    pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000003000"),  # noqa: E501
+    )
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=Op.JUMPI(pc=0x5, condition=0x0) + Op.JUMPDEST + Op.STOP,
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x0000000000000000000000000000000000004000"),  # noqa: E501
     )
     # Source: LLL
     # {
@@ -491,9 +129,7 @@ def test_gas_cost_jump(
     #
     #   ; Get the baseline cost
     # ... (51 more lines)
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=Op.GAS)
             + Op.POP(
@@ -586,8 +222,11 @@ def test_gas_cost_jump(
             + Op.STOP
         ),
         storage={0x0: 0x60A7},
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -597,7 +236,6 @@ def test_gas_cost_jump(
         data=tx_data,
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

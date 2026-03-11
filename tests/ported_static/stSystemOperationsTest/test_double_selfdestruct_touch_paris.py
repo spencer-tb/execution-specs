@@ -11,12 +11,11 @@ doubleSelfdestructTouch_ParisFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -43,36 +42,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 2,
                         1: 0x68FA59E127B7526718EB0A4E113DF5793628CB91,
                         2: 0x76FAE819612A29489A1A43208613D8F8557B8898,
-                    },
-                    code=Op.ADD(Op.SLOAD(key=0x0), 0x1)
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SELFDESTRUCT(address=Op.SLOAD),
-                ),
-                Address("0x8ec7465877d3957084dc907c0f6d8f2911a17a52"): Account(
-                    code=Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.CALLVALUE
-                    + Op.SHR(0x1, Op.DUP1)
-                    + Op.SWAP1
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x11170,
-                            address=0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE,
-                            value=Op.DUP6,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=Op.DUP3,
-                        )
-                    )
-                    + Op.SUB
-                    + Op.PUSH20[0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE]
-                    + Op.PUSH3[0x11170]
-                    + Op.CALL
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
         (
@@ -83,36 +54,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 2,
                         1: 0x68FA59E127B7526718EB0A4E113DF5793628CB91,
                         2: 0x76FAE819612A29489A1A43208613D8F8557B8898,
-                    },
-                    code=Op.ADD(Op.SLOAD(key=0x0), 0x1)
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SELFDESTRUCT(address=Op.SLOAD),
-                ),
-                Address("0x8ec7465877d3957084dc907c0f6d8f2911a17a52"): Account(
-                    code=Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.CALLVALUE
-                    + Op.SHR(0x1, Op.DUP1)
-                    + Op.SWAP1
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x11170,
-                            address=0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE,
-                            value=Op.DUP6,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=Op.DUP3,
-                        )
-                    )
-                    + Op.SUB
-                    + Op.PUSH20[0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE]
-                    + Op.PUSH3[0x11170]
-                    + Op.CALL
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
         (
@@ -123,36 +66,8 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 2,
                         1: 0x68FA59E127B7526718EB0A4E113DF5793628CB91,
                         2: 0x76FAE819612A29489A1A43208613D8F8557B8898,
-                    },
-                    code=Op.ADD(Op.SLOAD(key=0x0), 0x1)
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SELFDESTRUCT(address=Op.SLOAD),
-                ),
-                Address("0x8ec7465877d3957084dc907c0f6d8f2911a17a52"): Account(
-                    code=Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.CALLVALUE
-                    + Op.SHR(0x1, Op.DUP1)
-                    + Op.SWAP1
-                    + Op.POP(
-                        Op.CALL(
-                            gas=0x11170,
-                            address=0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE,
-                            value=Op.DUP6,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=Op.DUP3,
-                        )
-                    )
-                    + Op.SUB
-                    + Op.PUSH20[0x29E4504A3D2A0E0AE0EBBBEFEDD4570639B3EBEE]
-                    + Op.PUSH3[0x11170]
-                    + Op.CALL
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
     ],
@@ -170,8 +85,6 @@ def test_double_selfdestruct_touch_paris(
     sender = EOA(
         key=0xE92C121432830128CA66D3D8C4E6D8D96CC4BEFA7C612D28415082EB3C8339C5
     )
-    contract = Address("0x8ec7465877d3957084dc907c0f6d8f2911a17a52")
-    callee = Address("0x29e4504a3d2a0e0ae0ebbbefedd4570639b3ebee")
     callee_1 = Address("0x68fa59e127b7526718eb0a4e113df5793628cb91")
     callee_2 = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
 
@@ -184,9 +97,7 @@ def test_double_selfdestruct_touch_paris(
         gas_limit=30000000,
     )
 
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.ADD(Op.SLOAD(key=0x0), 0x1)
             + Op.SSTORE(key=0x0, value=Op.DUP1)
@@ -197,8 +108,10 @@ def test_double_selfdestruct_touch_paris(
             0x1: 0x68FA59E127B7526718EB0A4E113DF5793628CB91,
             0x2: 0x76FAE819612A29489A1A43208613D8F8557B8898,
         },
+        nonce=0,
+        address=Address("0x29e4504a3d2a0e0ae0ebbbefedd4570639b3ebee"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x5F5E102, nonce=0)
+    pre[sender] = Account(balance=0x5F5E102)
     pre[callee_1] = Account(balance=10, nonce=0)
     pre[callee_2] = Account(balance=10, nonce=0)
     # Source: Yul
@@ -209,9 +122,7 @@ def test_double_selfdestruct_touch_paris(
     #   let v2 := sub(v0, v1)
     #   let r2 := call(70000, <contract:0x000000000000000000000000000000000000dead>, v2, 0, 0, 0, 0)  # noqa: E501
     # }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0x0]
             + Op.DUP1
@@ -237,15 +148,15 @@ def test_double_selfdestruct_touch_paris(
             + Op.CALL
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x8ec7465877d3957084dc907c0f6d8f2911a17a52"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=10000000,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP150Specific/DelegateCallOnEIPFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,8 +35,6 @@ def test_delegate_call_on_eip(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0x90bc108216940a7ddaf3ba6624f2fdbe4c5e83dc")
-    callee = Address("0xfd59abae521384b5731ac657616680219fbc423d")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,9 +47,7 @@ def test_delegate_call_on_eip(
 
     # Source: LLL
     # { [8] (GAS) (SSTORE 9 (DELEGATECALL 600000 <contract:0x1000000000000000000000000000000000000105> 0 0 0 0)) [[8]] (SUB @8 (GAS)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x8, value=Op.GAS)
             + Op.SSTORE(
@@ -69,47 +64,25 @@ def test_delegate_call_on_eip(
             + Op.SSTORE(key=0x8, value=Op.SUB(Op.MLOAD(offset=0x8), Op.GAS))
             + Op.STOP
         ),
-    )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
-    pre[callee] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0x90bc108216940a7ddaf3ba6624f2fdbe4c5e83dc"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0xE8D4A51000)
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x0, value=0x12) + Op.STOP,
+        nonce=0,
+        address=Address("0xfd59abae521384b5731ac657616680219fbc423d"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 18, 8: 46841, 9: 1},
-            code=(
-                Op.MSTORE(offset=0x8, value=Op.GAS)
-                + Op.SSTORE(
-                    key=0x9,
-                    value=Op.DELEGATECALL(
-                        gas=0x927C0,
-                        address=0xFD59ABAE521384B5731AC657616680219FBC423D,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.SSTORE(
-                    key=0x8, value=Op.SUB(Op.MLOAD(offset=0x8), Op.GAS)
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(code=Op.SSTORE(key=0x0, value=0x12) + Op.STOP),
+        contract: Account(storage={0: 18, 8: 46841, 9: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

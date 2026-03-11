@@ -7,12 +7,11 @@ tests/static/state_tests/stCallCreateCallCodeTest/Call1024OOGFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -35,30 +34,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             13120826,
             {
                 Address("0x0878bc1c3d660907b056e31c854a309f7ef1b4c4"): Account(
-                    storage={0: 134, 1: 1, 2: 0x20B71},
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)
-                    )
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.MUL(
-                                Op.SUB(Op.GAS, 0x2710),
-                                Op.SUB(0x1, Op.DIV(Op.SLOAD(key=0x0), 0x401)),
-                            ),
-                            address=0x878BC1C3D660907B056E31C854A309F7EF1B4C4,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(
-                        key=0x2,
-                        value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3E8)),
-                    )
-                    + Op.STOP,
+                    storage={0: 134, 1: 1, 2: 0x20B71}
                 )
             },
         ),
@@ -66,30 +42,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             9320826,
             {
                 Address("0x0878bc1c3d660907b056e31c854a309f7ef1b4c4"): Account(
-                    storage={0: 113, 1: 1, 2: 0x1B969},
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)
-                    )
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.MUL(
-                                Op.SUB(Op.GAS, 0x2710),
-                                Op.SUB(0x1, Op.DIV(Op.SLOAD(key=0x0), 0x401)),
-                            ),
-                            address=0x878BC1C3D660907B056E31C854A309F7EF1B4C4,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(
-                        key=0x2,
-                        value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3E8)),
-                    )
-                    + Op.STOP,
+                    storage={0: 113, 1: 1, 2: 0x1B969}
                 )
             },
         ),
@@ -97,30 +50,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             15720826,
             {
                 Address("0x0878bc1c3d660907b056e31c854a309f7ef1b4c4"): Account(
-                    storage={0: 146, 1: 1, 2: 0x23A51},
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)
-                    )
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.MUL(
-                                Op.SUB(Op.GAS, 0x2710),
-                                Op.SUB(0x1, Op.DIV(Op.SLOAD(key=0x0), 0x401)),
-                            ),
-                            address=0x878BC1C3D660907B056E31C854A309F7EF1B4C4,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(
-                        key=0x2,
-                        value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3E8)),
-                    )
-                    + Op.STOP,
+                    storage={0: 146, 1: 1, 2: 0x23A51}
                 )
             },
         ),
@@ -128,30 +58,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             11220826,
             {
                 Address("0x0878bc1c3d660907b056e31c854a309f7ef1b4c4"): Account(
-                    storage={0: 124, 1: 1, 2: 0x1E461},
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1)
-                    )
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CALL(
-                            gas=Op.MUL(
-                                Op.SUB(Op.GAS, 0x2710),
-                                Op.SUB(0x1, Op.DIV(Op.SLOAD(key=0x0), 0x401)),
-                            ),
-                            address=0x878BC1C3D660907B056E31C854A309F7EF1B4C4,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.SSTORE(
-                        key=0x2,
-                        value=Op.ADD(0x1, Op.MUL(Op.SLOAD(key=0x0), 0x3E8)),
-                    )
-                    + Op.STOP,
+                    storage={0: 124, 1: 1, 2: 0x1E461}
                 )
             },
         ),
@@ -170,7 +77,6 @@ def test_call1024_oog(
     sender = EOA(
         key=0xE7C72B378297589ACEE4E0BA3272841BCFC5E220F86DE253F890274CFEE9E474
     )
-    contract = Address("0x0878bc1c3d660907b056e31c854a309f7ef1b4c4")
     callee = Address("0xd9b97c712ebce43f3c19179bbef44b550f9e8bc0")
 
     env = Environment(
@@ -184,9 +90,7 @@ def test_call1024_oog(
 
     # Source: LLL
     # { [[ 0 ]] (ADD @@0 1) [[ 1 ]] (CALL (MUL (SUB (GAS) 10000) (SUB 1 (DIV @@0 1025))) <contract:target:0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[ 2 ]] (ADD 1(MUL @@0 1000)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=1024,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
             + Op.SSTORE(
@@ -210,17 +114,18 @@ def test_call1024_oog(
             )
             + Op.STOP
         ),
+        balance=1024,
+        nonce=0,
+        address=Address("0x0878bc1c3d660907b056e31c854a309f7ef1b4c4"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
+    pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
     pre[callee] = Account(balance=7000, nonce=0)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 

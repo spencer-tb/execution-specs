@@ -8,12 +8,11 @@ transactionCollidingWithNonEmptyAccount_init_ParisFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -52,7 +51,6 @@ def test_transaction_colliding_with_non_empty_account_init_paris(
         key=0x3696BFBDBC65B14F4DC76D7762E0567E1DD55F053314276E47969D22E70A554E
     )
     contract = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
-    callee_1 = Address("0xcc7c3c64708397216f5f8aeb34a43f1749693fa9")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -64,14 +62,14 @@ def test_transaction_colliding_with_non_empty_account_init_paris(
     )
 
     pre[contract] = Account(balance=10, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000, code=bytes.fromhex("00"))
     # Source: raw bytecode
-    pre[sender] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    pre.deploy_contract(
         code=bytes.fromhex("00"),
+        balance=10,
+        nonce=0,
+        address=Address("0xcc7c3c64708397216f5f8aeb34a43f1749693fa9"),  # noqa: E501
     )
-    # Source: raw bytecode
-    pre[callee_1] = Account(balance=10, nonce=0, code=bytes.fromhex("00"))
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -82,14 +80,10 @@ def test_transaction_colliding_with_non_empty_account_init_paris(
         data=tx_data,
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
         error=TransactionException.SENDER_NOT_EOA,
     )
 
-    post = {
-        sender: Account(code=bytes.fromhex("00")),
-        callee_1: Account(code=bytes.fromhex("00")),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

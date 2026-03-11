@@ -7,12 +7,11 @@ tests/static/state_tests/stSystemOperationsTest/TestNameRegistratorFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_test_name_registrator(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xfd6034ff12fad248c17ca3c09f0d7b19243275cd")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,11 +47,9 @@ def test_test_name_registrator(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.JUMPI(
                 pc=0x9,
@@ -66,6 +62,9 @@ def test_test_name_registrator(
                 value=Op.CALLDATALOAD(offset=0x20),
             )
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xfd6034ff12fad248c17ca3c09f0d7b19243275cd"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -77,7 +76,6 @@ def test_test_name_registrator(
         ),
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
@@ -86,20 +84,6 @@ def test_test_name_registrator(
             storage={
                 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA,  # noqa: E501
             },
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
         ),
     }
 

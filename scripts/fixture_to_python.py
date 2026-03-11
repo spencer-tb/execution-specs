@@ -920,8 +920,10 @@ def generate_account_setup(
     indent: str = "    ",
     source_comment: str = "",
     is_sender: bool = False,
+    var_is_used: bool = True,
 ) -> str:
-    """Generate pre-state account setup code.
+    """
+    Generate pre-state account setup code.
 
     For EOAs and the sender, emit pre[var] = Account(...).
     For contracts, emit var = pre.deploy_contract(...).
@@ -940,7 +942,7 @@ def generate_account_setup(
     raw_hex = code_hex[2:] if code_hex.startswith("0x") else code_hex
     is_oversized = len(raw_hex) > 49152
 
-    # Use deploy_contract for contracts (not sender, not coinbase, not oversized)
+    # Use deploy_contract for non-sender, non-coinbase, non-oversized contracts
     use_deploy = (
         not is_eoa
         and not is_sender
@@ -961,9 +963,7 @@ def generate_account_setup(
         deploy_parts = []
         deploy_parts.append(f"code={code_expr}")
         if storage:
-            deploy_parts.append(
-                f"storage={format_storage(storage)}"
-            )
+            deploy_parts.append(f"storage={format_storage(storage)}")
         # balance: omit if 0 (deploy_contract default)
         if balance != 0:
             deploy_parts.append(f"balance={format_balance(balance)}")
@@ -976,15 +976,14 @@ def generate_account_setup(
         # Always use multi-line for deploy_contract (address line needs
         # noqa: E501 and the call is almost always long).
         deploy_parts.append(addr_part)
-        lines.append(
-            f"{indent}{var_name} = pre.deploy_contract("
-        )
+        if var_is_used:
+            lines.append(f"{indent}{var_name} = pre.deploy_contract(")
+        else:
+            lines.append(f"{indent}pre.deploy_contract(")
         for i, part in enumerate(deploy_parts):
             if i == len(deploy_parts) - 1 and part == addr_part:
                 # Last part is address — add noqa: E501
-                lines.append(
-                    f"{indent}    {part},  # noqa: E501"
-                )
+                lines.append(f"{indent}    {part},  # noqa: E501")
             else:
                 lines.append(f"{indent}    {part},")
         lines.append(f"{indent})")
@@ -1011,9 +1010,7 @@ def generate_account_setup(
             parts.append(f"storage={format_storage(storage)}")
 
         # Format as single line or multi-line
-        single = (
-            f"{indent}pre[{var_name}] = Account({', '.join(parts)})"
-        )
+        single = f"{indent}pre[{var_name}] = Account({', '.join(parts)})"
         if len(single) <= 79 and "\n" not in "".join(parts):
             lines.append(single)
         else:
@@ -1967,9 +1964,7 @@ def generate_test_file(
         addr_l = addr.lower()
         var = addr_vars.get(addr_l, "")
         code_hex = pre[addr].get("code", "0x")
-        raw_hex = (
-            code_hex[2:] if code_hex.startswith("0x") else code_hex
-        )
+        raw_hex = code_hex[2:] if code_hex.startswith("0x") else code_hex
         is_eoa_acct = code_hex in ("0x", "")
         is_oversized_acct = len(raw_hex) > 49152
         is_sender_acct = var == "sender"
@@ -1993,25 +1988,19 @@ def generate_test_file(
             addr in pre_addrs
             or var == "coinbase"  # fee_recipient=coinbase
             or var == "sender"  # always used (Transaction sender=sender)
-            or var in all_code  # used in post or tx
+            or bool(re.search(rf"\b{re.escape(var)}\b", all_code))
         )
         if used:
             if var == "sender":
                 out.append(
-                    f"    sender = EOA(\n"
-                    f"        key=0x{secret_key_hex}\n"
-                    f"    )"
+                    f"    sender = EOA(\n        key=0x{secret_key_hex}\n    )"
                 )
                 sender_emitted = True
             else:
                 out.append(f'    {var} = Address("{_pad_address(addr)}")')
     # Handle "no sender" tests: sender not in var_names but we still need it
     if not sender_emitted:
-        out.append(
-            f"    sender = EOA(\n"
-            f"        key=0x{secret_key_hex}\n"
-            f"    )"
-        )
+        out.append(f"    sender = EOA(\n        key=0x{secret_key_hex}\n    )")
     out.append("")
 
     # Environment
@@ -2032,7 +2021,11 @@ def generate_test_file(
             code_hex,
             is_to_addr=(addr_l == to_addr),
         )
-        is_sender_acct = (addr_l == sender_addr)
+        is_sender_acct = addr_l == sender_addr
+        is_var_used = (
+            bool(re.search(rf"\b{re.escape(var)}\b", all_code))
+            or var == "coinbase"
+        )
         account_code = generate_account_setup(
             addr_l,
             pre[addr],
@@ -2040,6 +2033,7 @@ def generate_test_file(
             indent="    ",
             source_comment=src_comment,
             is_sender=is_sender_acct,
+            var_is_used=is_var_used,
         )
         out.append(account_code)
 
@@ -2264,6 +2258,11 @@ def _post_format(output_dir: Path) -> None:
     print("\nRunning ruff format...")
     subprocess.run(
         ["ruff", "format", str(output_dir)],
+        check=False,
+    )
+    print("Running ruff check --fix (import sorting)...")
+    subprocess.run(
+        ["ruff", "check", "--fix", str(output_dir)],
         check=False,
     )
 

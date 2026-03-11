@@ -8,12 +8,11 @@ CallToNameRegistratorAddressTooBigLeftFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -40,7 +39,6 @@ def test_call_to_name_registrator_address_too_big_left(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
     contract = Address("0xc8266873d1c906e93364246e671c3d9802aabe37")
-    callee = Address("0x15eb18969e0925c8e4a76fd7cbce36a2b056b27e")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_call_to_name_registrator_address_too_big_left(
     )
 
     # Source: raw bytecode
-    pre[callee] = Account(
-        balance=23,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.JUMPI(
                 pc=0x9,
@@ -67,37 +63,21 @@ def test_call_to_name_registrator_address_too_big_left(
                 value=Op.CALLDATALOAD(offset=0x20),
             )
         ),
+        balance=23,
+        nonce=0,
+        address=Address("0x15eb18969e0925c8e4a76fd7cbce36a2b056b27e"),  # noqa: E501
     )
     pre[contract] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=300000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        callee: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

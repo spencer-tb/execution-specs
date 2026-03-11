@@ -7,12 +7,11 @@ tests/static/state_tests/stPreCompiledContracts2/CallSha256_1Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_call_sha256_1(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x1e79f0fd2bb702c9fd72905da2a5b109025fa4a6")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +49,7 @@ def test_call_sha256_1(
 
     # Source: LLL
     # { [[ 2 ]] (CALL 500 2 0 0 0 0 32) [[ 0 ]] (MLOAD 0)}
-    pre[contract] = Account(
-        balance=0x1312D00,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x2,
@@ -70,16 +66,17 @@ def test_call_sha256_1(
             + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
             + Op.STOP
         ),
+        balance=0x1312D00,
+        nonce=0,
+        address=Address("0x1e79f0fd2bb702c9fd72905da2a5b109025fa4a6"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=365224,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
@@ -89,22 +86,6 @@ def test_call_sha256_1(
                 0: 0xE3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855,  # noqa: E501
                 2: 1,
             },
-            code=(
-                Op.SSTORE(
-                    key=0x2,
-                    value=Op.CALL(
-                        gas=0x1F4,
-                        address=0x2,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-                + Op.STOP
-            ),
         ),
     }
 

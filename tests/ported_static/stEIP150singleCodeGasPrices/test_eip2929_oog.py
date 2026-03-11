@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP150singleCodeGasPrices/eip2929OOGFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -33,903 +32,43 @@ REFERENCE_SPEC_VERSION = "N/A"
     [
         (
             "1a8451e600000000000000000000000000000000000000000000000000000000000010fa00000000000000000000000000000000000000000000000000000000000006d6",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001031"): Account(
-                    code=Op.BALANCE(address=0xACC7) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103b"): Account(
-                    code=Op.EXTCODESIZE(address=0x1031) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103c"): Account(
-                    code=Op.EXTCODECOPY(
-                        address=0x1031, dest_offset=0x0, offset=0x0, size=0x20
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103f"): Account(
-                    code=Op.EXTCODEHASH(address=0x1031) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001054"): Account(
-                    code=Op.SLOAD(key=0x0) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001055"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f1"): Account(
-                    code=Op.CALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f2"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f4"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010fa"): Account(
-                    code=Op.STATICCALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000acc7"): Account(
-                    code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x24),
-                            address=Op.CALLDATALOAD(offset=0x4),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "1a8451e6000000000000000000000000000000000000000000000000000000000000105500000000000000000000000000000000000000000000000000000000000055f0",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001031"): Account(
-                    code=Op.BALANCE(address=0xACC7) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103b"): Account(
-                    code=Op.EXTCODESIZE(address=0x1031) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103c"): Account(
-                    code=Op.EXTCODECOPY(
-                        address=0x1031, dest_offset=0x0, offset=0x0, size=0x20
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103f"): Account(
-                    code=Op.EXTCODEHASH(address=0x1031) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001054"): Account(
-                    code=Op.SLOAD(key=0x0) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001055"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f1"): Account(
-                    code=Op.CALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f2"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f4"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010fa"): Account(
-                    code=Op.STATICCALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000acc7"): Account(
-                    code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x24),
-                            address=Op.CALLDATALOAD(offset=0x4),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "1a8451e6000000000000000000000000000000000000000000000000000000000000103100000000000000000000000000000000000000000000000000000000000007d0",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001031"): Account(
-                    code=Op.BALANCE(address=0xACC7) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103b"): Account(
-                    code=Op.EXTCODESIZE(address=0x1031) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103c"): Account(
-                    code=Op.EXTCODECOPY(
-                        address=0x1031, dest_offset=0x0, offset=0x0, size=0x20
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103f"): Account(
-                    code=Op.EXTCODEHASH(address=0x1031) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001054"): Account(
-                    code=Op.SLOAD(key=0x0) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001055"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f1"): Account(
-                    code=Op.CALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f2"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f4"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010fa"): Account(
-                    code=Op.STATICCALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000acc7"): Account(
-                    code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x24),
-                            address=Op.CALLDATALOAD(offset=0x4),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "1a8451e6000000000000000000000000000000000000000000000000000000000000103b00000000000000000000000000000000000000000000000000000000000009c4",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001031"): Account(
-                    code=Op.BALANCE(address=0xACC7) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103b"): Account(
-                    code=Op.EXTCODESIZE(address=0x1031) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103c"): Account(
-                    code=Op.EXTCODECOPY(
-                        address=0x1031, dest_offset=0x0, offset=0x0, size=0x20
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103f"): Account(
-                    code=Op.EXTCODEHASH(address=0x1031) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001054"): Account(
-                    code=Op.SLOAD(key=0x0) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001055"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f1"): Account(
-                    code=Op.CALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f2"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f4"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010fa"): Account(
-                    code=Op.STATICCALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000acc7"): Account(
-                    code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x24),
-                            address=Op.CALLDATALOAD(offset=0x4),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "1a8451e6000000000000000000000000000000000000000000000000000000000000103c00000000000000000000000000000000000000000000000000000000000009c4",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001031"): Account(
-                    code=Op.BALANCE(address=0xACC7) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103b"): Account(
-                    code=Op.EXTCODESIZE(address=0x1031) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103c"): Account(
-                    code=Op.EXTCODECOPY(
-                        address=0x1031, dest_offset=0x0, offset=0x0, size=0x20
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103f"): Account(
-                    code=Op.EXTCODEHASH(address=0x1031) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001054"): Account(
-                    code=Op.SLOAD(key=0x0) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001055"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f1"): Account(
-                    code=Op.CALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f2"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f4"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010fa"): Account(
-                    code=Op.STATICCALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000acc7"): Account(
-                    code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x24),
-                            address=Op.CALLDATALOAD(offset=0x4),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "1a8451e6000000000000000000000000000000000000000000000000000000000000103f00000000000000000000000000000000000000000000000000000000000009c4",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001031"): Account(
-                    code=Op.BALANCE(address=0xACC7) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103b"): Account(
-                    code=Op.EXTCODESIZE(address=0x1031) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103c"): Account(
-                    code=Op.EXTCODECOPY(
-                        address=0x1031, dest_offset=0x0, offset=0x0, size=0x20
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103f"): Account(
-                    code=Op.EXTCODEHASH(address=0x1031) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001054"): Account(
-                    code=Op.SLOAD(key=0x0) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001055"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f1"): Account(
-                    code=Op.CALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f2"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f4"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010fa"): Account(
-                    code=Op.STATICCALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000acc7"): Account(
-                    code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x24),
-                            address=Op.CALLDATALOAD(offset=0x4),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "1a8451e600000000000000000000000000000000000000000000000000000000000010f100000000000000000000000000000000000000000000000000000000000006d6",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001031"): Account(
-                    code=Op.BALANCE(address=0xACC7) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103b"): Account(
-                    code=Op.EXTCODESIZE(address=0x1031) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103c"): Account(
-                    code=Op.EXTCODECOPY(
-                        address=0x1031, dest_offset=0x0, offset=0x0, size=0x20
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103f"): Account(
-                    code=Op.EXTCODEHASH(address=0x1031) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001054"): Account(
-                    code=Op.SLOAD(key=0x0) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001055"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f1"): Account(
-                    code=Op.CALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f2"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f4"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010fa"): Account(
-                    code=Op.STATICCALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000acc7"): Account(
-                    code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x24),
-                            address=Op.CALLDATALOAD(offset=0x4),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "1a8451e600000000000000000000000000000000000000000000000000000000000010f200000000000000000000000000000000000000000000000000000000000006d6",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001031"): Account(
-                    code=Op.BALANCE(address=0xACC7) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103b"): Account(
-                    code=Op.EXTCODESIZE(address=0x1031) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103c"): Account(
-                    code=Op.EXTCODECOPY(
-                        address=0x1031, dest_offset=0x0, offset=0x0, size=0x20
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103f"): Account(
-                    code=Op.EXTCODEHASH(address=0x1031) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001054"): Account(
-                    code=Op.SLOAD(key=0x0) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001055"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f1"): Account(
-                    code=Op.CALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f2"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f4"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010fa"): Account(
-                    code=Op.STATICCALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000acc7"): Account(
-                    code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x24),
-                            address=Op.CALLDATALOAD(offset=0x4),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "1a8451e600000000000000000000000000000000000000000000000000000000000010f400000000000000000000000000000000000000000000000000000000000006d6",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001031"): Account(
-                    code=Op.BALANCE(address=0xACC7) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103b"): Account(
-                    code=Op.EXTCODESIZE(address=0x1031) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103c"): Account(
-                    code=Op.EXTCODECOPY(
-                        address=0x1031, dest_offset=0x0, offset=0x0, size=0x20
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103f"): Account(
-                    code=Op.EXTCODEHASH(address=0x1031) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001054"): Account(
-                    code=Op.SLOAD(key=0x0) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001055"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f1"): Account(
-                    code=Op.CALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f2"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f4"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010fa"): Account(
-                    code=Op.STATICCALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000acc7"): Account(
-                    code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x24),
-                            address=Op.CALLDATALOAD(offset=0x4),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "1a8451e6000000000000000000000000000000000000000000000000000000000000105400000000000000000000000000000000000000000000000000000000000007d0",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001031"): Account(
-                    code=Op.BALANCE(address=0xACC7) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103b"): Account(
-                    code=Op.EXTCODESIZE(address=0x1031) + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103c"): Account(
-                    code=Op.EXTCODECOPY(
-                        address=0x1031, dest_offset=0x0, offset=0x0, size=0x20
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000103f"): Account(
-                    code=Op.EXTCODEHASH(address=0x1031) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001054"): Account(
-                    code=Op.SLOAD(key=0x0) + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001055"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f1"): Account(
-                    code=Op.CALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f2"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010f4"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x00000000000000000000000000000000000010fa"): Account(
-                    code=Op.STATICCALL(
-                        gas=0x6A5,
-                        address=0xACC7,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000acc7"): Account(
-                    code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x24),
-                            address=Op.CALLDATALOAD(offset=0x4),
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
     ],
     ids=[
@@ -957,18 +96,6 @@ def test_eip2929_oog(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xcccccccccccccccccccccccccccccccccccccccc")
-    callee = Address("0x0000000000000000000000000000000000001031")
-    callee_1 = Address("0x000000000000000000000000000000000000103b")
-    callee_2 = Address("0x000000000000000000000000000000000000103c")
-    callee_3 = Address("0x000000000000000000000000000000000000103f")
-    callee_4 = Address("0x0000000000000000000000000000000000001054")
-    callee_5 = Address("0x0000000000000000000000000000000000001055")
-    callee_6 = Address("0x00000000000000000000000000000000000010f1")
-    callee_7 = Address("0x00000000000000000000000000000000000010f2")
-    callee_8 = Address("0x00000000000000000000000000000000000010f4")
-    callee_9 = Address("0x00000000000000000000000000000000000010fa")
-    callee_10 = Address("0x000000000000000000000000000000000000acc7")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -979,27 +106,25 @@ def test_eip2929_oog(
         gas_limit=100000000,
     )
 
-    pre[callee] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    pre.deploy_contract(
         code=Op.BALANCE(address=0xACC7) + Op.STOP,
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0x0000000000000000000000000000000000001031"),  # noqa: E501
     )
     # Source: LLL
     # {
     #    (extcodesize 0x1031)
     # }
-    pre[callee_1] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    pre.deploy_contract(
         code=Op.EXTCODESIZE(address=0x1031) + Op.STOP,
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0x000000000000000000000000000000000000103b"),  # noqa: E501
     )
     # Source: LLL
     # {
     #    (extcodecopy 0x1031 0 0 0x20)
     # }
-    pre[callee_2] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    pre.deploy_contract(
         code=(
             Op.EXTCODECOPY(
                 address=0x1031,
@@ -1009,33 +134,33 @@ def test_eip2929_oog(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0x000000000000000000000000000000000000103c"),  # noqa: E501
     )
     # Source: LLL
     # {
     #    (extcodehash 0x1031)
     # }
-    pre[callee_3] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    pre.deploy_contract(
         code=Op.EXTCODEHASH(address=0x1031) + Op.STOP,
-    )
-    pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+        address=Address("0x000000000000000000000000000000000000103f"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=Op.SLOAD(key=0x0) + Op.STOP,
-    )
-    pre[callee_5] = Account(
         balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+        address=Address("0x0000000000000000000000000000000000001054"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP,
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0x0000000000000000000000000000000000001055"),  # noqa: E501
     )
     # Source: LLL
     # {
     #    (call 0x06A5 0xACC7 0 0 0 0 0)
     # }
-    pre[callee_6] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    pre.deploy_contract(
         code=(
             Op.CALL(
                 gas=0x6A5,
@@ -1048,14 +173,14 @@ def test_eip2929_oog(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0x00000000000000000000000000000000000010f1"),  # noqa: E501
     )
     # Source: LLL
     # {
     #    (callcode 0x06A5 0xACC7 0 0 0 0 0)
     # }
-    pre[callee_7] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    pre.deploy_contract(
         code=(
             Op.CALLCODE(
                 gas=0x6A5,
@@ -1068,14 +193,14 @@ def test_eip2929_oog(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0x00000000000000000000000000000000000010f2"),  # noqa: E501
     )
     # Source: LLL
     # {
     #    (delegatecall 0x06A5 0xACC7 0 0 0 0)
     # }
-    pre[callee_8] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    pre.deploy_contract(
         code=(
             Op.DELEGATECALL(
                 gas=0x6A5,
@@ -1087,14 +212,14 @@ def test_eip2929_oog(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0x00000000000000000000000000000000000010f4"),  # noqa: E501
     )
     # Source: LLL
     # {
     #    (staticcall 0x06A5 0xACC7 0 0 0 0)
     # }
-    pre[callee_9] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    pre.deploy_contract(
         code=(
             Op.STATICCALL(
                 gas=0x6A5,
@@ -1106,15 +231,17 @@ def test_eip2929_oog(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0x00000000000000000000000000000000000010fa"),  # noqa: E501
     )
     # Source: LLL
     # {
     #    (return 0 0)
     # }
-    pre[callee_10] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    pre.deploy_contract(
         code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP,
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0x000000000000000000000000000000000000acc7"),  # noqa: E501
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
     # Source: LLL
@@ -1124,9 +251,7 @@ def test_eip2929_oog(
     #
     #    [[0]] (call callGas addr 0 0 0 0 0)
     # }
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -1143,6 +268,8 @@ def test_eip2929_oog(
             + Op.STOP
         ),
         storage={0x0: 0x60A7},
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0xcccccccccccccccccccccccccccccccccccccccc"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

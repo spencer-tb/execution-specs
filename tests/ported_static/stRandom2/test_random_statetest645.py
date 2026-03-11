@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom2/randomStatetest645Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,50 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (
-            4074160023,
-            {
-                Address("0x322c72dedad1a81092ab9ba908fbec8779ce1c32"): Account(
-                    code=Op.PC
-                    + Op.PUSH8[0x9B8E24022D8C28F3]
-                    + Op.SGT(0x84BC2F83, 0xB55A0)
-                    + Op.EQ(
-                        0xEA3E9D28799D45AA77BF1FC1A84EDF0193DEA2D610209EAAF9C8,
-                        0x15B61916F0F5,
-                    )
-                ),
-                Address("0xaa0103980a7c3113d3a8f81478b0281492eb3d38"): Account(
-                    code=Op.MSTORE(offset=0x1D72DE, value=0xCBB01282)
-                    + Op.LOG1(
-                        offset=0xC396EB18074F148D96FD766DDA35B6CC250661B5F83F0ED625BA68A5FF49A,  # noqa: E501
-                        size=0x1EF17F23ED237D9F3262C4EB1B95112820595B127C516074DF06223DB,  # noqa: E501
-                        topic_1=0x22948F746C938A0CB,
-                    )
-                ),
-            },
-        ),
-        (
-            0,
-            {
-                Address("0x322c72dedad1a81092ab9ba908fbec8779ce1c32"): Account(
-                    code=Op.PC
-                    + Op.PUSH8[0x9B8E24022D8C28F3]
-                    + Op.SGT(0x84BC2F83, 0xB55A0)
-                    + Op.EQ(
-                        0xEA3E9D28799D45AA77BF1FC1A84EDF0193DEA2D610209EAAF9C8,
-                        0x15B61916F0F5,
-                    )
-                ),
-                Address("0xaa0103980a7c3113d3a8f81478b0281492eb3d38"): Account(
-                    code=Op.MSTORE(offset=0x1D72DE, value=0xCBB01282)
-                    + Op.LOG1(
-                        offset=0xC396EB18074F148D96FD766DDA35B6CC250661B5F83F0ED625BA68A5FF49A,  # noqa: E501
-                        size=0x1EF17F23ED237D9F3262C4EB1B95112820595B127C516074DF06223DB,  # noqa: E501
-                        topic_1=0x22948F746C938A0CB,
-                    )
-                ),
-            },
-        ),
+        (4074160023, {}),
+        (0, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -89,7 +46,6 @@ def test_random_statetest645(
         key=0x0E5FB93861A38E5458E9D2FF0203D01D1D8167FA9C0DB762CC5CA50EB43B3376
     )
     contract = Address("0x0000000000000000000000000000000000000003")
-    callee = Address("0x322c72dedad1a81092ab9ba908fbec8779ce1c32")
     callee_1 = Address("0x9e9c03f8f885c32813db5207fd04870f08327f30")
 
     env = Environment(
@@ -102,9 +58,7 @@ def test_random_statetest645(
     )
 
     # Source: raw bytecode
-    pre[callee] = Account(
-        balance=0xBCBAF5A33577F162,
-        nonce=29,
+    pre.deploy_contract(
         code=(
             Op.PC
             + Op.PUSH8[0x9B8E24022D8C28F3]
@@ -114,9 +68,11 @@ def test_random_statetest645(
                 0x15B61916F0F5,
             )
         ),
+        balance=0xBCBAF5A33577F162,
+        nonce=29,
+        address=Address("0x322c72dedad1a81092ab9ba908fbec8779ce1c32"),  # noqa: E501
     )
     pre[callee_1] = Account(balance=0xB3508C0F8A22F8A1, nonce=28)
-    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=0x2BE1CFD5D6D6B0B7,
         nonce=175,
@@ -129,7 +85,7 @@ def test_random_statetest645(
             )
         ),
     )
-    pre[sender] = Account(balance=0x6F1F70FEA641F30A, nonce=0)
+    pre[sender] = Account(balance=0x6F1F70FEA641F30A)
 
     tx = Transaction(
         sender=sender,
@@ -141,7 +97,6 @@ def test_random_statetest645(
         ),
         gas_limit=26970,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

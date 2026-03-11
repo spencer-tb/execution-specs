@@ -8,12 +8,11 @@ CallRecursiveBomb0_OOG_atMaxCallDepthFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -40,7 +39,6 @@ def test_call_recursive_bomb0_oog_at_max_call_depth(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x44872316ef00e0cd82e980900e6b85077b65e32f")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +51,7 @@ def test_call_recursive_bomb0_oog_at_max_call_depth(
 
     # Source: LLL
     # { [[ 0 ]] (+ (SLOAD 0) 1) [[ 2 ]] (MUL (DIV @@0 0x0402) 0xfffffffffffffffffff) [[ 1 ]] (CALL (- (GAS) 1024) (ADDRESS) 0 0 (MUL (DIV @@0 0x0402) 0xfffffffffffffffffff) 0 0) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0x1312D00,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
             + Op.SSTORE(
@@ -82,49 +78,22 @@ def test_call_recursive_bomb0_oog_at_max_call_depth(
             )
             + Op.STOP
         ),
+        balance=0x1312D00,
+        nonce=0,
+        address=Address("0x44872316ef00e0cd82e980900e6b85077b65e32f"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        contract: Account(
-            storage={0: 749, 1: 1},
-            code=(
-                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-                + Op.SSTORE(
-                    key=0x2,
-                    value=Op.MUL(
-                        Op.DIV(Op.SLOAD(key=0x0), 0x402),
-                        0xFFFFFFFFFFFFFFFFFFF,
-                    ),
-                )
-                + Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALL(
-                        gas=Op.SUB(Op.GAS, 0x400),
-                        address=Op.ADDRESS,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=Op.MUL(
-                            Op.DIV(Op.SLOAD(key=0x0), 0x402),
-                            0xFFFFFFFFFFFFFFFFFFF,
-                        ),
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 749, 1: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest163Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -37,7 +36,6 @@ def test_random_statetest163(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xe9a32a9ad98c02fa9521b9ab066bcc683a8ab126")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,8 +46,7 @@ def test_random_statetest163(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -67,9 +64,7 @@ def test_random_statetest163(
         ),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=bytes.fromhex(
             "7f000000000000000000000000000000000000000000000000000000000000000034577f"  # noqa: E501
             "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffff"  # noqa: E501
@@ -78,6 +73,8 @@ def test_random_statetest163(
             "00000100000000000000000000000000000000000000007f000000000000000000000000"  # noqa: E501
             "0000000000000000000000000000000000000000426259cb6142a1196e3168c986758aa4"  # noqa: E501
         ),
+        nonce=0,
+        address=Address("0xe9a32a9ad98c02fa9521b9ab066bcc683a8ab126"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -93,32 +90,9 @@ def test_random_statetest163(
         ),
         gas_limit=381441932,
         gas_price=10,
-        nonce=0,
         value=1579124913,
     )
 
-    post = {
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
-        contract: Account(
-            code=bytes.fromhex(
-                "7f000000000000000000000000000000000000000000000000000000000000000034577fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f00000000000000000000000100000000000000000000000000000000000000007f0000000000000000000000000000000000000000000000000000000000000000426259cb6142a1196e3168c986758aa4"  # noqa: E501
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -8,12 +8,11 @@ returndatasize_after_successful_staticcallFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_returndatasize_after_successful_staticcall(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0xb59b41f3a1359dd85455601db8e79f621d7e63f6")
-    callee = Address("0x0c6426ee9b84ce08176d8d295613a7d10c48576b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +48,7 @@ def test_returndatasize_after_successful_staticcall(
         gas_limit=111669149696,
     )
 
-    pre[callee] = Account(
-        balance=0x6400000000,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -62,12 +57,13 @@ def test_returndatasize_after_successful_staticcall(
             + Op.RETURN(offset=0x0, size=0x6)
             + Op.STOP
         ),
+        balance=0x6400000000,
+        nonce=0,
+        address=Address("0x0c6426ee9b84ce08176d8d295613a7d10c48576b"),  # noqa: E501
     )
     # Source: LLL
     # { (seq (STATICCALL 60000 <contract:0x1000000000000000000000000000000000000002> 0 0 0 0) (SSTORE 0 (RETURNDATASIZE)))}  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.POP(
                 Op.STATICCALL(
@@ -85,47 +81,20 @@ def test_returndatasize_after_successful_staticcall(
         storage={
             0x0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
         },
+        nonce=0,
+        address=Address("0xb59b41f3a1359dd85455601db8e79f621d7e63f6"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        callee: Account(
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                )
-                + Op.RETURN(offset=0x0, size=0x6)
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            storage={0: 6},
-            code=(
-                Op.POP(
-                    Op.STATICCALL(
-                        gas=0xEA60,
-                        address=0xC6426EE9B84CE08176D8D295613A7D10C48576B,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 6}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

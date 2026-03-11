@@ -7,12 +7,11 @@ tests/static/state_tests/stPreCompiledContracts2/ecrecoverShortBuffFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_ecrecover_short_buff(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xcccccccccccccccccccccccccccccccccccccccc")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -82,9 +80,7 @@ def test_ecrecover_short_buff(
     #      sstore(len, sub(sload(len), 1))
     #
     # ... (4 more lines)
-    pre[contract] = Account(
-        balance=0,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0xA0]
             + Op.PUSH1[0x0]
@@ -155,6 +151,7 @@ def test_ecrecover_short_buff(
             0x1080: 0x60A7,
             0x1099: 0x60A7,
         },
+        address=Address("0xcccccccccccccccccccccccccccccccccccccccc"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -234,55 +231,6 @@ def test_ecrecover_short_buff(
                 4254: 0x3F9ECB7B25FA567AFB2A4C7B633749BDA578B593,
                 4255: 0x3F9ECB7B25FA567AFB2A4C7B633749BDA578B593,
             },
-            code=(
-                Op.PUSH1[0xA0]
-                + Op.PUSH1[0x0]
-                + Op.JUMPDEST
-                + Op.JUMPI(pc=0x8A, condition=Op.LT(Op.DUP2, Op.DUP2))
-                + Op.POP
-                + Op.MSTORE(offset=Op.DUP1, value=0x0)
-                + Op.MSTORE(offset=0x20, value=0x1B)
-                + Op.MSTORE(
-                    offset=0x40,
-                    value=0x184870A8E4FAA6065DDF65C873935D3E48E3D1C7B7853F25CD79B8247F771910,  # noqa: E501
-                )
-                + Op.MSTORE(
-                    offset=0x60,
-                    value=0x226140B6B66554C7FCFA38589E433CC148EBE5C8482EB3093AB1D9A932C96F58,  # noqa: E501
-                )
-                + Op.PUSH1[0x0]
-                + Op.JUMPDEST
-                + Op.JUMPI(pc=0x67, condition=Op.LT(Op.DUP2, Op.DUP2))
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.DUP1
-                + Op.PUSH1[0x20]
-                + Op.PUSH2[0x100]
-                + Op.PUSH1[0x1]
-                + Op.SWAP4
-                + Op.PUSH1[0x0]
-                + Op.DUP1
-                + Op.DUP7
-                + Op.GAS
-                + Op.CALL
-                + Op.DUP3
-                + Op.SWAP1
-                + Op.SSTORE(key=Op.DUP2, value=Op.SUB)
-                + Op.SSTORE(
-                    key=Op.ADD(Op.DUP3, 0x1000),
-                    value=Op.MLOAD(offset=0x100),
-                )
-                + Op.ADD
-                + Op.JUMP(pc=0x5F)
-                + Op.JUMPDEST
-                + Op.PUSH4[0xDEAD60A7]
-                + Op.SSTORE(key=Op.DUP3, value=Op.DUP1)
-                + Op.ADD(Op.DUP3, 0x1000)
-                + Op.SSTORE
-                + Op.PUSH1[0x1]
-                + Op.ADD
-                + Op.JUMP(pc=0x4)
-            ),
         ),
     }
 

@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/RevertPrefoundEmpty_ParisFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_revert_prefound_empty_paris(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xa000000000000000000000000000000000000000")
     callee = Address("0x7db299e0885c85039f56fa504a13dd8ce8a56aa7")
 
     env = Environment(
@@ -53,9 +51,7 @@ def test_revert_prefound_empty_paris(
     pre[callee] = Account(balance=10, nonce=0)
     # Source: LLL
     # { [[0]] (CREATE 0 0 32) [[1]]12 }
-    pre[contract] = Account(
-        balance=1,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0, value=Op.CREATE(value=0x0, offset=0x0, size=0x20)
@@ -63,17 +59,17 @@ def test_revert_prefound_empty_paris(
             + Op.SSTORE(key=0x1, value=0xC)
             + Op.STOP
         ),
+        balance=1,
+        nonce=0,
+        address=Address("0xa000000000000000000000000000000000000000"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=940000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
@@ -82,14 +78,6 @@ def test_revert_prefound_empty_paris(
                 0: 0x7DB299E0885C85039F56FA504A13DD8CE8A56AA7,
                 1: 12,
             },
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CREATE(value=0x0, offset=0x0, size=0x20),
-                )
-                + Op.SSTORE(key=0x1, value=0xC)
-                + Op.STOP
-            ),
         ),
     }
 

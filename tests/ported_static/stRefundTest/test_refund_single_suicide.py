@@ -7,12 +7,11 @@ tests/static/state_tests/stRefundTest/refund_singleSuicideFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_refund_single_suicide(
     sender = EOA(
         key=0x2B75D0C814EB07C075FCCBDD9A036FAF651D9C46D7477D6C4F30772CFCA90D38
     )
-    contract = Address("0xfc2c9403120f755b844fd30d99c231483e701631")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,12 +45,10 @@ def test_refund_single_suicide(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x1C9C380, nonce=0)
+    pre[sender] = Account(balance=0x1C9C380)
     pre[coinbase] = Account(balance=0, nonce=1)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x40, value=0x60)
             + Op.DIV(Op.CALLDATALOAD(offset=0x0), Op.EXP(0x2, 0xE0))
@@ -129,6 +125,9 @@ def test_refund_single_suicide(
             + Op.SWAP1
             + Op.JUMP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xfc2c9403120f755b844fd30d99c231483e701631"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -137,90 +136,8 @@ def test_refund_single_suicide(
         data=bytes.fromhex("c0406226"),
         gas_limit=300000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(offset=0x40, value=0x60)
-                + Op.DIV(Op.CALLDATALOAD(offset=0x0), Op.EXP(0x2, 0xE0))
-                + Op.JUMPI(pc=0x2E, condition=Op.EQ(Op.DUP2, 0x9E587A5))
-                + Op.JUMPI(pc=0x49, condition=Op.EQ(0x2E4699ED, Op.DUP1))
-                + Op.JUMPI(pc=0x9B, condition=Op.EQ(0xC0406226, Op.DUP1))
-                + Op.JUMPDEST
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.PUSH1[0x2C]
-                + Op.SELFDESTRUCT(
-                    address=Op.AND(
-                        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
-                        Op.CALLER,
-                    ),
-                )
-                + Op.JUMPDEST
-                + Op.PUSH1[0x2C]
-                + Op.JUMPDEST
-                + Op.PUSH1[0x0]
-                + Op.ADDRESS
-                + Op.SWAP1
-                + Op.POP
-                + Op.AND(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, Op.DUP1)
-                + Op.PUSH4[0x9E587A5]
-                + Op.MLOAD(offset=0x40)
-                + Op.MSTORE(
-                    offset=Op.DUP2,
-                    value=Op.MUL(Op.EXP(0x2, 0xE0), Op.DUP2),
-                )
-                + Op.PUSH1[0x4]
-                + Op.ADD
-                + Op.DUP1
-                + Op.SWAP1
-                + Op.POP
-                + Op.JUMPI(
-                    pc=0x2,
-                    condition=Op.ISZERO(
-                        Op.CALL(
-                            gas=Op.SUB(Op.GAS, 0x61DA),
-                            address=Op.DUP8,
-                            value=0x0,
-                            args_offset=Op.DUP2,
-                            args_size=Op.SUB(Op.DUP4, Op.DUP1),
-                            ret_offset=Op.MLOAD(offset=0x40),
-                            ret_size=0x0,
-                        ),
-                    ),
-                )
-                + Op.POP
-                + Op.POP
-                + Op.POP
-                + Op.POP
-                + Op.JUMP
-                + Op.JUMPDEST
-                + Op.PUSH1[0xA5]
-                + Op.PUSH1[0x0]
-                + Op.PUSH1[0xB9]
-                + Op.JUMP(pc=0x4C)
-                + Op.JUMPDEST
-                + Op.PUSH1[0x40]
-                + Op.MLOAD(offset=Op.DUP1)
-                + Op.SWAP2
-                + Op.MSTORE(offset=Op.DUP3, value=Op.ISZERO(Op.ISZERO))
-                + Op.MLOAD
-                + Op.SWAP1
-                + Op.DUP2
-                + Op.SWAP1
-                + Op.ADD(0x20, Op.SUB)
-                + Op.SWAP1
-                + Op.RETURN
-                + Op.JUMPDEST
-                + Op.POP
-                + Op.PUSH1[0x1]
-                + Op.SWAP1
-                + Op.JUMP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

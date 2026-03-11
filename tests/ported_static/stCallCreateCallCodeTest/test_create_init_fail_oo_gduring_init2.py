@@ -8,12 +8,11 @@ createInitFail_OOGduringInit2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_create_init_fail_oo_gduring_init2(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_create_init_fail_oo_gduring_init2(
 
     # Source: LLL
     # { (CREATE 1 0  (lll(seq [[1]] 1 (KECCAK256 0x00 0x2fffff) )0))   }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0xD]
             + Op.CODECOPY(dest_offset=0x0, offset=0xF, size=Op.DUP1)
@@ -67,34 +63,20 @@ def test_create_init_fail_oo_gduring_init2(
             + Op.SHA3(offset=0x0, size=0x2FFFFF)
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.PUSH1[0xD]
-                + Op.CODECOPY(dest_offset=0x0, offset=0xF, size=Op.DUP1)
-                + Op.PUSH1[0x0]
-                + Op.PUSH1[0x1]
-                + Op.CREATE
-                + Op.STOP
-                + Op.INVALID
-                + Op.SSTORE(key=0x1, value=0x1)
-                + Op.SHA3(offset=0x0, size=0x2FFFFF)
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

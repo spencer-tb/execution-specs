@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom2/randomStatetest576Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest576(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x447d08abed1518b3b0d1adee769af4e010f53737")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,11 +45,9 @@ def test_random_statetest576(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=bytes.fromhex(
             "7f0000000000000000000000000000000000000000000000000000000000000000447f00"  # noqa: E501
             "0000000000000000000000000000000000000000000000000000000000c3507f00000000"  # noqa: E501
@@ -61,8 +57,9 @@ def test_random_statetest576(
             "3f701464972e74606d6ea82d4d3080599a0e797f00000000000000000000000000000000"  # noqa: E501
             "0000000000000000000000000000000086053a0b43890710810651116e1555"
         ),
+        nonce=0,
+        address=Address("0x447d08abed1518b3b0d1adee769af4e010f53737"),  # noqa: E501
     )
-    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -94,32 +91,9 @@ def test_random_statetest576(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=768288943,
     )
 
-    post = {
-        contract: Account(
-            code=bytes.fromhex(
-                "7f0000000000000000000000000000000000000000000000000000000000000000447f000000000000000000000000000000000000000000000000000000000000c3507f00000000000000000000000000000000000000000000000000000000000000017f000000000000000000000000ffffffffffffffffffffffffffffffffffffffff7f000000000000000000000000000000000000000000000000000000000000c3507f0000000000000000000000004f3f701464972e74606d6ea82d4d3080599a0e797f000000000000000000000000000000000000000000000000000000000000000086053a0b43890710810651116e1555"  # noqa: E501
-            ),
-        ),
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

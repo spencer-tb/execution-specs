@@ -7,12 +7,11 @@ tests/static/state_tests/stBadOpcode/eip2315NotRemovedFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_eip2315_not_removed(
     sender = EOA(
         key=0x31B5AF02B012484AE954B3A43943242EDE546A2E76FC0A6ACC17435107C385EB
     )
-    contract = Address("0x147943601b1281618e4d824d11073025cd2ac623")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,9 +46,7 @@ def test_eip2315_not_removed(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0x4]
             + Op.MCOPY
@@ -59,30 +55,19 @@ def test_eip2315_not_removed(
             + Op.SSTORE(key=0x0, value=0x1)
             + Op.TSTORE
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x147943601b1281618e4d824d11073025cd2ac623"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.PUSH1[0x4]
-                + Op.MCOPY
-                + Op.STOP
-                + Op.TLOAD
-                + Op.SSTORE(key=0x0, value=0x1)
-                + Op.TSTORE
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

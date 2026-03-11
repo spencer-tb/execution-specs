@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom2/randomStatetest647Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest647(
     sender = EOA(
         key=0x5B7B8EFB6D003CD481E408D8759A25ADC79955092F1A380D8F8B57346C1D1342
     )
-    contract = Address("0x782b7c65205e1c08192df7357e2fe778c81256a9")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,39 +46,25 @@ def test_random_statetest647(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=7,
+    contract = pre.deploy_contract(
         code=(
             Op.RETURNDATACOPY(
                 dest_offset=0x0, offset=Op.SUB(0x0, 0x1), size=0x1
             )
             + Op.STOP
         ),
+        nonce=7,
+        address=Address("0x782b7c65205e1c08192df7357e2fe778c81256a9"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x174876E800, nonce=0)
+    pre[sender] = Account(balance=0x174876E800)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=5786929,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.RETURNDATACOPY(
-                    dest_offset=0x0,
-                    offset=Op.SUB(0x0, 0x1),
-                    size=0x1,
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

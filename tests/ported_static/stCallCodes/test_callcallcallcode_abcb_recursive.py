@@ -7,12 +7,11 @@ tests/static/state_tests/stCallCodes/callcallcallcode_ABCB_RECURSIVEFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,9 +37,6 @@ def test_callcallcallcode_abcb_recursive(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x039f3900e280b9c74d46e825b0b3814df4d705ac")
-    callee = Address("0x66c0d9f841a86866465e6385c3827be02b580020")
-    callee_1 = Address("0xa71333d8c0291cfd6da54bec5a3957563ab16c1c")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +49,7 @@ def test_callcallcallcode_abcb_recursive(
 
     # Source: LLL
     # {  [[ 0 ]] (CALL 25000000 <contract:0x1000000000000000000000000000000000000001> 0 0 64 0 64 ) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -71,10 +65,11 @@ def test_callcallcallcode_abcb_recursive(
             )
             + Op.STOP
         ),
-    )
-    pre[callee] = Account(
-        balance=0x2540BE400,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
+        address=Address("0x039f3900e280b9c74d46e825b0b3814df4d705ac"),  # noqa: E501
+    )
+    callee = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -90,10 +85,11 @@ def test_callcallcallcode_abcb_recursive(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
         balance=0x2540BE400,
         nonce=0,
+        address=Address("0x66c0d9f841a86866465e6385c3827be02b580020"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x2,
@@ -109,73 +105,22 @@ def test_callcallcallcode_abcb_recursive(
             )
             + Op.STOP
         ),
+        balance=0x2540BE400,
+        nonce=0,
+        address=Address("0xa71333d8c0291cfd6da54bec5a3957563ab16c1c"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0x17D7840,
-                        address=0x66C0D9F841A86866465E6385C3827BE02B580020,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            storage={1: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALL(
-                        gas=0xF4240,
-                        address=0xA71333D8C0291CFD6DA54BEC5A3957563AB16C1C,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x2,
-                    value=Op.CALLCODE(
-                        gas=0x7A120,
-                        address=0x66C0D9F841A86866465E6385C3827BE02B580020,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 1}),
+        callee: Account(storage={1: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

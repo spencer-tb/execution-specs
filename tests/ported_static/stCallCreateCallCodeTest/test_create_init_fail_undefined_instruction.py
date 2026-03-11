@@ -8,12 +8,11 @@ createInitFailUndefinedInstructionFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,9 +38,6 @@ def test_create_init_fail_undefined_instruction(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x73e58ff0ab0c422709d507efb9d4889740040144")
-    callee = Address("0x0183feb7335d767d4d6ae41bbdea7afb27227860")
-    callee_1 = Address("0x552f200b75457440ee6df9159d6b188e9d18c222")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +48,7 @@ def test_create_init_fail_undefined_instruction(
         gas_limit=1000000000,
     )
 
-    pre[callee] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.MSTORE8(offset=0x0, value=0xF9)
             + Op.SELFDESTRUCT(
@@ -62,10 +56,11 @@ def test_create_init_fail_undefined_instruction(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
+        address=Address("0x0183feb7335d767d4d6ae41bbdea7afb27227860"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.MSTORE8(offset=0x0, value=0xF9)
             + Op.SELFDESTRUCT(
@@ -73,12 +68,13 @@ def test_create_init_fail_undefined_instruction(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x552f200b75457440ee6df9159d6b188e9d18c222"),  # noqa: E501
     )
     # Source: LLL
     # { [[0]] (CALL 400000 <contract:0x1000000000000000000000000000000000000000> 0 0 0 0 0) [[1]] (CALL 400000 <contract:0x2000000000000000000000000000000000000000> 0 0 0 0 0) [[2]] 1 }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -107,71 +103,22 @@ def test_create_init_fail_undefined_instruction(
             + Op.SSTORE(key=0x2, value=0x1)
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x73e58ff0ab0c422709d507efb9d4889740040144"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=900000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        callee: Account(
-            code=(
-                Op.MSTORE8(offset=0x0, value=0xF9)
-                + Op.SELFDESTRUCT(
-                    address=Op.CREATE2(
-                        value=0x1, offset=0x0, size=0x1, salt=0x0
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(
-            code=(
-                Op.MSTORE8(offset=0x0, value=0xF9)
-                + Op.SELFDESTRUCT(
-                    address=Op.CREATE(value=0x1, offset=0x0, size=0x1),
-                )
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            storage={2: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0x61A80,
-                        address=0x552F200B75457440EE6DF9159D6B188E9D18C222,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALL(
-                        gas=0x61A80,
-                        address=0x183FEB7335D767D4D6AE41BBDEA7AFB27227860,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.SSTORE(key=0x2, value=0x1)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={2: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -8,12 +8,11 @@ LoopDelegateCallsDepthThenRevertFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_loop_delegate_calls_depth_then_revert(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0xb0923c4a632de291fcdac653e6c6cc2b4e4cdfa8")
-    callee = Address("0xf798cb78490da31dfacdcd1f2b3fb1948bb2b228")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +50,7 @@ def test_loop_delegate_calls_depth_then_revert(
 
     # Source: LLL
     # { [[0]] (+ (SLOAD 0) 1) (DELEGATECALL (GAS) <contract:0xb000000000000000000000000000000000000000> 0 0 0 0) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
             + Op.DELEGATECALL(
@@ -68,10 +63,10 @@ def test_loop_delegate_calls_depth_then_revert(
             )
             + Op.STOP
         ),
-    )
-    pre[callee] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0xb0923c4a632de291fcdac653e6c6cc2b4e4cdfa8"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
             + Op.DELEGATECALL(
@@ -84,49 +79,20 @@ def test_loop_delegate_calls_depth_then_revert(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xf798cb78490da31dfacdcd1f2b3fb1948bb2b228"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=10000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 386},
-            code=(
-                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-                + Op.DELEGATECALL(
-                    gas=Op.GAS,
-                    address=0xF798CB78490DA31DFACDCD1F2B3FB1948BB2B228,
-                    args_offset=0x0,
-                    args_size=0x0,
-                    ret_offset=0x0,
-                    ret_size=0x0,
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-                + Op.DELEGATECALL(
-                    gas=Op.GAS,
-                    address=0xB0923C4A632DE291FCDAC653E6C6CC2B4E4CDFA8,
-                    args_offset=0x0,
-                    args_size=0x0,
-                    ret_offset=0x0,
-                    ret_size=0x0,
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 386}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

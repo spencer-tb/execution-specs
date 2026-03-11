@@ -8,12 +8,11 @@ InternalCallHittingGasLimitFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_internal_call_hitting_gas_limit(
     sender = EOA(
         key=0xF79127A3004ABDE26A4CBD80C428CB10F829FA11B54D36E7B326F4F4A5927ACF
     )
-    contract = Address("0xb208128346fe6a0c4efa386c0c411a56e4557e2a")
-    callee = Address("0x9f499a40cbc961c5230197401ce369d5c53ed896")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,16 +48,14 @@ def test_internal_call_hitting_gas_limit(
         gas_limit=100000,
     )
 
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x1, value=0x37) + Op.STOP,
+        nonce=0,
+        address=Address("0x9f499a40cbc961c5230197401ce369d5c53ed896"),  # noqa: E501
     )
     # Source: LLL
     # { (CALL 5000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 1 0 0 0 0) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xF4240,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALL(
                 gas=0x1388,
@@ -73,35 +68,20 @@ def test_internal_call_hitting_gas_limit(
             )
             + Op.STOP
         ),
+        balance=0xF4240,
+        nonce=0,
+        address=Address("0xb208128346fe6a0c4efa386c0c411a56e4557e2a"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=21100,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
-    post = {
-        callee: Account(code=Op.SSTORE(key=0x1, value=0x37) + Op.STOP),
-        contract: Account(
-            code=(
-                Op.CALL(
-                    gas=0x1388,
-                    address=0x9F499A40CBC961C5230197401CE369D5C53ED896,
-                    value=0x1,
-                    args_offset=0x0,
-                    args_size=0x0,
-                    ret_offset=0x0,
-                    ret_size=0x0,
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

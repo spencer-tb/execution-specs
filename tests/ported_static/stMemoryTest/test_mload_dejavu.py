@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/mload_dejavuFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_mload_dejavu(
     sender = EOA(
         key=0x7DD1D0EC78FE936B0E88F8C21226F51F048579915C7BAFF1C5D7FD84B2139BF1
     )
-    contract = Address("0xea3899b6a7db8734111af8b25f6d873e1d14870d")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,26 +45,23 @@ def test_mload_dejavu(
         gas_limit=52949672960,
     )
 
-    pre[sender] = Account(balance=0x271000000000, nonce=0)
+    pre[sender] = Account(balance=0x271000000000)
     # Source: raw bytecode
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.MLOAD(offset=0xFFFFFFF),
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.MLOAD(offset=0xFFFFFFF),
+        address=Address("0xea3899b6a7db8734111af8b25f6d873e1d14870d"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
-    post = {
-        contract: Account(code=Op.MLOAD(offset=0xFFFFFFF)),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

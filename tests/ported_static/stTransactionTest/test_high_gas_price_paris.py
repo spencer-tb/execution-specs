@@ -7,12 +7,11 @@ tests/static/state_tests/stTransactionTest/HighGasPriceParisFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -49,15 +48,13 @@ def test_high_gas_price_paris(
     )
 
     pre[contract] = Account(balance=10, nonce=0)
-    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=21000,
         gas_price=5513909011300771210646237381366090850155713555506693525688456381329244268,  # noqa: E501
-        nonce=0,
         value=1,
         error=[
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,

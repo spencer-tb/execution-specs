@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/memCopySelfFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_mem_copy_self(
     sender = EOA(
         key=0x48DC5A9F099CAAAA557742CA3A990A94BE45B9969126A1BC74E5E8BE5A2B5B47
     )
-    contract = Address("0xb595300ac049b84c5277c7ca68a96d74ae377b85")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -73,9 +71,7 @@ def test_mem_copy_self(
     #    returndatacopy(0x20, 0, 10)
     #    sstore(2, mload(0x20))
     # }
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0x4]
             + Op.PUSH1[0x0]
@@ -106,16 +102,16 @@ def test_mem_copy_self(
             + Op.JUMP(pc=0x4)
         ),
         storage={0x0: 0x60A7},
+        balance=0xBA1A9CE0BA1A9CE,
+        address=Address("0xb595300ac049b84c5277c7ca68a96d74ae377b85"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=16777216,
         gas_price=10,
         nonce=1,
-        value=0,
     )
 
     post = {
@@ -125,35 +121,6 @@ def test_mem_copy_self(
                 1: 0x1122112233445566778899AADDEEFF0000000000000000000000000000000000,  # noqa: E501
                 2: 0x112233445566778899AA00000000000000000000000000000000000000000000,  # noqa: E501
             },
-            code=(
-                Op.PUSH1[0x4]
-                + Op.PUSH1[0x0]
-                + Op.JUMPDEST
-                + Op.JUMPI(pc=0x30, condition=Op.LT(Op.DUP2, 0xF))
-                + Op.PUSH1[0xA]
-                + Op.PUSH1[0x2]
-                + Op.DUP2
-                + Op.PUSH1[0x0]
-                + Op.DUP1
-                + Op.DUP7
-                + Op.SSTORE(key=Op.DUP3, value=Op.MLOAD(offset=Op.DUP2))
-                + Op.GAS
-                + Op.POP(Op.CALL)
-                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
-                + Op.RETURNDATACOPY(dest_offset=0x20, offset=0x0, size=0xA)
-                + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x20))
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.DUP1
-                + Op.PUSH1[0x11]
-                + Op.PUSH1[0x1]
-                + Op.DUP1
-                + Op.SWAP4
-                + Op.ADD
-                + Op.MSTORE8(offset=Op.DUP2, value=Op.MUL)
-                + Op.ADD
-                + Op.JUMP(pc=0x4)
-            ),
         ),
     }
 

@@ -7,12 +7,11 @@ tests/static/state_tests/stCallCodes/callcall_00_OOGEFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,9 +35,6 @@ def test_callcall_00_ooge(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x4353e77718be108d4c149d88b34caceda42c5c66")
-    callee = Address("0x766b2cf0691f51029181fc511395b7ab71353a88")
-    callee_1 = Address("0x9196f97bca1b117e521275693c79420479d9cc90")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +47,7 @@ def test_callcall_00_ooge(
 
     # Source: LLL
     # {  [[ 0 ]] (CALL 150000 <contract:0x1000000000000000000000000000000000000001> 0 0 64 0 64 ) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -69,19 +63,20 @@ def test_callcall_00_ooge(
             )
             + Op.STOP
         ),
-    )
-    pre[callee] = Account(
-        balance=0,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
+        address=Address("0x4353e77718be108d4c149d88b34caceda42c5c66"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x2, value=0x1)
             + Op.SHA3(offset=0x0, size=0x2FFFFF)
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0x766b2cf0691f51029181fc511395b7ab71353a88"),  # noqa: E501
+    )
+    callee_1 = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -98,64 +93,21 @@ def test_callcall_00_ooge(
             + Op.SSTORE(key=0xB, value=0x1)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x9196f97bca1b117e521275693c79420479d9cc90"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0x249F0,
-                        address=0x9196F97BCA1B117E521275693C79420479D9CC90,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.SSTORE(key=0x2, value=0x1)
-                + Op.SHA3(offset=0x0, size=0x2FFFFF)
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(
-            storage={11: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALL(
-                        gas=0x4E34,
-                        address=0x766B2CF0691F51029181FC511395B7AB71353A88,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.SSTORE(key=0xB, value=0x1)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 1}),
+        callee_1: Account(storage={11: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

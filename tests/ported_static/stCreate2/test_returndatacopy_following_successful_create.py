@@ -8,12 +8,11 @@ returndatacopy_following_successful_createFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_returndatacopy_following_successful_create(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_returndatacopy_following_successful_create(
 
     # Source: LLL
     # { (create2 0 0 (lll (seq (STOP)) 0) 0) (RETURNDATACOPY 0 1 32) (SSTORE 0 (MLOAD 0)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0x0]
             + Op.PUSH1[0x2]
@@ -70,37 +66,20 @@ def test_returndatacopy_following_successful_create(
             + Op.STOP
         ),
         storage={0x0: 0x2},
+        nonce=0,
+        address=Address("0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 2},
-            code=(
-                Op.PUSH1[0x0]
-                + Op.PUSH1[0x2]
-                + Op.CODECOPY(dest_offset=0x0, offset=0x1F, size=Op.DUP1)
-                + Op.PUSH1[0x0]
-                + Op.PUSH1[0x0]
-                + Op.POP(Op.CREATE2)
-                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x1, size=0x20)
-                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-                + Op.STOP
-                + Op.INVALID
-                + Op.STOP
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 2}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

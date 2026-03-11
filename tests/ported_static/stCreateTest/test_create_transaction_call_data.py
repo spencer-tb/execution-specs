@@ -9,16 +9,14 @@ tests/static/state_tests/stCreateTest/CreateTransactionCallDataFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -35,17 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     [
         ("6001600080376000516000556020600160003760005160015500", {}),
         ("60003560005560213560015500", {}),
-        (
-            "3860008039386000f3",
-            {
-                Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-                    code=Op.CODECOPY(
-                        dest_offset=Op.DUP1, offset=0x0, size=Op.CODESIZE
-                    )
-                    + Op.RETURN(offset=0x0, size=Op.CODESIZE)
-                )
-            },
-        ),
+        ("3860008039386000f3", {}),
     ],
     ids=["case0", "case1", "case2"],
 )
@@ -71,7 +59,7 @@ def test_create_transaction_call_data(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
+    pre[sender] = Account(balance=0x5AF3107A4000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -81,8 +69,6 @@ def test_create_transaction_call_data(
         data=tx_data,
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

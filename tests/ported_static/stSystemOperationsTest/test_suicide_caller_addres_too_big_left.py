@@ -8,12 +8,11 @@ suicideCallerAddresTooBigLeftFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_suicide_caller_addres_too_big_left(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_suicide_caller_addres_too_big_left(
 
     # Source: LLL
     # { [[0]] (CALLER) (SELFDESTRUCT 0xaaa94f5374fce5edbc8e2a8697c15331677e6ebf0b)}  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.CALLER)
             + Op.SELFDESTRUCT(
@@ -62,29 +58,23 @@ def test_suicide_caller_addres_too_big_left(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
         contract: Account(
             storage={0: 0xA94F5374FCE5EDBC8E2A8697C15331677E6EBF0B},
-            code=(
-                Op.SSTORE(key=0x0, value=Op.CALLER)
-                + Op.SELFDESTRUCT(
-                    address=0xAAA94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                )
-                + Op.STOP
-            ),
         ),
     }
 

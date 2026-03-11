@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/MSTORE_BoundsFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,24 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0x3634c48093587d5dab61c69ee815d8e8752e9312"): Account(
-                    code=Op.MSTORE(offset=0xFFFFFFFFFFFFFFFF, value=0x1)
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0x3634c48093587d5dab61c69ee815d8e8752e9312"): Account(
-                    code=Op.MSTORE(offset=0xFFFFFFFFFFFFFFFF, value=0x1)
-                    + Op.STOP
-                )
-            },
-        ),
+        (150000, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -62,7 +45,6 @@ def test_mstore_bounds(
     sender = EOA(
         key=0x50EADFB1030587AB3A993A6ECC073041FC3B45E119DAA31A13D78C7E209631A5
     )
-    contract = Address("0x3634c48093587d5dab61c69ee815d8e8752e9312")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -75,23 +57,20 @@ def test_mstore_bounds(
 
     # Source: LLL
     # {  (MSTORE 0xffffffffffffffff 1)}
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=Op.MSTORE(offset=0xFFFFFFFFFFFFFFFF, value=0x1) + Op.STOP,
+        nonce=0,
+        address=Address("0x3634c48093587d5dab61c69ee815d8e8752e9312"),  # noqa: E501
     )
     pre[sender] = Account(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-        nonce=0,
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

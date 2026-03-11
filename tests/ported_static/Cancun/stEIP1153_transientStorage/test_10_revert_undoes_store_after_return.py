@@ -8,12 +8,11 @@ tests/static/state_tests/Cancun/stEIP1153_transientStorage
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_10_revert_undoes_store_after_return(
     sender = EOA(
         key=0xBE0E7D5FEA1604BF57E004B0B414DF8DE04816DBB1C8F8719B725D0D6619B531
     )
-    contract = Address("0xe42b9e92d5348b0fc6353d40e3d220c316d3c685")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,7 +48,7 @@ def test_10_revert_undoes_store_after_return(
         gas_limit=4503599627370496,
     )
 
-    pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
+    pre[sender] = Account(balance=0x3635C9ADC5DEA00000)
     # Source: Yul
     # {
     #   switch selector()
@@ -83,9 +81,7 @@ def test_10_revert_undoes_store_after_return(
     #     sstore(3, val)
     #   }
     # ... (23 more lines)
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SHR(0xE0, Op.CALLDATALOAD(offset=Op.PUSH0))
             + Op.JUMPI(pc=0x2F, condition=Op.EQ(0x70AC643E, Op.DUP1))
@@ -141,6 +137,9 @@ def test_10_revert_undoes_store_after_return(
             + Op.JUMP
         ),
         storage={0x1: 0xFFFF},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xe42b9e92d5348b0fc6353d40e3d220c316d3c685"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -150,69 +149,10 @@ def test_10_revert_undoes_store_after_return(
         gas_limit=400000,
         max_fee_per_gas=2000,
         max_priority_fee_per_gas=0,
-        nonce=0,
-        value=0,
-        access_list=[],
     )
 
     post = {
-        contract: Account(
-            storage={0: 5, 2: 1, 3: 5},
-            code=(
-                Op.SHR(0xE0, Op.CALLDATALOAD(offset=Op.PUSH0))
-                + Op.JUMPI(pc=0x2F, condition=Op.EQ(0x70AC643E, Op.DUP1))
-                + Op.JUMPI(pc=0x2B, condition=Op.EQ(0x76B85D23, Op.DUP1))
-                + Op.PUSH4[0x4CCCA553]
-                + Op.JUMPI(pc=0x23, condition=Op.EQ)
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.PUSH1[0x29]
-                + Op.JUMP(pc=0x76)
-                + Op.JUMPDEST
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.JUMP(pc=0x5C)
-                + Op.JUMPDEST
-                + Op.POP
-                + Op.PUSH1[0x29]
-                + Op.TSTORE(key=Op.PUSH0, value=0x5)
-                + Op.SSTORE(key=Op.PUSH0, value=Op.TLOAD(key=Op.PUSH0))
-                + Op.MSTORE(offset=Op.PUSH0, value=Op.SHL(0xE0, 0x76B85D23))
-                + Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALL(
-                        gas=Op.GAS,
-                        address=Op.ADDRESS,
-                        value=Op.DUP1,
-                        args_offset=Op.DUP2,
-                        args_size=Op.DUP2,
-                        ret_offset=Op.PUSH0,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=Op.PUSH0))
-                + Op.SSTORE(key=0x3, value=Op.TLOAD(key=Op.PUSH0))
-                + Op.JUMP
-                + Op.JUMPDEST
-                + Op.MSTORE(offset=Op.PUSH0, value=Op.SHL(0xE0, 0x4CCCA553))
-                + Op.MSTORE(
-                    offset=Op.PUSH0,
-                    value=Op.CALL(
-                        gas=Op.GAS,
-                        address=Op.ADDRESS,
-                        value=Op.DUP1,
-                        args_offset=Op.DUP2,
-                        args_size=0x20,
-                        ret_offset=Op.DUP1,
-                        ret_size=Op.PUSH0,
-                    ),
-                )
-                + Op.REVERT(offset=Op.PUSH0, size=0x20)
-                + Op.JUMPDEST
-                + Op.TSTORE(key=Op.PUSH0, value=0x6)
-                + Op.JUMP
-            ),
-        ),
+        contract: Account(storage={0: 5, 2: 1, 3: 5}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

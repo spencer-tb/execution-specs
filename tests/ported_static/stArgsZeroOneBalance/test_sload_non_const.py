@@ -7,12 +7,11 @@ tests/static/state_tests/stArgsZeroOneBalance/sloadNonConstFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,38 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (
-            0,
-            {
-                Address("0x14f6d924bbf6563dd087359472133ffe566e60b1"): Account(
-                    code=Op.SSTORE(
-                        key=0x3,
-                        value=Op.SLOAD(
-                            key=Op.BALANCE(
-                                address=0x14F6D924BBF6563DD087359472133FFE566E60B1  # noqa: E501
-                            )
-                        ),
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            1,
-            {
-                Address("0x14f6d924bbf6563dd087359472133ffe566e60b1"): Account(
-                    code=Op.SSTORE(
-                        key=0x3,
-                        value=Op.SLOAD(
-                            key=Op.BALANCE(
-                                address=0x14F6D924BBF6563DD087359472133FFE566E60B1  # noqa: E501
-                            )
-                        ),
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
+        (0, {}),
+        (1, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -76,7 +45,6 @@ def test_sload_non_const(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x14f6d924bbf6563dd087359472133ffe566e60b1")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -89,9 +57,7 @@ def test_sload_non_const(
 
     # Source: LLL
     # { [[ 3 ]] (SLOAD (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x3,
@@ -103,16 +69,16 @@ def test_sload_non_const(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x14f6d924bbf6563dd087359472133ffe566e60b1"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

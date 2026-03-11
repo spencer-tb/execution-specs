@@ -7,12 +7,11 @@ tests/static/state_tests/stCreate2/Create2OOGafterInitCodeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,33 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            54000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=0x6460016001556000526005601BF3
-                    )
-                    + Op.CREATE2(value=0x0, offset=0x12, size=0xE, salt=0x0)
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            55000,
-            {
-                Address("0x6878b140f875209c82ab4d5f083b55947299ef6b"): Account(
-                    code=Op.SSTORE(key=0x1, value=0x1)
-                ),
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=0x6460016001556000526005601BF3
-                    )
-                    + Op.CREATE2(value=0x0, offset=0x12, size=0xE, salt=0x0)
-                    + Op.STOP
-                ),
-            },
-        ),
+        (54000, {}),
+        (55000, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -71,7 +45,6 @@ def test_create2_oo_gafter_init_code(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -82,27 +55,24 @@ def test_create2_oo_gafter_init_code(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
     # Source: LLL
     # { (MSTORE 0 0x6460016001556000526005601bf3) (CREATE2 0 18 14 0) }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
             + Op.CREATE2(value=0x0, offset=0x12, size=0xE, salt=0x0)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

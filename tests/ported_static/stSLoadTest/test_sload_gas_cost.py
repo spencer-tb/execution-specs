@@ -7,12 +7,11 @@ tests/static/state_tests/stSLoadTest/sloadGasCostFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_sload_gas_cost(
     sender = EOA(
         key=0x897B12D02D588D8A4FE16FF831CBD4459C6F62F8C845B0CCDD31CAF068C84A26
     )
-    contract = Address("0x31da7b7c048ed4b134f1fa2128871ee628d05237")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,9 +47,7 @@ def test_sload_gas_cost(
 
     # Source: asm
     # (asm GAS DUP1 SLOAD GAS SWAP1 POP SWAP1 SUB 5 SWAP1 SUB 0x01 SSTORE)
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.GAS
             + Op.SLOAD(key=Op.DUP1)
@@ -65,36 +61,20 @@ def test_sload_gas_cost(
             + Op.SSTORE(key=0x1, value=Op.SUB)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x31da7b7c048ed4b134f1fa2128871ee628d05237"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
+    pre[sender] = Account(balance=0x3635C9ADC5DEA00000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={1: 2100},
-            code=(
-                Op.GAS
-                + Op.SLOAD(key=Op.DUP1)
-                + Op.GAS
-                + Op.SWAP1
-                + Op.POP
-                + Op.SWAP1
-                + Op.SUB
-                + Op.PUSH1[0x5]
-                + Op.SWAP1
-                + Op.SSTORE(key=0x1, value=Op.SUB)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={1: 2100}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

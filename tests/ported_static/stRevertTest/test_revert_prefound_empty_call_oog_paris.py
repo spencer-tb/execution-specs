@@ -8,12 +8,11 @@ RevertPrefoundEmptyCallOOG_ParisFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_revert_prefound_empty_call_oog_paris(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0xf679bfe5f61e7640b9a66db191d5d86abc7b5c0a")
     callee = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
 
     env = Environment(
@@ -54,9 +52,7 @@ def test_revert_prefound_empty_call_oog_paris(
     pre[callee] = Account(balance=10, nonce=0)
     # Source: LLL
     # { [[0]] (CALL 50000 <eoa:0x7db299e0885c85039f56fa504a13dd8ce8a56aa7> 0 0 32 0 32) [[1]]12 [[2]]12 }  # noqa: E501
-    pre[contract] = Account(
-        balance=1,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -74,39 +70,19 @@ def test_revert_prefound_empty_call_oog_paris(
             + Op.SSTORE(key=0x2, value=0xC)
             + Op.STOP
         ),
+        balance=1,
+        nonce=0,
+        address=Address("0xf679bfe5f61e7640b9a66db191d5d86abc7b5c0a"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=63000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0xC350,
-                        address=0x76FAE819612A29489A1A43208613D8F8557B8898,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x20,
-                        ret_offset=0x0,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.SSTORE(key=0x1, value=0xC)
-                + Op.SSTORE(key=0x2, value=0xC)
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

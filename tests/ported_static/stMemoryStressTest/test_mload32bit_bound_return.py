@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/mload32bitBound_returnFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -31,22 +30,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0xd9cba08b7a9695800f57e226045176cf420ca0c1"): Account(
-                    code=Op.RETURN(offset=0x0, size=0xFFFFFFFF) + Op.STOP
-                )
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0xd9cba08b7a9695800f57e226045176cf420ca0c1"): Account(
-                    code=Op.RETURN(offset=0x0, size=0xFFFFFFFF) + Op.STOP
-                )
-            },
-        ),
+        (150000, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -62,7 +47,6 @@ def test_mload32bit_bound_return(
     sender = EOA(
         key=0x7DD14755C573E37C1F649B0C53B9815F76AEBD636DF7CCFA97F4579F33BA59A0
     )
-    contract = Address("0xd9cba08b7a9695800f57e226045176cf420ca0c1")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -73,23 +57,21 @@ def test_mload32bit_bound_return(
         gas_limit=17592320524892,
     )
 
-    pre[sender] = Account(balance=0x186A0C3B1E19A180, nonce=0)
+    pre[sender] = Account(balance=0x186A0C3B1E19A180)
     # Source: LLL
     # { (RETURN 0 4294967295) }
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.RETURN(offset=0x0, size=0xFFFFFFFF) + Op.STOP,
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.RETURN(offset=0x0, size=0xFFFFFFFF) + Op.STOP,
+        address=Address("0xd9cba08b7a9695800f57e226045176cf420ca0c1"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

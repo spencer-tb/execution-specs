@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/SLOAD_BoundsFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -45,7 +44,6 @@ def test_sload_bounds(
     sender = EOA(
         key=0xFE5BE118AD5955E30E0FFC4E1F1BBDCAA7F5A67CB1426C4AC19E32C80ECCDC06
     )
-    contract = Address("0x1b71c198ea09541afb8301905a0a80d026ebfa17")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -58,9 +56,7 @@ def test_sload_bounds(
 
     # Source: LLL
     # { (SLOAD 0) (SLOAD 0xffffffff) (SLOAD 0xffffffffffffffff) (SLOAD 0xffffffffffffffffffffffffffffffff) (SLOAD 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.POP(Op.SLOAD(key=0x0))
             + Op.POP(Op.SLOAD(key=0xFFFFFFFF))
@@ -71,32 +67,19 @@ def test_sload_bounds(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x1b71c198ea09541afb8301905a0a80d026ebfa17"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.POP(Op.SLOAD(key=0x0))
-                + Op.POP(Op.SLOAD(key=0xFFFFFFFF))
-                + Op.POP(Op.SLOAD(key=0xFFFFFFFFFFFFFFFF))
-                + Op.POP(Op.SLOAD(key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF))
-                + Op.SLOAD(
-                    key=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

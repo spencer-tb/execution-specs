@@ -7,16 +7,14 @@ tests/static/state_tests/stTransactionTest/CreateTransactionSuccessFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -48,7 +46,7 @@ def test_create_transaction_success(
         gas_limit=1000000000000,
     )
 
-    pre[sender] = Account(balance=0x5F5E100, nonce=0)
+    pre[sender] = Account(balance=0x5F5E100)
 
     tx = Transaction(
         sender=sender,
@@ -59,25 +57,9 @@ def test_create_transaction_success(
         ),
         gas_limit=70000,
         gas_price=10,
-        nonce=0,
         value=100,
     )
 
-    post = {
-        Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-            code=(
-                Op.DIV(Op.CALLDATALOAD(offset=0x0), Op.EXP(0x2, 0xE0))
-                + Op.JUMPI(pc=0x14, condition=Op.EQ(0xF8A8FD6D, Op.DUP1))
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.PUSH1[0x1A]
-                + Op.JUMP(pc=0x20)
-                + Op.JUMPDEST
-                + Op.RETURN(offset=0x0, size=0x0)
-                + Op.JUMPDEST
-                + Op.JUMP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

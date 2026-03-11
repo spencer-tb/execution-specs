@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP1559/tipTooHighFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -38,7 +37,6 @@ def test_tip_too_high(
     sender = EOA(
         key=0xDE0C95357363DA5C1C5A73BD7C2781CA5C9FECC1014103B5E1D1E990AE8208EC
     )
-    contract = Address("0xec75f5d282f63da54cb0dad4ff8eaaa070d2da2b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -54,10 +52,11 @@ def test_tip_too_high(
     # {
     #     sstore(0, add(1,1))
     # }
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
+        address=Address("0xec75f5d282f63da54cb0dad4ff8eaaa070d2da2b"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -69,12 +68,9 @@ def test_tip_too_high(
         max_priority_fee_per_gas=1001,
         nonce=1,
         value=100000,
-        access_list=[],
         error=TransactionException.PRIORITY_GREATER_THAN_MAX_FEE_PER_GAS,
     )
 
-    post = {
-        contract: Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

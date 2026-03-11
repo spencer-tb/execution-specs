@@ -8,12 +8,11 @@ contractCreationMakeCallThatAskMoreGasThenTransactionProvidedFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,43 +35,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             96000,
             {
                 Address("0x1000000000000000000000000000000000000001"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
-                ),
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.CALL(
-                        gas=0xC350,
-                        address=0x1000000000000000000000000000000000000001,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    )
-                    + Op.STOP
-                ),
+                    storage={1: 1}
+                )
             },
         ),
-        (
-            60000,
-            {
-                Address("0x1000000000000000000000000000000000000001"): Account(
-                    code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
-                ),
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.CALL(
-                        gas=0xC350,
-                        address=0x1000000000000000000000000000000000000001,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    )
-                    + Op.STOP
-                ),
-            },
-        ),
+        (60000, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -88,8 +55,6 @@ def test_contract_creation_make_call_that_ask_more_gas_then_transaction_provided
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x1000000000000000000000000000000000000001")
-    callee_1 = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -102,17 +67,16 @@ def test_contract_creation_make_call_that_ask_more_gas_then_transaction_provided
 
     # Source: LLL
     # {(SSTORE 1 1)}
-    pre[contract] = Account(
+    pre.deploy_contract(
+        code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
         balance=0x186A0,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+        address=Address("0x1000000000000000000000000000000000000001"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x10C8E0, nonce=0)
+    pre[sender] = Account(balance=0x10C8E0)
     # Source: LLL
     # {(CALL 50000 0x1000000000000000000000000000000000000001 0 0 64 0 64)}
-    pre[callee_1] = Account(
-        balance=0x186A0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.CALL(
                 gas=0xC350,
@@ -125,6 +89,9 @@ def test_contract_creation_make_call_that_ask_more_gas_then_transaction_provided
             )
             + Op.STOP
         ),
+        balance=0x186A0,
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -135,8 +102,6 @@ def test_contract_creation_make_call_that_ask_more_gas_then_transaction_provided
         ),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

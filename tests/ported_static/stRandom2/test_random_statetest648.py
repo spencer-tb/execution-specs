@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom2/randomStatetest648Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,8 +35,6 @@ def test_random_statetest648(
     sender = EOA(
         key=0xFF348633B687EC0F553647F4DDEED7590E90C7EA65B87C5BD399F4C869B9C9FC
     )
-    contract = Address("0xca5c69fa03b9dff4d059971ac17edac7ef758725")
-    callee = Address("0xa828265d4b2db08e65a1c68d2878f15368b5ae75")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,13 +45,15 @@ def test_random_statetest648(
         gas_limit=10944489199640098,
     )
 
-    pre[sender] = Account(balance=0xFFFFFFFF, nonce=0)
+    pre[sender] = Account(balance=0xFFFFFFFF)
     # Source: raw bytecode
-    pre[callee] = Account(balance=0, nonce=0, code=Op.POP(0x0))
-    # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
+    pre.deploy_contract(
+        code=Op.POP(0x0),
         nonce=0,
+        address=Address("0xa828265d4b2db08e65a1c68d2878f15368b5ae75"),  # noqa: E501
+    )
+    # Source: raw bytecode
+    contract = pre.deploy_contract(
         code=(
             Op.POP(
                 Op.DELEGATECALL(
@@ -71,6 +70,8 @@ def test_random_statetest648(
             + Op.SELFDESTRUCT(address=0xF5)
             + Op.REVERT
         ),
+        nonce=0,
+        address=Address("0xca5c69fa03b9dff4d059971ac17edac7ef758725"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -83,30 +84,9 @@ def test_random_statetest648(
         ),
         gas_limit=343469,
         gas_price=10,
-        nonce=0,
         value=14361094,
     )
 
-    post = {
-        callee: Account(code=Op.POP(0x0)),
-        contract: Account(
-            code=(
-                Op.POP(
-                    Op.DELEGATECALL(
-                        gas=Op.GAS,
-                        address=0xF1,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.PUSH1[0x0]
-                + Op.POP(0x0)
-                + Op.SELFDESTRUCT(address=0xF5)
-                + Op.REVERT
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

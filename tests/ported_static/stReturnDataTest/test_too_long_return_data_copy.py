@@ -7,12 +7,11 @@ tests/static/state_tests/stReturnDataTest/tooLongReturnDataCopyFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -34,1637 +33,205 @@ REFERENCE_SPEC_VERSION = "N/A"
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000001000000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000009000000000000000000000000000000000000000000000000000000000000000800000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000800000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001000000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001000000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000010000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000090000000000000000000000000000000000000000000000000000000000000008000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000008000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000010000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001100000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 24743}
+                )
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000800000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 57005},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 57005}
+                )
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
                 Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    storage={0: 16},
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN,
+                    storage={0: 16}
                 ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 57005},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
+                    storage={0: 57005}
                 ),
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
                 Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    storage={0: 16},
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN,
+                    storage={0: 16}
                 ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 57005},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
+                    storage={0: 57005}
                 ),
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000f000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
                 Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    storage={0: 16},
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN,
+                    storage={0: 16}
                 ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 57005},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
+                    storage={0: 57005}
                 ),
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000008000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
                 Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    storage={0: 16},
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN,
+                    storage={0: 16}
                 ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 57005},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
+                    storage={0: 57005}
                 ),
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 57005},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 57005}
+                )
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 57005},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 57005}
+                )
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 57005},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 57005}
+                )
             },
         ),
         (
             "917694f900000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000f00000000000000000000000023eef957bcfb3738417aee7fdf4294cf110d7881",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 57005},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 57005}
+                )
             },
         ),
         (
             "917694f9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a6e4f86617d6ab14d857f9115c2ab9f2787157ba",  # noqa: E501
             {
-                Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.REVERT
-                ),
-                Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"): Account(
-                    code=Op.CALLDATALOAD(offset=0x0)
-                    + Op.MSTORE(
-                        offset=0x0,
-                        value=0x1F1E1D1C1B1A191817161514131211100F0E0D0C0B0A090807060504030201FF,  # noqa: E501
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.PUSH1[0x0]
-                    + Op.RETURN
-                ),
                 Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"): Account(
-                    storage={0: 57005},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.CALLDATALOAD(offset=0x24)
-                    + Op.PUSH2[0x100]
-                    + Op.PUSH1[0x0]
-                    + Op.PUSH1[0x20]
-                    + Op.DUP2
-                    + Op.DUP1
-                    + Op.CALLDATALOAD(offset=0x44)
-                    + Op.SWAP7
-                    + Op.CALLDATALOAD(offset=0x64)
-                    + Op.SWAP1
-                    + Op.DUP3
-                    + Op.MSTORE
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.PUSH2[0x100]
-                    + Op.RETURNDATACOPY
-                    + Op.EXTCODECOPY(
-                        address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA,
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(
-                            0x20,
-                            Op.EXTCODESIZE(
-                                address=0xA6E4F86617D6AB14D857F9115C2AB9F2787157BA  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.CALLDATACOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CALLDATASIZE),
-                    )
-                    + Op.CODECOPY(
-                        dest_offset=Op.DUP1,
-                        offset=0x0,
-                        size=Op.ADD(0x20, Op.CODESIZE),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xDEAD)
-                    + Op.STOP,
-                ),
+                    storage={0: 57005}
+                )
             },
         ),
     ],
@@ -1707,9 +274,6 @@ def test_too_long_return_data_copy(
     sender = EOA(
         key=0x04DC42D61413D4DED993826AC4D6ED7A4A970C60335D2B285C60A4274E792FF1
     )
-    contract = Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1")
-    callee = Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881")
-    callee_1 = Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -1720,9 +284,7 @@ def test_too_long_return_data_copy(
         gas_limit=4503599627370496,
     )
 
-    pre[callee] = Account(
-        balance=0,
-        nonce=1,
+    pre.deploy_contract(
         code=(
             Op.CALLDATALOAD(offset=0x0)
             + Op.MSTORE(
@@ -1733,11 +295,10 @@ def test_too_long_return_data_copy(
             + Op.PUSH1[0x0]
             + Op.REVERT
         ),
+        address=Address("0x23eef957bcfb3738417aee7fdf4294cf110d7881"),  # noqa: E501
     )
     pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=1)
-    pre[callee_1] = Account(
-        balance=0,
-        nonce=1,
+    pre.deploy_contract(
         code=(
             Op.CALLDATALOAD(offset=0x0)
             + Op.MSTORE(
@@ -1748,6 +309,7 @@ def test_too_long_return_data_copy(
             + Op.PUSH1[0x0]
             + Op.RETURN
         ),
+        address=Address("0xa6e4f86617d6ab14d857f9115c2ab9f2787157ba"),  # noqa: E501
     )
     # Source: Yul
     # {
@@ -1780,9 +342,7 @@ def test_too_long_return_data_copy(
     #    // If we get here, kill the goat to show success
     #    sstore(0, 0xDEAD)
     # }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=(
             Op.CALLDATALOAD(offset=0x4)
             + Op.CALLDATALOAD(offset=0x24)
@@ -1826,6 +386,8 @@ def test_too_long_return_data_copy(
             + Op.STOP
         ),
         storage={0x0: 0x60A7},
+        balance=0xDE0B6B3A7640000,
+        address=Address("0xe4592ed5b9c3a9302d66798e39bfb7dfd44fafc1"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -1837,7 +399,6 @@ def test_too_long_return_data_copy(
         gas_limit=16777216,
         gas_price=100,
         nonce=1,
-        value=0,
     )
 
     post = expected_post

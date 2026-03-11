@@ -7,12 +7,11 @@ tests/static/state_tests/stExample/rangesExampleFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -37,9 +36,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -51,9 +48,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -65,9 +60,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -79,9 +72,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -93,9 +84,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -107,9 +96,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -121,9 +108,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -135,9 +120,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -149,9 +132,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -163,9 +144,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -177,9 +156,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -191,9 +168,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -205,9 +180,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -219,9 +192,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -233,9 +204,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -247,9 +216,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -261,9 +228,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -275,9 +240,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x400000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -289,9 +252,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -303,9 +264,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -317,9 +276,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -331,9 +288,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -345,9 +300,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -359,9 +312,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"): Account(
                     storage={
                         0: 0x100000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -407,7 +358,6 @@ def test_ranges_example(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -418,15 +368,16 @@ def test_ranges_example(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: LLL
     # {
     #    [[0]] (CALLDATALOAD 0)
     # }
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.STOP,
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.CALLDATALOAD(offset=0x0)) + Op.STOP,
+        address=Address("0xa054bc58f204030cbc0ec558a5b88ac9bd5aded2"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -437,7 +388,6 @@ def test_ranges_example(
         data=tx_data,
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

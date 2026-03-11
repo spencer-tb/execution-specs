@@ -7,12 +7,11 @@ tests/static/state_tests/stTransactionTest/PointAtInfinityECRecoverFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -37,7 +36,6 @@ def test_point_at_infinity_ec_recover(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xb9f36f1cb467544974bb7e0f5e1f0a499d4e6d7d")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,26 +48,24 @@ def test_point_at_infinity_ec_recover(
 
     # Source: Yul
     # { mstore(0, 0x6b8d2c81b11b2d699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9) mstore(32, 0x1b) mstore(64, 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798) mstore(96, 0x6b8d2c81b11b2d699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9) sstore(0, call(1000000, 1, 0, 0, 128, 0, 32)) sstore(1, mload(0)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xFFFFFFFF,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=bytes.fromhex(
             "6000805160206065833981519152600052601b6020527f79be667ef9dcbbac55a06295ce"  # noqa: E501
             "870b07029bfcdb2dce28d959f2815b16f817986040526000805160206065833981519152"  # noqa: E501
             "60605260206000608081806001620f4240f160005560005160015500fe6b8d2c81b11b2d"  # noqa: E501
             "699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9"
         ),
+        balance=0xFFFFFFFF,
+        nonce=0,
+        address=Address("0xb9f36f1cb467544974bb7e0f5e1f0a499d4e6d7d"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=10000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
@@ -78,9 +74,6 @@ def test_point_at_infinity_ec_recover(
                 0: 1,
                 1: 0x6B8D2C81B11B2D699528DDE488DBDF2F94293D0D33C32E347F255FA4A6C1F0A9,  # noqa: E501
             },
-            code=bytes.fromhex(
-                "6000805160206065833981519152600052601b6020527f79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798604052600080516020606583398151915260605260206000608081806001620f4240f160005560005160015500fe6b8d2c81b11b2d699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9"  # noqa: E501
-            ),
         ),
     }
 

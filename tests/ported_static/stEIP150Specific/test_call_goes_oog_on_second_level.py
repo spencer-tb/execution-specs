@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP150Specific/CallGoesOOGOnSecondLevelFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,9 +37,6 @@ def test_call_goes_oog_on_second_level(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0x3c6dca5471c6305d0642c6210d39d4613b5ea30b")
-    callee = Address("0x066f77b181e0e662e17d427c7320267adf2fd624")
-    callee_1 = Address("0xccc0159bd2ef7118b5e7b8d958e72237f02493fe")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +47,7 @@ def test_call_goes_oog_on_second_level(
         gas_limit=10000000,
     )
 
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    callee = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x8, value=Op.GAS)
             + Op.SSTORE(
@@ -71,12 +65,12 @@ def test_call_goes_oog_on_second_level(
             + Op.SSTORE(key=0xC, value=0x1)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x066f77b181e0e662e17d427c7320267adf2fd624"),  # noqa: E501
     )
     # Source: LLL
     # { (SSTORE 8 (GAS)) (SSTORE 9 (CALL 600000 <contract:0x1000000000000000000000000000000000000110> 0 0 0 0 0)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x8, value=Op.GAS)
             + Op.SSTORE(
@@ -93,10 +87,10 @@ def test_call_goes_oog_on_second_level(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0x3c6dca5471c6305d0642c6210d39d4613b5ea30b"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x8, value=Op.GAS)
             + Op.POP(Op.SHA3(offset=0x0, size=0x2FFFFF))
@@ -104,68 +98,21 @@ def test_call_goes_oog_on_second_level(
             + Op.SSTORE(key=0xA, value=Op.GAS)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xccc0159bd2ef7118b5e7b8d958e72237f02493fe"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=2200000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        callee: Account(
-            storage={8: 0x927BE, 12: 1},
-            code=(
-                Op.SSTORE(key=0x8, value=Op.GAS)
-                + Op.SSTORE(
-                    key=0x9,
-                    value=Op.CALL(
-                        gas=0x493E0,
-                        address=0xCCC0159BD2EF7118B5E7B8D958E72237F02493FE,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.SSTORE(key=0xC, value=0x1)
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            storage={8: 0x213FB6, 9: 1},
-            code=(
-                Op.SSTORE(key=0x8, value=Op.GAS)
-                + Op.SSTORE(
-                    key=0x9,
-                    value=Op.CALL(
-                        gas=0x927C0,
-                        address=0x66F77B181E0E662E17D427C7320267ADF2FD624,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(
-            code=(
-                Op.SSTORE(key=0x8, value=Op.GAS)
-                + Op.POP(Op.SHA3(offset=0x0, size=0x2FFFFF))
-                + Op.SSTORE(key=0x9, value=Op.GAS)
-                + Op.SSTORE(key=0xA, value=Op.GAS)
-                + Op.STOP
-            ),
-        ),
+        callee: Account(storage={8: 0x927BE, 12: 1}),
+        contract: Account(storage={8: 0x213FB6, 9: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

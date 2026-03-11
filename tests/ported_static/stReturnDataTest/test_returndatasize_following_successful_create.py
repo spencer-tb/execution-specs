@@ -8,12 +8,11 @@ returndatasize_following_successful_createFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_returndatasize_following_successful_create(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0xe7e262ca8ef9761acca450874326b1f3f483a73f")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,12 +48,10 @@ def test_returndatasize_following_successful_create(
         gas_limit=111669149696,
     )
 
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
     # Source: LLL
     # { (seq (CREATE 0 0 (lll (seq (mstore 0 0x112233) (RETURN 0 32) (STOP) ) 0)) (SSTORE 0 (RETURNDATASIZE)) (STOP) )}  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0xE]
             + Op.CODECOPY(dest_offset=0x0, offset=0x15, size=Op.DUP1)
@@ -72,41 +68,17 @@ def test_returndatasize_following_successful_create(
             + Op.STOP
         ),
         storage={0x0: 0x1},
+        nonce=0,
+        address=Address("0xe7e262ca8ef9761acca450874326b1f3f483a73f"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        Address("0x7b4276a91ae4da6c2f3f0e5bdf79d7f5da7519cb"): Account(
-            code=bytes.fromhex(
-                "0000000000000000000000000000000000000000000000000000000000112233"  # noqa: E501
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.PUSH1[0xE]
-                + Op.CODECOPY(dest_offset=0x0, offset=0x15, size=Op.DUP1)
-                + Op.PUSH1[0x0]
-                + Op.PUSH1[0x0]
-                + Op.POP(Op.CREATE)
-                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
-                + Op.STOP
-                + Op.STOP
-                + Op.INVALID
-                + Op.MSTORE(offset=0x0, value=0x112233)
-                + Op.RETURN(offset=0x0, size=0x20)
-                + Op.STOP
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

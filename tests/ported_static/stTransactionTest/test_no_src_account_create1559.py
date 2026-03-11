@@ -7,11 +7,11 @@ tests/static/state_tests/stTransactionTest/NoSrcAccountCreate1559Filler.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     AccessList,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -365,7 +365,6 @@ def test_no_src_account_create1559(
         gas_limit=tx_gas_limit,
         max_fee_per_gas=2000,
         max_priority_fee_per_gas=10,
-        nonce=0,
         value=tx_value,
         access_list=tx_access_list,
         error=tx_error,

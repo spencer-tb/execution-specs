@@ -7,12 +7,11 @@ tests/static/state_tests/stCreate2/create2collisionCodeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,48 +28,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        (
-            "6000600060006000f500",
-            {
-                Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(
-                    code=Op.SUB(Op.MUL, Op.ADD)
-                ),
-                Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
-                    code=Op.SUB(Op.MUL, Op.ADD)
-                ),
-                Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
-                    code=Op.SUB(Op.MUL, Op.ADD)
-                ),
-            },
-        ),
-        (
-            "64600160015560005260006005601b6000f500",
-            {
-                Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(
-                    code=Op.SUB(Op.MUL, Op.ADD)
-                ),
-                Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
-                    code=Op.SUB(Op.MUL, Op.ADD)
-                ),
-                Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
-                    code=Op.SUB(Op.MUL, Op.ADD)
-                ),
-            },
-        ),
-        (
-            "6d6460016001556000526005601bf36000526000600e60126000f500",
-            {
-                Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"): Account(
-                    code=Op.SUB(Op.MUL, Op.ADD)
-                ),
-                Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"): Account(
-                    code=Op.SUB(Op.MUL, Op.ADD)
-                ),
-                Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
-                    code=Op.SUB(Op.MUL, Op.ADD)
-                ),
-            },
-        ),
+        ("6000600060006000f500", {}),
+        ("64600160015560005260006005601b6000f500", {}),
+        ("6d6460016001556000526005601bf36000526000600e60126000f500", {}),
     ],
     ids=["case0", "case1", "case2"],
 )
@@ -86,9 +46,6 @@ def test_create2collision_code(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01")
-    callee_1 = Address("0xe2b35478fdd26477cc576dd906e6277761246a3c")
-    callee_2 = Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -99,13 +56,25 @@ def test_create2collision_code(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[contract] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
+    pre.deploy_contract(
+        code=Op.SUB(Op.MUL, Op.ADD),
+        nonce=0,
+        address=Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"),  # noqa: E501
+    )
     # Source: raw bytecode
-    pre[callee_1] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
+    pre.deploy_contract(
+        code=Op.SUB(Op.MUL, Op.ADD),
+        nonce=0,
+        address=Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"),  # noqa: E501
+    )
     # Source: raw bytecode
-    pre[callee_2] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
+    pre.deploy_contract(
+        code=Op.SUB(Op.MUL, Op.ADD),
+        nonce=0,
+        address=Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"),  # noqa: E501
+    )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -115,7 +84,6 @@ def test_create2collision_code(
         data=tx_data,
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

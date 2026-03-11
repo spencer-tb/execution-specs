@@ -8,12 +8,11 @@ TransactionCreateAutoSuicideContractFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -48,7 +47,7 @@ def test_transaction_create_auto_suicide_contract(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xF4240, nonce=0)
+    pre[sender] = Account(balance=0xF4240)
 
     tx = Transaction(
         sender=sender,
@@ -56,7 +55,6 @@ def test_transaction_create_auto_suicide_contract(
         data=bytes.fromhex("600a80600c6000396000fff2ffff600160008035811a81"),
         gas_limit=55000,
         gas_price=10,
-        nonce=0,
         value=15,
     )
 

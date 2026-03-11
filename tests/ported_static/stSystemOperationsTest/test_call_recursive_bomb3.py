@@ -7,12 +7,11 @@ tests/static/state_tests/stSystemOperationsTest/CallRecursiveBomb3Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_call_recursive_bomb3(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xbaa8243d50fddb48abd93764bbd97972dc654f67")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +49,7 @@ def test_call_recursive_bomb3(
 
     # Source: LLL
     # {  [[ 0 ]] (+ (SLOAD 0) 1) [[ 1 ]] (CALL (- (GAS) 224) (ADDRESS) 0 0 0 0 0)  }  # noqa: E501
-    pre[contract] = Account(
-        balance=0x1312D00,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
             + Op.SSTORE(
@@ -70,39 +66,22 @@ def test_call_recursive_bomb3(
             )
             + Op.STOP
         ),
+        balance=0x1312D00,
+        nonce=0,
+        address=Address("0xbaa8243d50fddb48abd93764bbd97972dc654f67"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        contract: Account(
-            storage={0: 18, 1: 1},
-            code=(
-                Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-                + Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALL(
-                        gas=Op.SUB(Op.GAS, 0xE0),
-                        address=Op.ADDRESS,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 18, 1: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

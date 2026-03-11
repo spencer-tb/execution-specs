@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/RevertInDelegateCallFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,8 +35,6 @@ def test_revert_in_delegate_call(
     sender = EOA(
         key=0xA2333EEF5630066B928DEA5FD85A239F511B5B067D1441EE7AC290D0122B917B
     )
-    contract = Address("0x23ea33dc3aa11f5a1da3643bb13956382b9b6767")
-    callee = Address("0xc3ecfe24c185ad3c946ebff4624131e8af5220a2")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,9 +47,7 @@ def test_revert_in_delegate_call(
 
     # Source: LLL
     # { [[ 0 ]] (DELEGATECALL 50000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 0 64 0 64 ) [[ 1 ]] (RETURNDATASIZE) (RETURNDATACOPY 63 0 32) [[2]](MLOAD 63)}  # noqa: E501
-    pre[contract] = Account(
-        balance=1000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -70,56 +65,30 @@ def test_revert_in_delegate_call(
             + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x3F))
             + Op.STOP
         ),
-    )
-    pre[sender] = Account(balance=0x5F5E100, nonce=0)
-    pre[callee] = Account(
-        balance=0,
+        balance=1000,
         nonce=0,
+        address=Address("0x23ea33dc3aa11f5a1da3643bb13956382b9b6767"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0x5F5E100)
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x20, value=0xA)
             + Op.REVERT(offset=0x20, size=0x20)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xc3ecfe24c185ad3c946ebff4624131e8af5220a2"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=105044,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={1: 32, 2: 10},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.DELEGATECALL(
-                        gas=0xC350,
-                        address=0xC3ECFE24C185AD3C946EBFF4624131E8AF5220A2,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.SSTORE(key=0x1, value=Op.RETURNDATASIZE)
-                + Op.RETURNDATACOPY(dest_offset=0x3F, offset=0x0, size=0x20)
-                + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0x3F))
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.MSTORE(offset=0x20, value=0xA)
-                + Op.REVERT(offset=0x20, size=0x20)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={1: 32, 2: 10}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/CALLCODE_Bounds2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -31,52 +30,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0x814cc86eb9caa0e43cfea934fbb77c7917f5cc0e"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x7FFFFFFFFFFFFFF,
-                        address=0x849F53126ADE5F72469029537296F2B6644D4D41,
-                        value=0x0,
-                        args_offset=0xFFFFFFF,
-                        args_size=0xFFFFFFF,
-                        ret_offset=0xFFFFFFF,
-                        ret_size=0xFFFFFFF,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x849f53126ade5f72469029537296f2b6644d4d41"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))
-                    )
-                    + Op.STOP
-                ),
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0x814cc86eb9caa0e43cfea934fbb77c7917f5cc0e"): Account(
-                    code=Op.CALLCODE(
-                        gas=0x7FFFFFFFFFFFFFF,
-                        address=0x849F53126ADE5F72469029537296F2B6644D4D41,
-                        value=0x0,
-                        args_offset=0xFFFFFFF,
-                        args_size=0xFFFFFFF,
-                        ret_offset=0xFFFFFFF,
-                        ret_size=0xFFFFFFF,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x849f53126ade5f72469029537296f2b6644d4d41"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))
-                    )
-                    + Op.STOP
-                ),
-            },
-        ),
+        (150000, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -92,8 +47,6 @@ def test_callcode_bounds2(
     sender = EOA(
         key=0x50EADFB1030587AB3A993A6ECC073041FC3B45E119DAA31A13D78C7E209631A5
     )
-    contract = Address("0x814cc86eb9caa0e43cfea934fbb77c7917f5cc0e")
-    callee = Address("0x849f53126ade5f72469029537296f2b6644d4d41")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -106,9 +59,7 @@ def test_callcode_bounds2(
 
     # Source: LLL
     # { (CALLCODE 0x7ffffffffffffff <contract:0x1000000000000000000000000000000000000001> 0 0xfffffff 0xfffffff 0xfffffff 0xfffffff)  }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALLCODE(
                 gas=0x7FFFFFFFFFFFFFF,
@@ -121,26 +72,25 @@ def test_callcode_bounds2(
             )
             + Op.STOP
         ),
-    )
-    pre[callee] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0x814cc86eb9caa0e43cfea934fbb77c7917f5cc0e"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x849f53126ade5f72469029537296f2b6644d4d41"),  # noqa: E501
     )
     pre[sender] = Account(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-        nonce=0,
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

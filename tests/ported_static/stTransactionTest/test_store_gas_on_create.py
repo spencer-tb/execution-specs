@@ -7,12 +7,11 @@ tests/static/state_tests/stTransactionTest/StoreGasOnCreateFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -46,9 +45,7 @@ def test_store_gas_on_create(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x17D78400, nonce=0)
-    # Source: LLL
-    # { (MSTORE 0 0x5a60fd55) (CREATE 0 28 4)}
+    pre[sender] = Account(balance=0x17D78400)
     pre[coinbase] = Account(
         balance=0,
         nonce=0,
@@ -62,21 +59,12 @@ def test_store_gas_on_create(
     tx = Transaction(
         sender=sender,
         to=coinbase,
-        data=b"",
         gas_limit=131882,
         gas_price=10,
-        nonce=0,
         value=100,
     )
 
     post = {
-        coinbase: Account(
-            code=(
-                Op.MSTORE(offset=0x0, value=0x5A60FD55)
-                + Op.CREATE(value=0x0, offset=0x1C, size=0x4)
-                + Op.STOP
-            ),
-        ),
         Address("0xf1ecf98489fa9ed60a664fc4998db699cfa39d40"): Account(
             storage={253: 0x12F39},
         ),

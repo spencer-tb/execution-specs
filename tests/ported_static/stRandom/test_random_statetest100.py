@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest100Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest100(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xac7af608fdd0c1e915c85a0dded54637285b93b0")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,8 +45,7 @@ def test_random_statetest100(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -66,9 +63,7 @@ def test_random_statetest100(
         ),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.COINBASE
             + Op.TIMESTAMP
@@ -85,6 +80,9 @@ def test_random_statetest100(
                 ),
             )
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xac7af608fdd0c1e915c85a0dded54637285b93b0"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -93,46 +91,11 @@ def test_random_statetest100(
         data=bytes.fromhex("42"),
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
-        contract: Account(
-            storage={0x20000: 1},
-            code=(
-                Op.COINBASE
-                + Op.TIMESTAMP
-                + Op.SSTORE(
-                    key=Op.PREVRANDAO,
-                    value=Op.CALLCODE(
-                        gas=Op.DUP4,
-                        address=Op.TIMESTAMP,
-                        value=Op.PREVRANDAO,
-                        args_offset=Op.TIMESTAMP,
-                        args_size=Op.NUMBER,
-                        ret_offset=Op.PREVRANDAO,
-                        ret_size=Op.NUMBER,
-                    ),
-                )
-            ),
-        ),
+        contract: Account(storage={0x20000: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

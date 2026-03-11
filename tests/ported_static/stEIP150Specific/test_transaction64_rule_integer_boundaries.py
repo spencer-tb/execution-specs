@@ -8,12 +8,11 @@ Transaction64Rule_integerBoundariesFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -35,685 +34,97 @@ REFERENCE_SPEC_VERSION = "N/A"
         (
             "000000000000000000000000000000007fffffffffffffffffffffffffffffff",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "0000000000000000000000000000000000000000000000000000000000007fff",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "000000000000000000000000000000000000000000000000000000007fffffff",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "0000000000000000000000000000000000000000000000007fffffffffffffff",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "000000000000000000000000000000000000000000000000000000000000007f",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "000000000000000000000000000000008fffffffffffffffffffffffffffffff",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "0000000000000000000000000000000000000000000000000000000000008fff",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "8fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "000000000000000000000000000000000000000000000000000000008fffffff",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "0000000000000000000000000000000000000000000000008fffffffffffffff",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
         (
             "000000000000000000000000000000000000000000000000000000000000008f",
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000c0de"): Account(
-                    storage={0: 1, 1: 1, 2: 1, 3: 1},
-                    code=Op.GAS
-                    + Op.PUSH1[0x20]
-                    + Op.PUSH1[0x0]
-                    + Op.DUP2
-                    + Op.DUP2
-                    + Op.PUSH2[0x1000]
-                    + Op.CALLDATALOAD(offset=Op.DUP2)
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=Op.DUP4, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.CALLCODE(
-                            gas=Op.DUP7,
-                            address=Op.DUP7,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(
-                        Op.DELEGATECALL(
-                            gas=Op.DUP6,
-                            address=Op.DUP6,
-                            args_offset=Op.DUP2,
-                            args_size=Op.DUP2,
-                            ret_offset=Op.DUP4,
-                            ret_size=Op.DUP4,
-                        )
-                    )
-                    + Op.SSTORE(key=0x2, value=Op.LT(Op.GAS, Op.DUP7))
-                    + Op.POP(Op.STATICCALL)
-                    + Op.GAS
-                    + Op.SSTORE(key=0x3, value=Op.LT)
-                    + Op.STOP,
-                ),
+                    storage={0: 1, 1: 1, 2: 1, 3: 1}
+                )
             },
         ),
     ],
@@ -744,8 +155,6 @@ def test_transaction64_rule_integer_boundaries(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x000000000000000000000000000000000000c0de")
-    callee = Address("0x0000000000000000000000000000000000001000")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -757,10 +166,11 @@ def test_transaction64_rule_integer_boundaries(
     )
 
     # Source: raw bytecode
-    pre[callee] = Account(
+    pre.deploy_contract(
+        code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP,
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP,
+        address=Address("0x0000000000000000000000000000000000001000"),  # noqa: E501
     )
     # Source: Yul
     # {
@@ -779,9 +189,7 @@ def test_transaction64_rule_integer_boundaries(
     #   pop(staticcall(callgas, 0x1000, 0, 0x20, 0, 0x20))
     #   sstore(3, lt(gas(), initialgas))
     # }
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.GAS
             + Op.PUSH1[0x20]
@@ -830,8 +238,11 @@ def test_transaction64_rule_integer_boundaries(
             + Op.SSTORE(key=0x3, value=Op.LT)
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x000000000000000000000000000000000000c0de"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x10000000000000000, nonce=0)
+    pre[sender] = Account(balance=0x10000000000000000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -841,8 +252,6 @@ def test_transaction64_rule_integer_boundaries(
         data=tx_data,
         gas_limit=800000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

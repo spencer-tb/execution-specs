@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest211Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest211(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xd7eb1ddc2f83f5620bd387bc6409be3cc2d2422f")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,8 +45,7 @@ def test_random_statetest211(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -66,9 +63,7 @@ def test_random_statetest211(
         ),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.LOG3(
                 offset=0x25,
@@ -98,6 +93,8 @@ def test_random_statetest211(
             + Op.PUSH21[0xF392A4AA2A84A99C9390AB4BD4C39F521A2B91C2EA]
             + Op.SWAP1
         ),
+        nonce=0,
+        address=Address("0xd7eb1ddc2f83f5620bd387bc6409be3cc2d2422f"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -139,58 +136,9 @@ def test_random_statetest211(
         ),
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
         value=1548974135,
     )
 
-    post = {
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.LOG3(
-                    offset=0x25,
-                    size=0xFC33,
-                    topic_1=0x37E1D07AD872CF04EB2A,
-                    topic_2=0xD4EE9A50996902EE4E,
-                    topic_3=0x7A980B5B1C50EBB63D8E2211D3A79E841EE5E5946B7969DFB6CA1309C99E8F,  # noqa: E501
-                )
-                + Op.PUSH5[0x8D5818A645]
-                + Op.PUSH30[
-                    0xC24F19F38D3DEEBB09968C812740339C6DF46AF95B7B0283ACB1944A8CA3  # noqa: E501
-                ]
-                + Op.PUSH32[
-                    0xBAAAFEAC115B9EC5ADC16FEA5A3A828D3483E495506A790CA75D8238EBBED647  # noqa: E501
-                ]
-                + Op.PUSH29[
-                    0x213D0177C10B33B6CF9362273973809AC39F11DFFEE928F3FB18E97518  # noqa: E501
-                ]
-                + Op.PUSH16[0xB4A74E56142D4431BFA392DD5F71D32B]
-                + Op.PUSH13[0x40A2BD0BEB6A8B24FC592B25F0]
-                + Op.PUSH9[0x306F11E049124EC39]
-                + Op.PUSH15[0xA3858D3339145AF8C1C16747BEA056]
-                + Op.PUSH4[0x9A7FAF44]
-                + Op.PUSH13[0xD9C7BF446ED2DE67F1665ADC47]
-                + Op.SWAP9
-                + Op.PUSH21[0x53C2C53F0FC53A12AF3C1951FDC7A5D20AEE8F968]
-                + Op.PUSH21[0xF392A4AA2A84A99C9390AB4BD4C39F521A2B91C2EA]
-                + Op.SWAP1
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

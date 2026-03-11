@@ -7,12 +7,11 @@ tests/static/state_tests/stShift/sar11Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_sar11(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x7362d25017f41b7d56bc5878cbb1fb9b03c39e26")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,27 +45,24 @@ def test_sar11(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=Op.SSTORE(key=0x0, value=Op.SAR(0x1, 0x1)),
         storage={0x0: 0x3},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x7362d25017f41b7d56bc5878cbb1fb9b03c39e26"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        contract: Account(code=Op.SSTORE(key=0x0, value=Op.SAR(0x1, 0x1))),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

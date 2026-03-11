@@ -8,12 +8,11 @@ CALLCODEEcrecover0_0inputFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_callcode_ecrecover0_0input(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xd87aadfe05df880bc4c678f75154215cc6692d81")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_callcode_ecrecover0_0input(
 
     # Source: LLL
     # { [[ 2 ]] (CALLCODE 300000 1 0 0 128 128 32) [[ 0 ]] (MOD (MLOAD 128) (EXP 2 160)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0x1312D00,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x2,
@@ -74,42 +70,22 @@ def test_callcode_ecrecover0_0input(
             )
             + Op.STOP
         ),
+        balance=0x1312D00,
+        nonce=0,
+        address=Address("0xd87aadfe05df880bc4c678f75154215cc6692d81"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=3652240,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        contract: Account(
-            storage={2: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x2,
-                    value=Op.CALLCODE(
-                        gas=0x493E0,
-                        address=0x1,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x80,
-                        ret_offset=0x80,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.SSTORE(
-                    key=0x0,
-                    value=Op.MOD(Op.MLOAD(offset=0x80), Op.EXP(0x2, 0xA0)),
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={2: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

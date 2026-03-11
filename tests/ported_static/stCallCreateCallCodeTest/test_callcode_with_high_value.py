@@ -8,12 +8,11 @@ callcodeWithHighValueFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_callcode_with_high_value(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x177bd06bad8f3fe1b5d335d0aba2f2a6b18b2fc6")
-    callee = Address("0x0896f13e800125c0ccec44f3c434335f0a97bc1b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,20 +49,19 @@ def test_callcode_with_high_value(
     )
 
     # Source: raw bytecode
-    pre[callee] = Account(
-        balance=23,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x1, value=0x1)
             + Op.MSTORE8(offset=0x0, value=0x37)
             + Op.RETURN(offset=0x0, size=0x2)
         ),
+        balance=23,
+        nonce=0,
+        address=Address("0x0896f13e800125c0ccec44f3c434335f0a97bc1b"),  # noqa: E501
     )
     # Source: LLL
     # {  [[ 0 ]] (CALLCODE 50000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 1000000000000000001 0 64 0 2 ) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -81,44 +77,19 @@ def test_callcode_with_high_value(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x177bd06bad8f3fe1b5d335d0aba2f2a6b18b2fc6"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=3000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        callee: Account(
-            code=(
-                Op.SSTORE(key=0x1, value=0x1)
-                + Op.MSTORE8(offset=0x0, value=0x37)
-                + Op.RETURN(offset=0x0, size=0x2)
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALLCODE(
-                        gas=0xC350,
-                        address=0x896F13E800125C0CCEC44F3C434335F0A97BC1B,
-                        value=0xDE0B6B3A7640001,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x2,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

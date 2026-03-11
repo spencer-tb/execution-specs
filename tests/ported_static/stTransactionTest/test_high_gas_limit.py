@@ -7,12 +7,11 @@ tests/static/state_tests/stTransactionTest/HighGasLimitFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -48,7 +47,6 @@ def test_high_gas_limit(
 
     pre[sender] = Account(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-        nonce=0,
     )
 
     tx = Transaction(
@@ -57,7 +55,6 @@ def test_high_gas_limit(
         data=bytes.fromhex("3240349548983454"),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=900,
     )
 

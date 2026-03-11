@@ -8,12 +8,11 @@ RawCreateGasValueTransferMemoryFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_raw_create_gas_value_transfer_memory(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,42 +48,30 @@ def test_raw_create_gas_value_transfer_memory(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
     # Source: LLL
     # { [0] (GAS) (CREATE 10 0 8000) [[1]] (SUB @0 (GAS)) }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=Op.GAS)
             + Op.POP(Op.CREATE(value=0xA, offset=0x0, size=0x1F40))
             + Op.SSTORE(key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=500000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
     post = {
-        contract: Account(
-            storage={1: 33391},
-            code=(
-                Op.MSTORE(offset=0x0, value=Op.GAS)
-                + Op.POP(Op.CREATE(value=0xA, offset=0x0, size=0x1F40))
-                + Op.SSTORE(
-                    key=0x1, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={1: 33391}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

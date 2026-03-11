@@ -7,12 +7,11 @@ tests/static/state_tests/stCreateTest/CreateOOGafterInitCodeRevertFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,9 +37,6 @@ def test_create_oo_gafter_init_code_revert(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    callee = Address("0x094f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    callee_1 = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,17 +49,15 @@ def test_create_oo_gafter_init_code_revert(
 
     # Source: LLL
     # { (KECCAK256 0x00 0x2fffff) }
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=Op.SHA3(offset=0x0, size=0x2FFFFF) + Op.STOP,
+        nonce=0,
+        address=Address("0x094f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
     # Source: LLL
     # { (MSTORE 0 0x6460016001556000526005601bf3) (CREATE 0 18 14) (CALLCODE 10000 0x094f5374fce5edbc8e2a8697c15331677e6ebf0b 0 0 0 0 0) (REVERT 0 32) }  # noqa: E501
-    pre[callee_1] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
             + Op.POP(Op.CREATE(value=0x0, offset=0x12, size=0xE))
@@ -81,12 +75,12 @@ def test_create_oo_gafter_init_code_revert(
             + Op.REVERT(offset=0x0, size=0x20)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
     # Source: LLL
     # { (CALL (GAS) 0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b 0 0 0 0 32) [[ 1 ]] (MLOAD 0) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.POP(
                 Op.CALL(
@@ -102,57 +96,19 @@ def test_create_oo_gafter_init_code_revert(
             + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=285000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        callee: Account(code=Op.SHA3(offset=0x0, size=0x2FFFFF) + Op.STOP),
-        callee_1: Account(
-            code=(
-                Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
-                + Op.POP(Op.CREATE(value=0x0, offset=0x12, size=0xE))
-                + Op.POP(
-                    Op.CALLCODE(
-                        gas=0x2710,
-                        address=0x94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.REVERT(offset=0x0, size=0x20)
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            storage={1: 0x6460016001556000526005601BF3},
-            code=(
-                Op.POP(
-                    Op.CALL(
-                        gas=Op.GAS,
-                        address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={1: 0x6460016001556000526005601BF3}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

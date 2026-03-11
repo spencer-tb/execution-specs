@@ -7,12 +7,11 @@ tests/static/state_tests/VMTests/vmIOandFlowOperations/popFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -32,53 +31,14 @@ REFERENCE_SPEC_VERSION = "N/A"
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x2]
-                    + Op.PUSH1[0x3]
-                    + Op.POP(0x4)
-                    + Op.SSTORE
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.POP + Op.PUSH1[0x2] + Op.SSTORE(key=0x4, value=0x3)
-                ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    storage={3: 2},
-                    code=Op.DELEGATECALL(
-                        gas=Op.GAS,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP,
-                ),
+                    storage={3: 2}
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.PUSH1[0x2]
-                    + Op.PUSH1[0x3]
-                    + Op.POP(0x4)
-                    + Op.SSTORE
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.POP + Op.PUSH1[0x2] + Op.SSTORE(key=0x4, value=0x3)
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.DELEGATECALL(
-                        gas=Op.GAS,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
     ],
     ids=["case0", "case1"],
@@ -95,9 +55,6 @@ def test_pop(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xcccccccccccccccccccccccccccccccccccccccc")
-    callee = Address("0x0000000000000000000000000000000000001000")
-    callee_1 = Address("0x0000000000000000000000000000000000001001")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -109,25 +66,25 @@ def test_pop(
     )
 
     # Source: raw bytecode
-    pre[callee] = Account(
+    pre.deploy_contract(
+        code=Op.PUSH1[0x2] + Op.PUSH1[0x3] + Op.POP(0x4) + Op.SSTORE,
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=Op.PUSH1[0x2] + Op.PUSH1[0x3] + Op.POP(0x4) + Op.SSTORE,
+        address=Address("0x0000000000000000000000000000000000001000"),  # noqa: E501
     )
     # Source: raw bytecode
-    pre[callee_1] = Account(
+    pre.deploy_contract(
+        code=Op.POP + Op.PUSH1[0x2] + Op.SSTORE(key=0x4, value=0x3),
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=Op.POP + Op.PUSH1[0x2] + Op.SSTORE(key=0x4, value=0x3),
+        address=Address("0x0000000000000000000000000000000000001001"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x100000000000, nonce=0)
+    pre[sender] = Account(balance=0x100000000000)
     # Source: LLL
     # {
     #     (delegatecall (gas) (+ 0x1000 $4) 0 0 0 0)
     # }
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.DELEGATECALL(
                 gas=Op.GAS,
@@ -139,6 +96,9 @@ def test_pop(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0xcccccccccccccccccccccccccccccccccccccccc"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -149,7 +109,6 @@ def test_pop(
         data=tx_data,
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

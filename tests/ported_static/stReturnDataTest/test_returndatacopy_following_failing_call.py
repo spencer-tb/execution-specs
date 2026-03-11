@@ -8,12 +8,11 @@ returndatacopy_following_failing_callFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_returndatacopy_following_failing_call(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x71a277f82c43ff98682eb8d6db4a3ecd680407eb")
-    callee = Address("0x3141bb954e8294e47a14ebd08229f30e6294ba83")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,12 +49,14 @@ def test_returndatacopy_following_failing_call(
     )
 
     # Source: raw bytecode
-    pre[callee] = Account(balance=0, nonce=0, code=Op.REVERT)
+    pre.deploy_contract(
+        code=Op.REVERT,
+        nonce=0,
+        address=Address("0x3141bb954e8294e47a14ebd08229f30e6294ba83"),  # noqa: E501
+    )
     # Source: LLL
     # { (CALL 0x0900000000 <contract:0x0aabbccdd5c57f15886f9b263e2f6d2d6c7b5ec6> 0 0 0 0 0) (RETURNDATACOPY 0 1 32) (SSTORE 0 (MLOAD 0)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.POP(
                 Op.CALL(
@@ -75,40 +74,20 @@ def test_returndatacopy_following_failing_call(
             + Op.STOP
         ),
         storage={0x0: 0x1},
+        nonce=0,
+        address=Address("0x71a277f82c43ff98682eb8d6db4a3ecd680407eb"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        callee: Account(code=Op.REVERT),
-        contract: Account(
-            storage={0: 1},
-            code=(
-                Op.POP(
-                    Op.CALL(
-                        gas=0x900000000,
-                        address=0x3141BB954E8294E47A14EBD08229F30E6294BA83,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.RETURNDATACOPY(dest_offset=0x0, offset=0x1, size=0x20)
-                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

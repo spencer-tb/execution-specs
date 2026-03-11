@@ -8,11 +8,11 @@ opcodeBlobhashOutOfRangeFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     AccessList,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -40,7 +40,6 @@ def test_opcode_blobhash_out_of_range(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x0c4d6f62d3c85069cea2411284bd520ac87fb7eb")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -57,17 +56,18 @@ def test_opcode_blobhash_out_of_range(
     #    [[0]] (BLOBHASH 0)
     #    [[1]] (BLOBHASH 10)
     # }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0))
             + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xA))
             + Op.STOP
         ),
         storage={0x0: 0x1, 0x1: 0x1},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x0c4d6f62d3c85069cea2411284bd520ac87fb7eb"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
@@ -85,7 +85,6 @@ def test_opcode_blobhash_out_of_range(
                 "0x01a915e4d060149eb4365960e6a7a45f334393093061116b197e3240065ff2d8"  # noqa: E501
             ),
         ],
-        nonce=0,
         value=100000,
         access_list=[
             AccessList(
@@ -107,11 +106,6 @@ def test_opcode_blobhash_out_of_range(
             storage={
                 0: 0x1A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8,  # noqa: E501
             },
-            code=(
-                Op.SSTORE(key=0x0, value=Op.BLOBHASH(index=0x0))
-                + Op.SSTORE(key=0x1, value=Op.BLOBHASH(index=0xA))
-                + Op.STOP
-            ),
         ),
     }
 

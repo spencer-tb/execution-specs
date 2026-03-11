@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/MLOAD_Bounds3Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -46,7 +45,6 @@ def test_mload_bounds3(
     sender = EOA(
         key=0xFE5BE118AD5955E30E0FFC4E1F1BBDCAA7F5A67CB1426C4AC19E32C80ECCDC06
     )
-    contract = Address("0xb4b66eef4a593bfd61289ec192af659c68266259")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -59,25 +57,21 @@ def test_mload_bounds3(
 
     # Source: LLL
     # {  (MLOAD 0x400000) }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=Op.MLOAD(offset=0x400000) + Op.STOP,
+        nonce=0,
+        address=Address("0xb4b66eef4a593bfd61289ec192af659c68266259"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
-    post = {
-        contract: Account(code=Op.MLOAD(offset=0x400000) + Op.STOP),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

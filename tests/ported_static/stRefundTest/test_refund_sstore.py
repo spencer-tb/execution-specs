@@ -7,12 +7,11 @@ tests/static/state_tests/stRefundTest/refundSSTOREFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_refund_sstore(
     sender = EOA(
         key=0x8C45B94DCA330650C0392398FB2097BB64764E973720A845EE67605FFABF0C7C
     )
-    contract = Address("0xf5f86b947fc07a75e19106a6b7e4953d431ad57f")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,11 +50,11 @@ def test_refund_sstore(
     # {
     #    sstore(0,0x0)
     # }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP,
         storage={0x0: 0x60A7},
+        balance=0xDE0B6B3A7640000,
+        address=Address("0xf5f86b947fc07a75e19106a6b7e4953d431ad57f"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -66,12 +64,8 @@ def test_refund_sstore(
         gas_limit=2601000,
         gas_price=1000,
         nonce=1,
-        value=0,
-        access_list=[],
     )
 
-    post = {
-        contract: Account(code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

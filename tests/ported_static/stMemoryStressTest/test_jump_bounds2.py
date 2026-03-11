@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/JUMP_Bounds2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,32 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0xde573d26b8c4a55fd9daa17e8f93347c269ee4f6"): Account(
-                    code=Op.JUMP(pc=0xFFFFFFFF)
-                    + Op.JUMP(pc=0xFFFFFFFFFFFFFFFF)
-                    + Op.JUMP(pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-                    + Op.JUMP(
-                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    )
-                )
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0xde573d26b8c4a55fd9daa17e8f93347c269ee4f6"): Account(
-                    code=Op.JUMP(pc=0xFFFFFFFF)
-                    + Op.JUMP(pc=0xFFFFFFFFFFFFFFFF)
-                    + Op.JUMP(pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-                    + Op.JUMP(
-                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    )
-                )
-            },
-        ),
+        (150000, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -70,7 +45,6 @@ def test_jump_bounds2(
     sender = EOA(
         key=0x31B5AF02B012484AE954B3A43943242EDE546A2E76FC0A6ACC17435107C385EB
     )
-    contract = Address("0xde573d26b8c4a55fd9daa17e8f93347c269ee4f6")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -82,9 +56,7 @@ def test_jump_bounds2(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.JUMP(pc=0xFFFFFFFF)
             + Op.JUMP(pc=0xFFFFFFFFFFFFFFFF)
@@ -93,16 +65,16 @@ def test_jump_bounds2(
                 pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
             )
         ),
+        nonce=0,
+        address=Address("0xde573d26b8c4a55fd9daa17e8f93347c269ee4f6"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

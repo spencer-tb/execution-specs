@@ -7,12 +7,11 @@ tests/static/state_tests/stCreate2/CreateMessageRevertedFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,27 +28,13 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            80000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x600C600055600D600155)
-                    + Op.CREATE2(value=0x0, offset=0x16, size=0xA, salt=0x0)
-                    + Op.STOP
-                )
-            },
-        ),
+        (80000, {}),
         (
             150000,
             {
                 Address("0x244fe9a7867edcc140245e775071fbfe6ebedbae"): Account(
                     storage={0: 12, 1: 13}
-                ),
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x600C600055600D600155)
-                    + Op.CREATE2(value=0x0, offset=0x16, size=0xA, salt=0x0)
-                    + Op.STOP
-                ),
+                )
             },
         ),
     ],
@@ -67,7 +52,6 @@ def test_create_message_reverted(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -78,26 +62,24 @@ def test_create_message_reverted(
         gas_limit=1000000000000,
     )
 
-    pre[sender] = Account(balance=0x2DC6C0, nonce=0)
+    pre[sender] = Account(balance=0x2DC6C0)
     # Source: LLL
     # {(MSTORE 0 0x600c600055600d600155) (CREATE2 0 22 10 0)}
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x600C600055600D600155)
             + Op.CREATE2(value=0x0, offset=0x16, size=0xA, salt=0x0)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=100,
     )
 

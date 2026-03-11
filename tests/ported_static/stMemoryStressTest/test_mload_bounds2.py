@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/MLOAD_Bounds2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,36 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0xb581f1a0f5810ad50a1f96713df63eb8cb0ebf8a"): Account(
-                    code=Op.POP(Op.MLOAD(offset=0xFFFFFFFFFFFFFFFF))
-                    + Op.POP(
-                        Op.MLOAD(offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-                    )
-                    + Op.MLOAD(
-                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0xb581f1a0f5810ad50a1f96713df63eb8cb0ebf8a"): Account(
-                    code=Op.POP(Op.MLOAD(offset=0xFFFFFFFFFFFFFFFF))
-                    + Op.POP(
-                        Op.MLOAD(offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-                    )
-                    + Op.MLOAD(
-                        offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
+        (150000, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -74,7 +45,6 @@ def test_mload_bounds2(
     sender = EOA(
         key=0xFE5BE118AD5955E30E0FFC4E1F1BBDCAA7F5A67CB1426C4AC19E32C80ECCDC06
     )
-    contract = Address("0xb581f1a0f5810ad50a1f96713df63eb8cb0ebf8a")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -87,9 +57,7 @@ def test_mload_bounds2(
 
     # Source: LLL
     # { (MLOAD 0xffffffffffffffff) (MLOAD 0xffffffffffffffffffffffffffffffff) (MLOAD 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.POP(Op.MLOAD(offset=0xFFFFFFFFFFFFFFFF))
             + Op.POP(Op.MLOAD(offset=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF))
@@ -98,16 +66,16 @@ def test_mload_bounds2(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb581f1a0f5810ad50a1f96713df63eb8cb0ebf8a"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFFFFF)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

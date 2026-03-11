@@ -7,12 +7,11 @@ tests/static/state_tests/stCreate2/create2collisionSelfdestructedOOGFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -48,9 +47,6 @@ def test_create2collision_selfdestructed_oog(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01")
-    callee_1 = Address("0xe2b35478fdd26477cc576dd906e6277761246a3c")
-    callee_2 = Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -61,27 +57,30 @@ def test_create2collision_selfdestructed_oog(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: LLL
     # { (SELFDESTRUCT 0x10) }
-    pre[contract] = Account(
+    pre.deploy_contract(
+        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
         balance=1,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
+        address=Address("0xaf3ecba2fe09a4f6c19f16a9d119e44e08c2da01"),  # noqa: E501
     )
     # Source: LLL
     # { (SELFDESTRUCT 0x10) }
-    pre[callee_1] = Account(
+    pre.deploy_contract(
+        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
         balance=1,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
+        address=Address("0xe2b35478fdd26477cc576dd906e6277761246a3c"),  # noqa: E501
     )
     # Source: LLL
     # { (SELFDESTRUCT 0x10) }
-    pre[callee_2] = Account(
+    pre.deploy_contract(
+        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
         balance=1,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
+        address=Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -92,14 +91,9 @@ def test_create2collision_selfdestructed_oog(
         data=tx_data,
         gas_limit=200000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
-    post = {
-        contract: Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP),
-        callee_1: Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP),
-        callee_2: Account(code=Op.SELFDESTRUCT(address=0x10) + Op.STOP),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

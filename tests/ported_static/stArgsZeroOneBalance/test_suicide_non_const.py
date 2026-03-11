@@ -7,12 +7,11 @@ tests/static/state_tests/stArgsZeroOneBalance/suicideNonConstFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -31,32 +30,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (
-            0,
-            {
-                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
-                    code=Op.SELFDESTRUCT(
-                        address=Op.BALANCE(
-                            address=0x95E7BAEA6A6C7C4C2DFEB977EFAC326AF552D87
-                        )
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            1,
-            {
-                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
-                    code=Op.SELFDESTRUCT(
-                        address=Op.BALANCE(
-                            address=0x95E7BAEA6A6C7C4C2DFEB977EFAC326AF552D87
-                        )
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
+        (0, {}),
+        (1, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -72,7 +47,6 @@ def test_suicide_non_const(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -85,9 +59,7 @@ def test_suicide_non_const(
 
     # Source: LLL
     # { (SELFDESTRUCT (BALANCE 0x095e7baea6a6c7c4c2dfeb977efac326af552d87)) }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(
                 address=Op.BALANCE(
@@ -96,16 +68,16 @@ def test_suicide_non_const(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/RevertPrefoundOOGFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_revert_prefound_oog(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0x35b3f8ca79c46f2cbc3db596a2162ade570b0add")
     callee = Address("0x85fdde91fd0ce22a2968e1f1b2ebb9f9e5a180ba")
 
     env = Environment(
@@ -50,9 +48,7 @@ def test_revert_prefound_oog(
 
     # Source: LLL
     # { [[0]] (CREATE 0 0 32) (KECCAK256 0x00 0x2fffff) }
-    pre[contract] = Account(
-        balance=1,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0, value=Op.CREATE(value=0x0, offset=0x0, size=0x20)
@@ -60,31 +56,20 @@ def test_revert_prefound_oog(
             + Op.SHA3(offset=0x0, size=0x2FFFFF)
             + Op.STOP
         ),
+        balance=1,
+        nonce=0,
+        address=Address("0x35b3f8ca79c46f2cbc3db596a2162ade570b0add"),  # noqa: E501
     )
     pre[callee] = Account(balance=1, nonce=0)
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=930000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CREATE(value=0x0, offset=0x0, size=0x20),
-                )
-                + Op.SHA3(offset=0x0, size=0x2FFFFF)
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP150singleCodeGasPrices/eip2929-ffFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )

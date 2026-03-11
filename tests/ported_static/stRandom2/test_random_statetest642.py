@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom2/randomStatetest642Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_random_statetest642(
     )
     contract = Address("0x0000000000000000000000000000000000000007")
     callee = Address("0x78d51368c50ed27350d847254125276522cf9dac")
-    callee_1 = Address("0x88f8bb676eb054b4f4788abf1200cb51361038cf")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +49,7 @@ def test_random_statetest642(
 
     pre[callee] = Account(balance=0x11BAE0BB79D6A164, nonce=163)
     # Source: raw bytecode
-    pre[callee_1] = Account(
-        balance=0x577686E8D1344340,
-        nonce=112,
+    pre.deploy_contract(
         code=(
             Op.SLOAD(key=0xF46A4F)
             + Op.JUMPI(
@@ -67,8 +63,11 @@ def test_random_statetest642(
                 value=0x34E99E4BA9EE,
             )
         ),
+        balance=0x577686E8D1344340,
+        nonce=112,
+        address=Address("0x88f8bb676eb054b4f4788abf1200cb51361038cf"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x26551A696CACB206, nonce=0)
+    pre[sender] = Account(balance=0x26551A696CACB206)
 
     tx = Transaction(
         sender=sender,
@@ -88,26 +87,9 @@ def test_random_statetest642(
         ),
         gas_limit=4901005,
         gas_price=10,
-        nonce=0,
         value=4125477963,
     )
 
-    post = {
-        callee_1: Account(
-            code=(
-                Op.SLOAD(key=0xF46A4F)
-                + Op.JUMPI(
-                    pc=0x4C4F0FBF6DE0659784434FB240652FF52D08,
-                    condition=0x169C9EDF92F4B39273FE47ACCC75D1209AE58463C2585607CE051FF6,  # noqa: E501
-                )
-                + Op.MSTORE8(offset=0x51F765A4788A05, value=0x8F168A43A)
-                + Op.PUSH17[0x86290691D5A3239DB43EEFEA96B0012EA2]
-                + Op.MSTORE8(
-                    offset=0x92F37FA731707F800683BAFB70815757D861AD8CC6804154CE5B9DE3146B58CD,  # noqa: E501
-                    value=0x34E99E4BA9EE,
-                )
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

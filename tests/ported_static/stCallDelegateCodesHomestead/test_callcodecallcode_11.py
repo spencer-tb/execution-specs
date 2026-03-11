@@ -8,12 +8,11 @@ callcodecallcode_11Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,9 +38,6 @@ def test_callcodecallcode_11(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xd26e26d5a4796d450bfa296d70c05f02dbc1a4b9")
-    callee = Address("0x2b0691cd58a1cf4628d642e9aca9ab04946e3ec9")
-    callee_1 = Address("0xcb4336321fac69281bd2902d427f4ef9e8584251")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +48,7 @@ def test_callcodecallcode_11(
         gas_limit=30000000,
     )
 
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -69,10 +63,10 @@ def test_callcodecallcode_11(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0x2b0691cd58a1cf4628d642e9aca9ab04946e3ec9"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x2, value=0x1)
             + Op.SSTORE(key=0x4, value=Op.CALLER)
@@ -84,12 +78,12 @@ def test_callcodecallcode_11(
             + Op.SSTORE(key=0xF0, value=Op.GASPRICE)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xcb4336321fac69281bd2902d427f4ef9e8584251"),  # noqa: E501
     )
     # Source: LLL
     # {  [[ 0 ]] (DELEGATECALL 350000 <contract:0x1000000000000000000000000000000000000001> 0 64 0 64 ) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -104,49 +98,20 @@ def test_callcodecallcode_11(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xd26e26d5a4796d450bfa296d70c05f02dbc1a4b9"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=3000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        callee: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.DELEGATECALL(
-                        gas=0x3D090,
-                        address=0xCB4336321FAC69281BD2902D427F4EF9E8584251,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(
-            code=(
-                Op.SSTORE(key=0x2, value=0x1)
-                + Op.SSTORE(key=0x4, value=Op.CALLER)
-                + Op.SSTORE(key=0x7, value=Op.CALLVALUE)
-                + Op.SSTORE(key=0xE6, value=Op.ADDRESS)
-                + Op.SSTORE(key=0xE8, value=Op.ORIGIN)
-                + Op.SSTORE(key=0xEC, value=Op.CALLDATASIZE)
-                + Op.SSTORE(key=0xEE, value=Op.CODESIZE)
-                + Op.SSTORE(key=0xF0, value=Op.GASPRICE)
-                + Op.STOP
-            ),
-        ),
         contract: Account(
             storage={
                 0: 1,
@@ -159,20 +124,6 @@ def test_callcodecallcode_11(
                 238: 34,
                 240: 10,
             },
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.DELEGATECALL(
-                        gas=0x55730,
-                        address=0x2B0691CD58A1CF4628D642E9ACA9AB04946E3EC9,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
         ),
     }
 

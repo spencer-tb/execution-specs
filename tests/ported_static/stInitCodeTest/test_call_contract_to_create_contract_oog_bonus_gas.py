@@ -8,12 +8,11 @@ CallContractToCreateContractOOGBonusGasFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_call_contract_to_create_contract_oog_bonus_gas(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,9 +50,7 @@ def test_call_contract_to_create_contract_oog_bonus_gas(
 
     # Source: LLL
     # {(MSTORE 0 0x600c60005566602060406000f060205260076039f3)[[0]](CREATE 1 11 21)(CALL 0 (SLOAD 0) 12 0 0 0 0)}  # noqa: E501
-    pre[contract] = Account(
-        balance=112,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -74,8 +70,11 @@ def test_call_contract_to_create_contract_oog_bonus_gas(
             )
             + Op.STOP
         ),
+        balance=112,
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00)
 
     tx = Transaction(
         sender=sender,
@@ -83,37 +82,14 @@ def test_call_contract_to_create_contract_oog_bonus_gas(
         data=bytes.fromhex("00"),
         gas_limit=200000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
         contract: Account(
             storage={0: 0xD2571607E241ECF590ED94B12D87C94BABE36DB6},
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0x600C60005566602060406000F060205260076039F3,
-                )
-                + Op.SSTORE(
-                    key=0x0,
-                    value=Op.CREATE(value=0x1, offset=0xB, size=0x15),
-                )
-                + Op.CALL(
-                    gas=0x0,
-                    address=Op.SLOAD(key=0x0),
-                    value=0xC,
-                    args_offset=0x0,
-                    args_size=0x0,
-                    ret_offset=0x0,
-                    ret_size=0x0,
-                )
-                + Op.STOP
-            ),
         ),
         Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(
             storage={0: 12},
-            code=Op.CREATE(value=0x0, offset=0x40, size=0x20),
         ),
     }
 

@@ -7,12 +7,11 @@ tests/static/state_tests/stReturnDataTest/returndatasize_initialFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_returndatasize_initial(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x3a939fcca7da8b1332893bcca91690406f4b7a82")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,28 +49,22 @@ def test_returndatasize_initial(
 
     # Source: LLL
     # { (SSTORE 0 (RETURNDATASIZE)) }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE) + Op.STOP,
         storage={0x0: 0x1},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x3a939fcca7da8b1332893bcca91690406f4b7a82"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE) + Op.STOP,
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

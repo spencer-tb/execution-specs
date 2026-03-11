@@ -7,12 +7,11 @@ tests/static/state_tests/stReturnDataTest/returndatacopy_initial_256Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -48,7 +47,6 @@ def test_returndatacopy_initial_256(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x28f194b678152b435b5910dbdf69c091fa056347")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -61,9 +59,7 @@ def test_returndatacopy_initial_256(
 
     # Source: LLL
     # { (RETURNDATACOPY (- 0 (CALLDATALOAD 0)) 0 0x64) (MSTORE 0 0x112233445566778899aabbccddeeff) (SSTORE 0 (MLOAD 0)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.RETURNDATACOPY(
                 dest_offset=Op.SUB(0x0, Op.CALLDATALOAD(offset=0x0)),
@@ -75,8 +71,11 @@ def test_returndatacopy_initial_256(
             + Op.STOP
         ),
         storage={0x0: 0x1},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x28f194b678152b435b5910dbdf69c091fa056347"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -86,24 +85,10 @@ def test_returndatacopy_initial_256(
         data=tx_data,
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 1},
-            code=(
-                Op.RETURNDATACOPY(
-                    dest_offset=Op.SUB(0x0, Op.CALLDATALOAD(offset=0x0)),
-                    offset=0x0,
-                    size=0x64,
-                )
-                + Op.MSTORE(offset=0x0, value=0x112233445566778899AABBCCDDEEFF)
-                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest146Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest146(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xde14e9d6c6f9145c355fdf3100fe961632d4cf85")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,8 +45,7 @@ def test_random_statetest146(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -66,9 +63,7 @@ def test_random_statetest146(
         ),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.NUMBER
             + Op.TIMESTAMP
@@ -80,6 +75,9 @@ def test_random_statetest146(
             + Op.POP(Op.NUMBER)
             + Op.EXP(Op.CALLCODE, Op.EQ(Op.CALLDATASIZE, Op.ADDRESS))
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xde14e9d6c6f9145c355fdf3100fe961632d4cf85"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -88,40 +86,9 @@ def test_random_statetest146(
         data=bytes.fromhex("42"),
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.NUMBER
-                + Op.TIMESTAMP
-                + Op.NUMBER
-                + Op.NUMBER
-                + Op.PREVRANDAO
-                + Op.PREVRANDAO
-                + Op.TIMESTAMP
-                + Op.POP(Op.NUMBER)
-                + Op.EXP(Op.CALLCODE, Op.EQ(Op.CALLDATASIZE, Op.ADDRESS))
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

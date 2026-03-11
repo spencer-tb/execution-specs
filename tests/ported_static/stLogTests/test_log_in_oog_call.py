@@ -7,12 +7,11 @@ tests/static/state_tests/stLogTests/logInOOG_CallFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,8 +35,6 @@ def test_log_in_oog_call(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x825dcc9fbf5cff44e688bae15b79e8e11951be2a")
-    callee = Address("0x69b6134b97e638b919a7089df82af74961e71ff8")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,20 +45,19 @@ def test_log_in_oog_call(
         gas_limit=1000000,
     )
 
-    pre[callee] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.LOG0(offset=0x0, size=0x20)
             + Op.MLOAD(offset=0xFFFFFFFFFFFFFFFF)
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x69b6134b97e638b919a7089df82af74961e71ff8"),  # noqa: E501
     )
     # Source: LLL
     # { [[ 0 ]] (CALL 100000 <contract:0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6> 23 0 0 0 0) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -77,44 +73,20 @@ def test_log_in_oog_call(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x825dcc9fbf5cff44e688bae15b79e8e11951be2a"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=210000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        callee: Account(
-            code=(
-                Op.LOG0(offset=0x0, size=0x20)
-                + Op.MLOAD(offset=0xFFFFFFFFFFFFFFFF)
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0x186A0,
-                        address=0x69B6134B97E638B919A7089DF82AF74961E71FF8,
-                        value=0x17,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

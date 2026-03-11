@@ -7,11 +7,11 @@ tests/static/state_tests/stEIP2930/transactionCostsFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     AccessList,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -29,14 +29,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_access_list, expected_post",
     [
-        (
-            [],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
-        ),
+        ([], {}),
         (
             [
                 AccessList(
@@ -184,11 +177,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     ],
                 ),
             ],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
+            {},
         ),
         (
             [
@@ -199,11 +188,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage_keys=[],
                 )
             ],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
+            {},
         ),
         (
             [
@@ -218,11 +203,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     ],
                 )
             ],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
+            {},
         ),
         (
             [
@@ -237,11 +218,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     ],
                 )
             ],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
+            {},
         ),
         (
             [
@@ -256,11 +233,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     ],
                 )
             ],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
+            {},
         ),
         (
             [
@@ -278,11 +251,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     ],
                 )
             ],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
+            {},
         ),
         (
             [
@@ -300,11 +269,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     ],
                 )
             ],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
+            {},
         ),
         (
             [
@@ -329,11 +294,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     ],
                 ),
             ],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
+            {},
         ),
         (
             [
@@ -358,11 +319,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     ],
                 ),
             ],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
+            {},
         ),
         (
             [
@@ -387,20 +344,9 @@ REFERENCE_SPEC_VERSION = "N/A"
                     ],
                 ),
             ],
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
+            {},
         ),
-        (
-            None,
-            {
-                Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"): Account(
-                    code=bytes.fromhex("00")
-                )
-            },
-        ),
+        (None, {}),
     ],
     ids=[
         "case0",
@@ -429,7 +375,6 @@ def test_transaction_costs(
     sender = EOA(
         key=0x7778A3B885EA30938725C6E00831943A454477163CDBC252DEBEB9612B4FA5F7
     )
-    contract = Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -441,12 +386,13 @@ def test_transaction_costs(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=bytes.fromhex("00"),
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=bytes.fromhex("00"),
+        address=Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x5FA9C18, nonce=0)
+    pre[sender] = Account(balance=0x5FA9C18)
 
     tx = Transaction(
         sender=sender,
@@ -454,7 +400,6 @@ def test_transaction_costs(
         data=bytes.fromhex("00"),
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
         access_list=tx_access_list,
     )

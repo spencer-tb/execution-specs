@@ -7,12 +7,11 @@ tests/static/state_tests/stSystemOperationsTest/return1Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_return1(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xe50c84b8b720a23e1bfb8bfaaee5f44b6dd44139")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,35 +47,26 @@ def test_return1(
 
     # Source: LLL
     # { (MSTORE8 0 55) (RETURN 0 2)}
-    pre[contract] = Account(
-        balance=23,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE8(offset=0x0, value=0x37)
             + Op.RETURN(offset=0x0, size=0x2)
             + Op.STOP
         ),
+        balance=23,
+        nonce=0,
+        address=Address("0xe50c84b8b720a23e1bfb8bfaaee5f44b6dd44139"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE8(offset=0x0, value=0x37)
-                + Op.RETURN(offset=0x0, size=0x2)
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

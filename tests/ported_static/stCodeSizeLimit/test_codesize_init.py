@@ -7,12 +7,11 @@ tests/static/state_tests/stCodeSizeLimit/codesizeInitFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -45,7 +44,7 @@ def test_codesize_init(
         gas_limit=20000000,
     )
 
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
@@ -53,8 +52,6 @@ def test_codesize_init(
         data=bytes.fromhex("38600155303b60025500"),
         gas_limit=15000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {

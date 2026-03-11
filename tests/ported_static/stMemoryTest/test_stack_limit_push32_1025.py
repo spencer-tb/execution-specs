@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/stackLimitPush32_1025Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_stack_limit_push32_1025(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x3a584dfb85485c7da4f7f6203d4aa78e8c40295a")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,9 +47,7 @@ def test_stack_limit_push32_1025(
 
     # Source: asm
     # (asm 1023 0x00 MSTORE JUMPDEST 0x0102030405060708090a0102030405060708090a0102030405060708090a0102 0x01 0x00 MLOAD SUB 0x00 MSTORE 0x00 MLOAD 0x06 JUMPI STOP )  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x3FF)
             + Op.JUMPDEST
@@ -63,35 +59,20 @@ def test_stack_limit_push32_1025(
             + Op.STOP
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x3a584dfb85485c7da4f7f6203d4aa78e8c40295a"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(offset=0x0, value=0x3FF)
-                + Op.JUMPDEST
-                + Op.PUSH32[
-                    0x102030405060708090A0102030405060708090A0102030405060708090A0102  # noqa: E501
-                ]
-                + Op.MSTORE(
-                    offset=0x0, value=Op.SUB(Op.MLOAD(offset=0x0), 0x1)
-                )
-                + Op.JUMPI(pc=0x6, condition=Op.MLOAD(offset=0x0))
-                + Op.STOP
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

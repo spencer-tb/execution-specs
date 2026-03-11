@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/codecopy_dejavu2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_codecopy_dejavu2(
     sender = EOA(
         key=0x7DD1D0EC78FE936B0E88F8C21226F51F048579915C7BAFF1C5D7FD84B2139BF1
     )
-    contract = Address("0xc165257d26f9435cbd00d8e2825ff173393d3b31")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,39 +45,27 @@ def test_codecopy_dejavu2(
         gas_limit=52949672960,
     )
 
-    pre[sender] = Account(balance=0x271000000000, nonce=0)
+    pre[sender] = Account(balance=0x271000000000)
     # Source: Yul
     # { codecopy(0x1f, 0x010000000000000001, 0x0a) let mem := mload(0) if eq(mem, 0) {stop()} }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CODECOPY(dest_offset=0x1F, offset=0x10000000000000001, size=0xA)
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xc165257d26f9435cbd00d8e2825ff173393d3b31"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.CODECOPY(
-                    dest_offset=0x1F,
-                    offset=0x10000000000000001,
-                    size=0xA,
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

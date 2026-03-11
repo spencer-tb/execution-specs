@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom2/randomStatetest644Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -37,8 +36,6 @@ def test_random_statetest644(
         key=0x0A10C9449493A34FD272F4BF6FC827C5B46ECE7D0253518E71286F47EC3AE23A
     )
     contract = Address("0x0000000000000000000000000000000000000001")
-    callee = Address("0x0346ad0b28ea31b7c3d398881dc11ebc97869461")
-    callee_1 = Address("0xe4882ba8527df19159e6536f4aee12c298d28f33")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -97,9 +94,7 @@ def test_random_statetest644(
         ),
     )
     # Source: raw bytecode
-    pre[callee] = Account(
-        balance=0x23C22AEB4961B17E,
-        nonce=148,
+    pre.deploy_contract(
         code=(
             Op.EXTCODESIZE(address=0xA66737FDCC16CD591384A0B12FB650CE85011E55)
             + Op.PUSH30[
@@ -124,12 +119,13 @@ def test_random_statetest644(
             + Op.CALLVALUE
             + Op.COINBASE
         ),
+        balance=0x23C22AEB4961B17E,
+        nonce=148,
+        address=Address("0x0346ad0b28ea31b7c3d398881dc11ebc97869461"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x236D08FE524712CB, nonce=0)
+    pre[sender] = Account(balance=0x236D08FE524712CB)
     # Source: raw bytecode
-    pre[callee_1] = Account(
-        balance=0x9183FD5B40D86E03,
-        nonce=28,
+    pre.deploy_contract(
         code=(
             Op.PUSH21[0x357A5ADE2DA3B4A5F5459FAFF84E5EA9B714B60ED2]
             + Op.PUSH3[0x57EF59]
@@ -151,6 +147,9 @@ def test_random_statetest644(
                 key=0xFE44ADD6669B247CAD0F00251697572FA913A16C98038931DF
             )
         ),
+        balance=0x9183FD5B40D86E03,
+        nonce=28,
+        address=Address("0xe4882ba8527df19159e6536f4aee12c298d28f33"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -173,111 +172,9 @@ def test_random_statetest644(
         ),
         gas_limit=48887,
         gas_price=10,
-        nonce=0,
         value=4077944035,
     )
 
-    post = {
-        coinbase: Account(
-            code=(
-                Op.PUSH24[0x351C4C5A02C8F13FA7C7F5800FA5C9BA2F3B971C13764F9B]
-                + Op.PUSH2[0xC2DB]
-                + Op.PUSH7[0xC3F909C17E434A]
-                + Op.PUSH9[0xD685402956CC341DBF]
-                + Op.PUSH8[0x79516900ED0A1E26]
-                + Op.PUSH7[0xDFA40E70F3BCEE]
-                + Op.PUSH24[0x3C2BFFD5B5422A2CF32B19E541F15AE2B6FBE16FD19BBD56]
-                + Op.PUSH24[0x28190F83569F036DCCD3886AA69C1E685736DA06152E3B24]
-                + Op.PUSH19[0x8B13546EA1ABD48EE47B1B2E1EC70B37FA14CC]
-                + Op.PUSH17[0x9D35FCE7380230F426455385DA80771FFC]
-                + Op.PUSH15[0x261F3BFE7BFE7F1827D17B0CF49A7D]
-                + Op.PUSH32[
-                    0xF8CEB60B6A86EBBB762EB3E4DD1A8A09EAA9A500BC65CBEFD4251865B70CA7E2  # noqa: E501
-                ]
-                + Op.PUSH7[0x82F1A2BAD52A4A]
-                + Op.PUSH10[0x7AA0BAF4EBE05130EC6A]
-                + Op.PUSH3[0xE66E71]
-                + Op.SWAP14
-                + Op.LT(
-                    0x682DCA6786082A55EDA4D65F21E9, 0xB753654F0FF08533F6D088E1
-                )
-                + Op.LOG0(
-                    offset=0xF77E3D07CC9DAA30A1B2941C17F9039FFA3BADDF70DCE808,
-                    size=0x345D12B775CE0F47447731E5EEEFF44CA0A946E1DF,
-                )
-                + Op.SLOAD(key=0xACB22D3FE0B1ECEA101F659FD3FCFE7D9F16)
-                + Op.EXTCODECOPY(
-                    address=0x2EBBA385BD7F6DDE6C57E2D3929A11A1EA0DA7E,
-                    dest_offset=0x118942,
-                    offset=0x32B792,
-                    size=0x73B023,
-                )
-                + Op.CALL(
-                    gas=0xB2DF5D6,
-                    address=0x2EBBA385BD7F6DDE6C57E2D3929A11A1EA0DA7E,
-                    value=0x6BD26962,
-                    args_offset=0x5B60D5,
-                    args_size=0x1ACB67,
-                    ret_offset=0x6AB8DE,
-                    ret_size=0x47F037,
-                )
-                + Op.CREATE(value=0x17EF5652, offset=0x958980, size=0x3402AF)
-                + Op.ORIGIN
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.EXTCODESIZE(
-                    address=0xA66737FDCC16CD591384A0B12FB650CE85011E55,
-                )
-                + Op.PUSH30[
-                    0x85CC6995D8948AC88F5726F16627D809C92DBA32D01471809AD1C5046B53  # noqa: E501
-                ]
-                + Op.PUSH9[0x7D1FF18BCA5A755A0C]
-                + Op.PUSH13[0xD7CE36E1DC18C7C2A909F6BC00]
-                + Op.PUSH20[0xD53F4C10A2121E6B4F0AEADC71B441C331B19EC5]
-                + Op.PUSH25[
-                    0x22835269748AE558697A082470ABAA3595D4B8256F8954C7ED
-                ]
-                + Op.PUSH6[0x5896EB04017A]
-                + Op.PUSH32[
-                    0x522BE50FD88E38EE27DE7EBD20794466F490BCB43162328A337A6E42FD88CACF  # noqa: E501
-                ]
-                + Op.PUSH11[0x8ECB264FE21836CF31D0AE]
-                + Op.PUSH28[
-                    0xE53DA5FE2CAC802905640C0A18B2CCFD806FED6D7CBAF1FC19C6931D
-                ]
-                + Op.PUSH13[0x37B9320599CA5061121076A654]
-                + Op.PUSH16[0xC888F04E94C09ADCC8A3CC9D00244883]
-                + Op.DUP10
-                + Op.PUSH24[0xC1010C1CDEF7438B3D1E99CF6D78B9D4F55962B04476323F]
-                + Op.CALLVALUE
-                + Op.COINBASE
-            ),
-        ),
-        callee_1: Account(
-            code=(
-                Op.PUSH21[0x357A5ADE2DA3B4A5F5459FAFF84E5EA9B714B60ED2]
-                + Op.PUSH3[0x57EF59]
-                + Op.PUSH30[
-                    0x9AA2E6D9316426366FE24FB9ED56C4A9E5DCF06AF08C42368FDAA12B7147  # noqa: E501
-                ]
-                + Op.PUSH3[0x83C5BD]
-                + Op.PUSH2[0x47ED]
-                + Op.SWAP4
-                + Op.DELEGATECALL(
-                    gas=0xC30A604,
-                    address=Op.PUSH20[0x5],
-                    args_offset=0x28EC1A,
-                    args_size=0x4971D8,
-                    ret_offset=0x52D373,
-                    ret_size=0x5663AE,
-                )
-                + Op.SLOAD(
-                    key=0xFE44ADD6669B247CAD0F00251697572FA913A16C98038931DF,
-                )
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

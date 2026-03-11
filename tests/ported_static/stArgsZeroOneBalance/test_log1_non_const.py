@@ -7,12 +7,11 @@ tests/static/state_tests/stArgsZeroOneBalance/log1NonConstFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,44 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (
-            0,
-            {
-                Address("0x99914055ed765ea48582acc6c8196d07835da7d7"): Account(
-                    code=Op.LOG1(
-                        offset=Op.BALANCE(
-                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
-                        ),
-                        size=Op.BALANCE(
-                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
-                        ),
-                        topic_1=Op.BALANCE(
-                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
-                        ),
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            1,
-            {
-                Address("0x99914055ed765ea48582acc6c8196d07835da7d7"): Account(
-                    code=Op.LOG1(
-                        offset=Op.BALANCE(
-                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
-                        ),
-                        size=Op.BALANCE(
-                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
-                        ),
-                        topic_1=Op.BALANCE(
-                            address=0x99914055ED765EA48582ACC6C8196D07835DA7D7
-                        ),
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
+        (0, {}),
+        (1, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -82,7 +45,6 @@ def test_log1_non_const(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x99914055ed765ea48582acc6c8196d07835da7d7")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -93,12 +55,10 @@ def test_log1_non_const(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: LLL
     # { (LOG1 (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>) (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>) (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.LOG1(
                 offset=Op.BALANCE(
@@ -113,15 +73,15 @@ def test_log1_non_const(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x99914055ed765ea48582acc6c8196d07835da7d7"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

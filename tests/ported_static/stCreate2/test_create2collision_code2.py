@@ -7,12 +7,11 @@ tests/static/state_tests/stCreate2/create2collisionCode2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -45,7 +44,6 @@ def test_create2collision_code2(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -56,9 +54,12 @@ def test_create2collision_code2(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[contract] = Account(balance=0, nonce=1, code=Op.SUB(Op.MUL, Op.ADD))
+    pre.deploy_contract(
+        code=Op.SUB(Op.MUL, Op.ADD),
+        address=Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"),  # noqa: E501
+    )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -68,12 +69,9 @@ def test_create2collision_code2(
         data=tx_data,
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
-    post = {
-        contract: Account(code=Op.SUB(Op.MUL, Op.ADD)),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

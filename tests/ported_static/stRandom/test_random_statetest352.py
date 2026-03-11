@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest352Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest352(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x936cfc08bee110b939b632fe581fdc10e3484e0f")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,8 +45,7 @@ def test_random_statetest352(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -66,9 +63,7 @@ def test_random_statetest352(
         ),
     )
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH32[
                 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
@@ -99,6 +94,8 @@ def test_random_statetest352(
             + Op.EQ
             + Op.ADDMOD
         ),
+        nonce=0,
+        address=Address("0x936cfc08bee110b939b632fe581fdc10e3484e0f"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -114,59 +111,9 @@ def test_random_statetest352(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=21936558,
     )
 
-    post = {
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.PUSH32[
-                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
-                ]
-                + Op.PUSH32[0x0]
-                + Op.GASPRICE
-                + Op.CALLCODE(
-                    gas=Op.DUP5,
-                    address=Op.DUP3,
-                    value=Op.TIMESTAMP,
-                    args_offset=Op.SGT(
-                        Op.PUSH32[0x4F3F701464972E74606D6EA82D4D3080599A0E79],
-                        Op.PUSH32[0x0],
-                    ),
-                    args_size=Op.PUSH32[
-                        0x4F3F701464972E74606D6EA82D4D3080599A0E79
-                    ],
-                    ret_offset=Op.PUSH32[0xC350],
-                    ret_size=Op.GASLIMIT,
-                )
-                + Op.DUP11
-                + Op.SWAP9
-                + Op.SIGNEXTEND
-                + Op.GASLIMIT
-                + Op.CODECOPY
-                + Op.LOG3
-                + Op.SWAP14
-                + Op.EQ
-                + Op.ADDMOD
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

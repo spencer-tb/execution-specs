@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/stackLimitGas_1025Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_stack_limit_gas_1025(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x6498d2da4fc198b991f2214160a3ce0e5438f3e4")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,9 +47,7 @@ def test_stack_limit_gas_1025(
 
     # Source: asm
     # (asm 1023 0x00 MSTORE JUMPDEST GAS 0x01 0x00 MLOAD SUB 0x00 MSTORE 0x00 MLOAD 0x06 JUMPI STOP )  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x3FF)
             + Op.JUMPDEST
@@ -61,33 +57,20 @@ def test_stack_limit_gas_1025(
             + Op.STOP
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x6498d2da4fc198b991f2214160a3ce0e5438f3e4"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(offset=0x0, value=0x3FF)
-                + Op.JUMPDEST
-                + Op.GAS
-                + Op.MSTORE(
-                    offset=0x0, value=Op.SUB(Op.MLOAD(offset=0x0), 0x1)
-                )
-                + Op.JUMPI(pc=0x6, condition=Op.MLOAD(offset=0x0))
-                + Op.STOP
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

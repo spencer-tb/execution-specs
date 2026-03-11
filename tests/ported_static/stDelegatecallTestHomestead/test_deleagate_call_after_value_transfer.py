@@ -8,12 +8,11 @@ deleagateCallAfterValueTransferFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_deleagate_call_after_value_transfer(
     sender = EOA(
         key=0x3722FAAB4D25B944622D559EA4BCF38B4BCF3CAF07A6D2C6FD99321C1A66C974
     )
-    contract = Address("0xdd657898b318b3d967472eaa82bb75c4141b6735")
-    callee = Address("0x0346aa231cb52f55ddf201dc19ca469cc73e6495")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,22 +48,20 @@ def test_deleagate_call_after_value_transfer(
         gas_limit=1000000,
     )
 
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.CALLVALUE)
             + Op.SSTORE(key=0x1, value=Op.CALLER)
             + Op.SSTORE(key=0x2, value=Op.CALLDATALOAD(offset=0x0))
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x0346aa231cb52f55ddf201dc19ca469cc73e6495"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x2386F26FC10000, nonce=0)
+    pre[sender] = Account(balance=0x2386F26FC10000)
     # Source: LLL
     # { (MSTORE 0 0x01) (DELEGATECALL 100000 <contract:0x1000000000000000000000000000000000000001> 0 64 0 64) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0x10C8E0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x1)
             + Op.DELEGATECALL(
@@ -79,44 +74,24 @@ def test_deleagate_call_after_value_transfer(
             )
             + Op.STOP
         ),
+        balance=0x10C8E0,
+        nonce=0,
+        address=Address("0xdd657898b318b3d967472eaa82bb75c4141b6735"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=453081,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        callee: Account(
-            code=(
-                Op.SSTORE(key=0x0, value=Op.CALLVALUE)
-                + Op.SSTORE(key=0x1, value=Op.CALLER)
-                + Op.SSTORE(key=0x2, value=Op.CALLDATALOAD(offset=0x0))
-                + Op.STOP
-            ),
-        ),
         contract: Account(
             storage={
                 1: 0x6FDA566D1950D7E0A4DAC1DE87109B2CA7D12DA4,
                 2: 1,
             },
-            code=(
-                Op.MSTORE(offset=0x0, value=0x1)
-                + Op.DELEGATECALL(
-                    gas=0x186A0,
-                    address=0x346AA231CB52F55DDF201DC19CA469CC73E6495,
-                    args_offset=0x0,
-                    args_size=0x40,
-                    ret_offset=0x0,
-                    ret_size=0x40,
-                )
-                + Op.STOP
-            ),
         ),
     }
 

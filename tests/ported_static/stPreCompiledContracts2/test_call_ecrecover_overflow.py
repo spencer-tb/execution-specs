@@ -8,12 +8,11 @@ CallEcrecover_OverflowFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,24 +35,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "917694f918c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c000000000000000000000000000000000000000000000000000000000000001cfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd03641421fffd310ac743f371de3b9f7f9cb56c0b28ad43601b4ab949f53faa07bd2c804",  # noqa: E501
             {
                 Address("0xdb8963071feae3b63e19d9d7af8ee89a92e99356"): Account(
-                    storage={0: 1},
-                    code=Op.CALLDATACOPY(
-                        dest_offset=0x0, offset=0x4, size=0x80
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0xBB8,
-                            address=0x1,
-                            value=Op.DUP1,
-                            args_offset=0x0,
-                            args_size=Op.DUP1,
-                            ret_offset=0x80,
-                            ret_size=0x20,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -61,24 +43,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "917694f918c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c000000000000000000000000000000000000000000000000000000000000001cfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364140efffd310ac743f371de3b9f7f9cb56c0b28ad43601b4ab949f53faa07bd2c804",  # noqa: E501
             {
                 Address("0xdb8963071feae3b63e19d9d7af8ee89a92e99356"): Account(
-                    storage={0: 1},
-                    code=Op.CALLDATACOPY(
-                        dest_offset=0x0, offset=0x4, size=0x80
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0xBB8,
-                            address=0x1,
-                            value=Op.DUP1,
-                            args_offset=0x0,
-                            args_size=Op.DUP1,
-                            ret_offset=0x80,
-                            ret_size=0x20,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -86,24 +51,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "917694f918c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c000000000000000000000000000000000000000000000000000000000000001c48b55bfa915ac795c431978d8a6a992b628d557da5ff759b307d495a36649353fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141",  # noqa: E501
             {
                 Address("0xdb8963071feae3b63e19d9d7af8ee89a92e99356"): Account(
-                    storage={0: 1},
-                    code=Op.CALLDATACOPY(
-                        dest_offset=0x0, offset=0x4, size=0x80
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0xBB8,
-                            address=0x1,
-                            value=Op.DUP1,
-                            args_offset=0x0,
-                            args_size=Op.DUP1,
-                            ret_offset=0x80,
-                            ret_size=0x20,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -111,24 +59,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "917694f918c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c000000000000000000000000000000000000000000000000000000000000001c48b55bfa915ac795c431978d8a6a992b628d557da5ff759b307d495a36649353fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364142",  # noqa: E501
             {
                 Address("0xdb8963071feae3b63e19d9d7af8ee89a92e99356"): Account(
-                    storage={0: 1},
-                    code=Op.CALLDATACOPY(
-                        dest_offset=0x0, offset=0x4, size=0x80
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0xBB8,
-                            address=0x1,
-                            value=Op.DUP1,
-                            args_offset=0x0,
-                            args_size=Op.DUP1,
-                            ret_offset=0x80,
-                            ret_size=0x20,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -136,24 +67,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             "917694f918c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c000000000000000000000000000000000000000000000000000000000000001cfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd03641411fffd310ac743f371de3b9f7f9cb56c0b28ad43601b4ab949f53faa07bd2c804",  # noqa: E501
             {
                 Address("0xdb8963071feae3b63e19d9d7af8ee89a92e99356"): Account(
-                    storage={0: 1},
-                    code=Op.CALLDATACOPY(
-                        dest_offset=0x0, offset=0x4, size=0x80
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0xBB8,
-                            address=0x1,
-                            value=Op.DUP1,
-                            args_offset=0x0,
-                            args_size=Op.DUP1,
-                            ret_offset=0x80,
-                            ret_size=0x20,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -164,24 +78,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 1,
                         1: 0x2182DA748249A933BF737586B80212DF19B8F829,
-                    },
-                    code=Op.CALLDATACOPY(
-                        dest_offset=0x0, offset=0x4, size=0x80
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0xBB8,
-                            address=0x1,
-                            value=Op.DUP1,
-                            args_offset=0x0,
-                            args_size=Op.DUP1,
-                            ret_offset=0x80,
-                            ret_size=0x20,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -192,24 +89,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 1,
                         1: 0x1B85AC3C9B09DE43659C5D04A2D9C75457D9ABF4,
-                    },
-                    code=Op.CALLDATACOPY(
-                        dest_offset=0x0, offset=0x4, size=0x80
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0xBB8,
-                            address=0x1,
-                            value=Op.DUP1,
-                            args_offset=0x0,
-                            args_size=Op.DUP1,
-                            ret_offset=0x80,
-                            ret_size=0x20,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -220,24 +100,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={
                         0: 1,
                         1: 0xD0277C8A3ECCD462A313FC60161BAC36B16E8699,
-                    },
-                    code=Op.CALLDATACOPY(
-                        dest_offset=0x0, offset=0x4, size=0x80
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=0xBB8,
-                            address=0x1,
-                            value=Op.DUP1,
-                            args_offset=0x0,
-                            args_size=Op.DUP1,
-                            ret_offset=0x80,
-                            ret_size=0x20,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -265,7 +128,6 @@ def test_call_ecrecover_overflow(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xdb8963071feae3b63e19d9d7af8ee89a92e99356")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -276,7 +138,7 @@ def test_call_ecrecover_overflow(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: Yul
     # {
     #  // Copy Hash, V, R, S values
@@ -286,9 +148,7 @@ def test_call_ecrecover_overflow(
     #  sstore(0, call(3000, 1, 0, 0, 0x80, 0x80, 0x20))
     #  sstore(1, mload(0x80))
     # }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALLDATACOPY(dest_offset=0x0, offset=0x4, size=0x80)
             + Op.SSTORE(
@@ -306,6 +166,8 @@ def test_call_ecrecover_overflow(
             + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x80))
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xdb8963071feae3b63e19d9d7af8ee89a92e99356"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -316,7 +178,6 @@ def test_call_ecrecover_overflow(
         data=tx_data,
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 

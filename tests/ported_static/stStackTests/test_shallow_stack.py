@@ -7,12 +7,11 @@ tests/static/state_tests/stStackTests/shallowStackFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -215,7 +214,7 @@ def test_shallow_stack(
         gas_limit=42949672960,
     )
 
-    pre[sender] = Account(balance=0x271000000000, nonce=0)
+    pre[sender] = Account(balance=0x271000000000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -225,8 +224,6 @@ def test_shallow_stack(
         data=tx_data,
         gas_limit=300000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post: dict = {}

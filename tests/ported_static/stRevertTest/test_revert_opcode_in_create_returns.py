@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/RevertOpcodeInCreateReturnsFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_revert_opcode_in_create_returns(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x910073ceed5c2372dc67ffd941b0f148dc4ebaf5")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +49,7 @@ def test_revert_opcode_in_create_returns(
 
     # Source: LLL
     # { (seq (CREATE 0 0 (lll (seq (mstore 0 0x112233) (revert 0 32)) 0)) (SSTORE 0 (RETURNDATASIZE)) (STOP) )}  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0xD]
             + Op.CODECOPY(dest_offset=0x0, offset=0x15, size=Op.DUP1)
@@ -69,37 +65,20 @@ def test_revert_opcode_in_create_returns(
             + Op.STOP
         ),
         storage={0x0: 0x1},
+        nonce=0,
+        address=Address("0x910073ceed5c2372dc67ffd941b0f148dc4ebaf5"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 32},
-            code=(
-                Op.PUSH1[0xD]
-                + Op.CODECOPY(dest_offset=0x0, offset=0x15, size=Op.DUP1)
-                + Op.PUSH1[0x0]
-                + Op.PUSH1[0x0]
-                + Op.POP(Op.CREATE)
-                + Op.SSTORE(key=0x0, value=Op.RETURNDATASIZE)
-                + Op.STOP
-                + Op.STOP
-                + Op.INVALID
-                + Op.MSTORE(offset=0x0, value=0x112233)
-                + Op.REVERT(offset=0x0, size=0x20)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 32}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

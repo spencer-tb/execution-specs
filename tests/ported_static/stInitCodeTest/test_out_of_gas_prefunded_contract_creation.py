@@ -8,12 +8,11 @@ OutOfGasPrefundedContractCreationFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -68,7 +67,7 @@ def test_out_of_gas_prefunded_contract_creation(
     )
 
     pre[contract] = Account(balance=1, nonce=0)
-    pre[sender] = Account(balance=0xF424000, nonce=0)
+    pre[sender] = Account(balance=0xF424000)
 
     tx = Transaction(
         sender=sender,
@@ -78,7 +77,6 @@ def test_out_of_gas_prefunded_contract_creation(
         ),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/mem32kb_singleByte-33Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )

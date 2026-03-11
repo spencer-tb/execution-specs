@@ -7,12 +7,11 @@ tests/static/state_tests/stRefundTest/refund_CallAFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,8 +35,6 @@ def test_refund_call_a(
     sender = EOA(
         key=0x752660E61324E901F7231DFAE39984F4D433A241D533838E4700925F477814FD
     )
-    contract = Address("0x3d72f604b4d56320853a5ece45772dbbf419f315")
-    callee = Address("0xf4c9fc42faeda49049e3b8e2b97a17cc2fe95718")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,9 +47,7 @@ def test_refund_call_a(
 
     # Source: LLL
     # { [[ 0 ]] (CALL 5500 <contract:0xaaae7baea6a6c7c4c2dfeb977efac326af552aaa> 0 0 0 0 0 )}  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -69,46 +64,30 @@ def test_refund_call_a(
             + Op.STOP
         ),
         storage={0x1: 0x1},
-    )
-    pre[sender] = Account(balance=0x1312D00, nonce=0)
-    pre[coinbase] = Account(balance=0, nonce=1)
-    pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
+        address=Address("0x3d72f604b4d56320853a5ece45772dbbf419f315"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0x1312D00)
+    pre[coinbase] = Account(balance=0, nonce=1)
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP,
         storage={0x1: 0x1},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xf4c9fc42faeda49049e3b8e2b97a17cc2fe95718"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=200000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
     post = {
-        contract: Account(
-            storage={0: 1, 1: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0x157C,
-                        address=0xF4C9FC42FAEDA49049E3B8E2B97A17CC2FE95718,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP),
+        contract: Account(storage={0: 1, 1: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

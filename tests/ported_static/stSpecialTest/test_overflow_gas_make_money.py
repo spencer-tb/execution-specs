@@ -7,12 +7,11 @@ tests/static/state_tests/stSpecialTest/OverflowGasMakeMoneyFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -46,15 +45,13 @@ def test_overflow_gas_make_money(
         gas_limit=9223372036854775807,
     )
 
-    pre[sender] = Account(balance=0x4FEC000000000139C, nonce=0)
+    pre[sender] = Account(balance=0x4FEC000000000139C)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=501,
     )
 

@@ -8,12 +8,11 @@ callcodeInInitcodeToExistingContractWithValueTransferFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_callcode_in_initcode_to_existing_contract_with_value_transfer(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x1000000000000000000000000000000000000000")
-    callee = Address("0x945304eb96065b2a98b57a48a06ae28d285a71b5")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +50,7 @@ def test_callcode_in_initcode_to_existing_contract_with_value_transfer(
 
     # Source: LLL
     # { (MSTORE 0 0x6040600060406000600573945304eb96065b2a98b57a48a06ae28d285a71b562) (MSTORE 32 0x0186a0f260005500000000000000000000000000000000000000000000000000) (CREATE 5 0 64) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0x2710,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -68,45 +63,30 @@ def test_callcode_in_initcode_to_existing_contract_with_value_transfer(
             + Op.CREATE(value=0x5, offset=0x0, size=0x40)
             + Op.STOP
         ),
+        balance=0x2710,
+        nonce=0,
+        address=Address("0x1000000000000000000000000000000000000000"),  # noqa: E501
     )
     # Source: LLL
     # { (SSTORE 2 1) }
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x2, value=0x1) + Op.STOP,
+        nonce=0,
+        address=Address("0x945304eb96065b2a98b57a48a06ae28d285a71b5"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x2386F26FC10000, nonce=0)
+    pre[sender] = Account(balance=0x2386F26FC10000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=453081,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0x6040600060406000600573945304EB96065B2A98B57A48A06AE28D285A71B562,  # noqa: E501
-                )
-                + Op.MSTORE(
-                    offset=0x20,
-                    value=0x186A0F260005500000000000000000000000000000000000000000000000000,  # noqa: E501
-                )
-                + Op.CREATE(value=0x5, offset=0x0, size=0x40)
-                + Op.STOP
-            ),
-        ),
         Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(
             storage={0: 1, 2: 1},
         ),
-        callee: Account(code=Op.SSTORE(key=0x2, value=0x1) + Op.STOP),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

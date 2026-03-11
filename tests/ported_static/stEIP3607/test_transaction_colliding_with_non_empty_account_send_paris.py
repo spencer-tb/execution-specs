@@ -8,12 +8,11 @@ transactionCollidingWithNonEmptyAccount_send_ParisFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -52,10 +51,8 @@ def test_transaction_colliding_with_non_empty_account_send_paris(
         gas_limit=71794957647893862,
     )
 
-    # Source: raw bytecode
     pre[sender] = Account(
         balance=0xDE0B6B3A7640000,
-        nonce=0,
         code=Op.SSTORE(key=0x1, value=0x0),
     )
     pre[contract] = Account(balance=10, nonce=0)
@@ -64,16 +61,12 @@ def test_transaction_colliding_with_non_empty_account_send_paris(
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
         error=TransactionException.SENDER_NOT_EOA,
     )
 
-    post = {
-        sender: Account(code=Op.SSTORE(key=0x1, value=0x0)),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

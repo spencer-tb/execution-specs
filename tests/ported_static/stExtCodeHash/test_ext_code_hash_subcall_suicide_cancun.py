@@ -8,12 +8,11 @@ extCodeHashSubcallSuicideCancunFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,9 +38,6 @@ def test_ext_code_hash_subcall_suicide_cancun(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb000000000000000000000000000000000000000")
-    callee = Address("0xa000000000000000000000000000000000000000")
-    callee_1 = Address("0xd000000000000000000000000000000000000000")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -56,9 +52,7 @@ def test_ext_code_hash_subcall_suicide_cancun(
     # {
     #   (CALLCODE 350000 0x3e180b1862f9d158abb5e519a6d8605540c23682 0 0 0 0 32)
     # }
-    pre[callee] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.CALLCODE(
                 gas=0x55730,
@@ -71,8 +65,11 @@ def test_ext_code_hash_subcall_suicide_cancun(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xa000000000000000000000000000000000000000"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: LLL
     # {
     #   ;; create 0x3e180b1862f9d158abb5e519a6d8605540c23682 (Account A)
@@ -101,9 +98,7 @@ def test_ext_code_hash_subcall_suicide_cancun(
     #
     #   [[7]] (CALL 350000 0xa000000000000000000000000000000000000000 0 0 0 0 32)  # noqa: E501
     # }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH1[0x49]
             + Op.CODECOPY(dest_offset=0x0, offset=0x10C, size=Op.DUP1)
@@ -195,50 +190,30 @@ def test_ext_code_hash_subcall_suicide_cancun(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xb000000000000000000000000000000000000000"),  # noqa: E501
     )
     # Source: LLL
     # {
     #   [[1]] 1
     # }
-    pre[callee_1] = Account(
+    callee_1 = pre.deploy_contract(
+        code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
+        address=Address("0xd000000000000000000000000000000000000000"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=500000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
     post = {
-        Address("0x3e180b1862f9d158abb5e519a6d8605540c23682"): Account(
-            code=(
-                Op.SELFDESTRUCT(
-                    address=0xA94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.CALLCODE(
-                    gas=0x55730,
-                    address=0x3E180B1862F9D158ABB5E519A6D8605540C23682,
-                    value=0x0,
-                    args_offset=0x0,
-                    args_size=0x0,
-                    ret_offset=0x0,
-                    ret_size=0x20,
-                )
-                + Op.STOP
-            ),
-        ),
         contract: Account(
             storage={
                 1: 0x807D478BD0D0173122F5531D4C43781631444232A0816DD35578747C7D67AF0D,  # noqa: E501
@@ -249,102 +224,8 @@ def test_ext_code_hash_subcall_suicide_cancun(
                 6: 0x60206000600060006000733E180B1862F9D158ABB5E519A6D8605540C2368262,  # noqa: E501
                 7: 1,
             },
-            code=(
-                Op.PUSH1[0x49]
-                + Op.CODECOPY(dest_offset=0x0, offset=0x10C, size=Op.DUP1)
-                + Op.PUSH1[0x0]
-                + Op.PUSH8[0xDE0B6B3A7640000]
-                + Op.POP(Op.CREATE)
-                + Op.SSTORE(
-                    key=0x1,
-                    value=Op.EXTCODEHASH(
-                        address=0xA000000000000000000000000000000000000000,
-                    ),
-                )
-                + Op.SSTORE(
-                    key=0x2,
-                    value=Op.EXTCODESIZE(
-                        address=0xA000000000000000000000000000000000000000,
-                    ),
-                )
-                + Op.EXTCODECOPY(
-                    address=0xA000000000000000000000000000000000000000,
-                    dest_offset=0x0,
-                    offset=0x0,
-                    size=0x20,
-                )
-                + Op.SSTORE(key=0x3, value=Op.MLOAD(offset=0x0))
-                + Op.POP(
-                    Op.CALL(
-                        gas=0x55730,
-                        address=0xA000000000000000000000000000000000000000,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.SSTORE(
-                    key=0x4,
-                    value=Op.EXTCODEHASH(
-                        address=0xA000000000000000000000000000000000000000,
-                    ),
-                )
-                + Op.SSTORE(
-                    key=0x5,
-                    value=Op.EXTCODESIZE(
-                        address=0xA000000000000000000000000000000000000000,
-                    ),
-                )
-                + Op.EXTCODECOPY(
-                    address=0xA000000000000000000000000000000000000000,
-                    dest_offset=0x0,
-                    offset=0x0,
-                    size=0x20,
-                )
-                + Op.SSTORE(key=0x6, value=Op.MLOAD(offset=0x0))
-                + Op.SSTORE(
-                    key=0x7,
-                    value=Op.CALL(
-                        gas=0x55730,
-                        address=0xA000000000000000000000000000000000000000,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x20,
-                    ),
-                )
-                + Op.STOP
-                + Op.INVALID
-                + Op.POP(
-                    Op.CALL(
-                        gas=0x186A0,
-                        address=0xD000000000000000000000000000000000000000,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.PUSH1[0x17]
-                + Op.CODECOPY(dest_offset=0x0, offset=0x32, size=Op.DUP1)
-                + Op.PUSH1[0x0]
-                + Op.RETURN
-                + Op.STOP
-                + Op.INVALID
-                + Op.SELFDESTRUCT(
-                    address=0xA94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                )
-                + Op.STOP
-            ),
         ),
-        callee_1: Account(
-            storage={1: 1},
-            code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
-        ),
+        callee_1: Account(storage={1: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

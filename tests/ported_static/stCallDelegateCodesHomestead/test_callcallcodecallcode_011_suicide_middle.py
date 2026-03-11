@@ -8,12 +8,11 @@ callcallcodecallcode_011_SuicideMiddleFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,10 +38,6 @@ def test_callcallcodecallcode_011_suicide_middle(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x4353e77718be108d4c149d88b34caceda42c5c66")
-    callee = Address("0x2cac1d43f00e8b40b63426ab460c7e8717ee6455")
-    callee_1 = Address("0x6a45ec7f08c71b222cfc454a9608bc278e87f0ab")
-    callee_2 = Address("0x73b954ebc05bb0ff4a0f6a13a054d50ad1584099")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +48,7 @@ def test_callcallcodecallcode_011_suicide_middle(
         gas_limit=30000000,
     )
 
-    pre[callee] = Account(
-        balance=0x2540BE400,
-        nonce=0,
+    callee = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -70,12 +63,13 @@ def test_callcallcodecallcode_011_suicide_middle(
             )
             + Op.STOP
         ),
+        balance=0x2540BE400,
+        nonce=0,
+        address=Address("0x2cac1d43f00e8b40b63426ab460c7e8717ee6455"),  # noqa: E501
     )
     # Source: LLL
     # {  [[ 0 ]] (CALL 150000 <contract:0x1000000000000000000000000000000000000001> 0 0 64 0 64 ) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -91,10 +85,11 @@ def test_callcallcodecallcode_011_suicide_middle(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
-        balance=0x2540BE400,
+        balance=0xDE0B6B3A7640000,
         nonce=0,
+        address=Address("0x4353e77718be108d4c149d88b34caceda42c5c66"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(address=0x4353E77718BE108D4C149D88B34CACEDA42C5C66)
             + Op.SSTORE(
@@ -110,80 +105,28 @@ def test_callcallcodecallcode_011_suicide_middle(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_2] = Account(
         balance=0x2540BE400,
         nonce=0,
-        code=Op.SSTORE(key=0x3, value=0x1) + Op.STOP,
+        address=Address("0x6a45ec7f08c71b222cfc454a9608bc278e87f0ab"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre.deploy_contract(
+        code=Op.SSTORE(key=0x3, value=0x1) + Op.STOP,
+        balance=0x2540BE400,
+        nonce=0,
+        address=Address("0x73b954ebc05bb0ff4a0f6a13a054d50ad1584099"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=3000000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        callee: Account(
-            storage={1: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.DELEGATECALL(
-                        gas=0x186A0,
-                        address=0x6A45EC7F08C71B222CFC454A9608BC278E87F0AB,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            storage={0: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0x249F0,
-                        address=0x2CAC1D43F00E8B40B63426AB460C7E8717EE6455,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(
-            code=(
-                Op.SELFDESTRUCT(
-                    address=0x4353E77718BE108D4C149D88B34CACEDA42C5C66,
-                )
-                + Op.SSTORE(
-                    key=0x2,
-                    value=Op.DELEGATECALL(
-                        gas=0xC350,
-                        address=0x73B954EBC05BB0FF4A0F6A13A054D50AD1584099,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee_2: Account(code=Op.SSTORE(key=0x3, value=0x1) + Op.STOP),
+        callee: Account(storage={1: 1}),
+        contract: Account(storage={0: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

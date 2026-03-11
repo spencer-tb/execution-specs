@@ -8,12 +8,11 @@ TouchToEmptyAccountRevert_ParisFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,9 +38,7 @@ def test_touch_to_empty_account_revert_paris(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0x68b5e303da0ad3dfba8b2134bab64274de666f37")
     callee = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
-    callee_1 = Address("0xba4d09eb64fddcec11d7587e1f51ac0b07c5069c")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -54,9 +51,7 @@ def test_touch_to_empty_account_revert_paris(
 
     # Source: LLL
     # { [[0]](CALL 30000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[2]] 1 }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -73,11 +68,11 @@ def test_touch_to_empty_account_revert_paris(
             + Op.SSTORE(key=0x2, value=0x1)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x68b5e303da0ad3dfba8b2134bab64274de666f37"),  # noqa: E501
     )
     pre[callee] = Account(balance=10, nonce=0)
-    pre[callee_1] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -93,55 +88,18 @@ def test_touch_to_empty_account_revert_paris(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xba4d09eb64fddcec11d7587e1f51ac0b07c5069c"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=70000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALL(
-                        gas=0x7530,
-                        address=0xBA4D09EB64FDDCEC11D7587E1F51AC0B07C5069C,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.SSTORE(key=0x2, value=0x1)
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.CALL(
-                        gas=0x7530,
-                        address=0x76FAE819612A29489A1A43208613D8F8557B8898,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

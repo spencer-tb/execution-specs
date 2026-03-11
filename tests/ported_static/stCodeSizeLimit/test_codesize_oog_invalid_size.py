@@ -7,12 +7,11 @@ tests/static/state_tests/stCodeSizeLimit/codesizeOOGInvalidSizeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -56,7 +55,7 @@ def test_codesize_oog_invalid_size(
         gas_limit=20000000,
     )
 
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -66,7 +65,6 @@ def test_codesize_oog_invalid_size(
         data=tx_data,
         gas_limit=15000000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

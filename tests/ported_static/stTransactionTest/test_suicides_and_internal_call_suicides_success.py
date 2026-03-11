@@ -8,12 +8,11 @@ SuicidesAndInternalCallSuicidesSuccessFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -34,49 +33,11 @@ REFERENCE_SPEC_VERSION = "N/A"
     [
         (
             "00000000000000000000000000000000000000000000000000000000000055f0",
-            {
-                Address("0x0000000000000000000000000000000000000000"): Account(
-                    code=Op.SELFDESTRUCT(address=0x1) + Op.STOP
-                ),
-                Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.POP(
-                        Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0x0,
-                            value=0x1,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.SELFDESTRUCT(address=0x0)
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "000000000000000000000000000000000000000000000000000000000000aaf0",
-            {
-                Address("0x0000000000000000000000000000000000000000"): Account(
-                    code=Op.SELFDESTRUCT(address=0x1) + Op.STOP
-                ),
-                Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.POP(
-                        Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0x0,
-                            value=0x1,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.SELFDESTRUCT(address=0x0)
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
     ],
     ids=["case0", "case1"],
@@ -93,8 +54,6 @@ def test_suicides_and_internal_call_suicides_success(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    callee = Address("0x0000000000000000000000000000000000000000")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -107,17 +66,15 @@ def test_suicides_and_internal_call_suicides_success(
 
     # Source: LLL
     # {(SELFDESTRUCT 0x0000000000000000000000000000000000000001)}
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=Op.SELFDESTRUCT(address=0x1) + Op.STOP,
+        nonce=0,
+        address=Address("0x0000000000000000000000000000000000000000"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xABA9500, nonce=0)
+    pre[sender] = Account(balance=0xABA9500)
     # Source: LLL
     # {(CALL (CALLDATALOAD 0) 0x0000000000000000000000000000000000000000 1 0 0 0 0) (SELFDESTRUCT 0)}  # noqa: E501
-    pre[contract] = Account(
-        balance=1000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.POP(
                 Op.CALL(
@@ -133,6 +90,9 @@ def test_suicides_and_internal_call_suicides_success(
             + Op.SELFDESTRUCT(address=0x0)
             + Op.STOP
         ),
+        balance=1000,
+        nonce=0,
+        address=Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -143,7 +103,6 @@ def test_suicides_and_internal_call_suicides_success(
         data=tx_data,
         gas_limit=150000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 

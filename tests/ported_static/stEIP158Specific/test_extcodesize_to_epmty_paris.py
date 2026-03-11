@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP158Specific/EXTCODESIZE_toEpmtyParisFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_extcodesize_to_epmty_paris(
     sender = EOA(
         key=0x4F31B3206FBF0E0E598B9B1A7D8AC86302A0FF1D8930738F1BEBAE9B67173E52
     )
-    contract = Address("0x6a7ca130ba6213231c23332fa5fcab8ccb85c04b")
     callee = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
 
     env = Environment(
@@ -52,9 +50,7 @@ def test_extcodesize_to_epmty_paris(
 
     # Source: LLL
     # { [0](GAS) [[1]] (EXTCODESIZE <eoa:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b>) [[100]] (SUB @0 (GAS)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=Op.GAS)
             + Op.SSTORE(
@@ -67,37 +63,21 @@ def test_extcodesize_to_epmty_paris(
             + Op.STOP
         ),
         storage={0x1: 0x600},
+        nonce=0,
+        address=Address("0x6a7ca130ba6213231c23332fa5fcab8ccb85c04b"),  # noqa: E501
     )
     pre[callee] = Account(balance=10, nonce=0)
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=600000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={100: 7617},
-            code=(
-                Op.MSTORE(offset=0x0, value=Op.GAS)
-                + Op.SSTORE(
-                    key=0x1,
-                    value=Op.EXTCODESIZE(
-                        address=0x76FAE819612A29489A1A43208613D8F8557B8898,
-                    ),
-                )
-                + Op.SSTORE(
-                    key=0x64, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS)
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={100: 7617}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

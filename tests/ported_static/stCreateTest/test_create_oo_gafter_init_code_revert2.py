@@ -7,12 +7,11 @@ tests/static/state_tests/stCreateTest/CreateOOGafterInitCodeRevert2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -34,114 +33,20 @@ REFERENCE_SPEC_VERSION = "N/A"
         (
             "000000000000000000000000c94f5374fce5edbc8e2a8697c15331677e6ebf0b",
             {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=Op.GAS,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=0x6460016001556000526005601BF3
-                    )
-                    + Op.POP(Op.CREATE(value=0x0, offset=0x12, size=0xE))
-                    + Op.REVERT(offset=0x0, size=0x20)
-                    + Op.STOP
-                ),
                 Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={1: 0x6460016001556000526005601BF3},
-                    code=Op.POP(
-                        Op.CALL(
-                            gas=0x80E8,
-                            address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x20,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
-                    + Op.STOP,
+                    storage={1: 0x6460016001556000526005601BF3}
                 ),
                 Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={1: 255},
-                    code=Op.POP(
-                        Op.CALL(
-                            gas=0x59D8,
-                            address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x20,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
-                    + Op.STOP,
+                    storage={1: 255}
                 ),
             },
         ),
         (
             "000000000000000000000000d94f5374fce5edbc8e2a8697c15331677e6ebf0b",
             {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=Op.GAS,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=0x6460016001556000526005601BF3
-                    )
-                    + Op.POP(Op.CREATE(value=0x0, offset=0x12, size=0xE))
-                    + Op.REVERT(offset=0x0, size=0x20)
-                    + Op.STOP
-                ),
                 Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={1: 255},
-                    code=Op.POP(
-                        Op.CALL(
-                            gas=0x80E8,
-                            address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x20,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
-                    + Op.STOP,
-                ),
-                Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.POP(
-                        Op.CALL(
-                            gas=0x59D8,
-                            address=0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x20,
-                        )
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x0))
-                    + Op.STOP
-                ),
+                    storage={1: 255}
+                )
             },
         ),
     ],
@@ -159,10 +64,6 @@ def test_create_oo_gafter_init_code_revert2(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x1000000000000000000000000000000000000000")
-    callee = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    callee_1 = Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    callee_2 = Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -175,9 +76,7 @@ def test_create_oo_gafter_init_code_revert2(
 
     # Source: LLL
     # { (CALL (GAS) (CALLDATALOAD 0) 0 0 0 0 0) }
-    pre[contract] = Account(
-        balance=0xE8D4A51000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALL(
                 gas=Op.GAS,
@@ -190,25 +89,26 @@ def test_create_oo_gafter_init_code_revert2(
             )
             + Op.STOP
         ),
+        balance=0xE8D4A51000,
+        nonce=0,
+        address=Address("0x1000000000000000000000000000000000000000"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
     # Source: LLL
     # { (MSTORE 0 0x6460016001556000526005601bf3) (CREATE 0 18 14) (REVERT 0 32) }  # noqa: E501
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x6460016001556000526005601BF3)
             + Op.POP(Op.CREATE(value=0x0, offset=0x12, size=0xE))
             + Op.REVERT(offset=0x0, size=0x20)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
     # Source: LLL
     # { (CALL 33000 0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b 0 0 0 0 32) [[ 1 ]] (MLOAD 0) }  # noqa: E501
-    pre[callee_1] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.POP(
                 Op.CALL(
@@ -225,12 +125,12 @@ def test_create_oo_gafter_init_code_revert2(
             + Op.STOP
         ),
         storage={0x1: 0xFF},
+        nonce=0,
+        address=Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
     # Source: LLL
     # { (CALL 23000 0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b 0 0 0 0 32) [[ 1 ]] (MLOAD 0) }  # noqa: E501
-    pre[callee_2] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.POP(
                 Op.CALL(
@@ -247,6 +147,8 @@ def test_create_oo_gafter_init_code_revert2(
             + Op.STOP
         ),
         storage={0x1: 0xFF},
+        nonce=0,
+        address=Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -257,8 +159,6 @@ def test_create_oo_gafter_init_code_revert2(
         data=tx_data,
         gas_limit=175000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

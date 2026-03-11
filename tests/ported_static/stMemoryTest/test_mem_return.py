@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/memReturnFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_mem_return(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x80349881d6a01127ffe2a32d172ee0599d94c87e")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,16 +47,17 @@ def test_mem_return(
 
     # Source: LLL
     # { (CALLDATACOPY 0 0 (CALLDATASIZE)) (RETURN 0 (MSIZE))  }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALLDATACOPY(dest_offset=0x0, offset=0x0, size=Op.CALLDATASIZE)
             + Op.RETURN(offset=0x0, size=Op.MSIZE)
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x80349881d6a01127ffe2a32d172ee0599d94c87e"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
         sender=sender,
@@ -70,22 +69,9 @@ def test_mem_return(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.CALLDATACOPY(
-                    dest_offset=0x0,
-                    offset=0x0,
-                    size=Op.CALLDATASIZE,
-                )
-                + Op.RETURN(offset=0x0, size=Op.MSIZE)
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

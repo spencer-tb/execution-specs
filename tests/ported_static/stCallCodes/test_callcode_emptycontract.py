@@ -7,12 +7,11 @@ tests/static/state_tests/stCallCodes/callcodeEmptycontractFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_callcode_emptycontract(
     sender = EOA(
         key=0xA2333EEF5630066B928DEA5FD85A239F511B5B067D1441EE7AC290D0122B917B
     )
-    contract = Address("0x594f6a1a002fc9949ac40616cc146845680302e1")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -49,9 +47,7 @@ def test_callcode_emptycontract(
 
     # Source: LLL
     # { [[ 0 ]] (CALLCODE 50000 0x945304eb96065b2a98b57a48a06ae28d285a71b5 1000 0 64 0 64 )}  # noqa: E501
-    pre[contract] = Account(
-        balance=1000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -67,38 +63,21 @@ def test_callcode_emptycontract(
             )
             + Op.STOP
         ),
+        balance=1000,
+        nonce=0,
+        address=Address("0x594f6a1a002fc9949ac40616cc146845680302e1"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x5F5E100, nonce=0)
+    pre[sender] = Account(balance=0x5F5E100)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1050440,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x0,
-                    value=Op.CALLCODE(
-                        gas=0xC350,
-                        address=0x945304EB96065B2A98B57A48A06AE28D285A71B5,
-                        value=0x3E8,
-                        args_offset=0x0,
-                        args_size=0x40,
-                        ret_offset=0x0,
-                        ret_size=0x40,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

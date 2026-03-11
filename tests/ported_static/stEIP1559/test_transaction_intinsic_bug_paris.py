@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP1559/transactionIntinsicBug_ParisFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -62,7 +61,6 @@ def test_transaction_intinsic_bug_paris(
         max_priority_fee_per_gas=20,
         nonce=1,
         value=48000020,
-        access_list=[],
         error=TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
     )
 

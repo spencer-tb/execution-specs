@@ -7,12 +7,11 @@ tests/static/state_tests/stArgsZeroOneBalance/sstoreNonConstFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,36 +28,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (
-            0,
-            {
-                Address("0x82d3d8be7168e697ed33f2a50810fa614393171e"): Account(
-                    code=Op.SSTORE(
-                        key=Op.BALANCE(
-                            address=0x82D3D8BE7168E697ED33F2A50810FA614393171E
-                        ),
-                        value=Op.BALANCE(
-                            address=0x82D3D8BE7168E697ED33F2A50810FA614393171E
-                        ),
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
+        (0, {}),
         (
             1,
             {
                 Address("0x82d3d8be7168e697ed33f2a50810fa614393171e"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(
-                        key=Op.BALANCE(
-                            address=0x82D3D8BE7168E697ED33F2A50810FA614393171E
-                        ),
-                        value=Op.BALANCE(
-                            address=0x82D3D8BE7168E697ED33F2A50810FA614393171E
-                        ),
-                    )
-                    + Op.STOP,
+                    storage={1: 1}
                 )
             },
         ),
@@ -77,7 +52,6 @@ def test_sstore_non_const(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x82d3d8be7168e697ed33f2a50810fa614393171e")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -88,12 +62,10 @@ def test_sstore_non_const(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: LLL
     # { (SSTORE (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>) (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=Op.BALANCE(
@@ -105,15 +77,15 @@ def test_sstore_non_const(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x82d3d8be7168e697ed33f2a50810fa614393171e"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

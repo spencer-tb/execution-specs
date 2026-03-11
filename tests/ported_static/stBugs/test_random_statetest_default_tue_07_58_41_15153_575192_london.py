@@ -8,12 +8,11 @@ randomStatetestDEFAULT-Tue_07_58_41-15153-575192_londonFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )

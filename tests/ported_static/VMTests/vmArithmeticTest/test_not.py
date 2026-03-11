@@ -7,12 +7,11 @@ tests/static/state_tests/VMTests/vmArithmeticTest/notFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,8 +35,6 @@ def test_not(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xcccccccccccccccccccccccccccccccccccccccc")
-    callee = Address("0x0000000000000000000000000000000000001000")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,19 +45,18 @@ def test_not(
         gas_limit=100000000,
     )
 
-    pre[callee] = Account(
+    callee = pre.deploy_contract(
+        code=Op.SSTORE(key=0x0, value=Op.NOT(0x123456789ABCDEF)) + Op.STOP,
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=Op.NOT(0x123456789ABCDEF)) + Op.STOP,
+        address=Address("0x0000000000000000000000000000000000001000"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE)
     # Source: LLL
     # {
     #     (call 0xffffff (+ 0x1000 $4) 0 0 0 0 0)
     # }
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALL(
                 gas=0xFFFFFF,
@@ -73,6 +69,9 @@ def test_not(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0xcccccccccccccccccccccccccccccccccccccccc"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -83,7 +82,6 @@ def test_not(
         ),
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
@@ -92,21 +90,6 @@ def test_not(
             storage={
                 0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEDCBA9876543210,  # noqa: E501
             },
-            code=Op.SSTORE(key=0x0, value=Op.NOT(0x123456789ABCDEF)) + Op.STOP,
-        ),
-        contract: Account(
-            code=(
-                Op.CALL(
-                    gas=0xFFFFFF,
-                    address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                    value=0x0,
-                    args_offset=0x0,
-                    args_size=0x0,
-                    ret_offset=0x0,
-                    ret_size=0x0,
-                )
-                + Op.STOP
-            ),
         ),
     }
 

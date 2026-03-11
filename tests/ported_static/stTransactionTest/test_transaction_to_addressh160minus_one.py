@@ -8,12 +8,11 @@ TransactionToAddressh160minusOneFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -49,15 +48,13 @@ def test_transaction_to_addressh160minus_one(
         gas_limit=100000,
     )
 
-    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=22000,
         gas_price=10,
-        nonce=0,
         value=100,
     )
 

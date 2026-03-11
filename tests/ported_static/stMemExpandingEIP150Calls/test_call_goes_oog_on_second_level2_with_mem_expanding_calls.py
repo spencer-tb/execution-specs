@@ -8,12 +8,11 @@ CallGoesOOGOnSecondLevel2WithMemExpandingCallsFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,9 +38,6 @@ def test_call_goes_oog_on_second_level2_with_mem_expanding_calls(
     sender = EOA(
         key=0x0B51075BB33D347A23B516E327E1B71C54F63FAA192D1D94B62C76E0C26CF98A
     )
-    contract = Address("0x0700bb425d7d4c412ac658014015bd6c98652dc4")
-    callee = Address("0x96983de02bfbcb5d0f4e0ee98fdde6d6f0c75fe0")
-    callee_1 = Address("0xc10a98222464b07008ceb5a0ec44ed49920addda")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +49,7 @@ def test_call_goes_oog_on_second_level2_with_mem_expanding_calls(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x8, value=Op.GAS)
             + Op.SSTORE(
@@ -71,21 +65,21 @@ def test_call_goes_oog_on_second_level2_with_mem_expanding_calls(
                 ),
             )
         ),
+        nonce=0,
+        address=Address("0x0700bb425d7d4c412ac658014015bd6c98652dc4"),  # noqa: E501
     )
     # Source: raw bytecode
-    pre[callee] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x8, value=Op.GAS)
             + Op.SSTORE(key=0x9, value=Op.GAS)
             + Op.SSTORE(key=0xA, value=Op.GAS)
         ),
-    )
-    pre[sender] = Account(balance=0xE8D4A510000, nonce=0)
-    pre[callee_1] = Account(
-        balance=0,
         nonce=0,
+        address=Address("0x96983de02bfbcb5d0f4e0ee98fdde6d6f0c75fe0"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0xE8D4A510000)
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x8, value=Op.GAS)
             + Op.SSTORE(
@@ -101,60 +95,17 @@ def test_call_goes_oog_on_second_level2_with_mem_expanding_calls(
                 ),
             )
         ),
+        nonce=0,
+        address=Address("0xc10a98222464b07008ceb5a0ec44ed49920addda"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=160000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SSTORE(key=0x8, value=Op.GAS)
-                + Op.SSTORE(
-                    key=0x9,
-                    value=Op.CALL(
-                        gas=0x927C0,
-                        address=0xC10A98222464B07008CEB5A0EC44ED49920ADDDA,
-                        value=0x0,
-                        args_offset=0xFF,
-                        args_size=0xFF,
-                        ret_offset=0xFF,
-                        ret_size=0xFF,
-                    ),
-                )
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.SSTORE(key=0x8, value=Op.GAS)
-                + Op.SSTORE(key=0x9, value=Op.GAS)
-                + Op.SSTORE(key=0xA, value=Op.GAS)
-            ),
-        ),
-        callee_1: Account(
-            code=(
-                Op.SSTORE(key=0x8, value=Op.GAS)
-                + Op.SSTORE(
-                    key=0x9,
-                    value=Op.CALL(
-                        gas=0x927C0,
-                        address=0x96983DE02BFBCB5D0F4E0EE98FDDE6D6F0C75FE0,
-                        value=0x0,
-                        args_offset=0xFF,
-                        args_size=0xFF,
-                        ret_offset=0xFF,
-                        ret_size=0xFF,
-                    ),
-                )
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

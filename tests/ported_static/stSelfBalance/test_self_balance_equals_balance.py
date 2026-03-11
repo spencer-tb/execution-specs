@@ -7,12 +7,11 @@ tests/static/state_tests/stSelfBalance/selfBalanceEqualsBalanceFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_self_balance_equals_balance(
     sender = EOA(
         key=0x897B12D02D588D8A4FE16FF831CBD4459C6F62F8C845B0CCDD31CAF068C84A26
     )
-    contract = Address("0x2f9dc2c2519cfd4ff8f7f296575c59dbe303d452")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +49,7 @@ def test_self_balance_equals_balance(
 
     # Source: LLL
     # { [[ 1 ]] (EQ (SELFBALANCE) (BALANCE (ADDRESS))) }
-    pre[contract] = Account(
-        balance=500,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -61,32 +57,21 @@ def test_self_balance_equals_balance(
             )
             + Op.STOP
         ),
+        balance=500,
+        nonce=0,
+        address=Address("0x2f9dc2c2519cfd4ff8f7f296575c59dbe303d452"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
+    pre[sender] = Account(balance=0x3635C9ADC5DEA00000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={1: 1},
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.EQ(
-                        Op.SELFBALANCE, Op.BALANCE(address=Op.ADDRESS)
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={1: 1}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

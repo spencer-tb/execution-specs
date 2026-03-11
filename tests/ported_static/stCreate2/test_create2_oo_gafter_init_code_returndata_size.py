@@ -8,12 +8,11 @@ Create2OOGafterInitCodeReturndataSizeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_create2_oo_gafter_init_code_returndata_size(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -50,12 +48,10 @@ def test_create2_oo_gafter_init_code_returndata_size(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
     # Source: LLL
     # { (MSTORE 0 0x6960016001556001600255600052600a6016f3) (CREATE2 0 13 19 0) (EXP 2 (RETURNDATASIZE)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0, value=0x6960016001556001600255600052600A6016F3
@@ -64,32 +60,18 @@ def test_create2_oo_gafter_init_code_returndata_size(
             + Op.EXP(0x2, Op.RETURNDATASIZE)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=55054,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0x6960016001556001600255600052600A6016F3,
-                )
-                + Op.POP(
-                    Op.CREATE2(value=0x0, offset=0xD, size=0x13, salt=0x0)
-                )
-                + Op.EXP(0x2, Op.RETURNDATASIZE)
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

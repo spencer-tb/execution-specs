@@ -7,12 +7,11 @@ tests/static/state_tests/stRefundTest/refund_CallToSuicideTwiceFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -35,36 +34,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "00000000000000000000000000000000000000000000000000000000000001f4",
             {
                 Address("0x81bdbaa560b5ad52b0f9857cf4ca40b74d4b6996"): Account(
-                    storage={1: 1},
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0x9DEA1AD5123F3D8B91CFC830B1C602597883E97C,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.CALL(
-                        gas=Op.CALLDATALOAD(offset=0x0),
-                        address=0x9DEA1AD5123F3D8B91CFC830B1C602597883E97C,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP,
+                    storage={1: 1}
                 ),
                 Address("0x9dea1ad5123f3d8b91cfc830b1c602597883e97c"): Account(
-                    storage={1: 1},
-                    code=Op.SELFDESTRUCT(
-                        address=0x81BDBAA560B5AD52B0F9857CF4CA40B74D4B6996
-                    )
-                    + Op.STOP,
+                    storage={1: 1}
                 ),
             },
         ),
@@ -72,36 +45,10 @@ REFERENCE_SPEC_VERSION = "N/A"
             "0000000000000000000000000000000000000000000000000000000000010000",
             {
                 Address("0x81bdbaa560b5ad52b0f9857cf4ca40b74d4b6996"): Account(
-                    storage={0: 1, 1: 1},
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALL(
-                            gas=Op.CALLDATALOAD(offset=0x0),
-                            address=0x9DEA1AD5123F3D8B91CFC830B1C602597883E97C,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x0,
-                            ret_offset=0x0,
-                            ret_size=0x0,
-                        ),
-                    )
-                    + Op.CALL(
-                        gas=Op.CALLDATALOAD(offset=0x0),
-                        address=0x9DEA1AD5123F3D8B91CFC830B1C602597883E97C,
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP,
+                    storage={0: 1, 1: 1}
                 ),
                 Address("0x9dea1ad5123f3d8b91cfc830b1c602597883e97c"): Account(
-                    storage={1: 1},
-                    code=Op.SELFDESTRUCT(
-                        address=0x81BDBAA560B5AD52B0F9857CF4CA40B74D4B6996
-                    )
-                    + Op.STOP,
+                    storage={1: 1}
                 ),
             },
         ),
@@ -120,8 +67,6 @@ def test_refund_call_to_suicide_twice(
     sender = EOA(
         key=0x6F0117D3E9C684C7D6E1E6B79DC3880DA2BEBE77C765B171C062FDFFD38A673F
     )
-    contract = Address("0x81bdbaa560b5ad52b0f9857cf4ca40b74d4b6996")
-    callee = Address("0x9dea1ad5123f3d8b91cfc830b1c602597883e97c")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -134,9 +79,7 @@ def test_refund_call_to_suicide_twice(
 
     # Source: LLL
     # { [[ 0 ]] (CALL (CALLDATALOAD 0) <contract:0xaaae7baea6a6c7c4c2dfeb977efac326af552aaa> 0 0 0 0 0 ) (CALL (CALLDATALOAD 0) <contract:0xaaae7baea6a6c7c4c2dfeb977efac326af552aaa> 0 0 0 0 0 )}  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -162,17 +105,21 @@ def test_refund_call_to_suicide_twice(
             + Op.STOP
         ),
         storage={0x1: 0x1},
-    )
-    pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
+        address=Address("0x81bdbaa560b5ad52b0f9857cf4ca40b74d4b6996"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SELFDESTRUCT(address=0x81BDBAA560B5AD52B0F9857CF4CA40B74D4B6996)
             + Op.STOP
         ),
         storage={0x1: 0x1},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x9dea1ad5123f3d8b91cfc830b1c602597883e97c"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x2540BE400, nonce=0)
+    pre[sender] = Account(balance=0x2540BE400)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -182,7 +129,6 @@ def test_refund_call_to_suicide_twice(
         data=tx_data,
         gas_limit=10000000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 

@@ -7,12 +7,11 @@ tests/static/state_tests/stCreate2/CreateMessageRevertedOOGInInit2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -65,7 +64,7 @@ def test_create_message_reverted_oog_in_init2(
         gas_limit=1000000000000,
     )
 
-    pre[sender] = Account(balance=0x2DC6C0, nonce=0)
+    pre[sender] = Account(balance=0x2DC6C0)
     pre[contract] = Account(balance=10, nonce=0)
 
     tx = Transaction(
@@ -74,7 +73,6 @@ def test_create_message_reverted_oog_in_init2(
         data=bytes.fromhex("69600c600055600d6001556000526000600a60166000f500"),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=100,
     )
 

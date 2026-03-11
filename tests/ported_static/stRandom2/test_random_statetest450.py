@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom2/randomStatetest450Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest450(
     sender = EOA(
         key=0xEC7C2DE039694D1868A1956B3126454E8E17448344A219E03D859B64831B6AF8
     )
-    contract = Address("0x4cda9e76f4ec620ca74c0321e2393998b84f4b99")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,9 +46,7 @@ def test_random_statetest450(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.PUSH32[0x0]
             + Op.PUSH32[0x4F3F701464972E74606D6EA82D4D3080599A0E79]
@@ -70,8 +66,9 @@ def test_random_statetest450(
             + Op.GASPRICE
             + Op.SSTORE(key=Op.MLOAD(offset=0x0), value=Op.DUP1)
         ),
+        nonce=0,
+        address=Address("0x4cda9e76f4ec620ca74c0321e2393998b84f4b99"),  # noqa: E501
     )
-    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -88,7 +85,7 @@ def test_random_statetest450(
             )
         ),
     )
-    pre[sender] = Account(balance=0xDE0B6B3A764000000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A764000000)
 
     tx = Transaction(
         sender=sender,
@@ -104,51 +101,11 @@ def test_random_statetest450(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=1357943190,
     )
 
     post = {
-        contract: Account(
-            storage={0: 10},
-            code=(
-                Op.PUSH32[0x0]
-                + Op.PUSH32[0x4F3F701464972E74606D6EA82D4D3080599A0E79]
-                + Op.PUSH32[
-                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                ]
-                + Op.CALLDATALOAD(
-                    offset=Op.PUSH32[
-                        0x4F3F701464972E74606D6EA82D4D3080599A0E79
-                    ],
-                )
-                + Op.PUSH32[
-                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                ]
-                + Op.SUB(
-                    Op.PUSH32[0x10000000000000000000000000000000000000000],
-                    Op.PUSH32[0xC350],
-                )
-                + Op.GASPRICE
-                + Op.SSTORE(key=Op.MLOAD(offset=0x0), value=Op.DUP1)
-            ),
-        ),
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
+        contract: Account(storage={0: 10}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

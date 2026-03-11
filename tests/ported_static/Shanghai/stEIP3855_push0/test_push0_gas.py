@@ -7,12 +7,11 @@ tests/static/state_tests/Shanghai/stEIP3855_push0/push0GasFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_push0_gas(
     sender = EOA(
         key=0xDC4EFA209AECDD4C2D5201A419EA27506151B4EC687F14A613229E310932491B
     )
-    contract = Address("0xc1aca9da71f5ea8db94b3428d8cbe5d544472ff7")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,39 +45,28 @@ def test_push0_gas(
         gas_limit=89128960,
     )
 
-    pre[sender] = Account(balance=0x989680, nonce=0)
+    pre[sender] = Account(balance=0x989680)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.GAS)
             + Op.PUSH0
             + Op.SSTORE(key=0x1, value=Op.SUB(Op.SLOAD(key=0x0), Op.GAS))
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xc1aca9da71f5ea8db94b3428d8cbe5d544472ff7"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 0x13496, 1: 22107},
-            code=(
-                Op.SSTORE(key=0x0, value=Op.GAS)
-                + Op.PUSH0
-                + Op.SSTORE(key=0x1, value=Op.SUB(Op.SLOAD(key=0x0), Op.GAS))
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={0: 0x13496, 1: 22107}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

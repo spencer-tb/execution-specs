@@ -7,11 +7,11 @@ tests/static/state_tests/stExample/mergeTestFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     AccessList,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
     Hash,
     StateTestFiller,
@@ -37,7 +37,6 @@ def test_merge_test(
     sender = EOA(
         key=0xDE0C95357363DA5C1C5A73BD7C2781CA5C9FECC1014103B5E1D1E990AE8208EC
     )
-    contract = Address("0x49a0fe79e28d1d65e16cdf53acafeae7baccac0e")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -54,15 +53,15 @@ def test_merge_test(
     #    (sstore 1 (basefee))
     #    (sstore 2 (difficulty))
     # }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.GASPRICE)
             + Op.SSTORE(key=0x1, value=Op.BASEFEE)
             + Op.SSTORE(key=0x2, value=Op.PREVRANDAO)
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        address=Address("0x49a0fe79e28d1d65e16cdf53acafeae7baccac0e"),  # noqa: E501
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
 
@@ -74,7 +73,6 @@ def test_merge_test(
         max_fee_per_gas=2000,
         max_priority_fee_per_gas=10,
         nonce=1,
-        value=0,
         access_list=[
             AccessList(
                 address=Address("0x49a0fe79e28d1d65e16cdf53acafeae7baccac0e"),
@@ -97,12 +95,6 @@ def test_merge_test(
                 1: 1000,
                 2: 0x1500000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
             },
-            code=(
-                Op.SSTORE(key=0x0, value=Op.GASPRICE)
-                + Op.SSTORE(key=0x1, value=Op.BASEFEE)
-                + Op.SSTORE(key=0x2, value=Op.PREVRANDAO)
-                + Op.STOP
-            ),
         ),
     }
 

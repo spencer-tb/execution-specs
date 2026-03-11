@@ -7,12 +7,11 @@ tests/static/state_tests/stArgsZeroOneBalance/ltNonConstFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,44 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (
-            0,
-            {
-                Address("0x2538bc735b54983a8f85ed92072dc2d0f07a2797"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.LT(
-                            Op.BALANCE(
-                                address=0x2538BC735B54983A8F85ED92072DC2D0F07A2797  # noqa: E501
-                            ),
-                            Op.BALANCE(
-                                address=0x2538BC735B54983A8F85ED92072DC2D0F07A2797  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            1,
-            {
-                Address("0x2538bc735b54983a8f85ed92072dc2d0f07a2797"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.LT(
-                            Op.BALANCE(
-                                address=0x2538BC735B54983A8F85ED92072DC2D0F07A2797  # noqa: E501
-                            ),
-                            Op.BALANCE(
-                                address=0x2538BC735B54983A8F85ED92072DC2D0F07A2797  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
+        (0, {}),
+        (1, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -82,7 +45,6 @@ def test_lt_non_const(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x2538bc735b54983a8f85ed92072dc2d0f07a2797")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -95,9 +57,7 @@ def test_lt_non_const(
 
     # Source: LLL
     # { [[ 0 ]](LT (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>) (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -112,16 +72,16 @@ def test_lt_non_const(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x2538bc735b54983a8f85ed92072dc2d0f07a2797"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

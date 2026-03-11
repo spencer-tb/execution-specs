@@ -7,12 +7,11 @@ tests/static/state_tests/stCreate2/create2collisionSelfdestructed2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -33,25 +32,11 @@ REFERENCE_SPEC_VERSION = "N/A"
     [
         (
             "6000600060006000600073fce41d047b4a1d4450382dcc29ec7e5fedc5f9a361c350f1506b620102036000526003601df36000526000600c60146000f500",  # noqa: E501
-            {
-                Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779"): Account(
-                    code=Op.SELFDESTRUCT(address=0x10)
-                ),
-                Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"): Account(
-                    code=Op.SELFDESTRUCT(address=0x10) + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "6000600060006000600073cff64f4c5df8f436c4f2c1af4b2e3f9e3004c77961c350f1506b626010ff6000526003601df36000526000600c60146000f500",  # noqa: E501
-            {
-                Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779"): Account(
-                    code=Op.SELFDESTRUCT(address=0x10)
-                ),
-                Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"): Account(
-                    code=Op.SELFDESTRUCT(address=0x10) + Op.STOP
-                ),
-            },
+            {},
         ),
     ],
     ids=["case0", "case1"],
@@ -68,8 +53,6 @@ def test_create2collision_selfdestructed2(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779")
-    callee_1 = Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -80,19 +63,20 @@ def test_create2collision_selfdestructed2(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=1,
-        nonce=1,
+    pre.deploy_contract(
         code=Op.SELFDESTRUCT(address=0x10),
+        balance=1,
+        address=Address("0xcff64f4c5df8f436c4f2c1af4b2e3f9e3004c779"),  # noqa: E501
     )
     # Source: LLL
     # { (SELFDESTRUCT 0x10) }
-    pre[callee_1] = Account(
+    pre.deploy_contract(
+        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
         balance=1,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
+        address=Address("0xfce41d047b4a1d4450382dcc29ec7e5fedc5f9a3"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -103,8 +87,6 @@ def test_create2collision_selfdestructed2(
         data=tx_data,
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

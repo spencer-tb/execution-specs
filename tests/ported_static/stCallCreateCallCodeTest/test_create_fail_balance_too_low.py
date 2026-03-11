@@ -8,12 +8,11 @@ createFailBalanceTooLowFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -32,35 +31,13 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
-        (
-            23,
-            {
-                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600255)
-                    + Op.SELFDESTRUCT(
-                        address=Op.CREATE(
-                            value=0xDE0B6B3A7640018, offset=0x1B, size=0x5
-                        )
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
+        (23, {}),
         (
             24,
             {
-                Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600255)
-                    + Op.SELFDESTRUCT(
-                        address=Op.CREATE(
-                            value=0xDE0B6B3A7640018, offset=0x1B, size=0x5
-                        )
-                    )
-                    + Op.STOP
-                ),
                 Address("0xd2571607e241ecf590ed94b12d87c94babe36db6"): Account(
                     storage={2: 1}
-                ),
+                )
             },
         ),
     ],
@@ -78,7 +55,6 @@ def test_create_fail_balance_too_low(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -91,9 +67,7 @@ def test_create_fail_balance_too_low(
 
     # Source: LLL
     # {(MSTORE 0 0x6001600255 ) (SELFDESTRUCT (CREATE 1000000000000000024 27 5)) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x6001600255)
             + Op.SELFDESTRUCT(
@@ -103,16 +77,17 @@ def test_create_fail_balance_too_low(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=253021,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

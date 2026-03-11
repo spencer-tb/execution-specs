@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/codeCopyOffsetFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,8 +35,6 @@ def test_code_copy_offset(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xaf89a7504341a87e1cfdffd483a00a4688469b3d")
-    callee = Address("0x27d16e1d3cc862149f1e7162e612635fcaef9ff4")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,9 +45,7 @@ def test_code_copy_offset(
         gas_limit=1000000,
     )
 
-    pre[callee] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=1,
+    callee = pre.deploy_contract(
         code=(
             Op.MSTORE(
                 offset=0x0,
@@ -60,13 +55,13 @@ def test_code_copy_offset(
             + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        address=Address("0x27d16e1d3cc862149f1e7162e612635fcaef9ff4"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: Yul
     # { mstore(0, 0x0123456789abcdef)  pop(call(0xffff, <contract:0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee>, 0, 0, 0x0f, 0, 0))  }  # noqa: E501
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x123456789ABCDEF)
             + Op.CALL(
@@ -80,46 +75,20 @@ def test_code_copy_offset(
             )
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        address=Address("0xaf89a7504341a87e1cfdffd483a00a4688469b3d"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
-        callee: Account(
-            storage={0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF},
-            code=(
-                Op.MSTORE(
-                    offset=0x0,
-                    value=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                )
-                + Op.CODECOPY(dest_offset=0x0, offset=0xFFFF, size=0x10)
-                + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-                + Op.STOP
-            ),
-        ),
-        contract: Account(
-            code=(
-                Op.MSTORE(offset=0x0, value=0x123456789ABCDEF)
-                + Op.CALL(
-                    gas=0xFFFF,
-                    address=0x27D16E1D3CC862149F1E7162E612635FCAEF9FF4,
-                    value=Op.DUP1,
-                    args_offset=Op.DUP2,
-                    args_size=0xF,
-                    ret_offset=Op.DUP1,
-                    ret_size=0x0,
-                )
-                + Op.STOP
-            ),
-        ),
+        callee: Account(storage={0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -7,12 +7,11 @@ tests/static/state_tests/stCreate2/create2InitCodesFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -117,7 +116,7 @@ def test_create2_init_codes(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -127,7 +126,6 @@ def test_create2_init_codes(
         data=tx_data,
         gas_limit=800000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

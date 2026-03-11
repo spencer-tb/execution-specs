@@ -7,12 +7,11 @@ tests/static/state_tests/stExample/yulExampleFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_yul_example(
     sender = EOA(
         key=0x40AC0FC28C27E961EE46EC43355A094DE205856EDBD4654CF2577C2608D4EC1E
     )
-    contract = Address("0xf30c160326a04ecb32e7651c0a8f373468bea269")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,7 +45,7 @@ def test_yul_example(
         gas_limit=100000000,
     )
 
-    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE)
     # Source: Yul
     # {
     #   function f(a, b) -> c {
@@ -57,30 +55,22 @@ def test_yul_example(
     #   sstore(0, f(1, 2))
     #   return(0, 32)
     # }
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.SSTORE(key=0x0, value=0x3) + Op.RETURN(offset=0x0, size=0x20),
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=0x3) + Op.RETURN(offset=0x0, size=0x20),
+        address=Address("0xf30c160326a04ecb32e7651c0a8f373468bea269"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = {
-        contract: Account(
-            storage={0: 3},
-            code=(
-                Op.SSTORE(key=0x0, value=0x3)
-                + Op.RETURN(offset=0x0, size=0x20)
-            ),
-        ),
+        contract: Account(storage={0: 3}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

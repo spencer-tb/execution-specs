@@ -8,12 +8,11 @@ TransactionCreateRandomInitCodeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -49,7 +48,7 @@ def test_transaction_create_random_init_code(
     )
 
     pre[coinbase] = Account(balance=0, nonce=1)
-    pre[sender] = Account(balance=0x2540BE400, nonce=0)
+    pre[sender] = Account(balance=0x2540BE400)
 
     tx = Transaction(
         sender=sender,
@@ -57,7 +56,6 @@ def test_transaction_create_random_init_code(
         data=bytes.fromhex("600a80600c6000396000f200600160008035811a8100"),
         gas_limit=64599,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

@@ -7,12 +7,11 @@ tests/static/state_tests/VMTests/vmBitwiseLogicOperation/sltFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -31,200 +30,26 @@ REFERENCE_SPEC_VERSION = "N/A"
     [
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000003",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SLT(Op.SUB(0x0, 0x2), 0x0)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SLT(0x0, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SLT(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SLT(
-                            0x0,
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SLT(Op.SUB(0x0, 0x2), 0x0)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SLT(0x0, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SLT(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SLT(
-                            0x0,
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SLT(Op.SUB(0x0, 0x2), 0x0)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SLT(0x0, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
                 Address("0x0000000000000000000000000000000000001002"): Account(
-                    storage={0: 1},
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SLT(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SLT(
-                            0x0,
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    storage={0: 1}
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
                 Address("0x0000000000000000000000000000000000001000"): Account(
-                    storage={0: 1},
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SLT(Op.SUB(0x0, 0x2), 0x0)
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SLT(0x0, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SLT(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SLT(
-                            0x0,
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    storage={0: 1}
+                )
             },
         ),
     ],
@@ -242,11 +67,6 @@ def test_slt(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xcccccccccccccccccccccccccccccccccccccccc")
-    callee = Address("0x0000000000000000000000000000000000001000")
-    callee_1 = Address("0x0000000000000000000000000000000000001001")
-    callee_2 = Address("0x0000000000000000000000000000000000001002")
-    callee_3 = Address("0x0000000000000000000000000000000000001003")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -257,19 +77,19 @@ def test_slt(
         gas_limit=100000000,
     )
 
-    pre[callee] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x0, value=Op.SLT(Op.SUB(0x0, 0x2), 0x0)) + Op.STOP,
-    )
-    pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001000"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x0, value=Op.SLT(0x0, Op.SUB(0x0, 0x2))) + Op.STOP,
-    )
-    pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001001"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -280,10 +100,11 @@ def test_slt(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001002"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -294,15 +115,16 @@ def test_slt(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x0000000000000000000000000000000000001003"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE)
     # Source: LLL
     # {
     #     (call 0xffffff (+ 0x1000 $4) 0 0 0 0 0)
     # }
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALL(
                 gas=0xFFFFFF,
@@ -315,6 +137,9 @@ def test_slt(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0xcccccccccccccccccccccccccccccccccccccccc"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -325,7 +150,6 @@ def test_slt(
         data=tx_data,
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

@@ -7,12 +7,11 @@ tests/static/state_tests/stBugs/staticcall_createfailsFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -45,9 +44,6 @@ def test_staticcall_createfails(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    callee = Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b")
-    callee_1 = Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -58,12 +54,10 @@ def test_staticcall_createfails(
         gas_limit=23826461031063688,
     )
 
-    pre[sender] = Account(balance=0x38BEEC8FEECA2598, nonce=0)
+    pre[sender] = Account(balance=0x38BEEC8FEECA2598)
     # Source: LLL
     # { [[1]] (STATICCALL 70000 (CALLDATALOAD 0) 0 0 0 0) }
-    pre[contract] = Account(
-        balance=0,
-        nonce=63,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x1,
@@ -79,12 +73,12 @@ def test_staticcall_createfails(
             + Op.STOP
         ),
         storage={0x1: 0x1},
+        nonce=63,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
     # Source: LLL
     # { (MSTORE 1 1) [[2]] (CREATE 1 1 1) }
-    pre[callee] = Account(
-        balance=0,
-        nonce=63,
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x1, value=0x1)
             + Op.SSTORE(
@@ -92,12 +86,14 @@ def test_staticcall_createfails(
             )
             + Op.STOP
         ),
+        nonce=63,
+        address=Address("0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
     # Source: raw bytecode
-    pre[callee_1] = Account(
-        balance=0,
-        nonce=63,
+    pre.deploy_contract(
         code=Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CREATE,
+        nonce=63,
+        address=Address("0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -108,38 +104,8 @@ def test_staticcall_createfails(
         data=tx_data,
         gas_limit=120000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.SSTORE(
-                    key=0x1,
-                    value=Op.STATICCALL(
-                        gas=0x11170,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    ),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.MSTORE(offset=0x1, value=0x1)
-                + Op.SSTORE(
-                    key=0x2,
-                    value=Op.CREATE(value=0x1, offset=0x1, size=0x1),
-                )
-                + Op.STOP
-            ),
-        ),
-        callee_1: Account(code=Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.CREATE),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

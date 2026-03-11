@@ -7,12 +7,11 @@ tests/static/state_tests/stSystemOperationsTest/suicideSendEtherToMeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_suicide_send_ether_to_me(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0x3b11a41d66b30b30d4d5be673f7d5c7d72c9fca8")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,25 +49,22 @@ def test_suicide_send_ether_to_me(
 
     # Source: LLL
     # { (SELFDESTRUCT (ADDRESS) )}
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.SELFDESTRUCT(address=Op.ADDRESS) + Op.STOP,
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SELFDESTRUCT(address=Op.ADDRESS) + Op.STOP,
+        address=Address("0x3b11a41d66b30b30d4d5be673f7d5c7d72c9fca8"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        contract: Account(code=Op.SELFDESTRUCT(address=Op.ADDRESS) + Op.STOP),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

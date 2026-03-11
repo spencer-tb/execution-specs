@@ -7,12 +7,11 @@ tests/static/state_tests/stSpecialTest/eoaEmptyParisFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -49,67 +48,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         47826: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47827: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47828: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
-                    },
-                    code=Op.ORIGIN
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SSTORE(key=0x31, value=Op.BALANCE(address=Op.DUP1))
-                    + Op.SSTORE(
-                        key=0x3B, value=Op.EXTCODESIZE(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x3F, value=Op.EXTCODEHASH(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x13F,
-                        value=Op.EXTCODEHASH(address=Op.ADD(Op.DUP2, 0x1)),
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD1, value=Op.EXTCODEHASH(address=0xBAD1)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD2, value=Op.EXTCODEHASH(address=0xBAD2)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD3, value=Op.EXTCODEHASH(address=0xBAD3)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD4, value=Op.EXTCODEHASH(address=0xBAD4)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD5, value=Op.EXTCODEHASH(address=0xBAD5)
-                    )
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.GAS
-                    + Op.SWAP5
-                    + Op.CALLDATALOAD(offset=0x4)
-                    + Op.SWAP1
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xF1, value=Op.SUB)
-                    + Op.GAS
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xFF, value=Op.SUB)
-                    + Op.STOP,
-                ),
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SELFDESTRUCT(address=Op.ORIGIN)
+                    }
                 ),
             },
             id="case0",
@@ -122,69 +61,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x000000000000000000000000000000000000bad4"): Account(
                     storage={57005: 48879}
-                ),
-                Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=Op.ORIGIN
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SSTORE(key=0x31, value=Op.BALANCE(address=Op.DUP1))
-                    + Op.SSTORE(
-                        key=0x3B, value=Op.EXTCODESIZE(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x3F, value=Op.EXTCODEHASH(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x13F,
-                        value=Op.EXTCODEHASH(address=Op.ADD(Op.DUP2, 0x1)),
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD1, value=Op.EXTCODEHASH(address=0xBAD1)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD2, value=Op.EXTCODEHASH(address=0xBAD2)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD3, value=Op.EXTCODEHASH(address=0xBAD3)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD4, value=Op.EXTCODEHASH(address=0xBAD4)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD5, value=Op.EXTCODEHASH(address=0xBAD5)
-                    )
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.GAS
-                    + Op.SWAP5
-                    + Op.CALLDATALOAD(offset=0x4)
-                    + Op.SWAP1
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xF1, value=Op.SUB)
-                    + Op.GAS
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xFF, value=Op.SUB)
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SELFDESTRUCT(address=Op.ORIGIN)
-                ),
+                )
             },
             id="case1",
             marks=pytest.mark.exception_test,
@@ -209,67 +86,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         47826: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47827: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47828: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
-                    },
-                    code=Op.ORIGIN
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SSTORE(key=0x31, value=Op.BALANCE(address=Op.DUP1))
-                    + Op.SSTORE(
-                        key=0x3B, value=Op.EXTCODESIZE(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x3F, value=Op.EXTCODEHASH(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x13F,
-                        value=Op.EXTCODEHASH(address=Op.ADD(Op.DUP2, 0x1)),
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD1, value=Op.EXTCODEHASH(address=0xBAD1)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD2, value=Op.EXTCODEHASH(address=0xBAD2)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD3, value=Op.EXTCODEHASH(address=0xBAD3)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD4, value=Op.EXTCODEHASH(address=0xBAD4)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD5, value=Op.EXTCODEHASH(address=0xBAD5)
-                    )
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.GAS
-                    + Op.SWAP5
-                    + Op.CALLDATALOAD(offset=0x4)
-                    + Op.SWAP1
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xF1, value=Op.SUB)
-                    + Op.GAS
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xFF, value=Op.SUB)
-                    + Op.STOP,
-                ),
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SELFDESTRUCT(address=Op.ORIGIN)
+                    }
                 ),
             },
             id="case2",
@@ -293,67 +110,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         47826: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47827: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47828: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
-                    },
-                    code=Op.ORIGIN
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SSTORE(key=0x31, value=Op.BALANCE(address=Op.DUP1))
-                    + Op.SSTORE(
-                        key=0x3B, value=Op.EXTCODESIZE(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x3F, value=Op.EXTCODEHASH(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x13F,
-                        value=Op.EXTCODEHASH(address=Op.ADD(Op.DUP2, 0x1)),
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD1, value=Op.EXTCODEHASH(address=0xBAD1)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD2, value=Op.EXTCODEHASH(address=0xBAD2)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD3, value=Op.EXTCODEHASH(address=0xBAD3)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD4, value=Op.EXTCODEHASH(address=0xBAD4)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD5, value=Op.EXTCODEHASH(address=0xBAD5)
-                    )
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.GAS
-                    + Op.SWAP5
-                    + Op.CALLDATALOAD(offset=0x4)
-                    + Op.SWAP1
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xF1, value=Op.SUB)
-                    + Op.GAS
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xFF, value=Op.SUB)
-                    + Op.STOP,
-                ),
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SELFDESTRUCT(address=Op.ORIGIN)
+                    }
                 ),
             },
             id="case3",
@@ -377,67 +134,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         47826: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47827: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47828: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
-                    },
-                    code=Op.ORIGIN
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SSTORE(key=0x31, value=Op.BALANCE(address=Op.DUP1))
-                    + Op.SSTORE(
-                        key=0x3B, value=Op.EXTCODESIZE(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x3F, value=Op.EXTCODEHASH(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x13F,
-                        value=Op.EXTCODEHASH(address=Op.ADD(Op.DUP2, 0x1)),
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD1, value=Op.EXTCODEHASH(address=0xBAD1)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD2, value=Op.EXTCODEHASH(address=0xBAD2)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD3, value=Op.EXTCODEHASH(address=0xBAD3)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD4, value=Op.EXTCODEHASH(address=0xBAD4)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD5, value=Op.EXTCODEHASH(address=0xBAD5)
-                    )
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.GAS
-                    + Op.SWAP5
-                    + Op.CALLDATALOAD(offset=0x4)
-                    + Op.SWAP1
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xF1, value=Op.SUB)
-                    + Op.GAS
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xFF, value=Op.SUB)
-                    + Op.STOP,
-                ),
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SELFDESTRUCT(address=Op.ORIGIN)
+                    }
                 ),
             },
             id="case4",
@@ -450,69 +147,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             {
                 Address("0x000000000000000000000000000000000000bad4"): Account(
                     storage={57005: 48879}
-                ),
-                Address("0x000000000000000000000000000000000000c0de"): Account(
-                    code=Op.ORIGIN
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SSTORE(key=0x31, value=Op.BALANCE(address=Op.DUP1))
-                    + Op.SSTORE(
-                        key=0x3B, value=Op.EXTCODESIZE(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x3F, value=Op.EXTCODEHASH(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x13F,
-                        value=Op.EXTCODEHASH(address=Op.ADD(Op.DUP2, 0x1)),
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD1, value=Op.EXTCODEHASH(address=0xBAD1)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD2, value=Op.EXTCODEHASH(address=0xBAD2)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD3, value=Op.EXTCODEHASH(address=0xBAD3)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD4, value=Op.EXTCODEHASH(address=0xBAD4)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD5, value=Op.EXTCODEHASH(address=0xBAD5)
-                    )
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.GAS
-                    + Op.SWAP5
-                    + Op.CALLDATALOAD(offset=0x4)
-                    + Op.SWAP1
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xF1, value=Op.SUB)
-                    + Op.GAS
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xFF, value=Op.SUB)
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SELFDESTRUCT(address=Op.ORIGIN)
-                ),
+                )
             },
             id="case5",
             marks=pytest.mark.exception_test,
@@ -537,67 +172,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         47826: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47827: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47828: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
-                    },
-                    code=Op.ORIGIN
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SSTORE(key=0x31, value=Op.BALANCE(address=Op.DUP1))
-                    + Op.SSTORE(
-                        key=0x3B, value=Op.EXTCODESIZE(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x3F, value=Op.EXTCODEHASH(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x13F,
-                        value=Op.EXTCODEHASH(address=Op.ADD(Op.DUP2, 0x1)),
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD1, value=Op.EXTCODEHASH(address=0xBAD1)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD2, value=Op.EXTCODEHASH(address=0xBAD2)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD3, value=Op.EXTCODEHASH(address=0xBAD3)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD4, value=Op.EXTCODEHASH(address=0xBAD4)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD5, value=Op.EXTCODEHASH(address=0xBAD5)
-                    )
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.GAS
-                    + Op.SWAP5
-                    + Op.CALLDATALOAD(offset=0x4)
-                    + Op.SWAP1
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xF1, value=Op.SUB)
-                    + Op.GAS
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xFF, value=Op.SUB)
-                    + Op.STOP,
-                ),
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SELFDESTRUCT(address=Op.ORIGIN)
+                    }
                 ),
             },
             id="case6",
@@ -621,67 +196,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         47826: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47827: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
                         47828: 0xC5D2460186F7233C927E7DB2DCC703C0E500B653CA82273B7BFAD8045D85A470,  # noqa: E501
-                    },
-                    code=Op.ORIGIN
-                    + Op.SSTORE(key=0x0, value=Op.DUP1)
-                    + Op.SSTORE(key=0x31, value=Op.BALANCE(address=Op.DUP1))
-                    + Op.SSTORE(
-                        key=0x3B, value=Op.EXTCODESIZE(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x3F, value=Op.EXTCODEHASH(address=Op.DUP1)
-                    )
-                    + Op.SSTORE(
-                        key=0x13F,
-                        value=Op.EXTCODEHASH(address=Op.ADD(Op.DUP2, 0x1)),
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD1, value=Op.EXTCODEHASH(address=0xBAD1)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD2, value=Op.EXTCODEHASH(address=0xBAD2)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD3, value=Op.EXTCODEHASH(address=0xBAD3)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD4, value=Op.EXTCODEHASH(address=0xBAD4)
-                    )
-                    + Op.SSTORE(
-                        key=0xBAD5, value=Op.EXTCODEHASH(address=0xBAD5)
-                    )
-                    + Op.PUSH1[0x0]
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.DUP1
-                    + Op.GAS
-                    + Op.SWAP5
-                    + Op.CALLDATALOAD(offset=0x4)
-                    + Op.SWAP1
-                    + Op.GAS
-                    + Op.POP(Op.CALL)
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xF1, value=Op.SUB)
-                    + Op.GAS
-                    + Op.POP(
-                        Op.CALL(
-                            gas=Op.GAS,
-                            address=0xDEAD,
-                            value=Op.DUP1,
-                            args_offset=Op.DUP1,
-                            args_size=Op.DUP1,
-                            ret_offset=Op.DUP1,
-                            ret_size=0x0,
-                        )
-                    )
-                    + Op.GAS
-                    + Op.SWAP1
-                    + Op.SSTORE(key=0xFF, value=Op.SUB)
-                    + Op.STOP,
-                ),
-                Address("0x000000000000000000000000000000000000dead"): Account(
-                    code=Op.SELFDESTRUCT(address=Op.ORIGIN)
+                    }
                 ),
             },
             id="case7",
@@ -703,12 +218,10 @@ def test_eoa_empty_paris(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x000000000000000000000000000000000000c0de")
     callee = Address("0x000000000000000000000000000000000000bad1")
     callee_1 = Address("0x000000000000000000000000000000000000bad2")
     callee_2 = Address("0x000000000000000000000000000000000000bad3")
     callee_3 = Address("0x000000000000000000000000000000000000bad4")
-    callee_4 = Address("0x000000000000000000000000000000000000dead")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -747,9 +260,7 @@ def test_eoa_empty_paris(
     #    pop(call(gas(), 0xDEAD, 0, 0, 0, 0, 0))
     #    sstore(0xFF, sub(gas0, gas()))
     # }
-    pre[contract] = Account(
-        balance=0,
-        nonce=1,
+    contract = pre.deploy_contract(
         code=(
             Op.ORIGIN
             + Op.SSTORE(key=0x0, value=Op.DUP1)
@@ -795,17 +306,18 @@ def test_eoa_empty_paris(
             + Op.SSTORE(key=0xFF, value=Op.SUB)
             + Op.STOP
         ),
+        address=Address("0x000000000000000000000000000000000000c0de"),  # noqa: E501
     )
     # Source: Yul
     # {
     #    selfdestruct(origin())
     # }
-    pre[callee_4] = Account(
-        balance=0x2710,
-        nonce=1,
+    pre.deploy_contract(
         code=Op.SELFDESTRUCT(address=Op.ORIGIN),
+        balance=0x2710,
+        address=Address("0x000000000000000000000000000000000000dead"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    pre[sender] = Account(balance=0x3B9ACA00)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -815,7 +327,6 @@ def test_eoa_empty_paris(
         data=tx_data,
         gas_limit=tx_gas_limit,
         gas_price=100,
-        nonce=0,
         value=tx_value,
         error=tx_error,
     )

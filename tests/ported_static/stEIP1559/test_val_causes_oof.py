@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP1559/valCausesOOFFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -37,16 +36,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    storage={1: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3),
+                    storage={1: 24743}
                 )
             },
             id="case0",
@@ -56,19 +46,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             100000,
             1,
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
-            {
-                Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3)
-                )
-            },
+            {},
             id="case1",
             marks=pytest.mark.exception_test,
         ),
@@ -79,16 +57,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    storage={1: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3),
+                    storage={1: 24743}
                 )
             },
             id="case2",
@@ -100,16 +69,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    storage={1: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3),
+                    storage={1: 24743}
                 )
             },
             id="case3",
@@ -119,19 +79,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             110000,
             0,
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
-            {
-                Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3)
-                )
-            },
+            {},
             id="case4",
             marks=pytest.mark.exception_test,
         ),
@@ -140,19 +88,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             110000,
             1,
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
-            {
-                Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3)
-                )
-            },
+            {},
             id="case5",
             marks=pytest.mark.exception_test,
         ),
@@ -163,16 +99,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    storage={1: 24743, 2: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3),
+                    storage={1: 24743, 2: 24743}
                 )
             },
             id="case6",
@@ -182,19 +109,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             100000,
             1,
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
-            {
-                Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3)
-                )
-            },
+            {},
             id="case7",
             marks=pytest.mark.exception_test,
         ),
@@ -205,16 +120,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    storage={1: 24743, 2: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3),
+                    storage={1: 24743, 2: 24743}
                 )
             },
             id="case8",
@@ -226,16 +132,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             None,
             {
                 Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    storage={1: 24743, 2: 24743},
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3),
+                    storage={1: 24743, 2: 24743}
                 )
             },
             id="case9",
@@ -245,19 +142,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             110000,
             0,
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
-            {
-                Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3)
-                )
-            },
+            {},
             id="case10",
             marks=pytest.mark.exception_test,
         ),
@@ -266,19 +151,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             110000,
             1,
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
-            {
-                Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"): Account(
-                    code=Op.CALLDATALOAD(offset=0x4)
-                    + Op.JUMPDEST
-                    + Op.JUMPI(pc=0xC, condition=Op.GT(Op.DUP2, 0x0))
-                    + Op.STOP
-                    + Op.JUMPDEST
-                    + Op.SSTORE(key=Op.DUP2, value=0x60A7)
-                    + Op.NOT(0x0)
-                    + Op.ADD
-                    + Op.JUMP(pc=0x3)
-                )
-            },
+            {},
             id="case11",
             marks=pytest.mark.exception_test,
         ),
@@ -299,7 +172,6 @@ def test_val_causes_oof(
     sender = EOA(
         key=0x7608AB0A661408930040C5E3EB5B0C6520ACBB6CE5B28DDBE53676109E8EA24B
     )
-    contract = Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -319,9 +191,7 @@ def test_val_causes_oof(
     #        sstore(i, 0x60A7)
     #     }     // for loop
     # }
-    pre[contract] = Account(
-        balance=0x5AF3107A4000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALLDATALOAD(offset=0x4)
             + Op.JUMPDEST
@@ -333,6 +203,9 @@ def test_val_causes_oof(
             + Op.ADD
             + Op.JUMP(pc=0x3)
         ),
+        balance=0x5AF3107A4000,
+        nonce=0,
+        address=Address("0x71e12b76ab6be1efbc98ac17ebfe5faf488da45e"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -346,7 +219,6 @@ def test_val_causes_oof(
         max_priority_fee_per_gas=0,
         nonce=1,
         value=tx_value,
-        access_list=[],
         error=tx_error,
     )
 

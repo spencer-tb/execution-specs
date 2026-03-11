@@ -8,12 +8,11 @@ recursiveCreateReturnValueFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -40,7 +39,6 @@ def test_recursive_create_return_value(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -53,9 +51,7 @@ def test_recursive_create_return_value(
 
     # Source: LLL
     # {(CODECOPY 0 0 32) [[ 0 ]] (ADD (CREATE 0 0 32) 1) }
-    pre[contract] = Account(
-        balance=0x1312D00,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20)
             + Op.SSTORE(
@@ -64,16 +60,17 @@ def test_recursive_create_return_value(
             )
             + Op.STOP
         ),
+        balance=0x1312D00,
+        nonce=0,
+        address=Address("0x095e7baea6a6c7c4c2dfeb977efac326af552d87"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
@@ -122,16 +119,6 @@ def test_recursive_create_return_value(
         ),
         contract: Account(
             storage={0: 0xD2571607E241ECF590ED94B12D87C94BABE36DB7},
-            code=(
-                Op.CODECOPY(dest_offset=0x0, offset=0x0, size=0x20)
-                + Op.SSTORE(
-                    key=0x0,
-                    value=Op.ADD(
-                        Op.CREATE(value=0x0, offset=0x0, size=0x20), 0x1
-                    ),
-                )
-                + Op.STOP
-            ),
         ),
         Address("0x09a35a6f6607eebc286c6b5194a213370bcadb30"): Account(
             storage={0: 0x18205DF1C43E9E29920725E96A362260AA5D3242},

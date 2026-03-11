@@ -7,12 +7,11 @@ tests/static/state_tests/stTransactionTest/TransactionSendingToEmptyFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -47,16 +46,13 @@ def test_transaction_sending_to_empty(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0x5F5E100, nonce=0)
+    pre[sender] = Account(balance=0x5F5E100)
 
     tx = Transaction(
         sender=sender,
         to=None,
-        data=b"",
         gas_limit=53000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post: dict = {}

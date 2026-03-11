@@ -7,16 +7,14 @@ tests/static/state_tests/stCreate2/create2collisionBalanceFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
@@ -38,14 +36,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                 )
             },
         ),
-        (
-            "6d6460016001556000526005601bf36000526000600e60126000f500",
-            {
-                Address("0xec2c6832d00680ece8ff9254f81fdab0a5a2ac50"): Account(
-                    code=Op.SSTORE(key=0x1, value=0x1)
-                )
-            },
-        ),
+        ("6d6460016001556000526005601bf36000526000600e60126000f500", {}),
         ("6000600060006001f500", {}),
     ],
     ids=["case0", "case1", "case2", "case3"],
@@ -75,7 +66,7 @@ def test_create2collision_balance(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[contract] = Account(balance=1, nonce=0)
     pre[callee_1] = Account(balance=1, nonce=0)
     pre[callee_2] = Account(balance=1, nonce=0)
@@ -88,7 +79,6 @@ def test_create2collision_balance(
         data=tx_data,
         gas_limit=400000,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

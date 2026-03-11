@@ -7,12 +7,11 @@ tests/static/state_tests/stSpecialTest/sha3_dejaFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_sha3_deja(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0xcc4cdc08ed5801a6c7d1d87efb229f9556d50ce6")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,36 +45,27 @@ def test_sha3_deja(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE8(offset=0x1F, value=0x42)
             + Op.SHA3(offset=0xFFFFFFFFFF, size=0x0)
             + Op.DUP1
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xcc4cdc08ed5801a6c7d1d87efb229f9556d50ce6"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE8(offset=0x1F, value=0x42)
-                + Op.SHA3(offset=0xFFFFFFFFFF, size=0x0)
-                + Op.DUP1
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

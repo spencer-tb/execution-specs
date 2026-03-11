@@ -8,12 +8,11 @@ TransactionCollisionToEmptyButNonceFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -63,7 +62,7 @@ def test_transaction_collision_to_empty_but_nonce(
     )
 
     pre[contract] = Account(balance=0, nonce=1)
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx = Transaction(
         sender=sender,
@@ -71,7 +70,6 @@ def test_transaction_collision_to_empty_but_nonce(
         data=bytes.fromhex("6001600155"),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

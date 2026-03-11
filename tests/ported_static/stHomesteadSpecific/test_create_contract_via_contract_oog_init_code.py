@@ -8,12 +8,11 @@ createContractViaContractOOGInitCodeFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,7 +38,6 @@ def test_create_contract_via_contract_oog_init_code(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x1000000000000000000000000000000000000001")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -52,35 +50,24 @@ def test_create_contract_via_contract_oog_init_code(
 
     # Source: LLL
     # { (MSTORE 0 0x602060406000f0600c600055)(CREATE 0 20 12)}
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x602060406000F0600C600055)
             + Op.CREATE(value=0x0, offset=0x14, size=0xC)
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x1000000000000000000000000000000000000001"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x10C8E0, nonce=0)
+    pre[sender] = Account(balance=0x10C8E0)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=105044,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.MSTORE(offset=0x0, value=0x602060406000F0600C600055)
-                + Op.CREATE(value=0x0, offset=0x14, size=0xC)
-                + Op.STOP
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

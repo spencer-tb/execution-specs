@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/JUMPI_BoundsFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,40 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9"): Account(
-                    code=Op.JUMPI(pc=0xFFFFFFFF, condition=0x1)
-                    + Op.JUMPI(pc=0xFFFFFFFFFFFFFFFF, condition=0x1)
-                    + Op.JUMPI(
-                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, condition=0x1
-                    )
-                    + Op.JUMPI(
-                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        condition=0x1,
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9"): Account(
-                    code=Op.JUMPI(pc=0xFFFFFFFF, condition=0x1)
-                    + Op.JUMPI(pc=0xFFFFFFFFFFFFFFFF, condition=0x1)
-                    + Op.JUMPI(
-                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, condition=0x1
-                    )
-                    + Op.JUMPI(
-                        pc=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        condition=0x1,
-                    )
-                    + Op.STOP
-                )
-            },
-        ),
+        (150000, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -78,7 +45,6 @@ def test_jumpi_bounds(
     sender = EOA(
         key=0x31B5AF02B012484AE954B3A43943242EDE546A2E76FC0A6ACC17435107C385EB
     )
-    contract = Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -91,9 +57,7 @@ def test_jumpi_bounds(
 
     # Source: LLL
     # { (JUMPI 0xffffffff 1) (JUMPI 0xffffffffffffffff 1) (JUMPI 0xffffffffffffffffffffffffffffffff 1) (JUMPI 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 1) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.JUMPI(pc=0xFFFFFFFF, condition=0x1)
             + Op.JUMPI(pc=0xFFFFFFFFFFFFFFFF, condition=0x1)
@@ -104,16 +68,16 @@ def test_jumpi_bounds(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x147f3300e29f2f09880e97b81f7b3ebcf78863e9"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

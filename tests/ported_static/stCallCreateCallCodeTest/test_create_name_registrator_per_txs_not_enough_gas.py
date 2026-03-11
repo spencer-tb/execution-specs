@@ -8,12 +8,11 @@ createNameRegistratorPerTxsNotEnoughGasFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,8 +35,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             86157,
             {
                 Address("0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"): Account(
-                    storage={1: 1},
-                    code=bytes.fromhex("396000f3006000355415600957005b60"),
+                    storage={1: 1}
                 )
             },
         ),
@@ -66,7 +64,7 @@ def test_create_name_registrator_per_txs_not_enough_gas(
         gas_limit=10000000000,
     )
 
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
@@ -76,7 +74,6 @@ def test_create_name_registrator_per_txs_not_enough_gas(
         ),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 

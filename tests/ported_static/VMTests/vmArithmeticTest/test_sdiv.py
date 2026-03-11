@@ -7,12 +7,11 @@ tests/static/state_tests/VMTests/vmArithmeticTest/sdivFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -31,3278 +30,132 @@ REFERENCE_SPEC_VERSION = "N/A"
     [
         (
             "693c6139000000000000000000000000000000000000000000000000000000000000000b",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "693c6139000000000000000000000000000000000000000000000000000000000000000c",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000100c"): Account(
-                    storage={0: 1},
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    storage={0: 1}
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
                 Address("0x0000000000000000000000000000000000001000"): Account(
                     storage={
                         0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000006",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000005",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
                 Address("0x0000000000000000000000000000000000001005"): Account(
                     storage={
                         0: 0x8000000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
         (
             "693c6139000000000000000000000000000000000000000000000000000000000000000f",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000100f"): Account(
                     storage={
                         0: 0x8000000000000000000000000000000000000000000000000000000000000000  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP,
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000003",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
                 Address("0x0000000000000000000000000000000000001003"): Account(
                     storage={
                         0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000004",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
                 Address("0x0000000000000000000000000000000000001004"): Account(
                     storage={
                         0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
         (
             "693c6139000000000000000000000000000000000000000000000000000000000000000e",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000100e"): Account(
                     storage={
                         0: 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000001",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
                 Address("0x0000000000000000000000000000000000001001"): Account(
                     storage={
                         0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000009",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
                 Address("0x0000000000000000000000000000000000001009"): Account(
                     storage={
                         0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000007",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000010",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000008",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
                 Address("0x0000000000000000000000000000000000001008"): Account(
-                    storage={0: 1},
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    storage={0: 1}
+                )
             },
         ),
         (
             "693c61390000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "693c6139000000000000000000000000000000000000000000000000000000000000000a",  # noqa: E501
-            {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100d"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-            },
+            {},
         ),
         (
             "693c6139000000000000000000000000000000000000000000000000000000000000000d",  # noqa: E501
             {
-                Address("0x0000000000000000000000000000000000000110"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001000"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001001"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001002"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001003"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001004"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001005"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001006"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001007"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001008"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x0000000000000000000000000000000000001009"): Account(
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100a"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0)),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100b"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            ),
-                            0x0,
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100c"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.ADD(
-                            Op.SDIV(
-                                Op.SUB(
-                                    0x0,
-                                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                                ),
-                                0x0,
-                            ),
-                            0x1,
-                        ),
-                    )
-                    + Op.STOP
-                ),
                 Address("0x000000000000000000000000000000000000100d"): Account(
                     storage={
                         0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  # noqa: E501
-                    },
-                    code=Op.SSTORE(
-                        key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)
-                    )
-                    + Op.STOP,
-                ),
-                Address("0x000000000000000000000000000000000000100e"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                Op.SUB(
-                                    0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                                    0x1,
-                                ),
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x000000000000000000000000000000000000100f"): Account(
-                    code=Op.SSTORE(
-                        key=0x0,
-                        value=Op.SDIV(
-                            Op.SUB(
-                                0x0,
-                                0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-                            ),
-                            Op.SUB(0x0, 0x1),
-                        ),
-                    )
-                    + Op.STOP
-                ),
-                Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
-                    code=Op.CALL(
-                        gas=0xFFFFFF,
-                        address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
+                    }
+                )
             },
         ),
     ],
@@ -3338,24 +191,6 @@ def test_sdiv(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xcccccccccccccccccccccccccccccccccccccccc")
-    callee = Address("0x0000000000000000000000000000000000000110")
-    callee_1 = Address("0x0000000000000000000000000000000000001000")
-    callee_2 = Address("0x0000000000000000000000000000000000001001")
-    callee_3 = Address("0x0000000000000000000000000000000000001002")
-    callee_4 = Address("0x0000000000000000000000000000000000001003")
-    callee_5 = Address("0x0000000000000000000000000000000000001004")
-    callee_6 = Address("0x0000000000000000000000000000000000001005")
-    callee_7 = Address("0x0000000000000000000000000000000000001006")
-    callee_8 = Address("0x0000000000000000000000000000000000001007")
-    callee_9 = Address("0x0000000000000000000000000000000000001008")
-    callee_10 = Address("0x0000000000000000000000000000000000001009")
-    callee_11 = Address("0x000000000000000000000000000000000000100a")
-    callee_12 = Address("0x000000000000000000000000000000000000100b")
-    callee_13 = Address("0x000000000000000000000000000000000000100c")
-    callee_14 = Address("0x000000000000000000000000000000000000100d")
-    callee_15 = Address("0x000000000000000000000000000000000000100e")
-    callee_16 = Address("0x000000000000000000000000000000000000100f")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -3366,9 +201,7 @@ def test_sdiv(
         gas_limit=100000000,
     )
 
-    pre[callee] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -3382,10 +215,11 @@ def test_sdiv(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000000110"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -3399,10 +233,11 @@ def test_sdiv(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001000"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -3416,34 +251,38 @@ def test_sdiv(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001001"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x2), Op.SUB(0x0, 0x4))
             )
             + Op.STOP
         ),
-    )
-    pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001002"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.SDIV(0x4, Op.SUB(0x0, 0x2))) + Op.STOP
         ),
-    )
-    pre[callee_5] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001003"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.SDIV(0x5, Op.SUB(0x0, 0x4))) + Op.STOP
         ),
-    )
-    pre[callee_6] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001004"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -3457,10 +296,11 @@ def test_sdiv(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_7] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001005"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -3474,40 +314,46 @@ def test_sdiv(
             )
             + Op.STOP
         ),
-    )
-    pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x0000000000000000000000000000000000001006"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)) + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x0000000000000000000000000000000000001007"),  # noqa: E501
     )
     # Source: LLL
     # {  ; (-1)/(-1) = 1
     #
     #    [[0]] (sdiv (- 0 1) (- 0 1))
     # }
-    pre[callee_9] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), Op.SUB(0x0, 0x1))
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x0000000000000000000000000000000000001008"),  # noqa: E501
     )
     # Source: LLL
     # {  ; (-1)/1 = -1
     #
     #    [[0]] (sdiv (- 0 1) 1)
     # }
-    pre[callee_10] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)) + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x0000000000000000000000000000000000001009"),  # noqa: E501
     )
     # Source: LLL
     # {  ; (-3)/0 = 0
@@ -3515,15 +361,16 @@ def test_sdiv(
     #
     #    [[0]] (sdiv (- 0 3) (- 0 0))
     # }
-    pre[callee_11] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x3), Op.SUB(0x0, 0x0))
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x000000000000000000000000000000000000100a"),  # noqa: E501
     )
     # Source: LLL
     # {  ; (0-(-1))/0 = 0
@@ -3533,9 +380,7 @@ def test_sdiv(
     #
     #    [[0]] (sdiv (- 0 neg1) 0)
     # }
-    pre[callee_12] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -3549,6 +394,9 @@ def test_sdiv(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x000000000000000000000000000000000000100b"),  # noqa: E501
     )
     # Source: LLL
     # {  ; (0-(-1))/0 + 1 = 1
@@ -3558,9 +406,7 @@ def test_sdiv(
     #
     #    [[0]] (+ (sdiv (- 0 neg1) 0) 1)
     # }
-    pre[callee_13] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -3577,14 +423,18 @@ def test_sdiv(
             )
             + Op.STOP
         ),
-    )
-    # Source: raw bytecode
-    pre[callee_14] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
+        address=Address("0x000000000000000000000000000000000000100c"),  # noqa: E501
+    )
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)) + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x000000000000000000000000000000000000100d"),  # noqa: E501
     )
     # Source: LLL
     # {
@@ -3593,9 +443,7 @@ def test_sdiv(
     #    (def 'pow2_255_min1 (- pow2_255 1))
     #    [[0]] (sdiv (- 0 pow2_255_min1) (- 0 1))
     # }
-    pre[callee_15] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -3612,6 +460,9 @@ def test_sdiv(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x000000000000000000000000000000000000100e"),  # noqa: E501
     )
     # Source: LLL
     # {
@@ -3620,9 +471,7 @@ def test_sdiv(
     #    [[0]] (sdiv (- 0 pow2_255) (- 0 1))
     #    ; 2^255 = -2^255 in evm (modulo 2^256)
     # }
-    pre[callee_16] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.SSTORE(
                 key=0x0,
@@ -3636,15 +485,16 @@ def test_sdiv(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0x000000000000000000000000000000000000100f"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE)
     # Source: LLL
     # {
     #     (call 0xffffff (+ 0x1000 $4) 0 0 0 0 0)
     # }
-    pre[contract] = Account(
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALL(
                 gas=0xFFFFFF,
@@ -3657,6 +507,9 @@ def test_sdiv(
             )
             + Op.STOP
         ),
+        balance=0xBA1A9CE0BA1A9CE,
+        nonce=0,
+        address=Address("0xcccccccccccccccccccccccccccccccccccccccc"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -3667,7 +520,6 @@ def test_sdiv(
         data=tx_data,
         gas_limit=16777216,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 

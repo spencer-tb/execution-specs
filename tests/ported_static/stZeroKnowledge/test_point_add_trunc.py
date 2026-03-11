@@ -7,12 +7,11 @@ tests/static/state_tests/stZeroKnowledge/pointAddTruncFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -34,34 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             1000000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1, 1: 1, 2: 2},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1, 1: 1, 2: 2}
                 )
             },
         ),
@@ -70,34 +42,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             110000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1, 1: 1, 2: 2},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1, 1: 1, 2: 2}
                 )
             },
         ),
@@ -106,105 +51,21 @@ REFERENCE_SPEC_VERSION = "N/A"
             200000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1, 1: 1, 2: 2},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1, 1: 1, 2: 2}
                 )
             },
         ),
         (
             "0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             80000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             1000000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -213,34 +74,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             110000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -249,34 +83,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             200000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -285,34 +92,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             80000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -325,34 +105,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -365,34 +118,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -405,71 +131,14 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
         (
             "0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             80000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
@@ -480,34 +149,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -520,34 +162,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -560,105 +175,21 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
         (
             "0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
             80000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             1000000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -667,34 +198,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             110000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -703,34 +207,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             200000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
@@ -739,316 +216,49 @@ REFERENCE_SPEC_VERSION = "N/A"
             80000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 1},
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    storage={0: 1}
                 )
             },
         ),
         (
             "0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             1000000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             110000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             200000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             80000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             1000000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             110000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             200000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25919bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             80000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
@@ -1059,34 +269,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -1099,34 +282,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -1139,71 +295,14 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
         (
             "0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba",  # noqa: E501
             80000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba1de49a4b0233273bba8146af82042d004f2085ec982397db0d97da17204cc2860217327ffc463919bef80cc166d09c6172639d8589799928761bcd9f22c903d4",  # noqa: E501
@@ -1214,34 +313,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -1254,34 +326,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -1294,71 +339,14 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
         (
             "0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba1de49a4b0233273bba8146af82042d004f2085ec982397db0d97da17204cc2860217327ffc463919bef80cc166d09c6172639d8589799928761bcd9f22c903d4",  # noqa: E501
             80000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
         (
             "0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
@@ -1369,34 +357,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -1409,34 +370,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
@@ -1449,71 +383,14 @@ REFERENCE_SPEC_VERSION = "N/A"
                         0: 1,
                         1: 0xF25929BCB43D5A57391564615C9E70A992B10EAFA4DB109709649CF48C50DD2,  # noqa: E501
                         2: 0x16DA2F5CB6BE7A0AA72C440C53C9BBDFEC6C36C7D515536431B3A865468ACBBA,  # noqa: E501
-                    },
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP,
+                    }
                 )
             },
         ),
         (
             "0f25929bcb43d5a57391564615c9e70a992b10eafa4db109709649cf48c50dd216da2f5cb6be7a0aa72c440c53c9bbdfec6c36c7d515536431b3a865468acbba00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002",  # noqa: E501
             80000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=Op.CALLDATALOAD(offset=0x0)
-                    )
-                    + Op.MSTORE(
-                        offset=0x20, value=Op.CALLDATALOAD(offset=0x20)
-                    )
-                    + Op.MSTORE(
-                        offset=0x40, value=Op.CALLDATALOAD(offset=0x40)
-                    )
-                    + Op.MSTORE(
-                        offset=0x60, value=Op.CALLDATALOAD(offset=0x60)
-                    )
-                    + Op.SSTORE(
-                        key=0x0,
-                        value=Op.CALLCODE(
-                            gas=0x7A120,
-                            address=0x6,
-                            value=0x0,
-                            args_offset=0x0,
-                            args_size=0x40,
-                            ret_offset=0xC8,
-                            ret_size=0x40,
-                        ),
-                    )
-                    + Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0xC8))
-                    + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
-                    + Op.STOP
-                )
-            },
+            {},
         ),
     ],
     ids=[
@@ -1572,7 +449,6 @@ def test_point_add_trunc(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -1586,9 +462,7 @@ def test_point_add_trunc(
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
     # Source: LLL
     # {(MSTORE 0 (CALLDATALOAD 0)) (MSTORE 32 (CALLDATALOAD 32)) (MSTORE 64 (CALLDATALOAD 64)) (MSTORE 96 (CALLDATALOAD 96)) [[0]](CALLCODE 500000 6 0 0 64 200 64)  [[1]] (MLOAD 200)  [[2]] (MLOAD 232) }  # noqa: E501
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
             + Op.MSTORE(offset=0x20, value=Op.CALLDATALOAD(offset=0x20))
@@ -1610,6 +484,8 @@ def test_point_add_trunc(
             + Op.SSTORE(key=0x2, value=Op.MLOAD(offset=0xE8))
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -1621,7 +497,6 @@ def test_point_add_trunc(
         gas_limit=tx_gas_limit,
         gas_price=10,
         nonce=1,
-        value=0,
     )
 
     post = expected_post

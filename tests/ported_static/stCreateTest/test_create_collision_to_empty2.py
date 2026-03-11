@@ -7,12 +7,11 @@ tests/static/state_tests/stCreateTest/CreateCollisionToEmpty2Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -37,48 +36,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             {
                 Address("0x1000000000000000000000000000000000000000"): Account(
-                    storage={1: 0x13136008B64FF592819B2FA6D43F2835C452020E},
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP,
+                    storage={1: 0x13136008B64FF592819B2FA6D43F2835C452020E}
                 ),
                 Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(
                     storage={1: 1}
                 ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
             },
         ),
         (
@@ -87,509 +49,72 @@ REFERENCE_SPEC_VERSION = "N/A"
             1,
             {
                 Address("0x1000000000000000000000000000000000000000"): Account(
-                    storage={1: 0x13136008B64FF592819B2FA6D43F2835C452020E},
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP,
+                    storage={1: 0x13136008B64FF592819B2FA6D43F2835C452020E}
                 ),
                 Address("0x13136008b64ff592819b2fa6d43f2835c452020e"): Account(
                     storage={1: 1}
                 ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
             },
         ),
         (
             "0000000000000000000000001000000000000000000000000000000000000000",
             54000,
             0,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
-            },
+            {},
         ),
         (
             "0000000000000000000000001000000000000000000000000000000000000000",
             54000,
             1,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
-            },
+            {},
         ),
         (
             "0000000000000000000000002000000000000000000000000000000000000000",
             600000,
             0,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
-            },
+            {},
         ),
         (
             "0000000000000000000000002000000000000000000000000000000000000000",
             600000,
             1,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
-            },
+            {},
         ),
         (
             "0000000000000000000000002000000000000000000000000000000000000000",
             54000,
             0,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
-            },
+            {},
         ),
         (
             "0000000000000000000000002000000000000000000000000000000000000000",
             54000,
             1,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
-            },
+            {},
         ),
         (
             "0000000000000000000000003000000000000000000000000000000000000000",
             600000,
             0,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
-            },
+            {},
         ),
         (
             "0000000000000000000000003000000000000000000000000000000000000000",
             600000,
             1,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
-            },
+            {},
         ),
         (
             "0000000000000000000000003000000000000000000000000000000000000000",
             54000,
             0,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
-            },
+            {},
         ),
         (
             "0000000000000000000000003000000000000000000000000000000000000000",
             54000,
             1,
-            {
-                Address("0x1000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x1a00000000000000000000000000000000000000"): Account(
-                    code=Op.CALL(
-                        gas=0x13880,
-                        address=Op.CALLDATALOAD(offset=0x0),
-                        value=0x0,
-                        args_offset=0x0,
-                        args_size=0x0,
-                        ret_offset=0x0,
-                        ret_size=0x0,
-                    )
-                    + Op.STOP
-                ),
-                Address("0x2000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x3000000000000000000000000000000000000000"): Account(
-                    code=Op.MSTORE(offset=0x0, value=0x6001600155)
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x0, offset=0x1B, size=0x5),
-                    )
-                    + Op.STOP
-                ),
-                Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"): Account(
-                    code=bytes.fromhex("1122334455")
-                ),
-            },
+            {},
         ),
     ],
     ids=[
@@ -621,13 +146,8 @@ def test_create_collision_to_empty2(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0x1a00000000000000000000000000000000000000")
     callee = Address("0x0bf4c804e0579073baf54ec4ec37cd04f3455c65")
-    callee_1 = Address("0x1000000000000000000000000000000000000000")
     callee_2 = Address("0x13136008b64ff592819b2fa6d43f2835c452020e")
-    callee_3 = Address("0x2000000000000000000000000000000000000000")
-    callee_4 = Address("0x3000000000000000000000000000000000000000")
-    callee_5 = Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -641,9 +161,7 @@ def test_create_collision_to_empty2(
     pre[callee] = Account(balance=0, nonce=2)
     # Source: LLL
     # { (MSTORE 0 0x6001600155) [[1]] (CREATE 0 27 5) }
-    pre[callee_1] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x6001600155)
             + Op.SSTORE(
@@ -651,13 +169,13 @@ def test_create_collision_to_empty2(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x1000000000000000000000000000000000000000"),  # noqa: E501
     )
     pre[callee_2] = Account(balance=10, nonce=0)
     # Source: LLL
     # { (CALL 80000 (CALLDATALOAD 0) 0 0 0 0 0) }
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.CALL(
                 gas=0x13880,
@@ -670,12 +188,12 @@ def test_create_collision_to_empty2(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x1a00000000000000000000000000000000000000"),  # noqa: E501
     )
     # Source: LLL
     # { (MSTORE 0 0x6001600155) [[1]] (CREATE 0 27 5) }
-    pre[callee_3] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x6001600155)
             + Op.SSTORE(
@@ -683,12 +201,12 @@ def test_create_collision_to_empty2(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x2000000000000000000000000000000000000000"),  # noqa: E501
     )
     # Source: LLL
     # { (MSTORE 0 0x6001600155) [[1]] (CREATE 0 27 5) }
-    pre[callee_4] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x6001600155)
             + Op.SSTORE(
@@ -696,14 +214,16 @@ def test_create_collision_to_empty2(
             )
             + Op.STOP
         ),
+        nonce=0,
+        address=Address("0x3000000000000000000000000000000000000000"),  # noqa: E501
     )
     # Source: raw bytecode
-    pre[callee_5] = Account(
-        balance=0,
-        nonce=0,
+    pre.deploy_contract(
         code=bytes.fromhex("1122334455"),
+        nonce=0,
+        address=Address("0x4b86c4ed99b87f0f396bc0c76885453c343916ed"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -713,7 +233,6 @@ def test_create_collision_to_empty2(
         data=tx_data,
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=tx_value,
     )
 

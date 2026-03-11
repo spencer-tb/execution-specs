@@ -8,12 +8,11 @@ returndatasize_initial_zero_readFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -32,30 +31,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
-        (
-            "",
-            {
-                Address("0x537cd1744af41c3a74d5aa5ae93958d1160ca98f"): Account(
-                    code=Op.RETURNDATACOPY(
-                        dest_offset=0x0, offset=0x0, size=0x0
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-                    + Op.STOP
-                )
-            },
-        ),
-        (
-            "992919aa",
-            {
-                Address("0x537cd1744af41c3a74d5aa5ae93958d1160ca98f"): Account(
-                    code=Op.RETURNDATACOPY(
-                        dest_offset=0x0, offset=0x0, size=0x0
-                    )
-                    + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
-                    + Op.STOP
-                )
-            },
-        ),
+        ("", {}),
+        ("992919aa", {}),
     ],
     ids=["case0", "case1"],
 )
@@ -71,7 +48,6 @@ def test_returndatasize_initial_zero_read(
     sender = EOA(
         key=0x834185262E53584684BF2B72C64E510013C235D0F45E462DB65900455DF45A35
     )
-    contract = Address("0x537cd1744af41c3a74d5aa5ae93958d1160ca98f")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -84,17 +60,18 @@ def test_returndatasize_initial_zero_read(
 
     # Source: LLL
     # { (RETURNDATACOPY 0 0 0) (SSTORE 0 (MLOAD 0)) }
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.RETURNDATACOPY(dest_offset=0x0, offset=0x0, size=0x0)
             + Op.SSTORE(key=0x0, value=Op.MLOAD(offset=0x0))
             + Op.STOP
         ),
         storage={0x0: 0x1},
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0x537cd1744af41c3a74d5aa5ae93958d1160ca98f"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0x6400000000, nonce=0)
+    pre[sender] = Account(balance=0x6400000000)
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
 
@@ -104,8 +81,6 @@ def test_returndatasize_initial_zero_read(
         data=tx_data,
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

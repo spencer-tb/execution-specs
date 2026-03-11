@@ -7,12 +7,11 @@ tests/static/state_tests/stRandom/randomStatetest20Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_random_statetest20(
     sender = EOA(
         key=0xB1F4CBC3A50042184425A6F9E996D0910F7BA879457CE5DAC5C71E498AD3C005
     )
-    contract = Address("0x14aae767bfb5a29ee9b0f5b449eb48366103601c")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -48,9 +46,7 @@ def test_random_statetest20(
     )
 
     # Source: raw bytecode
-    pre[contract] = Account(
-        balance=0,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.BALANCE
             + Op.COINBASE
@@ -72,9 +68,10 @@ def test_random_statetest20(
             + Op.SWAP11
             + Op.SSTORE
         ),
+        nonce=0,
+        address=Address("0x14aae767bfb5a29ee9b0f5b449eb48366103601c"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
-    # Source: raw bytecode
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     pre[coinbase] = Account(
         balance=46,
         nonce=0,
@@ -105,52 +102,9 @@ def test_random_statetest20(
         ),
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=1758540724,
     )
 
-    post = {
-        contract: Account(
-            code=(
-                Op.BALANCE
-                + Op.COINBASE
-                + Op.PUSH32[0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF]
-                + Op.PUSH32[0xC350]
-                + Op.PUSH32[
-                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE  # noqa: E501
-                ]
-                + Op.SHA3(
-                    offset=Op.ISZERO(
-                        Op.SUB(
-                            0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
-                            Op.PUSH32[0x1],
-                        ),
-                    ),
-                    size=Op.PUSH32[
-                        0x10000000000000000000000000000000000000000
-                    ],
-                )
-                + Op.DIV(Op.NOT(0x5944747F74306615), Op.DUP11)
-                + Op.SWAP11
-                + Op.SSTORE
-            ),
-        ),
-        coinbase: Account(
-            code=(
-                Op.JUMPI(
-                    pc=0x9,
-                    condition=Op.ISZERO(
-                        Op.SLOAD(key=Op.CALLDATALOAD(offset=0x0))
-                    ),
-                )
-                + Op.STOP
-                + Op.JUMPDEST
-                + Op.SSTORE(
-                    key=Op.CALLDATALOAD(offset=0x0),
-                    value=Op.CALLDATALOAD(offset=0x20),
-                )
-            ),
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

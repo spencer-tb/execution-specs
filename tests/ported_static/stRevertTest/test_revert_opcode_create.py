@@ -7,12 +7,11 @@ tests/static/state_tests/stRevertTest/RevertOpcodeCreateFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -33,35 +32,11 @@ REFERENCE_SPEC_VERSION = "N/A"
             460000,
             {
                 Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    storage={0: 12},
-                    code=Op.MSTORE(
-                        offset=0x0, value=0x600160005560016000FD6011600155
-                    )
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x1, offset=0x11, size=0xF),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xC)
-                    + Op.STOP,
+                    storage={0: 12}
                 )
             },
         ),
-        (
-            70000,
-            {
-                Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"): Account(
-                    code=Op.MSTORE(
-                        offset=0x0, value=0x600160005560016000FD6011600155
-                    )
-                    + Op.SSTORE(
-                        key=0x1,
-                        value=Op.CREATE(value=0x1, offset=0x11, size=0xF),
-                    )
-                    + Op.SSTORE(key=0x0, value=0xC)
-                    + Op.STOP
-                )
-            },
-        ),
+        (70000, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -77,7 +52,6 @@ def test_revert_opcode_create(
     sender = EOA(
         key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
     )
-    contract = Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -88,12 +62,10 @@ def test_revert_opcode_create(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    pre[sender] = Account(balance=0xE8D4A51000)
     # Source: LLL
     # { (MSTORE 0 0x600160005560016000fd6011600155 ) [[1]](CREATE 1 17 15) [[0]] 12 }  # noqa: E501
-    pre[contract] = Account(
-        balance=1,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x600160005560016000FD6011600155)
             + Op.SSTORE(
@@ -102,6 +74,9 @@ def test_revert_opcode_create(
             + Op.SSTORE(key=0x0, value=0xC)
             + Op.STOP
         ),
+        balance=1,
+        nonce=0,
+        address=Address("0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -110,8 +85,6 @@ def test_revert_opcode_create(
         data=bytes.fromhex("600160005560016000fe6011600155"),
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post = expected_post

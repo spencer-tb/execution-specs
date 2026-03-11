@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP1559/outOfFundsFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -34,11 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             0,
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
-            {
-                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
-                )
-            },
+            {},
             id="case0",
             marks=pytest.mark.exception_test,
         ),
@@ -46,34 +41,16 @@ REFERENCE_SPEC_VERSION = "N/A"
             16777216,
             1000000000000000000,
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
-            {
-                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
-                )
-            },
+            {},
             id="case1",
             marks=pytest.mark.exception_test,
         ),
-        pytest.param(
-            40000,
-            0,
-            None,
-            {
-                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
-                )
-            },
-            id="case2",
-        ),
+        pytest.param(40000, 0, None, {}, id="case2"),
         pytest.param(
             40000,
             1000000000000000000,
             TransactionException.INSUFFICIENT_ACCOUNT_FUNDS,
-            {
-                Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"): Account(
-                    code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP
-                )
-            },
+            {},
             id="case3",
             marks=pytest.mark.exception_test,
         ),
@@ -93,7 +70,6 @@ def test_out_of_funds(
     sender = EOA(
         key=0xDE0C95357363DA5C1C5A73BD7C2781CA5C9FECC1014103B5E1D1E990AE8208EC
     )
-    contract = Address("0xd71b14c239fc39327f25764dd784c85ef0285fda")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -109,10 +85,11 @@ def test_out_of_funds(
     # {
     #     sstore(0, add(1,1))
     # }
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
+        address=Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"),  # noqa: E501
     )
 
     tx = Transaction(
@@ -124,7 +101,6 @@ def test_out_of_funds(
         max_priority_fee_per_gas=100000000000,
         nonce=1,
         value=tx_value,
-        access_list=[],
         error=tx_error,
     )
 

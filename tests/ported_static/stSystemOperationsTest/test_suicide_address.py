@@ -7,12 +7,11 @@ tests/static/state_tests/stSystemOperationsTest/suicideAddressFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -38,7 +37,6 @@ def test_suicide_address(
     sender = EOA(
         key=0xE04D1AC7DDDA0C98397D56A0B501E960D4CD325A39286919AC23C1A07009A869
     )
-    contract = Address("0xab0ceffaa4bd275f5819261e06029439647112c1")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,35 +49,29 @@ def test_suicide_address(
 
     # Source: LLL
     # { [[0]] (ADDRESS) (SELFDESTRUCT (ADDRESS))}
-    pre[contract] = Account(
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=Op.ADDRESS)
             + Op.SELFDESTRUCT(address=Op.ADDRESS)
             + Op.STOP
         ),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=Address("0xab0ceffaa4bd275f5819261e06029439647112c1"),  # noqa: E501
     )
-    pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=1000000,
         gas_price=10,
-        nonce=0,
         value=100000,
     )
 
     post = {
         contract: Account(
             storage={0: 0xAB0CEFFAA4BD275F5819261E06029439647112C1},
-            code=(
-                Op.SSTORE(key=0x0, value=Op.ADDRESS)
-                + Op.SELFDESTRUCT(address=Op.ADDRESS)
-                + Op.STOP
-            ),
         ),
     }
 

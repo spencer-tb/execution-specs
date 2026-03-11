@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryTest/mload16bitBoundFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -36,7 +35,6 @@ def test_mload16bit_bound(
     sender = EOA(
         key=0xA9DF11BD92FC8535FFCA3AE0A2133C80D5F4ECC5D31D100B94FF03E63F7E74FF
     )
-    contract = Address("0x85eaa01ac6288c06360d431d62cd865c92b74a28")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -47,29 +45,24 @@ def test_mload16bit_bound(
         gas_limit=17592320524892,
     )
 
-    pre[sender] = Account(balance=0xA00050281798, nonce=0)
+    pre[sender] = Account(balance=0xA00050281798)
     # Source: LLL
     # { [[ 1 ]] (MLOAD 65536) }
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x10000)) + Op.STOP,
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x10000)) + Op.STOP,
+        address=Address("0x85eaa01ac6288c06360d431d62cd865c92b74a28"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
-    post = {
-        contract: Account(
-            code=Op.SSTORE(key=0x1, value=Op.MLOAD(offset=0x10000)) + Op.STOP,
-        ),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -8,12 +8,11 @@ StoreClearsAndInternalCallStoreClearsSuccessFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -39,8 +38,6 @@ def test_store_clears_and_internal_call_store_clears_success(
     sender = EOA(
         key=0x96C07046493EC8728482079AB999D2994420D9CF4D3491DFD06871B106D9D87B
     )
-    contract = Address("0x8989e867016031a6730f2b84d5e47e1f0f83bdd9")
-    callee = Address("0xd61e0564fab2b0da5136f75db579b663bd9f2bd8")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,12 +48,10 @@ def test_store_clears_and_internal_call_store_clears_success(
         gas_limit=10000000,
     )
 
-    pre[sender] = Account(balance=0x1DCD6500, nonce=0)
+    pre[sender] = Account(balance=0x1DCD6500)
     # Source: LLL
     # {(SSTORE 0 0)(SSTORE 1 0)(SSTORE 2 0)(SSTORE 3 0) (CALL 50000 <contract:0x0000000000000000000000000000000000000000> 1 0 0 0 0) }  # noqa: E501
-    pre[contract] = Account(
-        balance=10,
-        nonce=0,
+    contract = pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=0x0)
             + Op.SSTORE(key=0x1, value=0x0)
@@ -74,10 +69,11 @@ def test_store_clears_and_internal_call_store_clears_success(
             + Op.STOP
         ),
         storage={0x0: 0xC, 0x1: 0xC, 0x2: 0xC, 0x3: 0xC, 0x4: 0xC},
-    )
-    pre[callee] = Account(
-        balance=0,
+        balance=10,
         nonce=0,
+        address=Address("0x8989e867016031a6730f2b84d5e47e1f0f83bdd9"),  # noqa: E501
+    )
+    pre.deploy_contract(
         code=(
             Op.SSTORE(key=0x0, value=0x0)
             + Op.SSTORE(key=0x1, value=0x0)
@@ -103,53 +99,20 @@ def test_store_clears_and_internal_call_store_clears_success(
             0x8: 0xC,
             0x9: 0xC,
         },
+        nonce=0,
+        address=Address("0xd61e0564fab2b0da5136f75db579b663bd9f2bd8"),  # noqa: E501
     )
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=200000,
         gas_price=10,
-        nonce=0,
         value=10,
     )
 
     post = {
-        contract: Account(
-            storage={4: 12},
-            code=(
-                Op.SSTORE(key=0x0, value=0x0)
-                + Op.SSTORE(key=0x1, value=0x0)
-                + Op.SSTORE(key=0x2, value=0x0)
-                + Op.SSTORE(key=0x3, value=0x0)
-                + Op.CALL(
-                    gas=0xC350,
-                    address=0xD61E0564FAB2B0DA5136F75DB579B663BD9F2BD8,
-                    value=0x1,
-                    args_offset=0x0,
-                    args_size=0x0,
-                    ret_offset=0x0,
-                    ret_size=0x0,
-                )
-                + Op.STOP
-            ),
-        ),
-        callee: Account(
-            code=(
-                Op.SSTORE(key=0x0, value=0x0)
-                + Op.SSTORE(key=0x1, value=0x0)
-                + Op.SSTORE(key=0x2, value=0x0)
-                + Op.SSTORE(key=0x3, value=0x0)
-                + Op.SSTORE(key=0x4, value=0x0)
-                + Op.SSTORE(key=0x5, value=0x0)
-                + Op.SSTORE(key=0x6, value=0x0)
-                + Op.SSTORE(key=0x7, value=0x0)
-                + Op.SSTORE(key=0x8, value=0x0)
-                + Op.SSTORE(key=0x9, value=0x0)
-                + Op.STOP
-            ),
-        ),
+        contract: Account(storage={4: 12}),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -8,12 +8,11 @@ createContractViaTransactionCost53000Filler.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -48,16 +47,13 @@ def test_create_contract_via_transaction_cost53000(
         gas_limit=1000000,
     )
 
-    pre[sender] = Account(balance=0xF4240, nonce=0)
+    pre[sender] = Account(balance=0xF4240)
 
     tx = Transaction(
         sender=sender,
         to=None,
-        data=b"",
         gas_limit=100000,
         gas_price=10,
-        nonce=0,
-        value=0,
     )
 
     post: dict = {}

@@ -7,12 +7,11 @@ tests/static/state_tests/stEIP1559/lowGasPriceOldTypesFiller.yml
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -48,7 +47,6 @@ def test_low_gas_price_old_types(
     sender = EOA(
         key=0xDE0C95357363DA5C1C5A73BD7C2781CA5C9FECC1014103B5E1D1E990AE8208EC
     )
-    contract = Address("0xd71b14c239fc39327f25764dd784c85ef0285fda")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -64,10 +62,11 @@ def test_low_gas_price_old_types(
     # {
     #     sstore(0, add(1,1))
     # }
-    pre[contract] = Account(
+    contract = pre.deploy_contract(
+        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
         balance=0xDE0B6B3A7640000,
         nonce=0,
-        code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP,
+        address=Address("0xd71b14c239fc39327f25764dd784c85ef0285fda"),  # noqa: E501
     )
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""
@@ -84,8 +83,6 @@ def test_low_gas_price_old_types(
         error=TransactionException.INSUFFICIENT_MAX_FEE_PER_GAS,
     )
 
-    post = {
-        contract: Account(code=Op.SSTORE(key=0x0, value=0x2) + Op.STOP),
-    }
+    post: dict = {}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

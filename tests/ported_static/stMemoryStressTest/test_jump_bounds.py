@@ -7,12 +7,11 @@ tests/static/state_tests/stMemoryStressTest/JUMP_BoundsFiller.json
 
 import pytest
 from execution_testing import (
+    EOA,
     Account,
     Address,
     Alloc,
-    EOA,
     Environment,
-    Hash,
     StateTestFiller,
     Transaction,
 )
@@ -29,22 +28,8 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
-        (
-            150000,
-            {
-                Address("0xb2448deb71e9fd31ed854e3b856f729adbc0c288"): Account(
-                    code=Op.JUMP(pc=0x0) + Op.STOP
-                )
-            },
-        ),
-        (
-            16777216,
-            {
-                Address("0xb2448deb71e9fd31ed854e3b856f729adbc0c288"): Account(
-                    code=Op.JUMP(pc=0x0) + Op.STOP
-                )
-            },
-        ),
+        (150000, {}),
+        (16777216, {}),
     ],
     ids=["case0", "case1"],
 )
@@ -60,7 +45,6 @@ def test_jump_bounds(
     sender = EOA(
         key=0x31B5AF02B012484AE954B3A43943242EDE546A2E76FC0A6ACC17435107C385EB
     )
-    contract = Address("0xb2448deb71e9fd31ed854e3b856f729adbc0c288")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -73,16 +57,18 @@ def test_jump_bounds(
 
     # Source: LLL
     # { (JUMP 0) }
-    pre[contract] = Account(balance=0, nonce=0, code=Op.JUMP(pc=0x0) + Op.STOP)
-    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
+    contract = pre.deploy_contract(
+        code=Op.JUMP(pc=0x0) + Op.STOP,
+        nonce=0,
+        address=Address("0xb2448deb71e9fd31ed854e3b856f729adbc0c288"),  # noqa: E501
+    )
+    pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF)
 
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=b"",
         gas_limit=tx_gas_limit,
         gas_price=10,
-        nonce=0,
         value=1,
     )
 
