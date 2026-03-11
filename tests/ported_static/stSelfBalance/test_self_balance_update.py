@@ -45,6 +45,8 @@ def test_self_balance_update(
     )
 
     pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
+    # Source: asm
+    # (asm SELFBALANCE DUP1 1 SSTORE 0 0 0 0 1 0 0 CALL POP SELFBALANCE DUP1 2 SSTORE SWAP1 SUB 3 SSTORE)  # noqa: E501
     pre[contract] = Account(
         balance=500,
         nonce=0,

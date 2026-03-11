@@ -940,6 +940,19 @@ def test_create2_first_byte_loop(
         gas_limit=89128960,
     )
 
+    # Source: Yul
+    # {
+    #   let start := calldataload(4)
+    #   let end := calldataload(36)
+    #   // initcode: { mstore8(0, 0x00) return(0, 1) }
+    #   mstore(0, 0x600060005360016000f300000000000000000000000000000000000000000000)  # noqa: E501
+    #   for { let code := start } lt(code, end) { code := add(code, 1) }
+    #   {
+    #     mstore8(1, code) // change returned byte in initcode
+    #     if iszero(create2(0, 0, 10, 0)) { sstore(code, 1) }
+    #   }
+    #   sstore(256, 1)
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

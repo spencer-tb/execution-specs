@@ -44,6 +44,8 @@ def test_stack_limit_gas_1024(
         gas_limit=42949672960,
     )
 
+    # Source: asm
+    # (asm 1022 0x00 MSTORE JUMPDEST GAS 0x01 0x00 MLOAD SUB 0x00 MSTORE 0x00 MLOAD 0x06 JUMPI STOP )  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

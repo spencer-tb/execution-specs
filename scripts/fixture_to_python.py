@@ -270,52 +270,34 @@ def bytecode_to_assembly_summary(
 # Filler context extraction
 # ---------------------------------------------------------------------------
 
-# Git ref that contains the original filler files (before they were replaced
-# with auto-ported Python tests).
-_FILLER_GIT_REF = "b0e75de2a~1"
-
 
 def _load_filler_data(filler_path: Path) -> dict | None:
     """
     Load and parse a filler file (JSON or YAML).
 
-    Try the on-disk path first.  If the file doesn't exist (fillers were
-    deleted), fall back to ``git show <ref>:<relative_path>``.
-    Returns the parsed dict, or None on failure.
+    Return the parsed dict, or None on failure.
     """
     raw: str | None = None
     suffix = filler_path.suffix
 
-    # Check on-disk: try both the path as-is and relative to repo root
-    repo_root: Path | None = None
-    try:
-        repo_root = Path(
-            subprocess.check_output(
-                ["git", "rev-parse", "--show-toplevel"],
-                stderr=subprocess.DEVNULL,
-            )
-            .decode()
-            .strip()
-        )
-    except (subprocess.CalledProcessError, OSError):
-        pass
-
     if filler_path.exists():
         raw = filler_path.read_text()
-    elif repo_root and (repo_root / filler_path).exists():
-        raw = (repo_root / filler_path).read_text()
     else:
-        # Extract from git history — filler_path is repo-root-relative
-        # (e.g. "tests/static/state_tests/stExample/add11Filler.json")
+        # Try relative to repo root
         try:
-            # Use as-is first (works when path is already repo-relative)
-            raw = subprocess.check_output(
-                ["git", "show", f"{_FILLER_GIT_REF}:{filler_path}"],
-                stderr=subprocess.DEVNULL,
-                cwd=repo_root,
-            ).decode()
+            repo_root = Path(
+                subprocess.check_output(
+                    ["git", "rev-parse", "--show-toplevel"],
+                    stderr=subprocess.DEVNULL,
+                )
+                .decode()
+                .strip()
+            )
+            resolved = repo_root / filler_path
+            if resolved.exists():
+                raw = resolved.read_text()
         except (subprocess.CalledProcessError, OSError):
-            return None
+            pass
 
     if raw is None:
         return None
@@ -493,10 +475,8 @@ def _extract_filler_code_sources(
                 if hex_bytes:
                     result.by_hex[hex_bytes] = comment
 
-                # Detect target role from label
-                if ":target:" in addr_str or addr_str.startswith(
-                    "<contract:target:"
-                ):
+                # Detect target/entry role from label
+                if ":target:" in addr_str or ":entry:" in addr_str:
                     result.target_source = comment
     except Exception:
         pass
@@ -553,6 +533,10 @@ def _classify_code_source(code: str) -> str:
     # LLL: starts with { ... }
     if stripped.startswith("{"):
         return _format_source_comment("LLL", stripped)
+
+    # Inline assembly: (asm OP OP ...)
+    if stripped.startswith("(asm"):
+        return _format_source_comment("asm", stripped)
 
     return ""
 

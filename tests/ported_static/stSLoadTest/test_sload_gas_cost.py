@@ -44,6 +44,8 @@ def test_sload_gas_cost(
         gas_limit=10000000000,
     )
 
+    # Source: asm
+    # (asm GAS DUP1 SLOAD GAS SWAP1 POP SWAP1 SUB 5 SWAP1 SUB 0x01 SSTORE)
     pre[contract] = Account(
         balance=0,
         nonce=0,

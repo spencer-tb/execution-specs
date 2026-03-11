@@ -44,6 +44,8 @@ def test_chain_id_gas_cost(
         gas_limit=10000000000,
     )
 
+    # Source: asm
+    # (asm GAS CHAINID GAS SWAP1 POP SWAP1 SUB 2 SWAP1 SUB 0x01 SSTORE)
     pre[contract] = Account(
         balance=0,
         nonce=0,
