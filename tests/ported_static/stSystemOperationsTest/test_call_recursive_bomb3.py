@@ -46,6 +46,8 @@ def test_call_recursive_bomb3(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {  [[ 0 ]] (+ (SLOAD 0) 1) [[ 1 ]] (CALL (- (GAS) 224) (ADDRESS) 0 0 0 0 0)  }  # noqa: E501
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

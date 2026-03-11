@@ -1649,6 +1649,7 @@ def test_opcodes_transaction_init(
         gas_limit=1000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -1659,6 +1660,8 @@ def test_opcodes_transaction_init(
         nonce=0,
         storage={0x0: 0x0},
     )
+    # Source: Yul
+    # { sstore(0, 1) }
     pre[callee_1] = Account(
         balance=0,
         nonce=0,

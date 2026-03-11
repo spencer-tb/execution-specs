@@ -45,6 +45,15 @@ def test_yul_example(
     )
 
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: Yul
+    # {
+    #   function f(a, b) -> c {
+    #     c := add(a, b)
+    #   }
+    #
+    #   sstore(0, f(1, 2))
+    #   return(0, 32)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

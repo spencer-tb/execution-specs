@@ -45,6 +45,13 @@ def test_create2_high_nonce(
     )
 
     pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    # Source: Yul
+    # {
+    #   // initcode: { return(0, 1) }
+    #   mstore(0, 0x60016000f3000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #   sstore(0, create2(0, 0, 5, 0))
+    #   sstore(1, 1)
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=18446744073709551615,

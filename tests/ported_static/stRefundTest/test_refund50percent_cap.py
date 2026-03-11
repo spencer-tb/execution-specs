@@ -46,6 +46,8 @@ def test_refund50percent_cap(
 
     pre[sender] = Account(balance=0x989680, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)
+    # Source: LLL
+    # { @@1 @@2 [[ 10 ]] (EXP 2 0xff) [[ 11 ]] (BALANCE (ADDRESS)) [[ 1 ]] 0 [[ 2 ]] 0 [[ 3 ]] 0 [[ 4 ]] 0 [[ 5 ]] 0 [[ 6 ]] 0 }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

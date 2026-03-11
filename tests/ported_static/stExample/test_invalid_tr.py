@@ -47,6 +47,8 @@ def test_invalid_tr(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # { [[0]] (ADD 1 1) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

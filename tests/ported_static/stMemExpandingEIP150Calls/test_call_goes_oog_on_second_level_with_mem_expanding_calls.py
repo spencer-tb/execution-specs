@@ -49,6 +49,7 @@ def test_call_goes_oog_on_second_level_with_mem_expanding_calls(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -80,6 +81,7 @@ def test_call_goes_oog_on_second_level_with_mem_expanding_calls(
             )
         ),
     )
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

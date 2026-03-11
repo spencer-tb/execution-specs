@@ -1589,6 +1589,8 @@ def test_point_add(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
+    # Source: LLL
+    # {(MSTORE 0 (CALLDATALOAD 0)) (MSTORE 32 (CALLDATALOAD 32)) (MSTORE 64 (CALLDATALOAD 64)) (MSTORE 96 (CALLDATALOAD 96)) [[0]](CALLCODE 500000 6 0 0 128 200 64)  [[1]] (MLOAD 200)  [[2]] (MLOAD 232) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

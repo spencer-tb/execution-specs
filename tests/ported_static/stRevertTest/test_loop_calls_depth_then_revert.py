@@ -64,6 +64,8 @@ def test_loop_calls_depth_then_revert(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { [[0]] (+ (SLOAD 0) 1) (CALL (GAS) <contract:0xb000000000000000000000000000000000000000> 0 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

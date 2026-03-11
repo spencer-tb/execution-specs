@@ -6433,6 +6433,8 @@ def test_revert_opcode_multiple_sub_calls(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL 260000 (CALLDATALOAD 0) (CALLVALUE) 0 0 0 0) }
     pre[contract] = Account(
         balance=0,
         nonce=0,

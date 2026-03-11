@@ -925,6 +925,8 @@ def test_revert_opcode_calls(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {  [[10]] (CALL 260000 (CALLDATALOAD 0) 0 0 0 0 0)}
     pre[contract] = Account(
         balance=1,
         nonce=0,

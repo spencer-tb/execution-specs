@@ -452,6 +452,8 @@ def test_self_balance_call_types(
         nonce=0,
         code=Op.SSTORE(key=0x21, value=Op.SELFBALANCE) + Op.STOP,
     )
+    # Source: LLL
+    # {(set 'i 0) (while @@ @i {(when (eq 0x01 $0x0) (call allgas @@ @i 0 0 0 0 0)) (when (eq 0x02 $0x0) (delegatecall allgas @@ @i 0 0 0 0)) (when (eq 0x03 $0x0) (callcode allgas @@ @i 0 0 0 0 0)) [i]:(+ @i 1)})}  # noqa: E501
     pre[contract] = Account(
         balance=8192,
         nonce=0,

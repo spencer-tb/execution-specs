@@ -76,6 +76,8 @@ def test_create_message_reverted(
     )
 
     pre[sender] = Account(balance=0x2DC6C0, nonce=0)
+    # Source: LLL
+    # {(MSTORE 0 0x600c600055600d600155) (CREATE2 0 22 10 0)}
     pre[contract] = Account(
         balance=0,
         nonce=0,

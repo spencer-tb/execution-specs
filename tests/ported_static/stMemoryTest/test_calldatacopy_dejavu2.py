@@ -45,6 +45,8 @@ def test_calldatacopy_dejavu2(
     )
 
     pre[sender] = Account(balance=0x271000000000, nonce=0)
+    # Source: Yul
+    # { mstore8(0x1f, 0x42) calldatacopy(0x1f, 0, 0x0103) let mem := mload(0) if eq(mem,0x60) { stop() }  sstore(0xff, 0x0badc0ffee) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -48,6 +48,7 @@ def test_delegatecall_oo_gin_call(
         gas_limit=30000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=23,
         nonce=0,
@@ -57,6 +58,8 @@ def test_delegatecall_oo_gin_call(
             + Op.RETURN(offset=0x0, size=0x2)
         ),
     )
+    # Source: LLL
+    # {  [[ 0 ]] (ADD (DELEGATECALL 10000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 0 0 0 0 ) 1) }  # noqa: E501
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,

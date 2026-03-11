@@ -51,6 +51,11 @@ def test_empty_blobhash_list(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # {
+    #    ; Can also add lll style comments here
+    #    [[0]] (BLOBHASH 0)
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

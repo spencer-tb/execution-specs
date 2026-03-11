@@ -47,6 +47,8 @@ def test_suicide_not_existing_account(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (SELFDESTRUCT 0xaa1722f3947def4cf144679da39c4c32bdc35681 )}
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

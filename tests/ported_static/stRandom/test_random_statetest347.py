@@ -46,7 +46,9 @@ def test_random_statetest347(
     )
 
     pre[sender] = Account(balance=0x1024D289465FA51769, nonce=0)
+    # Source: raw bytecode
     pre[callee] = Account(balance=0x4EA91708, nonce=89, code=Op.CALLDATASIZE)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x33498455,
         nonce=233,

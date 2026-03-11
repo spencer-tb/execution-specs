@@ -490,6 +490,7 @@ def test_return(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -508,6 +509,14 @@ def test_return(
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     ; read 0x40 bytes of return data
+    #     (delegatecall 0xffffff (+ 0x1000 $4) 0 0 0x00 0x40)
+    #
+    #     [[0]] @0x00
+    #     [[1]] @0x20
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

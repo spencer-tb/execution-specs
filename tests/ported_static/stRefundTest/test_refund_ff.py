@@ -47,6 +47,10 @@ def test_refund_ff(
 
     pre[sender] = Account(balance=0xE8D6599218, nonce=1)
     pre[callee] = Account(balance=0, nonce=1)
+    # Source: Yul
+    # {
+    #    selfdestruct(<eoa:0xdddddddddddddddddddddddddddddddddddddddd>)
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=1,

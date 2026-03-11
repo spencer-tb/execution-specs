@@ -49,6 +49,8 @@ def test_create_empty_contract_with_storage_and_call_it_1wei(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { [[0]](GAS) (MSTORE 0 0x600c6000556000600060006000600073c94f5374fce5edbc8e2a8697c1533167) (MSTORE 32 0x7e6ebf0b61ea60f1000000000000000000000000000000000000000000000000) [[1]] (CREATE 0 0 64) [[2]] (GAS) [[3]] (CALL 60000 (SLOAD 1) 1 0 0 0 0) [[100]] (GAS) }  # noqa: E501
     pre[contract] = Account(
         balance=1,
         nonce=0,
@@ -82,6 +84,8 @@ def test_create_empty_contract_with_storage_and_call_it_1wei(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {[[1]]12}
     pre[callee] = Account(
         balance=0xE8D4A51000,
         nonce=0,

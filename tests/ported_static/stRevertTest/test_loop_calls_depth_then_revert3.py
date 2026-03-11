@@ -47,6 +47,7 @@ def test_loop_calls_depth_then_revert3(
         gas_limit=9223372036854775807,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=10,
         nonce=0,

@@ -336,12 +336,20 @@ def test_create_collision_results(
         gas_limit=4294967296,
     )
 
+    # Source: LLL
+    # {
+    #   [[0]] 0x001D
+    # }
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=0x1D) + Op.STOP,
         storage={0x0: 0x60A7},
     )
+    # Source: LLL
+    # {
+    #   [[0]] 0x001D
+    # }
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -349,6 +357,38 @@ def test_create_collision_results(
         storage={0x0: 0x60A7},
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #   ; Variables are 0x20 bytes (= 256 bits) apart, except for
+    #   ; code buffers that get 0x100 (256 bytes)
+    #   (def 'creation          0x100)
+    #   (def 'contractCode      0x200)
+    #   (def 'constructorCode   0x300)
+    #   (def 'contractLength    0x520)
+    #   (def 'constructorLength 0x540)
+    #   (def 'addr1             0x600)
+    #   (def 'callRet           0x640)
+    #   (def 'buffer            0x660)
+    #   ; Addresses of the contracts (to check what code is there)
+    #   (def 'OrigAddr1 0x8af6a7af30d840ba137e8f3f34d54cfb8beba6e2)
+    #   (def 'OrigAddr2 0x40f1299359ea754ac29eb2662a1900752bf8275f)
+    #   ; Other constants
+    #   (def 'NOP 0)   ; No OPeration
+    #   ; Understand the input.
+    #   [creation]       (shr $ 0 248)
+    #   ; Code for created contract
+    #   (def 'contractMacro
+    #       (lll
+    #          (sstore 0 0xFF)
+    #          contractCode
+    #       )
+    #   )
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Create the contract and a constructor to pass to CREATE[2]
+    #   ;
+    #   [constructorLength]
+    #     (lll
+    # ... (43 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

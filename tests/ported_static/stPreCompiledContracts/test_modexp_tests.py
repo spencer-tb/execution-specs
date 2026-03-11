@@ -5262,6 +5262,29 @@ def test_modexp_tests(
     )
 
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: Yul
+    # {
+    #    // Our input values, 20 bytes each
+    #    // This is not the most efficient use of gas, but
+    #    // this is a test. Readability is more important
+    #    let base := calldataload(0x04)
+    #    let expV := calldataload(0x24)
+    #    let modV := calldataload(0x44)
+    #
+    #    // Prepare the calldata
+    #    mstore(0x00, 0x20)
+    #    mstore(0x20, 0x20)
+    #    mstore(0x40, 0x20)
+    #    mstore(0x60, base)
+    #    mstore(0x80, expV)
+    #    mstore(0xA0, modV)
+    #
+    #    let gas0 := gas()
+    #    pop(call(gas(), 0x05, 0, 0, 0xC0, 0x100, 0x20))
+    #    let gas1 := gas()
+    #    sstore(0, mload(0x100))
+    #    sstore(1, sub(sub(gas0, gas1), 0x14c))
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,

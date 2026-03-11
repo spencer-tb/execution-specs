@@ -47,6 +47,8 @@ def test_revert_opcode_in_create_returns_create2(
         gas_limit=47244640256,
     )
 
+    # Source: LLL
+    # { (seq (CREATE2 0 0 (lll (seq (mstore 0 0x112233) (revert 0 32) (STOP)) 0) 0) (SSTORE 0 (RETURNDATASIZE)) (STOP) )}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -47,6 +47,8 @@ def test_create_init_fail_bad_jump_destination2(
         gas_limit=1000000000,
     )
 
+    # Source: LLL
+    # {(MSTORE 0 0x61ffff56 ) (SELFDESTRUCT (CREATE 1 28 4)) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

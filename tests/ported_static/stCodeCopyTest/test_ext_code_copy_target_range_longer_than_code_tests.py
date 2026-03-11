@@ -49,6 +49,8 @@ def test_ext_code_copy_target_range_longer_than_code_tests(
     )
 
     pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
+    # Source: LLL
+    # { (MSTORE 32 0x1234) (EXTCODECOPY <contract:0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 64) [[0]] (MLOAD 0) [[1]] (MLOAD 32) (MSTORE 96 0x5678) (EXTCODECOPY <eoa:sender:0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b> 64 0 64) [[2]] (MLOAD 64) [[3]] (MLOAD 96)}  # noqa: E501
     pre[contract] = Account(
         balance=7000,
         nonce=0,
@@ -74,6 +76,7 @@ def test_ext_code_copy_target_range_longer_than_code_tests(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0,
         nonce=1,

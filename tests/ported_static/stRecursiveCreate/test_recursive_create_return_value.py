@@ -48,6 +48,8 @@ def test_recursive_create_return_value(
         gas_limit=10000000000,
     )
 
+    # Source: LLL
+    # {(CODECOPY 0 0 32) [[ 0 ]] (ADD (CREATE 0 0 32) 1) }
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

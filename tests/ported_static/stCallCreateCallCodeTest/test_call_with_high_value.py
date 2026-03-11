@@ -52,6 +52,8 @@ def test_call_with_high_value(
         nonce=0,
         code=Op.SSTORE(key=0x2, value=0x1) + Op.STOP,
     )
+    # Source: LLL
+    # {  [[ 0 ]] (CALL 150000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 1000000000000000001 0 64 0 2 ) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

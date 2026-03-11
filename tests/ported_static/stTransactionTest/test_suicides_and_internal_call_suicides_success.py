@@ -102,12 +102,16 @@ def test_suicides_and_internal_call_suicides_success(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {(SELFDESTRUCT 0x0000000000000000000000000000000000000001)}
     pre[callee] = Account(
         balance=0,
         nonce=0,
         code=Op.SELFDESTRUCT(address=0x1) + Op.STOP,
     )
     pre[sender] = Account(balance=0xABA9500, nonce=0)
+    # Source: LLL
+    # {(CALL (CALLDATALOAD 0) 0x0000000000000000000000000000000000000000 1 0 0 0 0) (SELFDESTRUCT 0)}  # noqa: E501
     pre[contract] = Account(
         balance=1000,
         nonce=0,

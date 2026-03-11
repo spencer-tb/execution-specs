@@ -48,6 +48,8 @@ def test_returndatasize_after_successful_delegatecall(
         gas_limit=111669149696,
     )
 
+    # Source: LLL
+    # { (seq (DELEGATECALL 60000 <contract:0x1000000000000000000000000000000000000002> 0 0 0 0) (SSTORE 0 (RETURNDATASIZE)))}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

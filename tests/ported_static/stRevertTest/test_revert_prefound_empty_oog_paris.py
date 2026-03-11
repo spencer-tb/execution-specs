@@ -47,6 +47,8 @@ def test_revert_prefound_empty_oog_paris(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[0]] (CREATE 0 0 32) (KECCAK256 0x00 0x2fffff) }
     pre[contract] = Account(
         balance=1,
         nonce=0,

@@ -73,6 +73,8 @@ def test_call_recursive_bomb_log(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  (CALL 100000000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 23 0 0 0 0)  }  # noqa: E501
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

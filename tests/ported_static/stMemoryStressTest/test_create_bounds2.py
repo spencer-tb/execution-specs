@@ -82,6 +82,8 @@ def test_create_bounds2(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # {  (MSTORE 0 0x6001600155601080600c6000396000f3006000355415600957005b6020356000 )  (MSTORE8 32 0x35) (MSTORE8 33 0x55) (CREATE 1 0 0xffffffff) }  # noqa: E501
     pre[contract] = Account(
         balance=100,
         nonce=0,

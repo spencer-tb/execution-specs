@@ -48,6 +48,8 @@ def test_raw_ext_code_copy_gas(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [0] (GAS) (EXTCODECOPY <contract:0x094f5374fce5edbc8e2a8697c15331677e6ebf0b> 32 0 20) [[1]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -63,6 +65,7 @@ def test_raw_ext_code_copy_gas(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0,
         nonce=0,

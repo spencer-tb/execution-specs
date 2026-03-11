@@ -48,6 +48,8 @@ def test_create_empty000_createin_init_code_transaction(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # {[[1]]12}
     pre[contract] = Account(
         balance=0xE8D4A51000,
         nonce=0,

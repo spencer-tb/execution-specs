@@ -47,6 +47,38 @@ def test_exp_power256_of256(
     )
 
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (def 'storageJump 0x10)
+    #
+    #     (def 'calc (n) {
+    #
+    #          [[(* storageJump n)]]       (exp 256 (exp 256 n))
+    #          [[(+ (* storageJump n) 1)]] (exp 256 (exp 255 n))
+    #          [[(+ (* storageJump n) 2)]] (exp 256 (exp 257 n))
+    #
+    #          [[(+ (* storageJump n) 3)]] (exp 255 (exp 256 n))
+    #          [[(+ (* storageJump n) 4)]] (exp 255 (exp 255 n))
+    #          [[(+ (* storageJump n) 5)]] (exp 255 (exp 257 n))
+    #
+    #          [[(+ (* storageJump n) 6)]] (exp 257 (exp 256 n))
+    #          [[(+ (* storageJump n) 7)]] (exp 257 (exp 255 n))
+    #          [[(+ (* storageJump n) 8)]] (exp 257 (exp 257 n))
+    #       }
+    #     )
+    #
+    #     (calc 0)
+    #     (calc 1)
+    #     (calc 2)
+    #     (calc 3)
+    #     (calc 4)
+    #     (calc 5)
+    #     (calc 6)
+    #     (calc 7)
+    #     (calc 8)
+    #     (calc 9)
+    #     (calc 10)
+    # ... (24 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

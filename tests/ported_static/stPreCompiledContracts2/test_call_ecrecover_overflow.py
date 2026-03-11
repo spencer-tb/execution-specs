@@ -274,6 +274,15 @@ def test_call_ecrecover_overflow(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: Yul
+    # {
+    #  // Copy Hash, V, R, S values
+    #  calldatacopy(0x00, 0x04, 0x80)
+    #
+    #  // Call the EC Recover Precompile
+    #  sstore(0, call(3000, 1, 0, 0, 0x80, 0x80, 0x20))
+    #  sstore(1, mload(0x80))
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

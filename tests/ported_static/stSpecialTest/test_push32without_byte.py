@@ -44,6 +44,7 @@ def test_push32without_byte(
     )
 
     pre[sender] = Account(balance=0x8AC7230489E80000, nonce=1)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

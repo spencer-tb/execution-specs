@@ -437,6 +437,7 @@ def test_transaction_costs(
         gas_limit=71794957647893862,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

@@ -49,6 +49,8 @@ def test_call1024_balance_too_low(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # { [[ 0 ]] (ADD @@0 1) [[ 1 ]] (CALL 0xfffffffffff <contract:target:0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b> @@0 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=1024,
         nonce=0,

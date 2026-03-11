@@ -497,6 +497,7 @@ def test_no_src_account_create(
         gas_limit=89128960,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(balance=0, nonce=0, code=bytes.fromhex("00"))
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

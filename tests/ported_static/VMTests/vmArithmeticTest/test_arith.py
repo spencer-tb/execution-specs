@@ -44,6 +44,7 @@ def test_arith(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

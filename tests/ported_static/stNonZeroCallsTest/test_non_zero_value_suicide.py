@@ -47,6 +47,8 @@ def test_non_zero_value_suicide(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { (SELFDESTRUCT 0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b) }
     pre[contract] = Account(
         balance=1,
         nonce=0,

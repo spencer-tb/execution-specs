@@ -375,6 +375,30 @@ def test_oo_gin_return(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   ; Variables are 0x20 bytes (= 256 bits) apart, except for
+    #   ; code buffers that get 0x100 (256 bytes)
+    #   (def 'callRet    0x100)
+    #   (def 'type       0x120)
+    #   (def 'gas2Use    0x140)
+    #   (def 'retVal     0x160)
+    #   ; Other constants
+    #   (def 'NOP 0)   ; No OPeration
+    #   ; Understand the input.
+    #   [type]       $4
+    #   [gas2Use]    $36
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   [0] 0x60A760A7
+    #   [callRet] (call @gas2Use
+    #                   @type
+    #                   0
+    #                   0 0
+    #                   0 0x100)
+    #   [[0]] @0    ; first 0x20 bytes of return data
+    #   (if (> (returndatasize) 0) (returndatacopy retVal 0 0x20) NOP)
+    #   [[1]] @retVal
+    # }   ; end of LLL code
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

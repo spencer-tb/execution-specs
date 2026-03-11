@@ -336404,6 +336404,38 @@ def test_precomps_eip2929_cancun(
         nonce=1,
         code=Op.MSTORE(offset=0x0, value=0x3) + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #   let addrTest   := calldataload(0x04)
+    #   let action     := calldataload(0x24)
+    #   let gas0, gas1, gas2
+    #
+    #   // Not really needed, but otherwise Yul optimizes and
+    #   // skips operations we need
+    #   let useless0, useless1
+    #
+    #   // Touch the first word of memory here, so it
+    #   // won't confuse the gas measurement
+    #   mstore(0x100, 0xDEADBEEF)
+    #
+    #   // Access <contract:0x0000000000000000000000000000000000101157> (so it becomes warm and send it wei)  # noqa: E501
+    #   pop(call(0x100000, <contract:0x0000000000000000000000000000000000101157>, 1, 0, 0, 0, 0))  # noqa: E501
+    #
+    #   // Switch before measuring, so it won't affect
+    #   // the gas costs
+    #   switch action
+    #   case 0xf100 {
+    #       gas0 := gas()
+    #       pop(call(0x100000, addrTest, 0, 0, 0, 0, 0))
+    #       gas1 := gas()
+    #       pop(call(0x100000, addrTest, 0, 0, 0, 0, 0))
+    #       gas2 := gas()
+    #   }
+    #   case 0xf101 {
+    #       gas0 := gas()
+    #       pop(call(0x100000, addrTest, 1, 0, 0, 0, 0))
+    #       gas1 := gas()
+    # ... (155 more lines)
     pre[contract] = Account(
         balance=0,
         nonce=1,

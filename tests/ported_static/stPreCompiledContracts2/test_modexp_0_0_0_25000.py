@@ -75,6 +75,7 @@ def test_modexp_0_0_0_25000(
     pre[callee_7] = Account(balance=1, nonce=0)
     pre[coinbase] = Account(balance=0x201EE, nonce=0)
     pre[sender] = Account(balance=0xDE0B6B3A761FE12, nonce=1)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=1,

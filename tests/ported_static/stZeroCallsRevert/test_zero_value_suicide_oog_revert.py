@@ -48,6 +48,8 @@ def test_zero_value_suicide_oog_revert(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (CALL 40000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[2]]12 [[3]]12 [[4]]12 [[100]](GAS) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

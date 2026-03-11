@@ -144,6 +144,7 @@ def test_push0_gas2(
         gas_limit=89128960,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -158,6 +159,7 @@ def test_push0_gas2(
             + Op.SSTORE
         ),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -173,6 +175,11 @@ def test_push0_gas2(
         ),
     )
     pre[sender] = Account(balance=0x989680, nonce=0)
+    # Source: Yul
+    # {
+    #    sstore(0, call(100000, shr(96, calldataload(0)), 0, 0, 0, 0, 0))
+    #    sstore(1, 1)
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

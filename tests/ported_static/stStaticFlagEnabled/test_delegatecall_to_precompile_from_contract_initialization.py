@@ -51,6 +51,38 @@ def test_delegatecall_to_precompile_from_contract_initialization(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {
+    #   ;; Recovery of ECDSA signature
+    #   [ 0x00 ] 0x18c547e4f7b0f325ad1e56f57e26c745b09a3e503d86e00e5255ff7f715d3d1c  # noqa: E501
+    #   [ 0x20 ] 28
+    #   [ 0x40 ] 0x73b1693892219d736caba55bdb67216e485557ea6b6af75f37096c9aa6a5a75f  # noqa: E501
+    #   [ 0x60 ] 0xeeb940b1d03b21e36b0e47e79769f095fe2ab855bd91e3a38756b7d75a9c4549  # noqa: E501
+    #   ;; zero value
+    #   [ 0x0a0000 ] (DELEGATECALL (GAS) 1 0 128 0x2000 32)
+    #   [ 0x0a0100 ] (MOD @0x2000 (EXP 2 160))
+    #   [ 0x0a0200 ] (EQ (ORIGIN) @0x0a0100)
+    #   [ 0x00 ] 0x0000000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+    #   [ 0x20 ] 0x0000000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+    #   [ 0x40 ] 0x0000000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+    #   [ 0x60 ] 0x0000000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+    #   [ 0x2000 ] 0x0000000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+    #
+    #   ;; Hash function SHA256
+    #   [ 0x00 ] 0x0000000ccccccccccccccccccccccccccccccccccccccccccccccccccc000000  # noqa: E501
+    #   ;; zero value
+    #   [ 0x0a0300 ] (DELEGATECALL (GAS) 2 0 32 0x2000 32)
+    #   [ 0x0a0400 ] @0
+    #   [ 0x0a0500 ] @0x2000
+    #   [ 0x00 ] 0x0000000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+    #   [ 0x2000 ] 0x0000000000000000000000000000000000000000000000000000000000000000  # noqa: E501
+    #
+    #   ;; Hash function RIPEMD160
+    #   [ 0x00 ] 0x0000000ccccccccccccccccccccccccccccccccccccccccccccccccccc000000  # noqa: E501
+    #   ;; zero value
+    #   [ 0x0a0600 ] (DELEGATECALL (GAS) 3 0 32 0x2000 32)
+    #   [ 0x0a0700 ] @0
+    # ... (82 more lines)
     pre[callee] = Account(
         balance=1000,
         nonce=0,
@@ -310,6 +342,13 @@ def test_delegatecall_to_precompile_from_contract_initialization(
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # {
+    #   [[ 0x00 ]] 0xfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed  # noqa: E501
+    #   (CALLDATACOPY 0 0 (CALLDATASIZE))
+    #   [[ 0x01 ]] (CREATE2 0 0 (CALLDATASIZE) 0x5a175a175a17)
+    #   [[ 0x02 ]] 0xfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeedfeed  # noqa: E501
+    # }
     pre[contract] = Account(
         balance=1000,
         nonce=0,

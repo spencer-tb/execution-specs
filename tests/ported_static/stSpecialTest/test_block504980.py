@@ -60,6 +60,7 @@ def test_block504980(
     pre[callee_2] = Account(balance=1, nonce=0)
     pre[callee_3] = Account(balance=1, nonce=0)
     pre[callee_4] = Account(balance=1, nonce=0)
+    # Source: raw bytecode
     pre[callee_5] = Account(
         balance=0,
         nonce=0,
@@ -4182,6 +4183,7 @@ def test_block504980(
             0xFD280AC5182D5B2366122F38ACFA6DC471240FFDE9D5FEB985CE7A2325C960E7: 0x3,  # noqa: E501
         },
     )
+    # Source: raw bytecode
     pre[callee_6] = Account(
         balance=0,
         nonce=0,
@@ -4561,6 +4563,7 @@ def test_block504980(
         ),
     )
     pre[coinbase] = Account(balance=1, nonce=0)
+    # Source: raw bytecode
     pre[callee_7] = Account(
         balance=0,
         nonce=0,
@@ -6626,6 +6629,7 @@ def test_block504980(
         ),
     )
     pre[sender] = Account(balance=0xD8D726B7177A800000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -7655,6 +7659,7 @@ def test_block504980(
             + Op.POP
         ),
     )
+    # Source: raw bytecode
     pre[callee_8] = Account(
         balance=0,
         nonce=0,
@@ -8434,6 +8439,7 @@ def test_block504980(
             0xF9A3BF5F2CCB903EE1A7644113B794DB0260DE404FB8F11203E75A7FFF151618: 0xBD94773C0D85C68240AE8DFD53D9D33CD137509BFC5D3433381299DF768C8377,  # noqa: E501
         },
     )
+    # Source: raw bytecode
     pre[callee_9] = Account(
         balance=0,
         nonce=0,
@@ -9799,6 +9805,7 @@ def test_block504980(
             0xEC5E7F54FA5E516E616B04F9D5A0EE433A80E09ED47D7E5269AFD76C05FF251E: 0x2,  # noqa: E501
         },
     )
+    # Source: raw bytecode
     pre[callee_10] = Account(
         balance=0,
         nonce=0,

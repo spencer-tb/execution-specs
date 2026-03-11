@@ -45,6 +45,15 @@ def test_create_high_nonce_minus1(
     )
 
     pre[sender] = Account(balance=0x3B9ACA00, nonce=0)
+    # Source: Yul
+    # {
+    #   // initcode: { return(0, 1) }
+    #   mstore(0, 0x60016000f3000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #   sstore(0, create(0, 0, 5))
+    #   sstore(1, 1)
+    #
+    #   let noOptimization := msize()
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=18446744073709551614,

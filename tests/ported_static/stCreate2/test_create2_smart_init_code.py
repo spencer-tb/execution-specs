@@ -179,6 +179,8 @@ def test_create2_smart_init_code(
         gas_limit=47244640256,
     )
 
+    # Source: LLL
+    # { (MSTORE 0 0x600060015414601157600a6000f3601a565b60016001556001ff5b) [[1]](CREATE2 1 5 27 0) [[2]](CREATE2 1 5 27 0) }  # noqa: E501
     pre[callee] = Account(
         balance=100,
         nonce=0,
@@ -198,6 +200,8 @@ def test_create2_smart_init_code(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (MSTORE 0 0x600060015414601157600a6000f3601c565b6001600155600a6000f35b) [[1]](CREATE2 1 3 29 0) [[2]](CREATE2 1 5 27 0) }  # noqa: E501
     pre[callee_1] = Account(
         balance=100,
         nonce=0,
@@ -218,6 +222,8 @@ def test_create2_smart_init_code(
         ),
     )
     pre[sender] = Account(balance=0x6400000000, nonce=0)
+    # Source: LLL
+    # { (CALL (GAS) (CALLDATALOAD 0) 0 0 0 0 0) }
     pre[contract] = Account(
         balance=0x6400000000,
         nonce=0,

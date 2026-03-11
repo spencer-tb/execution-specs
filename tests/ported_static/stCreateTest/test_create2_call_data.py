@@ -44,6 +44,25 @@ def test_create2_call_data(
         gas_limit=1000000,
     )
 
+    # Source: Yul
+    # {
+    #   code {
+    #     let s := datasize("initcode")
+    #     let o := dataoffset("initcode")
+    #     codecopy(0, o, s)
+    #     let r := create2(0, 0, s, 0)
+    #     sstore(0, r)
+    #     stop()
+    #   }
+    #
+    #   object "initcode" {
+    #     code {
+    #       sstore(0, calldataload(0))
+    #       calldatacopy(0, 0, 64)
+    #       return(0, msize())
+    #     }
+    #   }
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -231,6 +231,8 @@ def test_revert_depth2(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { [[0]] (ADD 1 (SLOAD 0)) [[1]] (CALL 150000 <contract:0xb000000000000000000000000000000000000000> 0 0 0 0 0) [[2]] (CALL 150000 <contract:0xd000000000000000000000000000000000000000> 0 0 0 0 0)}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

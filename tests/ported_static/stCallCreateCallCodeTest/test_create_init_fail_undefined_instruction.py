@@ -71,6 +71,8 @@ def test_create_init_fail_undefined_instruction(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { [[0]] (CALL 400000 <contract:0x1000000000000000000000000000000000000000> 0 0 0 0 0) [[1]] (CALL 400000 <contract:0x2000000000000000000000000000000000000000> 0 0 0 0 0) [[2]] 1 }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

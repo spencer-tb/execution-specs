@@ -47,6 +47,8 @@ def test_create_message_success(
     )
 
     pre[sender] = Account(balance=0x17D78400, nonce=0)
+    # Source: LLL
+    # {(MSTORE 0 0x600c600055) (CREATE 0 27 5)}
     pre[contract] = Account(
         balance=0,
         nonce=0,

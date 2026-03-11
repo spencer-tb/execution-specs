@@ -48,6 +48,8 @@ def test_create_oo_gafter_init_code_returndata_size(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0 0x6960016001556001600255600052600a6016f3) (CREATE 0 13 19) (EXP 2 (RETURNDATASIZE)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

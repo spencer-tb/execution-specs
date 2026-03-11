@@ -45,6 +45,8 @@ def test_revert_in_delegate_call(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { [[ 0 ]] (DELEGATECALL 50000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 0 64 0 64 ) [[ 1 ]] (RETURNDATASIZE) (RETURNDATACOPY 63 0 32) [[2]](MLOAD 63)}  # noqa: E501
     pre[contract] = Account(
         balance=1000,
         nonce=0,

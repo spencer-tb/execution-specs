@@ -46,6 +46,8 @@ def test_caller_account_balance(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # { [[0]] (balance (caller)) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

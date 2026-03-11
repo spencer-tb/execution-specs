@@ -295,6 +295,8 @@ def test_create_bounds3(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # {  (MSTORE 0 0x6001600155601080600c6000396000f3006000355415600957005b6020356000 )  (MSTORE8 32 0x35) (MSTORE8 33 0x55) (CREATE 1 0 0xffffffffffffffff) (CREATE 1 0 0xffffffffffffffffffffffffffffffff) (CREATE 1 0 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) (CREATE 1 0xfffffff 0) (CREATE 1 0xffffffff 0) (CREATE 1 0xffffffffffffffff 0) (CREATE 1 0xffffffffffffffffffffffffffffffff 0) (CREATE 1 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 0) (CREATE 1 0xfffffff 0xfffffff) (CREATE 1 0xffffffff 0xffffffff) (CREATE 1 0xffffffffffffffff 0xffffffffffffffff) (CREATE 1 0xffffffffffffffffffffffffffffffff 0xffffffffffffffffffffffffffffffff) (CREATE 1 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)}  # noqa: E501
     pre[contract] = Account(
         balance=100,
         nonce=0,

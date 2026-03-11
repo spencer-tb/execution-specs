@@ -47,6 +47,7 @@ def test_create_js_example_contract(
         gas_limit=1000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,

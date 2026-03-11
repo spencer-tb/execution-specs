@@ -310,6 +310,8 @@ def test_revert_depth_create_oog(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[0]] 1 [[1]] (CALL (CALLDATALOAD 0) 0xb000000000000000000000000000000000000000 0 0 0 0 0) [[4]] 12 }  # noqa: E501
     pre[contract] = Account(
         balance=5,
         nonce=54,
@@ -332,6 +334,8 @@ def test_revert_depth_create_oog(
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { [[2]] 8 (CREATE 0 0 0) [[3]] 12}
     pre[callee] = Account(
         balance=0,
         nonce=0,

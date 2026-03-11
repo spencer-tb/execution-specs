@@ -49,6 +49,8 @@ def test_ext_code_hash_created_and_deleted_account_recheck_in_outer_call(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0 (CREATE2 0 128 (lll { (RETURN 0 (lll { (SELFDESTRUCT 0x0) } 0)) } 128) 0x10)) [[0]] (EXTCODEHASH (MLOAD 0)) [[1]] (EXTCODESIZE (MLOAD 0)) (CALL 0x10000 (MLOAD 0) 0 0 0 0 0) [[2]] (EXTCODEHASH (MLOAD 0)) [[3]] (EXTCODESIZE (MLOAD 0)) (STOP) }  # noqa: E501
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -99,6 +101,8 @@ def test_ext_code_hash_created_and_deleted_account_recheck_in_outer_call(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL 0x20000 0xdeadbeef00000000000000000000000000000000 0 0 0 0 0) [[0]] (EXTCODEHASH 0x123f4c415171383dcf6f3ac6c3b70fe321e11b5e) [[1]] (EXTCODESIZE 0x123f4c415171383dcf6f3ac6c3b70fe321e11b5e) (STOP) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

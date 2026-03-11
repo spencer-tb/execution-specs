@@ -48,6 +48,7 @@ def test_call_to_name_registrator_address_too_big_left(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=23,
         nonce=0,

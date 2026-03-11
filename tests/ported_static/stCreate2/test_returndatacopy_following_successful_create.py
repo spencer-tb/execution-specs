@@ -47,6 +47,8 @@ def test_returndatacopy_following_successful_create(
         gas_limit=51539607552,
     )
 
+    # Source: LLL
+    # { (create2 0 0 (lll (seq (STOP)) 0) 0) (RETURNDATACOPY 0 1 32) (SSTORE 0 (MLOAD 0)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

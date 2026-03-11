@@ -80,6 +80,8 @@ def test_create2no_cash(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # { (CREATE2 101 0 0 0) }
     pre[contract] = Account(
         balance=100,
         nonce=0,

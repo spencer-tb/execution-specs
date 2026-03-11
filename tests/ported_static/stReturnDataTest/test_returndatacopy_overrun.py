@@ -47,6 +47,8 @@ def test_returndatacopy_overrun(
         gas_limit=111669149696,
     )
 
+    # Source: LLL
+    # { (seq (CALL 0x0900000000 <contract:0x0aabbccdd5c57f15886f9b263e2f6d2d6c7b5ec6> 0 0 0 0 0) (RETURNDATACOPY 0 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc 100) (SSTORE 0 (MLOAD 0)) )}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

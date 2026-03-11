@@ -44,6 +44,8 @@ def test_mload8bit_bound(
         gas_limit=42949672960,
     )
 
+    # Source: LLL
+    # { [[ 1 ]] (MLOAD 256) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -45,6 +45,10 @@ def test_refund_sstore(
     )
 
     pre[sender] = Account(balance=0xE8D631F190, nonce=1)
+    # Source: Yul
+    # {
+    #    sstore(0,0x0)
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,

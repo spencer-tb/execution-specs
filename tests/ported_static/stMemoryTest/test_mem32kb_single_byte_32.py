@@ -44,6 +44,8 @@ def test_mem32kb_single_byte_32(
         gas_limit=42949672960,
     )
 
+    # Source: LLL
+    # { (MSTORE8 31967 42) [[ 0 ]] (MSIZE) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

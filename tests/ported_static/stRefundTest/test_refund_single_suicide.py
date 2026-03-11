@@ -46,6 +46,7 @@ def test_refund_single_suicide(
 
     pre[sender] = Account(balance=0x1C9C380, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

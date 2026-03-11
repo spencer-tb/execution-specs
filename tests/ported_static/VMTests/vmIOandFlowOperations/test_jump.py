@@ -2504,6 +2504,7 @@ def test_jump(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2522,6 +2523,7 @@ def test_jump(
             Op.SSTORE(key=0x0, value=0x600D) + Op.JUMP(pc=0xFFFFFFF) + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2534,11 +2536,13 @@ def test_jump(
             + Op.SSTORE
         ),
     )
+    # Source: raw bytecode
     pre[callee_5] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=0x600D) + Op.JUMPDEST + Op.JUMP(pc=0x6),
     )
+    # Source: raw bytecode
     pre[callee_6] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2551,6 +2555,7 @@ def test_jump(
             + Op.SSTORE
         ),
     )
+    # Source: raw bytecode
     pre[callee_7] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2563,6 +2568,7 @@ def test_jump(
             + Op.JUMP(pc=0x3)
         ),
     )
+    # Source: raw bytecode
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2573,6 +2579,7 @@ def test_jump(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: raw bytecode
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2583,6 +2590,7 @@ def test_jump(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: raw bytecode
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2593,6 +2601,7 @@ def test_jump(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: raw bytecode
     pre[callee_11] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2604,6 +2613,7 @@ def test_jump(
             + Op.SSTORE(key=0x1, value=Op.GAS)
         ),
     )
+    # Source: raw bytecode
     pre[callee_12] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2615,6 +2625,7 @@ def test_jump(
             + Op.SSTORE(key=0x1, value=Op.GAS)
         ),
     )
+    # Source: raw bytecode
     pre[callee_13] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2625,6 +2636,7 @@ def test_jump(
             + Op.SSTORE(key=0x1, value=0x1)
         ),
     )
+    # Source: raw bytecode
     pre[callee_14] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2635,6 +2647,11 @@ def test_jump(
             + Op.SSTORE(key=0x1, value=0x1)
         ),
     )
+    # Source: LLL
+    # {
+    #   @0 (- 0 1)
+    #   (asm 0 mload jump 0x600D 0x00 sstore)
+    # }
     pre[callee_15] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2646,6 +2663,7 @@ def test_jump(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_16] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2671,6 +2689,11 @@ def test_jump(
         ),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
+    # Source: LLL
+    # {
+    #     ; limited gas because of the endless loop
+    #     (delegatecall 0x10000 (+ 0x1000 $4) 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

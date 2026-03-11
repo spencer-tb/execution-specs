@@ -49,6 +49,7 @@ def test_wallet_change_requirement_remove_pending_transaction(
 
     pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
     pre[callee] = Account(balance=0xDE0B6B3A75EF08F, nonce=1)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=100,
         nonce=0,

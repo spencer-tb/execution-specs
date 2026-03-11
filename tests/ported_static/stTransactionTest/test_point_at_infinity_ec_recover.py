@@ -45,6 +45,8 @@ def test_point_at_infinity_ec_recover(
         gas_limit=89128960,
     )
 
+    # Source: Yul
+    # { mstore(0, 0x6b8d2c81b11b2d699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9) mstore(32, 0x1b) mstore(64, 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798) mstore(96, 0x6b8d2c81b11b2d699528dde488dbdf2f94293d0d33c32e347f255fa4a6c1f0a9) sstore(0, call(1000000, 1, 0, 0, 128, 0, 32)) sstore(1, mload(0)) }  # noqa: E501
     pre[contract] = Account(
         balance=0xFFFFFFFF,
         nonce=0,

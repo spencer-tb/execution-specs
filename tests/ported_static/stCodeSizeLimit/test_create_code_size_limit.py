@@ -99,6 +99,12 @@ def test_create_code_size_limit(
     )
 
     pre[sender] = Account(balance=0xBEBC200, nonce=0)
+    # Source: Yul
+    # {
+    #   mstore(0, calldataload(0))
+    #   sstore(0, create(0, 0, calldatasize()))
+    #   sstore(1, 1)
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

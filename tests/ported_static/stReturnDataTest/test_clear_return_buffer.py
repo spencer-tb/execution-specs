@@ -51602,6 +51602,38 @@ def test_clear_return_buffer(
         code=bytes.fromhex("602060008181808035833582525af1503078464500"),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: Yul
+    # {
+    #    // The operation that we ran and that after which we're supposed
+    #    // to have an empty buffer
+    #    //
+    #    // 0xF0 means CREATE
+    #    // 0xF1 means CALL
+    #    // 0xF2 means CALLCODE
+    #    // 0xF4 means DELEGATECALL
+    #    // 0xF5 means CREATE2
+    #    // 0xFA means STATICCALL
+    #    // 0x11<operation> means that operation, but it fails
+    #    let operation := calldataload(0x04)
+    #
+    #    // 0xF3F3 means the buffer is RETURNed
+    #    // 0xFDFD means the buffer is REVERTed
+    #    let bufferFrom := calldataload(0x24)
+    #
+    #    // The length of the buffer that the RETURN or REVERT returns
+    #    let bufLen := calldataload(0x44)
+    #
+    #    let codeLen
+    #
+    #    // Put the constructor code at 0x00-length, and return that length
+    #    function makeConstructor(addr, len) -> retVal {
+    #      // The constructor code CALLs the appropriate contract with the specified  # noqa: E501
+    #      // buffer length
+    #      //
+    #      // Write the buffer length to memory (so we can send it)
+    #      //    0x0 PUSH32 <bufLen>
+    #      mstore8(0x0, 0x7F)
+    # ... (154 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,

@@ -108,6 +108,7 @@ def test_call_with_high_value_and_oo_gat_tx_level(
         gas_limit=30000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=23,
         nonce=0,
@@ -117,6 +118,8 @@ def test_call_with_high_value_and_oo_gat_tx_level(
             + Op.RETURN(offset=0x0, size=0x2)
         ),
     )
+    # Source: LLL
+    # {  [[ 0 ]] (CALL 3000001 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 100001 0 0 0 0 ) }  # noqa: E501
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,

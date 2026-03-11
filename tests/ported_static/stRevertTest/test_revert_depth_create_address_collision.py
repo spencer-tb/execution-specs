@@ -309,6 +309,8 @@ def test_revert_depth_create_address_collision(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[0]] 1 [[1]] (CALL (CALLDATALOAD 0) <contract:0xb000000000000000000000000000000000000000> 0 0 0 0 0) [[4]] 12 }  # noqa: E501
     pre[contract] = Account(
         balance=5,
         nonce=54,

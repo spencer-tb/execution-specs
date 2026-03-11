@@ -46,6 +46,8 @@ def test_raw_balance_gas(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [0] (GAS) (BALANCE <eoa:sender:0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b>) [[1]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

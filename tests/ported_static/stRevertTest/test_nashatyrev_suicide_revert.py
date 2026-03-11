@@ -45,6 +45,7 @@ def test_nashatyrev_suicide_revert(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

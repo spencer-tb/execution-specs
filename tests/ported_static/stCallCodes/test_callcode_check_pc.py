@@ -45,6 +45,8 @@ def test_callcode_check_pc(
         gas_limit=3000000000,
     )
 
+    # Source: LLL
+    # { (CALL 1000000 <contract:0x1000000000000000000000000000000000000001> 0 0 64 0 64 ) [[3]] (PC) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

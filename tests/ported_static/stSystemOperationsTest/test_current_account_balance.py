@@ -48,6 +48,8 @@ def test_current_account_balance(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # { [[0]] (balance (address)) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

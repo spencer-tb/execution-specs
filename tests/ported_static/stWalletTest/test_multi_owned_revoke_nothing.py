@@ -45,6 +45,7 @@ def test_multi_owned_revoke_nothing(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=100,
         nonce=0,

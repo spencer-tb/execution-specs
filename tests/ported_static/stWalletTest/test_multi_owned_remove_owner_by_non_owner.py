@@ -48,6 +48,7 @@ def test_multi_owned_remove_owner_by_non_owner(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A75EF08F, nonce=1)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=100,
         nonce=0,

@@ -44,6 +44,8 @@ def test_refund_tx_to_suicide(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (SELFDESTRUCT 0x095e7baea6a6c7c4c2dfeb977efac326af552d87) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

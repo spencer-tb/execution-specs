@@ -47,6 +47,8 @@ def test_create_contract_via_contract(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { (CREATE 0 0 0)}
     pre[contract] = Account(
         balance=0,
         nonce=0,

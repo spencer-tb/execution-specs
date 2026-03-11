@@ -2208,6 +2208,10 @@ def test_addmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    [[0]] (addmod (- 0 1) 1 5)
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2216,6 +2220,10 @@ def test_addmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    [[0]] (addmod (- 0 1) 2 5)
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2224,6 +2232,10 @@ def test_addmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    [[0]] (addmod (- 0 1) (- 0 2) 5)
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2235,6 +2247,11 @@ def test_addmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; ((2^160)-1 + 1) % 5
+    #    [[0]] (addmod 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 1 5)  # noqa: E501
+    # }
     pre[callee_11] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2250,21 +2267,37 @@ def test_addmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    [[0]] (addmod 4 1 0)
+    # }
     pre[callee_12] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.ADDMOD(0x4, 0x1, 0x0)) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    [[0]] (addmod 0 1 0)
+    # }
     pre[callee_13] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.ADDMOD(0x0, 0x1, 0x0)) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    [[0]] (addmod 1 0 0)
+    # }
     pre[callee_14] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.ADDMOD(0x1, 0x0, 0x0)) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    [[0]] (- (addmod 0 0 0) 1)
+    # }
     pre[callee_15] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2274,6 +2307,10 @@ def test_addmod(
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (call 0xffffff (+ 0x1000 $4) 0 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

@@ -3479,6 +3479,11 @@ def test_sdiv(
             Op.SSTORE(key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x19)) + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  ; (-1)/(-1) = 1
+    #
+    #    [[0]] (sdiv (- 0 1) (- 0 1))
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -3489,6 +3494,11 @@ def test_sdiv(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  ; (-1)/1 = -1
+    #
+    #    [[0]] (sdiv (- 0 1) 1)
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -3496,6 +3506,12 @@ def test_sdiv(
             Op.SSTORE(key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x1), 0x1)) + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  ; (-3)/0 = 0
+    #    ; x/0 = 0 in evm
+    #
+    #    [[0]] (sdiv (- 0 3) (- 0 0))
+    # }
     pre[callee_11] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -3506,6 +3522,14 @@ def test_sdiv(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  ; (0-(-1))/0 = 0
+    #    ;
+    #    ; -1 = 2^256-1
+    #    (def 'neg1 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)  # noqa: E501
+    #
+    #    [[0]] (sdiv (- 0 neg1) 0)
+    # }
     pre[callee_12] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -3523,6 +3547,14 @@ def test_sdiv(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  ; (0-(-1))/0 + 1 = 1
+    #    ;
+    #    ; -1 = 2^256-1
+    #    (def 'neg1 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)  # noqa: E501
+    #
+    #    [[0]] (+ (sdiv (- 0 neg1) 0) 1)
+    # }
     pre[callee_13] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -3543,6 +3575,7 @@ def test_sdiv(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_14] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -3550,6 +3583,13 @@ def test_sdiv(
             Op.SSTORE(key=0x0, value=Op.SDIV(Op.SUB(0x0, 0x9), 0x5)) + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; A negative number sdiv -1 is the absolute value of that number
+    #    (def 'pow2_255 0x8000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #    (def 'pow2_255_min1 (- pow2_255 1))
+    #    [[0]] (sdiv (- 0 pow2_255_min1) (- 0 1))
+    # }
     pre[callee_15] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -3570,6 +3610,13 @@ def test_sdiv(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; A negative number sdiv -1 is the absolute value of that number
+    #    (def 'pow2_255 0x8000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #    [[0]] (sdiv (- 0 pow2_255) (- 0 1))
+    #    ; 2^255 = -2^255 in evm (modulo 2^256)
+    # }
     pre[callee_16] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -3588,6 +3635,10 @@ def test_sdiv(
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (call 0xffffff (+ 0x1000 $4) 0 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

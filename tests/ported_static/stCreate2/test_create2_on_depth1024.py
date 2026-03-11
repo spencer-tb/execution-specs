@@ -50,6 +50,8 @@ def test_create2_on_depth1024(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
         nonce=0,
     )
+    # Source: LLL
+    # { (MSTORE 0 (CALLDATALOAD 0)) (MSTORE 0 (ADD 2 (MLOAD 0))) (if (EQ (MLOAD 0) 0x0400) (seq (MSTORE 32 0x686000600060006000f56000526000600960176000f5600155) [[1]] (CREATE2 0 39 25 0))  (CALL (GAS) 0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b (EQ (MLOAD 0) 0x0400) 0 32 0 0)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -82,6 +84,8 @@ def test_create2_on_depth1024(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (MSTORE 0 (CALLDATALOAD 0)) (CALL (GAS) 0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b 0 0 32 0 0) }  # noqa: E501
     pre[callee] = Account(
         balance=0,
         nonce=0,

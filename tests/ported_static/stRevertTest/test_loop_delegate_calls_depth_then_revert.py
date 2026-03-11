@@ -48,6 +48,8 @@ def test_loop_delegate_calls_depth_then_revert(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # { [[0]] (+ (SLOAD 0) 1) (DELEGATECALL (GAS) <contract:0xb000000000000000000000000000000000000000> 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

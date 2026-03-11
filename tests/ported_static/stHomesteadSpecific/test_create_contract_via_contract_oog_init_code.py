@@ -47,6 +47,8 @@ def test_create_contract_via_contract_oog_init_code(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { (MSTORE 0 0x602060406000f0600c600055)(CREATE 0 20 12)}
     pre[contract] = Account(
         balance=0,
         nonce=0,

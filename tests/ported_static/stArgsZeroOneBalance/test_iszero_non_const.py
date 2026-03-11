@@ -85,6 +85,8 @@ def test_iszero_non_const(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { [[ 0 ]](ISZERO (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -50,6 +50,8 @@ def test_ext_code_copy_tests_paris(
     )
 
     pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
+    # Source: LLL
+    # { (EXTCODECOPY 0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b 1 10 2) [[2]] (MLOAD 0) (EXTCODECOPY 0xcccf5374fce5edbc8e2a8697c15331677e6ebf0b 1 10 2) [[3]] (MLOAD 0) (EXTCODECOPY 0xdddf5374fce5edbc8e2a8697c15331677e6ebf0b 1 10 2) [[4]] (MLOAD 0) (EXTCODECOPY 0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b 1 10 2) [[5]] (MLOAD 0) (EXTCODECOPY 0xeeef5374fce5edbc8e2a8697c15331677e6ebf0b 1 10 200) [[6]] (MLOAD 0)}  # noqa: E501
     pre[contract] = Account(
         balance=7000,
         nonce=0,
@@ -94,6 +96,7 @@ def test_ext_code_copy_tests_paris(
     )
     pre[callee] = Account(balance=10, nonce=0)
     pre[callee_1] = Account(balance=0, nonce=1)
+    # Source: raw bytecode
     pre[callee_2] = Account(
         balance=0,
         nonce=1,

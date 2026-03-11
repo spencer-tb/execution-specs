@@ -981,11 +981,19 @@ def test_eip2929_oog(
         nonce=1,
         code=Op.BALANCE(address=0xACC7) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    (extcodesize 0x1031)
+    # }
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=Op.EXTCODESIZE(address=0x1031) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    (extcodecopy 0x1031 0 0 0x20)
+    # }
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -999,6 +1007,10 @@ def test_eip2929_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    (extcodehash 0x1031)
+    # }
     pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1014,6 +1026,10 @@ def test_eip2929_oog(
         nonce=1,
         code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    (call 0x06A5 0xACC7 0 0 0 0 0)
+    # }
     pre[callee_6] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1030,6 +1046,10 @@ def test_eip2929_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    (callcode 0x06A5 0xACC7 0 0 0 0 0)
+    # }
     pre[callee_7] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1046,6 +1066,10 @@ def test_eip2929_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    (delegatecall 0x06A5 0xACC7 0 0 0 0)
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1061,6 +1085,10 @@ def test_eip2929_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    (staticcall 0x06A5 0xACC7 0 0 0 0)
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1076,12 +1104,23 @@ def test_eip2929_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    (return 0 0)
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=Op.RETURN(offset=0x0, size=0x0) + Op.STOP,
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: LLL
+    # {
+    #    (def 'addr     $4)     ; the address to call
+    #    (def 'callGas $36)     ; the amount of gas to give it
+    #
+    #    [[0]] (call callGas addr 0 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,

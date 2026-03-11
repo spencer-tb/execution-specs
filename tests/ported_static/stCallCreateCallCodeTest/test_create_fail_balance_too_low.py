@@ -86,6 +86,8 @@ def test_create_fail_balance_too_low(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {(MSTORE 0 0x6001600255 ) (SELFDESTRUCT (CREATE 1000000000000000024 27 5)) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -151,6 +151,8 @@ def test_revert_opcode_direct_call(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { [[0]] (CALL 50000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[2]] 14 }  # noqa: E501
     pre[contract] = Account(
         balance=1,
         nonce=0,

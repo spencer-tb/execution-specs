@@ -407,6 +407,169 @@ def load_filler_network_upper_bound(filler_path: Path) -> str | None:
         return None
 
 
+_MAX_SOURCE_LINES = 30
+
+
+class _FillerCodeSources:
+    """Source code comments extracted from a filler file."""
+
+    def __init__(self) -> None:
+        # {normalized_address: comment} — works for plain-address fillers
+        self.by_address: dict[str, str] = {}
+        # {hex_bytecode_lower: comment} — for :raw and 0x... code
+        self.by_hex: dict[str, str] = {}
+        # Source comment for the contract with the "target" label
+        self.target_source: str = ""
+
+    def lookup(
+        self,
+        compiled_addr: str,
+        compiled_hex: str,
+        is_to_addr: bool,
+    ) -> str:
+        """Look up source comment for a compiled fixture address."""
+        norm = _normalize_address(compiled_addr)
+
+        # 1. Try direct address match (plain-address fillers)
+        if norm in self.by_address:
+            return self.by_address[norm]
+
+        # 2. Try bytecode match (:raw and hex code)
+        hex_key = compiled_hex.lower()
+        if hex_key.startswith("0x"):
+            hex_key = hex_key[2:]
+        if hex_key and hex_key in self.by_hex:
+            return self.by_hex[hex_key]
+
+        # 3. For the to_addr, use the target label source
+        if is_to_addr and self.target_source:
+            return self.target_source
+
+        return ""
+
+
+def _extract_filler_code_sources(
+    filler_data: dict | None,
+) -> _FillerCodeSources:
+    """
+    Extract original source code from filler pre-state.
+
+    Return a _FillerCodeSources object supporting lookup by address,
+    bytecode hex, and label role.
+    """
+    result = _FillerCodeSources()
+    if not filler_data:
+        return result
+
+    try:
+        for _test_name, test_data in filler_data.items():
+            if not isinstance(test_data, dict):
+                continue
+            pre = test_data.get("pre", {})
+            if not isinstance(pre, dict):
+                continue
+            for addr_key, account in pre.items():
+                if not isinstance(account, dict):
+                    continue
+                code = account.get("code")
+                if not code or not isinstance(code, str):
+                    continue
+                code = code.strip()
+                if not code:
+                    continue
+
+                comment = _classify_code_source(code)
+                if not comment:
+                    continue
+
+                addr_str = str(addr_key)
+
+                # Store by normalized address
+                norm = _normalize_address(addr_str)
+                result.by_address[norm] = comment
+
+                # Store by hex for :raw and plain-hex code
+                hex_bytes = _extract_hex_from_code(code)
+                if hex_bytes:
+                    result.by_hex[hex_bytes] = comment
+
+                # Detect target role from label
+                if ":target:" in addr_str or addr_str.startswith(
+                    "<contract:target:"
+                ):
+                    result.target_source = comment
+    except Exception:
+        pass
+    return result
+
+
+def _extract_hex_from_code(code: str) -> str:
+    """
+    Extract raw hex bytes from a code field, if applicable.
+
+    Return lowercase hex string (no 0x prefix), or empty string.
+    """
+    stripped = code.strip()
+    if stripped.startswith(":raw"):
+        raw = stripped[4:].strip()
+        if raw.startswith("0x"):
+            return raw[2:].lower()
+        return raw.lower()
+    if stripped.startswith("0x"):
+        return stripped[2:].lower()
+    return ""
+
+
+def _classify_code_source(code: str) -> str:
+    """
+    Classify a filler code field and return a source comment string.
+
+    Return empty string if no useful comment can be generated.
+    """
+    stripped = code.strip()
+
+    # :yul <dialect> { ... }
+    if stripped.startswith(":yul"):
+        body = stripped[4:].strip()
+        # Remove optional dialect name (e.g. "berlin")
+        brace = body.find("{")
+        if brace >= 0:
+            body = body[brace:]
+        return _format_source_comment("Yul", body)
+
+    # :abi func(args) vals
+    if stripped.startswith(":abi"):
+        body = stripped[4:].strip()
+        return _format_source_comment("ABI", body)
+
+    # :raw 0x...
+    if stripped.startswith(":raw"):
+        return "# Source: raw bytecode"
+
+    # Plain hex: 0x...
+    if stripped.startswith("0x"):
+        return "# Source: raw bytecode"
+
+    # LLL: starts with { ... }
+    if stripped.startswith("{"):
+        return _format_source_comment("LLL", stripped)
+
+    return ""
+
+
+def _format_source_comment(lang: str, body: str) -> str:
+    """Format a source comment with language tag and body lines."""
+    lines = body.splitlines()
+    if len(lines) > _MAX_SOURCE_LINES:
+        extra = len(lines) - _MAX_SOURCE_LINES
+        lines = lines[:_MAX_SOURCE_LINES]
+        lines.append(f"... ({extra} more lines)")
+    comment_lines = [f"# Source: {lang}"]
+    for line in lines:
+        comment_lines.append(f"# {line}" if line.strip() else "#")
+    return "\n".join(comment_lines)
+
+
 COINBASE_ADDRESS = "0x2adc25665018aa1fe0e6bc666dac8fc2697ff9ba"
 
 # Regex to strip YAML label syntax:
@@ -708,35 +871,47 @@ def _wrap_op_chain(
 
 
 def generate_code_expr(
-    hex_code: str, indent: str = "        "
+    hex_code: str,
+    indent: str = "        ",
+    source_comment: str = "",
 ) -> tuple[str, str]:
     """
     Generate Python code expression for bytecode.
 
     Returns (code_expr, pre_comment) where:
     - code_expr is the Python expression (Op chain or bytes.fromhex fallback)
-    - pre_comment is always empty (kept for API compatibility)
+    - pre_comment is the source language comment (if provided)
     """
     if hex_code in ("0x", ""):
         return 'b""', ""
 
     raw = hex_code[2:] if hex_code.startswith("0x") else hex_code
 
+    # Indent source comment lines to match the surrounding code
+    comment = ""
+    if source_comment:
+        comment_indent = indent[4:] if len(indent) >= 4 else ""
+        comment = "\n".join(
+            f"{comment_indent}{line}" for line in source_comment.splitlines()
+        )
+
     # Always use Op format — readable and round-trips to identical bytecode
     op_str = bytecode_to_op_string(hex_code)
     if op_str is not None:
         wrapped = _wrap_op_chain(op_str, indent=indent, prefix="code=")
-        return wrapped, ""
+        return wrapped, comment
 
     # bytes.fromhex fallback only if Op conversion fails entirely
     if len(raw) > 72:
         chunks = [raw[i : i + 72] for i in range(0, len(raw), 72)]
         if len(chunks) == 1:
-            return f'bytes.fromhex(\n{indent}"{chunks[0]}"\n{indent[4:]})', ""
+            expr = f'bytes.fromhex(\n{indent}"{chunks[0]}"\n{indent[4:]})'
+            return expr, comment
         hex_lines = f'"\n{indent}"'.join(chunks)
-        return f'bytes.fromhex(\n{indent}"{hex_lines}"\n{indent[4:]})', ""
+        expr = f'bytes.fromhex(\n{indent}"{hex_lines}"\n{indent[4:]})'
+        return expr, comment
 
-    return f'bytes.fromhex("{raw}")', ""
+    return f'bytes.fromhex("{raw}")', comment
 
 
 def generate_account_setup(
@@ -744,6 +919,7 @@ def generate_account_setup(
     account: dict[str, Any],
     var_name: str,
     indent: str = "    ",
+    source_comment: str = "",
 ) -> str:
     """Generate pre[addr] = Account(...) code."""
     lines = []
@@ -761,7 +937,9 @@ def generate_account_setup(
 
     if not is_eoa:
         code_expr, code_comment = generate_code_expr(
-            code_hex, indent=indent + "    "
+            code_hex,
+            indent=indent + "    ",
+            source_comment=source_comment,
         )
         if code_comment:
             lines.append(code_comment.rstrip())
@@ -1115,6 +1293,7 @@ def generate_test_file(
     filler_comment: str,
     valid_until: str | None = None,
     filler_full_path: Path | None = None,  # noqa: ARG001
+    code_sources: _FillerCodeSources | None = None,
 ) -> str:
     """Generate a complete Python test file from fixture data."""
     # Compiled fixtures have one top-level key per (case × fork).
@@ -1755,11 +1934,22 @@ def generate_test_file(
     out.append("")
 
     # Pre-state accounts
+    src = code_sources or _FillerCodeSources()
     for addr in sorted(pre.keys()):
         addr_l = addr.lower()
         var = addr_vars.get(addr_l, f'Address("{addr}")')
+        code_hex = pre[addr].get("code", "0x")
+        src_comment = src.lookup(
+            addr_l,
+            code_hex,
+            is_to_addr=(addr_l == to_addr),
+        )
         account_code = generate_account_setup(
-            addr, pre[addr], var, indent="    "
+            addr,
+            pre[addr],
+            var,
+            indent="    ",
+            source_comment=src_comment,
         )
         out.append(account_code)
 
@@ -1832,6 +2022,10 @@ def process_single_fixture(
         filler_full_path = Path(filler_path)
     filler_comment = load_filler_comment(filler_full_path)
 
+    # Extract source code comments from filler pre-state
+    filler_data = _load_filler_data(filler_full_path)
+    code_sources = _extract_filler_code_sources(filler_data)
+
     # Detect fork upper bound from filler network (e.g. ">=Cancun<Osaka")
     upper_bound = load_filler_network_upper_bound(filler_full_path)
     valid_until = fork_before(upper_bound) if upper_bound else None
@@ -1844,6 +2038,7 @@ def process_single_fixture(
             filler_comment,
             valid_until=valid_until,
             filler_full_path=filler_full_path,
+            code_sources=code_sources,
         )
     except Exception as e:
         return False, f"Error generating {fixture_path}: {e}"

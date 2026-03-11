@@ -45,6 +45,8 @@ def test_callcode_to0(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # { [[ 0 ]] (CALLCODE 50000 0 1 0 0 0 0) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

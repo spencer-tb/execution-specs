@@ -46,6 +46,7 @@ def test_recursive_create_contracts(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x314DC6448D9338C15B0A00000000,
         nonce=0,

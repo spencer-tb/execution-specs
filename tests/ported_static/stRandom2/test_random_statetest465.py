@@ -45,6 +45,7 @@ def test_random_statetest465(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -65,6 +66,7 @@ def test_random_statetest465(
             + Op.SSTORE(key=Op.MLOAD(offset=0x0), value=Op.PUSH32[0x1])
         ),
     )
+    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=46,
         nonce=0,

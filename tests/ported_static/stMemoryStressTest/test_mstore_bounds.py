@@ -70,6 +70,8 @@ def test_mstore_bounds(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # {  (MSTORE 0xffffffffffffffff 1)}
     pre[contract] = Account(
         balance=0,
         nonce=0,

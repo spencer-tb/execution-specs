@@ -82,6 +82,8 @@ def test_mload_bounds2(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # { (MLOAD 0xffffffffffffffff) (MLOAD 0xffffffffffffffffffffffffffffffff) (MLOAD 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

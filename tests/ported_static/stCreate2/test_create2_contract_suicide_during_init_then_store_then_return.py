@@ -49,6 +49,8 @@ def test_create2_contract_suicide_during_init_then_store_then_return(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { (CALL 150000 0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b 1 0 0 0 32) (SSTORE 1 (MLOAD 0)) }  # noqa: E501
     pre[contract] = Account(
         balance=0xE8D4A51000,
         nonce=0,
@@ -68,6 +70,8 @@ def test_create2_contract_suicide_during_init_then_store_then_return(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (MSTORE 0 0x6d64600c6000556000526005601bf36000526001ff) (CREATE2 1 11 21 0) [[0]] 11 (RETURN 18 14) }  # noqa: E501
     pre[callee] = Account(
         balance=0xE8D4A51000,
         nonce=0,

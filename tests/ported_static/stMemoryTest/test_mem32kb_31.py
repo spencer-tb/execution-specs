@@ -44,6 +44,8 @@ def test_mem32kb_31(
         gas_limit=42949672960,
     )
 
+    # Source: LLL
+    # { (MSTORE 31937 42) [[ 1 ]] (MLOAD 31937) [[ 0 ]] (MSIZE) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

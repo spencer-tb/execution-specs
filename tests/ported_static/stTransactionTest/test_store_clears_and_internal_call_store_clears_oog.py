@@ -78,6 +78,8 @@ def test_store_clears_and_internal_call_store_clears_oog(
             0x9: 0xC,
         },
     )
+    # Source: LLL
+    # {(SSTORE 0 0)(SSTORE 1 0)(SSTORE 2 0)(SSTORE 3 0) (CALL 20000 <contract:0x0000000000000000000000000000000000000000> 1 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=10,
         nonce=0,

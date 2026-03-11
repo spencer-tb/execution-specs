@@ -69,6 +69,8 @@ def test_call_ask_more_gas_on_depth2_then_transaction_has(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (SSTORE 8 (GAS)) (SSTORE 9 (CALL 200000 <contract:0x1000000000000000000000000000000000000107> 0 0 0 0 0)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -47,12 +47,16 @@ def test_suicides_stop_after_suicide(
         gas_limit=100000,
     )
 
+    # Source: LLL
+    # {(SELFDESTRUCT 0x0000000000000000000000000000000000000001)}
     pre[callee] = Account(
         balance=1110,
         nonce=0,
         code=Op.SELFDESTRUCT(address=0x1) + Op.STOP,
     )
     pre[sender] = Account(balance=0x7459280, nonce=0)
+    # Source: LLL
+    # {(SELFDESTRUCT 0) (CALL 30000 0x0000000000000000000000000000000000000000 0 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0x2710,
         nonce=0,

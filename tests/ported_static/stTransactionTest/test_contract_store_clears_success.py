@@ -48,6 +48,8 @@ def test_contract_store_clears_success(
     )
 
     pre[sender] = Account(balance=0x8583B00, nonce=0)
+    # Source: LLL
+    # {(SSTORE 0 0)(SSTORE 1 0)(SSTORE 2 0)(SSTORE 3 0)(SSTORE 4 0)(SSTORE 5 0)(SSTORE 6 0)(SSTORE 7 0)(SSTORE 8 0)(SSTORE 9 0)}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

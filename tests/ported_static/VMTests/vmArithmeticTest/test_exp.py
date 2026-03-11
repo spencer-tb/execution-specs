@@ -831,22 +831,38 @@ def test_exp(
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.EXP(0x2, 0x101)) + Op.STOP,
     )
+    # Source: LLL
+    # {  ; 0^0 (that is 1 in evm arithmetic)
+    #    [[0]] (exp 0 0)
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.EXP(0x0, 0x0)) + Op.STOP,
     )
+    # Source: LLL
+    # {  ; 2^big = 0
+    #    [[0]] (exp 2 0x0100000000000f)
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.EXP(0x2, 0x100000000000F)) + Op.STOP,
     )
+    # Source: LLL
+    # {  ; 2^15 = 0x8000
+    #    [[0]] (exp 2 15)
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.EXP(0x2, 0xF)) + Op.STOP,
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (call 0xffffff (+ 0x1000 $4) 0 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

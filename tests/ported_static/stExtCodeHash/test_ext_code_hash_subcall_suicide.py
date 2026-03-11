@@ -48,6 +48,10 @@ def test_ext_code_hash_subcall_suicide(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {
+    #   (CALLCODE 350000 0xc000000000000000000000000000000000000000 0 0 0 0 32)
+    # }
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -65,6 +69,22 @@ def test_ext_code_hash_subcall_suicide(
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # {
+    #   (SSTORE 1 (EXTCODEHASH 0xa000000000000000000000000000000000000000))
+    #   (SSTORE 2 (EXTCODESIZE 0xa000000000000000000000000000000000000000))
+    #   (EXTCODECOPY 0xa000000000000000000000000000000000000000 0 0 32)
+    #   (SSTORE 3 (MLOAD 0))
+    #
+    #   (CALL 350000 0xa000000000000000000000000000000000000000 0 0 0 0 32)
+    #
+    #   (SSTORE 4 (EXTCODEHASH 0xa000000000000000000000000000000000000000))
+    #   (SSTORE 5 (EXTCODESIZE 0xa000000000000000000000000000000000000000))
+    #   (EXTCODECOPY 0xa000000000000000000000000000000000000000 0 0 32)
+    #   (SSTORE 6 (MLOAD 0))
+    #
+    #   [[7]] (CALL 350000 0xa000000000000000000000000000000000000000 0 0 0 0 32)  # noqa: E501
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -133,6 +153,10 @@ def test_ext_code_hash_subcall_suicide(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   (SELFDESTRUCT 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b)
+    # }
     pre[callee_1] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

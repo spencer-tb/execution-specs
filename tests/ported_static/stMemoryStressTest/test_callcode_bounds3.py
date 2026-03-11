@@ -101,6 +101,8 @@ def test_callcode_bounds3(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # {  (CALLCODE 0x7ffffffffffffff <contract:0x1000000000000000000000000000000000000001> 0 0xffffffff 0xffffffff 0xffffffff 0xffffffff)  }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

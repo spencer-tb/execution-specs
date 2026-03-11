@@ -48,11 +48,13 @@ def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0x186A0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0xC),
     )
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -46,6 +46,7 @@ def test_wallet_default_with_out_value(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A75EF08F, nonce=1)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=100,
         nonce=0,

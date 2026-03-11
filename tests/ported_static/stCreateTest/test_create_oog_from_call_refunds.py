@@ -9976,6 +9976,13 @@ def test_create_oog_from_call_refunds(
         gas_limit=4294967296,
     )
 
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   sstore(1, 0)
+    #   return(0, 1)
+    # }
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -9987,6 +9994,13 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   sstore(1, 0)
+    #   return(0, 5000)
+    # }
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -9997,6 +10011,13 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1388)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   sstore(1, 0)
+    #   invalid()
+    # }
     pre[callee_2] = Account(
         balance=0,
         nonce=0,
@@ -10009,6 +10030,12 @@ def test_create_oog_from_call_refunds(
             + Op.INVALID
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   pop(call(gas(), 0x00000000000000000000000000000000000c0deA, 0, 0, 0, 0, 0))  # noqa: E501
+    #   return(0, 1)
+    # }
     pre[callee_3] = Account(
         balance=0,
         nonce=0,
@@ -10026,6 +10053,12 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   pop(call(gas(), 0x00000000000000000000000000000000000c0deA, 0, 0, 0, 0, 0))  # noqa: E501
+    #   return(0, 5000)
+    # }
     pre[callee_4] = Account(
         balance=0,
         nonce=0,
@@ -10043,6 +10076,12 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1388)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   pop(call(gas(), 0x00000000000000000000000000000000000c0deA, 0, 0, 0, 0, 0))  # noqa: E501
+    #   invalid()
+    # }
     pre[callee_5] = Account(
         balance=0,
         nonce=0,
@@ -10062,6 +10101,13 @@ def test_create_oog_from_call_refunds(
             + Op.INVALID
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   pop(delegatecall(gas(), 0x00000000000000000000000000000000000c0deA, 0, 0, 0, 0))  # noqa: E501
+    #   return(0, 1)
+    # }
     pre[callee_6] = Account(
         balance=0,
         nonce=0,
@@ -10079,6 +10125,13 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   pop(delegatecall(gas(), 0x00000000000000000000000000000000000c0deA, 0, 0, 0, 0))  # noqa: E501
+    #   return(0, 5000)
+    # }
     pre[callee_7] = Account(
         balance=0,
         nonce=0,
@@ -10096,6 +10149,13 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1388)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   pop(delegatecall(gas(), 0x00000000000000000000000000000000000c0deA, 0, 0, 0, 0))  # noqa: E501
+    #   invalid()
+    # }
     pre[callee_8] = Account(
         balance=0,
         nonce=0,
@@ -10115,6 +10175,13 @@ def test_create_oog_from_call_refunds(
             + Op.INVALID
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   pop(callcode(gas(), 0x00000000000000000000000000000000000c0deA, 0, 0, 0, 0, 0))  # noqa: E501
+    #   return(0, 1)
+    # }
     pre[callee_9] = Account(
         balance=0,
         nonce=0,
@@ -10133,6 +10200,13 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   pop(callcode(gas(), 0x00000000000000000000000000000000000c0deA, 0, 0, 0, 0, 0))  # noqa: E501
+    #   return(0, 5000)
+    # }
     pre[callee_10] = Account(
         balance=0,
         nonce=0,
@@ -10151,6 +10225,13 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1388)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   pop(callcode(gas(), 0x00000000000000000000000000000000000c0deA, 0, 0, 0, 0, 0))  # noqa: E501
+    #   invalid()
+    # }
     pre[callee_11] = Account(
         balance=0,
         nonce=0,
@@ -10171,6 +10252,12 @@ def test_create_oog_from_call_refunds(
             + Op.INVALID
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   pop(call(gas(), 0x00000000000000000000000000000000000c0deD, 0, 0, 0, 0, 0))  # noqa: E501
+    #   return(0, 1)
+    # }
     pre[callee_12] = Account(
         balance=0,
         nonce=0,
@@ -10188,6 +10275,12 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   pop(call(gas(), 0x00000000000000000000000000000000000c0deD, 0, 0, 0, 0, 0))  # noqa: E501
+    #   return(0, 5000)
+    # }
     pre[callee_13] = Account(
         balance=0,
         nonce=0,
@@ -10205,6 +10298,12 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1388)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   pop(call(gas(), 0x00000000000000000000000000000000000c0deD, 0, 0, 0, 0, 0))  # noqa: E501
+    #   invalid()
+    # }
     pre[callee_14] = Account(
         balance=0,
         nonce=0,
@@ -10224,6 +10323,12 @@ def test_create_oog_from_call_refunds(
             + Op.INVALID
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   pop(call(gas(), 0x00000000000000000000000000000000000c0de0, 0, 0, 0, 0, 0))  # noqa: E501
+    #   return(0, 1)
+    # }
     pre[callee_15] = Account(
         balance=0,
         nonce=0,
@@ -10241,6 +10346,12 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   pop(call(gas(), 0x00000000000000000000000000000000000c0de0, 0, 0, 0, 0, 0))  # noqa: E501
+    #   return(0, 5000)
+    # }
     pre[callee_16] = Account(
         balance=0,
         nonce=0,
@@ -10258,6 +10369,12 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN(offset=0x0, size=0x1388)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   pop(call(gas(), 0x00000000000000000000000000000000000c0de0, 0, 0, 0, 0, 0))  # noqa: E501
+    #   invalid()
+    # }
     pre[callee_17] = Account(
         balance=0,
         nonce=0,
@@ -10277,6 +10394,17 @@ def test_create_oog_from_call_refunds(
             + Op.INVALID
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   sstore(1, 0)
+    #   let initcodeaddr := 0x00000000000000000000000000000000000c0de1
+    #   let initcodelength := extcodesize(initcodeaddr)
+    #   extcodecopy(initcodeaddr, 0, 0, initcodelength)
+    #   pop(create(0, 0, initcodelength))
+    #   return(add(initcodelength, 1), 1)
+    # }
     pre[callee_18] = Account(
         balance=0,
         nonce=0,
@@ -10300,6 +10428,17 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   sstore(1, 0)
+    #   let initcodeaddr := 0x00000000000000000000000000000000000c0de1
+    #   let initcodelength := extcodesize(initcodeaddr)
+    #   extcodecopy(initcodeaddr, 0, 0, initcodelength)
+    #   pop(create(0, 0, initcodelength))
+    #   return(add(initcodelength, 1), 5000)
+    # }
     pre[callee_19] = Account(
         balance=0,
         nonce=0,
@@ -10322,6 +10461,17 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   sstore(1, 0)
+    #   let initcodeaddr := 0x00000000000000000000000000000000000c0de1
+    #   let initcodelength := extcodesize(initcodeaddr)
+    #   extcodecopy(initcodeaddr, 0, 0, initcodelength)
+    #   pop(create(0, 0, initcodelength))
+    #   invalid()
+    # }
     pre[callee_20] = Account(
         balance=0,
         nonce=0,
@@ -10343,6 +10493,22 @@ def test_create_oog_from_call_refunds(
             + Op.INVALID
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   sstore(1, 0)
+    #   let initcodeaddr := 0x00000000000000000000000000000000000c0de1
+    #   //let initcodelength := extcodesize(initcodeaddr)
+    #   //extcodecopy(initcodeaddr, 0, 0, initcodelength)
+    #
+    #   // protection from solc version changing init code
+    #   let initcodelength := 15
+    #   mstore(0, 0x6001600055600060005560016000f30000000000000000000000000000000000)  # noqa: E501
+    #
+    #   pop(create2(0, 0, initcodelength, 0))
+    #   return(add(initcodelength, 1), 1)
+    # }
     pre[callee_21] = Account(
         balance=0,
         nonce=0,
@@ -10367,6 +10533,17 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   sstore(1, 0)
+    #   let initcodeaddr := 0x00000000000000000000000000000000000c0de1
+    #   let initcodelength := extcodesize(initcodeaddr)
+    #   extcodecopy(initcodeaddr, 0, 0, initcodelength)
+    #   pop(create2(0, 0, initcodelength, 0))
+    #   return(add(initcodelength, 1), 5000)
+    # }
     pre[callee_22] = Account(
         balance=0,
         nonce=0,
@@ -10393,6 +10570,17 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(1, 1)
+    #   sstore(1, 0)
+    #   let initcodeaddr := 0x00000000000000000000000000000000000c0de1
+    #   let initcodelength := extcodesize(initcodeaddr)
+    #   extcodecopy(initcodeaddr, 0, 0, initcodelength)
+    #   pop(create2(0, 0, initcodelength, 0))
+    #   invalid()
+    # }
     pre[callee_23] = Account(
         balance=0,
         nonce=0,
@@ -10415,6 +10603,15 @@ def test_create_oog_from_call_refunds(
             + Op.INVALID
         ),
     )
+    # Source: Yul
+    # {
+    #   mstore(0, 0xff)
+    #   log0(0, 32)
+    #   log1(0, 32, 0xfa)
+    #   log2(0, 32, 0xfa, 0xfb)
+    #   log3(0, 32, 0xfa, 0xfb, 0xfc)
+    #   log4(0, 32, 0xfa, 0xfb, 0xfc, 0xfd)
+    # }
     pre[callee_24] = Account(
         balance=0,
         nonce=1,
@@ -10442,6 +10639,12 @@ def test_create_oog_from_call_refunds(
         ),
         storage={0x1: 0x1},
     )
+    # Source: Yul
+    # {
+    #   sstore(0, 1)
+    #   sstore(0, 0)
+    #   return(0, 1)
+    # }
     pre[callee_25] = Account(
         balance=0,
         nonce=1,
@@ -10453,12 +10656,21 @@ def test_create_oog_from_call_refunds(
             + Op.RETURN
         ),
     )
+    # Source: Yul
+    # {
+    #   // Simple SSTORE to zero to get a refund
+    #   sstore(1, 0)
+    # }
     pre[callee_26] = Account(
         balance=0,
         nonce=1,
         code=Op.SSTORE(key=0x1, value=0x0) + Op.STOP,
         storage={0x1: 0x1},
     )
+    # Source: Yul
+    # {
+    #   selfdestruct(origin())
+    # }
     pre[callee_27] = Account(
         balance=0,
         nonce=1,
@@ -10466,6 +10678,17 @@ def test_create_oog_from_call_refunds(
         storage={0x1: 0x1},
     )
     pre[sender] = Account(balance=0x3D0900, nonce=1)
+    # Source: Yul
+    # {
+    #   let init_addr := calldataload(4)
+    #   let init_length := extcodesize(init_addr)
+    #   extcodecopy(init_addr, 0, 0, init_length)
+    #   let created_addr := create(0, 0, init_length)
+    #   if eq(created_addr, 0) {
+    #     /* This invalid will deplete the remaining gas to make refund check deterministic */  # noqa: E501
+    #     invalid()
+    #   }
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=1,

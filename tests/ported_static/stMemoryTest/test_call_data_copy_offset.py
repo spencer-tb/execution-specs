@@ -45,6 +45,8 @@ def test_call_data_copy_offset(
         gas_limit=1000000,
     )
 
+    # Source: Yul
+    # { mstore(0, 0x0123456789abcdef) pop(call(0xffff,0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee,0, 0,0x0f, 0,0))  }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -63,6 +65,8 @@ def test_call_data_copy_offset(
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0x00 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) (CALLDATACOPY 0x00 0xffff  0x10) (SSTORE 0x00 (MLOAD 0x00)) }  # noqa: E501
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,

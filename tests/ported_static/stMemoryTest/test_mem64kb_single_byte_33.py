@@ -45,6 +45,8 @@ def test_mem64kb_single_byte_33(
     )
 
     pre[sender] = Account(balance=0x6400000000, nonce=0)
+    # Source: LLL
+    # { (MSTORE8 63966 42) [[ 0 ]] (MSIZE) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

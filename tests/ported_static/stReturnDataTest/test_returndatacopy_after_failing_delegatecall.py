@@ -71,6 +71,7 @@ def test_returndatacopy_after_failing_delegatecall(
             0x0: 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
         },
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(balance=0x6400000000, nonce=0, code=Op.REVERT)
     pre[contract] = Account(balance=0x100000, nonce=0)
     pre[sender] = Account(balance=0x6400000000, nonce=0)

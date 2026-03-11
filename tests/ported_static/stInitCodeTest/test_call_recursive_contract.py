@@ -46,6 +46,8 @@ def test_call_recursive_contract(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {[[ 2 ]](ADDRESS)(CODECOPY 0 0 32)(CREATE 0 0 32)}
     pre[contract] = Account(
         balance=0,
         nonce=40,

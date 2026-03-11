@@ -49,6 +49,7 @@ def test_new_gas_price_for_codes_with_mem_expanding_calls(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -124,6 +125,7 @@ def test_new_gas_price_for_codes_with_mem_expanding_calls(
         ),
         storage={0x0: 0x12},
     )
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=111,
         nonce=0,
@@ -131,6 +133,7 @@ def test_new_gas_price_for_codes_with_mem_expanding_calls(
             "1122334455667788991011121314151617181920212223242526272829303132"
         ),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0,
         nonce=0,

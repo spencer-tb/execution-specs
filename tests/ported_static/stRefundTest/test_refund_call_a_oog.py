@@ -46,6 +46,8 @@ def test_refund_call_a_oog(
     )
 
     pre[sender] = Account(balance=0x2DC6C0, nonce=0)
+    # Source: LLL
+    # { [[ 0 ]] (CALL 6000 <contract:0xaaae7baea6a6c7c4c2dfeb977efac326af552aaa> 0 0 0 0 0 )}  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

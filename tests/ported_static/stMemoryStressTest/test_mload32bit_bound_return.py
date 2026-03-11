@@ -71,6 +71,8 @@ def test_mload32bit_bound_return(
     )
 
     pre[sender] = Account(balance=0x186A0C3B1E19A180, nonce=0)
+    # Source: LLL
+    # { (RETURN 0 4294967295) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

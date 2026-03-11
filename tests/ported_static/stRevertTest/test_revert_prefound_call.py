@@ -45,6 +45,8 @@ def test_revert_prefound_call(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[0]] (CALL 50000 <eoa:0x7db299e0885c85039f56fa504a13dd8ce8a56aa7> 0 0 32 0 32) [[1]]12 }  # noqa: E501
     pre[contract] = Account(
         balance=1,
         nonce=0,

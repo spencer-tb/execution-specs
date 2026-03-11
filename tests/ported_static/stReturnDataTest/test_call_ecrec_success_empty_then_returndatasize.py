@@ -47,6 +47,8 @@ def test_call_ecrec_success_empty_then_returndatasize(
         gas_limit=111669149696,
     )
 
+    # Source: LLL
+    # { (seq (CALL 0x9000 0x1 0 0 0 0 0xaa) (SSTORE 0 (RETURNDATASIZE)) )}
     pre[contract] = Account(
         balance=0,
         nonce=0,

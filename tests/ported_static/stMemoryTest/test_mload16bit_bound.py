@@ -45,6 +45,8 @@ def test_mload16bit_bound(
     )
 
     pre[sender] = Account(balance=0xA00050281798, nonce=0)
+    # Source: LLL
+    # { [[ 1 ]] (MLOAD 65536) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -60,6 +60,8 @@ def test_returndatacopy_following_create(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (seq (create (STOP)) (RETURNDATACOPY 0 0 32) (SSTORE 0 (MLOAD 0)) )}
     pre[contract] = Account(
         balance=0,
         nonce=0,

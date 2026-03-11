@@ -45,6 +45,8 @@ def test_codecopy_dejavu2(
     )
 
     pre[sender] = Account(balance=0x271000000000, nonce=0)
+    # Source: Yul
+    # { codecopy(0x1f, 0x010000000000000001, 0x0a) let mem := mload(0) if eq(mem, 0) {stop()} }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

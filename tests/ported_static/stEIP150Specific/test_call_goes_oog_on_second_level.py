@@ -69,6 +69,8 @@ def test_call_goes_oog_on_second_level(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (SSTORE 8 (GAS)) (SSTORE 9 (CALL 600000 <contract:0x1000000000000000000000000000000000000110> 0 0 0 0 0)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

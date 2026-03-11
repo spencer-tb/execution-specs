@@ -45,6 +45,8 @@ def test_delegate_call_on_eip(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [8] (GAS) (SSTORE 9 (DELEGATECALL 600000 <contract:0x1000000000000000000000000000000000000105> 0 0 0 0)) [[8]] (SUB @8 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

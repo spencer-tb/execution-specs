@@ -1626,6 +1626,10 @@ def test_byte(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    [[0]] (byte (- 31 31) 0x8040201008040201)
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1637,6 +1641,10 @@ def test_byte(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    [[0]] (byte (sdiv 31 32) 0x8040201008040201)
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1648,6 +1656,7 @@ def test_byte(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_11] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1659,6 +1668,10 @@ def test_byte(
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (call 0xffffff $4 0 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

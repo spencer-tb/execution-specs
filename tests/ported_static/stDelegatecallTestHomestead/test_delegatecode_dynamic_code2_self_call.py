@@ -47,6 +47,8 @@ def test_delegatecode_dynamic_code2_self_call(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # {(MSTORE 0 0x60406000604060007313136008b64ff592819b2fa6d43f2835c452020e620186) (MSTORE 32 0xa0f4600b5533600c550000000000000000000000000000000000000000000000) (CREATE 1 0 64) }  # noqa: E501
     pre[contract] = Account(
         balance=0x10C8E0,
         nonce=0,

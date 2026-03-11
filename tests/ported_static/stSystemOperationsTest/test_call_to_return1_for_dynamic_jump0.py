@@ -48,6 +48,7 @@ def test_call_to_return1_for_dynamic_jump0(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=23,
         nonce=0,
@@ -57,6 +58,7 @@ def test_call_to_return1_for_dynamic_jump0(
             + Op.RETURN(offset=0x1F, size=0x1)
         ),
     )
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -1166,6 +1166,8 @@ def test_sstore_xto0to0(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { [[1]] 0 [[1]] 0 }
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -1176,6 +1178,8 @@ def test_sstore_xto0to0(
         ),
         storage={0x1: 0x1},
     )
+    # Source: LLL
+    # { [[1]] 0 [[1]] 0 }
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -1186,6 +1190,8 @@ def test_sstore_xto0to0(
         ),
         storage={0x1: 0x1},
     )
+    # Source: LLL
+    # { [[1]] 1 [[1]] 0 [[2]] 1 [[2]] 0 [[3]] 1 [[3]] 0 [[4]] 1 [[4]] 0 [[5]] 1 [[5]] 0 [[6]] 1 [[6]] 0 [[7]] 1 [[7]] 0 [[8]] 1 [[8]] 0 [[9]] 1 [[9]] 0 [[10]] 1 [[10]] 0 [[11]] 1 [[11]] 0 [[12]] 1 [[12]] 0 [[13]] 1 [[13]] 0 [[14]] 1 [[14]] 0 [[15]] 1 [[15]] 0 [[16]] 1 [[16]] 0  [[1]] 1 }  # noqa: E501
     pre[callee_2] = Account(
         balance=0,
         nonce=0,

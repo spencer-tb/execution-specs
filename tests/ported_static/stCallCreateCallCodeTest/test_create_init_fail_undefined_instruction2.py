@@ -47,6 +47,8 @@ def test_create_init_fail_undefined_instruction2(
         gas_limit=1000000000,
     )
 
+    # Source: LLL
+    # {(MSTORE8 0 0xf4 ) (SELFDESTRUCT (CREATE 1 0 1)) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

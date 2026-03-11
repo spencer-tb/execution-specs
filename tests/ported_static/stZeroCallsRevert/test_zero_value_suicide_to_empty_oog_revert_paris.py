@@ -58,6 +58,8 @@ def test_zero_value_suicide_to_empty_oog_revert_paris(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL 50000 <contract:0xd94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[2]]12 [[3]]12 [[4]]12 }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

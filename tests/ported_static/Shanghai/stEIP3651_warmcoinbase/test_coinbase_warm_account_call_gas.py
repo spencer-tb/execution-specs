@@ -1130,6 +1130,38 @@ def test_coinbase_warm_account_call_gas(
 
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
     pre[coinbase] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: Yul
+    # {
+    #    // Save the coinbase value
+    #    let cb := coinbase()
+    #
+    #    // Minimum gas spent on the measurement, which changes depending on
+    #    // the tested opcode
+    #    //
+    #    // Note that this value can change (mostly down) when Yul rolls out new  # noqa: E501
+    #    // optimizations
+    #    let measureGas
+    #
+    #    let gas0, gas1
+    #    let retVal
+    #
+    #    // We can only check the gas of one opcode per transaction,
+    #    // because the first check adds the account to the
+    #    // 'accessed_addresses' list.
+    #    switch calldataload(4)
+    #    case 0 {
+    #      // EXTCODESIZE
+    #      measureGas := 8
+    #      gas0 := gas()
+    #      retVal := extcodesize(cb)
+    #      gas1 := gas()
+    #    }
+    #    case 1 {
+    #      // EXTCODECOPY
+    #      measureGas := 5
+    #      gas0 := gas()
+    #      extcodecopy(cb, 0, 0, 0)
+    # ... (53 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,

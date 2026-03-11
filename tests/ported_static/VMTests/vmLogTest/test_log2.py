@@ -1165,6 +1165,14 @@ def test_log2(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {        ; maxTopic
+    #    (def 'neg1 (- 0 1))
+    #
+    #    (mstore8 0 0xFF)
+    #    (log2 31 1 neg1 neg1)
+    #    [[0]] 0x600D
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1181,6 +1189,10 @@ def test_log2(
         ),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
+    # Source: LLL
+    # {
+    #     (delegatecall (gas) (+ 0x1000 $4) 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

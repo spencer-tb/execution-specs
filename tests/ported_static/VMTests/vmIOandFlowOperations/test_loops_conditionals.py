@@ -1773,6 +1773,15 @@ def test_loops_conditionals(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #     (for
+    #       { [[0]] 0x10  [[1]] 0x01 }         ; initialization
+    #       (> @@0 0)                          ; predicate
+    #       [[0]] (- @@0 1)                    ; post
+    #       [[1]] (* @@1 2)                    ; body
+    #     )   ; for loop
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1790,6 +1799,19 @@ def test_loops_conditionals(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #     (def 'i 0x80)
+    #     (def 'j 0xA0)
+    #
+    #     (for [i] 10        ; init
+    #          (> @i 0)      ; predicate
+    #          [i] (- @i 1)  ; post
+    #          [j] (+ @i @j) ; body
+    #     )    ; for loop
+    #
+    #     [[0]] @j
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1811,6 +1833,19 @@ def test_loops_conditionals(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #     (def 'i 0x80)
+    #     (def 'j 0xA0)
+    #
+    #     (for [i] 0         ; init
+    #          (<= @i 10)    ; predicate
+    #          [i] (+ @i 1)  ; post
+    #          [j] (+ @i @j) ; body
+    #     )    ; for loop
+    #
+    #     [[0]] @j
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1835,6 +1870,10 @@ def test_loops_conditionals(
         ),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
+    # Source: LLL
+    # {
+    #     (delegatecall (gas) (+ 0x1000 $4) 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

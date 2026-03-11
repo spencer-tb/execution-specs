@@ -47,6 +47,8 @@ def test_suicide_caller_addres_too_big_left(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[0]] (CALLER) (SELFDESTRUCT 0xaaa94f5374fce5edbc8e2a8697c15331677e6ebf0b)}  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

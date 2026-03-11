@@ -86,6 +86,8 @@ def test_revert_opcode_create(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0 0x600160005560016000fd6011600155 ) [[1]](CREATE 1 17 15) [[0]] 12 }  # noqa: E501
     pre[contract] = Account(
         balance=1,
         nonce=0,

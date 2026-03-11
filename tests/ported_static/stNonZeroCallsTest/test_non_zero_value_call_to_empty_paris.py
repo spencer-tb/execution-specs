@@ -49,6 +49,8 @@ def test_non_zero_value_call_to_empty_paris(
     )
 
     pre[callee] = Account(balance=10, nonce=0)
+    # Source: LLL
+    # { [0](GAS) [[1]] (CALL 60000 <eoa:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 1 0 0 0 0) [[100]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=1000,
         nonce=0,

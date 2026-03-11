@@ -45,6 +45,8 @@ def test_refund50_2(
     )
 
     pre[sender] = Account(balance=0x989680, nonce=0)
+    # Source: LLL
+    # { [[ 10 ]] 1 [[ 11 ]] 1 [[ 1 ]] 0 [[ 2 ]] 0 [[ 3 ]] 0 [[ 4 ]] 0 [[ 5 ]] 0 }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -1839,6 +1839,20 @@ def test_mcopy_copy_cost(
         gas_limit=1000000,
     )
 
+    # Source: Yul
+    # {
+    #   function mcopy(dst, src, size) { verbatim_3i_0o(hex"5e", dst, src, size) }  # noqa: E501
+    #
+    #   // Put a flag in storage indicating successful execution (will be reverted in case of OOG).  # noqa: E501
+    #   sstore(0, 1)
+    #
+    #   // Expand memory to cover memory expansion cost before MCOPY.
+    #   // The test uses up to 1400 memory words.
+    #   mstore(44800, 1)
+    #
+    #   // MCOPY using src and size from CALLDATA to 0 destination.
+    #   mcopy(0, calldataload(0), calldataload(32))
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=1,

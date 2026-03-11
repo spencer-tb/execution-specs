@@ -47,6 +47,8 @@ def test_call_contract_to_create_contract_which_would_create_contract_in_init_co
         gas_limit=1000000000,
     )
 
+    # Source: LLL
+    # {(MSTORE 0 0x600c600055602060406000f0)(CREATE 0 20 12)}
     pre[contract] = Account(
         balance=1,
         nonce=0,

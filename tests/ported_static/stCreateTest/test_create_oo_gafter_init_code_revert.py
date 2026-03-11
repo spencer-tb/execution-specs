@@ -48,12 +48,16 @@ def test_create_oo_gafter_init_code_revert(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (KECCAK256 0x00 0x2fffff) }
     pre[callee] = Account(
         balance=0,
         nonce=0,
         code=Op.SHA3(offset=0x0, size=0x2FFFFF) + Op.STOP,
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0 0x6460016001556000526005601bf3) (CREATE 0 18 14) (CALLCODE 10000 0x094f5374fce5edbc8e2a8697c15331677e6ebf0b 0 0 0 0 0) (REVERT 0 32) }  # noqa: E501
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -75,6 +79,8 @@ def test_create_oo_gafter_init_code_revert(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL (GAS) 0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b 0 0 0 0 32) [[ 1 ]] (MLOAD 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

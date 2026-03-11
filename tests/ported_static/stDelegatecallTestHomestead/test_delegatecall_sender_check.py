@@ -48,6 +48,8 @@ def test_delegatecall_sender_check(
         gas_limit=30000000,
     )
 
+    # Source: LLL
+    # {  [[ 0 ]] (DELEGATECALL 500000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 0 64 0 2 ) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

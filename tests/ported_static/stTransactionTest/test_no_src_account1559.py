@@ -350,6 +350,7 @@ def test_no_src_account1559(
         gas_limit=89128960,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(balance=0, nonce=0, code=bytes.fromhex("00"))
 
     tx = Transaction(

@@ -73,6 +73,8 @@ def test_callcallcallcode_001_oogm_after(
         nonce=0,
         code=Op.SSTORE(key=0x3, value=0x1) + Op.STOP,
     )
+    # Source: LLL
+    # {  [[ 0 ]] (CALL 800000 <contract:0x1000000000000000000000000000000000000001> 0 0 64 0 64 ) [[11]] 1  }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

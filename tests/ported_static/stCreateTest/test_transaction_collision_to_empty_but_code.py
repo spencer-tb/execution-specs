@@ -91,6 +91,7 @@ def test_transaction_collision_to_empty_but_code(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

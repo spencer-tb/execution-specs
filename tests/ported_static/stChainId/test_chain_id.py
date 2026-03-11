@@ -44,6 +44,8 @@ def test_chain_id(
         gas_limit=10000000000,
     )
 
+    # Source: LLL
+    # { [[ 1 ]] (CHAINID) }
     pre[contract] = Account(
         balance=0,
         nonce=0,

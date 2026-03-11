@@ -49,6 +49,10 @@ def test_ext_code_hash_subcall_suicide_cancun(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {
+    #   (CALLCODE 350000 0x3e180b1862f9d158abb5e519a6d8605540c23682 0 0 0 0 32)
+    # }
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -66,6 +70,34 @@ def test_ext_code_hash_subcall_suicide_cancun(
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # {
+    #   ;; create 0x3e180b1862f9d158abb5e519a6d8605540c23682 (Account A)
+    #   (CREATE 1000000000000000000 0 (lll
+    #         {
+    #             (CALL 100000 0xd000000000000000000000000000000000000000 0 0 0 0 0)  # noqa: E501
+    #             (RETURN 0 (lll
+    #                 {
+    #                   (SELFDESTRUCT 0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b)  # noqa: E501
+    #                 }
+    #             0))
+    #         }
+    #   0))
+    #
+    #   (SSTORE 1 (EXTCODEHASH 0xa000000000000000000000000000000000000000))
+    #   (SSTORE 2 (EXTCODESIZE 0xa000000000000000000000000000000000000000))
+    #   (EXTCODECOPY 0xa000000000000000000000000000000000000000 0 0 32)
+    #   (SSTORE 3 (MLOAD 0))
+    #
+    #   (CALL 350000 0xa000000000000000000000000000000000000000 0 0 0 0 32)
+    #
+    #   (SSTORE 4 (EXTCODEHASH 0xa000000000000000000000000000000000000000))
+    #   (SSTORE 5 (EXTCODESIZE 0xa000000000000000000000000000000000000000))
+    #   (EXTCODECOPY 0xa000000000000000000000000000000000000000 0 0 32)
+    #   (SSTORE 6 (MLOAD 0))
+    #
+    #   [[7]] (CALL 350000 0xa000000000000000000000000000000000000000 0 0 0 0 32)  # noqa: E501
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -161,6 +193,10 @@ def test_ext_code_hash_subcall_suicide_cancun(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   [[1]] 1
+    # }
     pre[callee_1] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

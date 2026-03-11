@@ -45,6 +45,7 @@ def test_random_statetest422(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -62,6 +63,7 @@ def test_random_statetest422(
             + Op.PUSH32[0x4F3F701464972E74606D6EA82D4D3080599A0E79]
         ),
     )
+    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=46,
         nonce=0,

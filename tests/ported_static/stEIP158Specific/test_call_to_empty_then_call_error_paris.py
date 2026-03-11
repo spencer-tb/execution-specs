@@ -49,6 +49,8 @@ def test_call_to_empty_then_call_error_paris(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (CALL 0 <eoa:0xee098e6c2a43d9e2c04f08f0c3a87b0ba59079d4> 0 0 0 0 0) (CALL 0 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -44,6 +44,7 @@ def test_random_statetest647(
         gas_limit=18857228215205537,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=7,

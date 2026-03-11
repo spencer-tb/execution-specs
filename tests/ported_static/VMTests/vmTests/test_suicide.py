@@ -149,6 +149,10 @@ def test_suicide(
         code=Op.SELFDESTRUCT(address=Op.ADDRESS) + Op.STOP,
     )
     pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
+    # Source: LLL
+    # {
+    #    (call (gas) $4 0 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0x100000000000,
         nonce=0,

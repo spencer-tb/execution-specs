@@ -50,6 +50,7 @@ def test_call_ask_more_gas_on_depth2_then_transaction_has_with_mem_expanding_cal
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -69,6 +70,7 @@ def test_call_ask_more_gas_on_depth2_then_transaction_has_with_mem_expanding_cal
             )
         ),
     )
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0,
         nonce=0,

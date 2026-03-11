@@ -45,6 +45,7 @@ def test_contract_inheritance(
         gas_limit=9223372036854775807,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,

@@ -45,6 +45,7 @@ def test_push0_gas(
     )
 
     pre[sender] = Account(balance=0x989680, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

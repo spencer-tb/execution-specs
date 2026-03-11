@@ -49,6 +49,8 @@ def test_store_clears_and_internal_call_store_clears_success(
     )
 
     pre[sender] = Account(balance=0x1DCD6500, nonce=0)
+    # Source: LLL
+    # {(SSTORE 0 0)(SSTORE 1 0)(SSTORE 2 0)(SSTORE 3 0) (CALL 50000 <contract:0x0000000000000000000000000000000000000000> 1 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=10,
         nonce=0,

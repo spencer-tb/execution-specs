@@ -278103,6 +278103,7 @@ def test_underflow_test(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -278119,6 +278120,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -278131,12 +278133,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_2] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.SGT(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_3] = Account(
         balance=0,
         nonce=0,
@@ -278162,6 +278166,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_4] = Account(
         balance=0,
         nonce=0,
@@ -278177,6 +278182,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_5] = Account(
         balance=0,
         nonce=0,
@@ -278193,18 +278199,21 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_6] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.AND + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_7] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.NOT + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_8] = Account(
         balance=0,
         nonce=0,
@@ -278217,6 +278226,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_9] = Account(
         balance=0,
         nonce=0,
@@ -278227,12 +278237,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_10] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.POP(0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_11] = Account(
         balance=0,
         nonce=0,
@@ -278241,6 +278253,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_12] = Account(
         balance=0,
         nonce=0,
@@ -278253,6 +278266,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_13] = Account(
         balance=0,
         nonce=0,
@@ -278278,6 +278292,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_14] = Account(
         balance=0,
         nonce=0,
@@ -278286,12 +278301,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_15] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.SMOD(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_16] = Account(
         balance=0,
         nonce=0,
@@ -278306,6 +278323,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_17] = Account(
         balance=0,
         nonce=0,
@@ -278329,6 +278347,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_18] = Account(
         balance=0,
         nonce=0,
@@ -278337,6 +278356,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_19] = Account(
         balance=0,
         nonce=0,
@@ -278364,6 +278384,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_20] = Account(
         balance=0,
         nonce=0,
@@ -278375,6 +278396,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_21] = Account(
         balance=0,
         nonce=0,
@@ -278400,6 +278422,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_22] = Account(
         balance=0,
         nonce=0,
@@ -278416,6 +278439,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_23] = Account(
         balance=0,
         nonce=0,
@@ -278426,12 +278450,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_24] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.LT(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_25] = Account(
         balance=0,
         nonce=0,
@@ -278452,12 +278478,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_26] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.EQ + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_27] = Account(
         balance=0,
         nonce=0,
@@ -278470,6 +278498,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_28] = Account(
         balance=0,
         nonce=0,
@@ -278494,6 +278523,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_29] = Account(
         balance=0,
         nonce=0,
@@ -278517,12 +278547,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_30] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.ADD + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_31] = Account(
         balance=0,
         nonce=0,
@@ -278542,6 +278574,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_32] = Account(
         balance=0,
         nonce=0,
@@ -278552,6 +278585,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_33] = Account(
         balance=0,
         nonce=0,
@@ -278574,6 +278608,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_34] = Account(
         balance=0,
         nonce=0,
@@ -278594,6 +278629,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_35] = Account(
         balance=0,
         nonce=0,
@@ -278612,6 +278648,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_36] = Account(
         balance=0,
         nonce=0,
@@ -278629,6 +278666,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_37] = Account(
         balance=0,
         nonce=0,
@@ -278639,12 +278677,19 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_38] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.XOR + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: LLL
+    # {
+    #     [[0]] 0x60A7
+    #     (call (gas) $4 0 0 0 0 0)
+    #     [[1]] 0x60A7
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -278665,6 +278710,7 @@ def test_underflow_test(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_39] = Account(
         balance=0,
         nonce=0,
@@ -278684,24 +278730,28 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_40] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.MOD(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_41] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.EQ(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_42] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.SLOAD(key=0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_43] = Account(
         balance=0,
         nonce=0,
@@ -278715,6 +278765,7 @@ def test_underflow_test(
         storage={0x1: 0x60A7},
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: raw bytecode
     pre[callee_44] = Account(
         balance=0,
         nonce=0,
@@ -278723,6 +278774,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_45] = Account(
         balance=0,
         nonce=0,
@@ -278731,12 +278783,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_46] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.SDIV(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_47] = Account(
         balance=0,
         nonce=0,
@@ -278749,6 +278803,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_48] = Account(
         balance=0,
         nonce=0,
@@ -278763,6 +278818,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_49] = Account(
         balance=0,
         nonce=0,
@@ -278776,6 +278832,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_50] = Account(
         balance=0,
         nonce=0,
@@ -278795,18 +278852,21 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_51] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.MOD + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_52] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.POP + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_53] = Account(
         balance=0,
         nonce=0,
@@ -278824,6 +278884,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_54] = Account(
         balance=0,
         nonce=0,
@@ -278837,6 +278898,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_55] = Account(
         balance=0,
         nonce=0,
@@ -278855,12 +278917,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_56] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.EXTCODESIZE + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_57] = Account(
         balance=0,
         nonce=0,
@@ -278883,6 +278947,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_58] = Account(
         balance=0,
         nonce=0,
@@ -278895,6 +278960,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_59] = Account(
         balance=0,
         nonce=0,
@@ -278917,6 +278983,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_60] = Account(
         balance=0,
         nonce=0,
@@ -278943,24 +279010,28 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_61] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.BLOCKHASH + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_62] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.SHL(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_63] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.EXTCODEHASH + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_64] = Account(
         balance=0,
         nonce=0,
@@ -278976,6 +279047,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_65] = Account(
         balance=0,
         nonce=0,
@@ -278997,6 +279069,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_66] = Account(
         balance=0,
         nonce=0,
@@ -279021,6 +279094,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_67] = Account(
         balance=0,
         nonce=0,
@@ -279042,6 +279116,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_68] = Account(
         balance=0,
         nonce=0,
@@ -279063,6 +279138,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_69] = Account(
         balance=0,
         nonce=0,
@@ -279086,6 +279162,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_70] = Account(
         balance=0,
         nonce=0,
@@ -279096,12 +279173,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_71] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.LT + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_72] = Account(
         balance=0,
         nonce=0,
@@ -279117,6 +279196,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_73] = Account(
         balance=0,
         nonce=0,
@@ -279134,12 +279214,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_74] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.SLOAD + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_75] = Account(
         balance=0,
         nonce=0,
@@ -279150,12 +279232,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_76] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.OR + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_77] = Account(
         balance=0,
         nonce=0,
@@ -279170,12 +279254,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_78] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.DIV(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_79] = Account(
         balance=0,
         nonce=0,
@@ -279187,6 +279273,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_80] = Account(
         balance=0,
         nonce=0,
@@ -279197,6 +279284,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_81] = Account(
         balance=0,
         nonce=0,
@@ -279207,6 +279295,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_82] = Account(
         balance=0,
         nonce=0,
@@ -279215,6 +279304,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_83] = Account(
         balance=0,
         nonce=0,
@@ -279233,12 +279323,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_84] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.DUP1 + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_85] = Account(
         balance=0,
         nonce=0,
@@ -279255,12 +279347,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_86] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.SAR(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_87] = Account(
         balance=0,
         nonce=0,
@@ -279287,6 +279381,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_88] = Account(
         balance=0,
         nonce=0,
@@ -279309,12 +279404,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_89] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.MLOAD + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_90] = Account(
         balance=0,
         nonce=0,
@@ -279328,6 +279425,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_91] = Account(
         balance=0,
         nonce=0,
@@ -279345,6 +279443,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_92] = Account(
         balance=0,
         nonce=0,
@@ -279358,18 +279457,21 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_93] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.BALANCE + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_94] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.EXP(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_95] = Account(
         balance=0,
         nonce=0,
@@ -279383,6 +279485,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_96] = Account(
         balance=0,
         nonce=0,
@@ -279398,12 +279501,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_97] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.XOR(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_98] = Account(
         balance=0,
         nonce=0,
@@ -279422,6 +279527,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_99] = Account(
         balance=0,
         nonce=0,
@@ -279432,6 +279538,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_100] = Account(
         balance=0,
         nonce=0,
@@ -279458,6 +279565,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_101] = Account(
         balance=0,
         nonce=0,
@@ -279466,6 +279574,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_102] = Account(
         balance=0,
         nonce=0,
@@ -279482,6 +279591,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_103] = Account(
         balance=0,
         nonce=0,
@@ -279493,6 +279603,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_104] = Account(
         balance=0,
         nonce=0,
@@ -279503,18 +279614,21 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_105] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.SHR(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_106] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.SHL + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_107] = Account(
         balance=0,
         nonce=0,
@@ -279529,6 +279643,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_108] = Account(
         balance=0,
         nonce=0,
@@ -279539,6 +279654,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_109] = Account(
         balance=0,
         nonce=0,
@@ -279552,6 +279668,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_110] = Account(
         balance=0,
         nonce=0,
@@ -279570,6 +279687,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_111] = Account(
         balance=0,
         nonce=0,
@@ -279588,18 +279706,21 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_112] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.MLOAD(offset=0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_113] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.SAR + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_114] = Account(
         balance=0,
         nonce=0,
@@ -279615,12 +279736,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_115] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.SUB + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_116] = Account(
         balance=0,
         nonce=0,
@@ -279631,6 +279754,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_117] = Account(
         balance=0,
         nonce=0,
@@ -279641,12 +279765,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_118] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.ISZERO(0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_119] = Account(
         balance=0,
         nonce=0,
@@ -279662,6 +279788,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_120] = Account(
         balance=0,
         nonce=0,
@@ -279686,12 +279813,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_121] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.SHR + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_122] = Account(
         balance=0,
         nonce=0,
@@ -279700,18 +279829,21 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_123] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.CALLDATALOAD + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_124] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.EXP + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_125] = Account(
         balance=0,
         nonce=0,
@@ -279729,6 +279861,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_126] = Account(
         balance=0,
         nonce=0,
@@ -279741,12 +279874,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_127] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.NOT(0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_128] = Account(
         balance=0,
         nonce=0,
@@ -279768,6 +279903,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_129] = Account(
         balance=0,
         nonce=0,
@@ -279780,24 +279916,28 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_130] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.ISZERO + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_131] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.SLT(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_132] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.AND(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_133] = Account(
         balance=0,
         nonce=0,
@@ -279815,18 +279955,21 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_134] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.ADD(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_135] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.SGT + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_136] = Account(
         balance=0,
         nonce=0,
@@ -279852,6 +279995,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_137] = Account(
         balance=0,
         nonce=0,
@@ -279862,6 +280006,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_138] = Account(
         balance=0,
         nonce=0,
@@ -279878,12 +280023,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_139] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.DIV + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_140] = Account(
         balance=0,
         nonce=0,
@@ -279904,12 +280051,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_141] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.GT(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_142] = Account(
         balance=0,
         nonce=0,
@@ -279924,6 +280073,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_143] = Account(
         balance=0,
         nonce=0,
@@ -279944,6 +280094,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_144] = Account(
         balance=0,
         nonce=0,
@@ -279954,12 +280105,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_145] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.MUL(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_146] = Account(
         balance=0,
         nonce=0,
@@ -279973,6 +280126,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_147] = Account(
         balance=0,
         nonce=0,
@@ -279992,18 +280146,21 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_148] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.MUL + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_149] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.SLT + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_150] = Account(
         balance=0,
         nonce=0,
@@ -280019,6 +280176,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_151] = Account(
         balance=0,
         nonce=0,
@@ -280027,12 +280185,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_152] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.OR(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_153] = Account(
         balance=0,
         nonce=0,
@@ -280045,6 +280205,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_154] = Account(
         balance=0,
         nonce=0,
@@ -280056,6 +280217,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_155] = Account(
         balance=0,
         nonce=0,
@@ -280064,6 +280226,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_156] = Account(
         balance=0,
         nonce=0,
@@ -280079,12 +280242,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_157] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.BYTE(0x80, 0x80) + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_158] = Account(
         balance=0,
         nonce=0,
@@ -280095,6 +280260,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_159] = Account(
         balance=0,
         nonce=0,
@@ -280118,6 +280284,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_160] = Account(
         balance=0,
         nonce=0,
@@ -280134,6 +280301,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_161] = Account(
         balance=0,
         nonce=0,
@@ -280158,12 +280326,14 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_162] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.PUSH1[0x80] + Op.GT + Op.STOP,
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_163] = Account(
         balance=0,
         nonce=0,
@@ -280174,6 +280344,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_164] = Account(
         balance=0,
         nonce=0,
@@ -280191,6 +280362,7 @@ def test_underflow_test(
         ),
         storage={0x1: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee_165] = Account(
         balance=0,
         nonce=0,

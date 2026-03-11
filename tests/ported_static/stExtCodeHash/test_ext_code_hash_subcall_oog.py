@@ -1158,6 +1158,15 @@ def test_ext_code_hash_subcall_oog(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {
+    #   (CALLCODE 350000 (CALLDATALOAD 0) 0 0 0 0 32)
+    #   (SSTORE 1 (EXTCODEHASH (MLOAD 0)))
+    #   (SSTORE 2 (EXTCODESIZE (MLOAD 0)))
+    #   (EXTCODECOPY (MLOAD 0) 0 0 32)
+    #   (SSTORE 3 (MLOAD 0))
+    #   (SSTORE 4 (CALLCODE 50000 (MLOAD 0) 0 0 0 0 0))
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -1203,6 +1212,8 @@ def test_ext_code_hash_subcall_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL 150000 0xa000000000000000000000000000000000000000 0 0 0 0 32) (RETURN 0 32)}  # noqa: E501
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -1222,6 +1233,8 @@ def test_ext_code_hash_subcall_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALLCODE 150000 0xa000000000000000000000000000000000000000 0 0 0 0 32) (RETURN 0 32)}  # noqa: E501
     pre[callee_1] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -1241,6 +1254,8 @@ def test_ext_code_hash_subcall_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (DELEGATECALL 150000 0xa000000000000000000000000000000000000000 0 0 0 32) (RETURN 0 32)}  # noqa: E501
     pre[callee_2] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -1259,6 +1274,8 @@ def test_ext_code_hash_subcall_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL 150000 0xa100000000000000000000000000000000000000 0 0 0 0 32) (RETURN 0 32)}  # noqa: E501
     pre[callee_3] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -1278,6 +1295,8 @@ def test_ext_code_hash_subcall_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALLCODE 250000 0xa100000000000000000000000000000000000000 0 0 0 0 32) (RETURN 0 32)}  # noqa: E501
     pre[callee_4] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -1297,6 +1316,8 @@ def test_ext_code_hash_subcall_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (DELEGATECALL 150000 0xa100000000000000000000000000000000000000 0 0 0 32) (RETURN 0 32)}  # noqa: E501
     pre[callee_5] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -1315,6 +1336,20 @@ def test_ext_code_hash_subcall_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   (MSTORE 0
+    #     (CREATE2 0 0
+    #       (lll
+    #       {
+    #         (MSTORE 0 0x6020602055)
+    #         (RETURN 27 5)
+    #       }
+    #       0)
+    #     0))
+    #    (RETURN 0 32)
+    #    (STOP)
+    # }
     pre[callee_6] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -1334,6 +1369,22 @@ def test_ext_code_hash_subcall_oog(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   (MSTORE 0
+    #     (CREATE2 0 0
+    #       (lll
+    #       {
+    #         (MSTORE 0 0x6020602055)
+    #         (RETURN 27 5)
+    #       }
+    #       0)
+    #     0))
+    #   (SSTORE 1 1) (SSTORE 2 1) (SSTORE 3 1) (SSTORE 4 1) (SSTORE 5 1) (SSTORE 6 1) (SSTORE 7 1)  # noqa: E501
+    #   (SSTORE 8 1) (SSTORE 9 1) (SSTORE 10 1) (SSTORE 11 1) (SSTORE 12 1) (SSTORE 13 1) (SSTORE 14 1)  # noqa: E501
+    #   (RETURN 0 32)
+    #   (STOP)
+    # }
     pre[callee_7] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

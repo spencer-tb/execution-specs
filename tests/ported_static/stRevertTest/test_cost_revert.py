@@ -5039,6 +5039,7 @@ def test_cost_revert(
         nonce=0,
         code=Op.SHA3(offset=0x0, size=Op.SUB(0x0, 0x1)) + Op.STOP,
     )
+    # Source: raw bytecode
     pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5046,6 +5047,7 @@ def test_cost_revert(
             "610103600155600060006000600061dead6175305a03f450ba"
         ),
     )
+    # Source: raw bytecode
     pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5064,17 +5066,51 @@ def test_cost_revert(
             + Op.JUMP(pc=0x0)
         ),
     )
+    # Source: raw bytecode
     pre[callee_5] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.LT + Op.STOP,
     )
+    # Source: raw bytecode
     pre[callee_6] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.JUMPDEST + Op.PC + Op.JUMP(pc=Op.SUB(Op.PC, 0x4)),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
+    # Source: LLL
+    # {
+    #     (if (= $36 0) {     ; CALL
+    #        [0x00] (gas)
+    #
+    #       ; Leave us some gas even if the call takes all of it
+    #       (call (- (gas) 30000) $4 0 0 0 0 0)
+    #
+    #       [0x20] (gas)
+    #
+    #       ; Opcodes between the two gas measurements cost 42 gas
+    #
+    #       ; 0-1            GAS         2         0  79978808
+    #       ; 1-1          PUSH1         3         2  79978806
+    #       ; 2-1         MSTORE         6         5  79978803
+    #       ; 3-1          PUSH1         3        11  79978797
+    #       ; 4-1          PUSH1         3        14  79978794
+    #       ; 5-1          PUSH1         3        17  79978791
+    #       ; 6-1          PUSH1         3        20  79978788
+    #       ; 7-1          PUSH1         3        23  79978785
+    #       ; 8-1          PUSH1         3        26  79978782
+    #       ; 9-1   CALLDATALOAD         3        29  79978779
+    #       ; 10-1          PUSH2         3        38  79978770
+    #       ; 11-1            GAS         2        41  79978767
+    #       ; 12-1            SUB         3        43  79978765
+    #       ;
+    #       ;  The call goes here, and the cost varies based
+    #       ;  on what the call does
+    #       ;
+    #       ; 17-1            POP         2     24761  79954047
+    #
+    # ... (59 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

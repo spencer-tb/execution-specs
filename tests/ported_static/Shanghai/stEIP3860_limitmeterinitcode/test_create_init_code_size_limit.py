@@ -158,6 +158,17 @@ def test_create_init_code_size_limit(
         gas_limit=20000000,
     )
 
+    # Source: Yul
+    # {
+    #   // :yul { codecopy(0x00, 0x00, 0x0a) return(0x00, 0x0a) }
+    #   mstore(0, 0x600a80600080396000f300000000000000000000000000000000000000000000)  # noqa: E501
+    #   // get initcode size from calldata
+    #   let initcode_size := calldataload(0)
+    #   let gas_before := gas()
+    #   let create_result := create(0, 0, initcode_size)
+    #   sstore(10, sub(gas_before, gas()))
+    #   sstore(0, create_result)
+    # }
     pre[callee] = Account(
         balance=0,
         nonce=1,
@@ -183,6 +194,13 @@ def test_create_init_code_size_limit(
         ),
     )
     pre[sender] = Account(balance=0xBEBC200, nonce=1)
+    # Source: Yul
+    # {
+    #   mstore(0, calldataload(0))
+    #   let call_result := call(10000000, 0xc0de, 0, 0, calldatasize(), 0, 0)
+    #   sstore(0, call_result)
+    #   sstore(1, 1)
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=1,

@@ -455,6 +455,35 @@ def test_coinbase_warm_account_call_gas_fail(
         gas_limit=100000000,
     )
 
+    # Source: Yul
+    # {
+    #    // Depending on the called contract here, the subcall will perform
+    #    // another call/delegatecall/staticcall/callcode that will only succeed  # noqa: E501
+    #    // if coinbase is considered warm by default (post-Shanghai).
+    #    let calladdr := calldataload(4)
+    #
+    #    let callgas := 100
+    #    switch calladdr
+    #    case <contract:0x0000000000000000000000000000000000001000> {
+    #      // Extra: COINBASE + 6xPUSH1 + DUP6 + 2xPOP
+    #      callgas := add(callgas, 27)
+    #    }
+    #    case <contract:0x0000000000000000000000000000000000002000> {
+    #      // Extra: COINBASE + 6xPUSH1 + DUP6 + 2xPOP
+    #      callgas := add(callgas, 27)
+    #    }
+    #    case <contract:0x0000000000000000000000000000000000003000> {
+    #      // Extra: COINBASE + 5xPUSH1 + DUP6 + 2xPOP
+    #      callgas := add(callgas, 24)
+    #    }
+    #    case <contract:0x0000000000000000000000000000000000004000> {
+    #      // Extra: COINBASE + 5xPUSH1 + DUP6 + 2xPOP
+    #      callgas := add(callgas, 24)
+    #    }
+    #    // Call and save result
+    #    sstore(0, call(callgas, calladdr, 0, 0, 0, 0, 0))
+    #
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,

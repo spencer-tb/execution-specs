@@ -39505,6 +39505,38 @@ def test_invalid_addr(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; Inputs
+    #    (def 'opcode $4)
+    #    (def 'addrBase $36)
+    #    (def 'addrType $68)
+    #
+    #    ; Constants
+    #    (def 'NOP 0)
+    #    (def 'two160 (shl 1 160))
+    #    (def 'two254 (shl 1 254))
+    #    (def 'two255 (shl 1 255))
+    #    (def 'word 0x20) ; 32 bytes per word
+    #
+    #    ; Variables
+    #    (def 'addr1       0x2000)
+    #    (def 'res1        0x2020)
+    #    (def 'addr2       0x2040)
+    #    (def 'res2        0x2060)
+    #    (def 'resExpected 0x2080)
+    #    (def 'temp        0x20A0)
+    #
+    #    ; addrBase 1 is a normal valid address (<contract:0x000000000000000000000000000000000000c0de>)  # noqa: E501
+    #    ; addrBase 2 is a precompiled address  (0x00000002)
+    #    (if (= addrBase 1) [addr1] <contract:0x000000000000000000000000000000000000c0de> NOP)  # noqa: E501
+    #    (if (= addrBase 2) [addr1] 0x0002 NOP)
+    #
+    #    ; addrType  0 is to just use the base (twice, verify result is consistent)  # noqa: E501
+    #    ; addrType  1 is addr1 + 2^160
+    #    ; addrType  2 is addr1 + 2^254
+    #    ; addrType  3 is addr1 + 2^255
+    # ... (108 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

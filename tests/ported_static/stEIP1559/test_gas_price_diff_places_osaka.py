@@ -28973,6 +28973,22 @@ def test_gas_price_diff_places_osaka(
         gas_limit=4503599627370496,
     )
 
+    # Source: Yul
+    # {
+    #    mstore(0, gasprice())
+    #
+    #
+    #
+    #    // Here the result is is mload(0). We want to run it, but
+    #    // prefix it with a zero so we'll be safe from being considered
+    #    // an invalid program.
+    #    //
+    #    // If we use this as a constructor the result will be
+    #    // the code of the created contract, but we can live
+    #    // with that. We won't call it.
+    #    mstore(0x40, mload(0x00))
+    #    return(0x3F, 0x21)
+    # }
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -28982,6 +28998,13 @@ def test_gas_price_diff_places_osaka(
             + Op.RETURN(offset=0x3F, size=0x21)
         ),
     )
+    # Source: Yul
+    # {
+    #   mstore(0, gasprice())
+    #
+    #
+    #   return(0, 0x20)     // return the result as our return value
+    # }
     pre[callee_1] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -29002,6 +29025,15 @@ def test_gas_price_diff_places_osaka(
         ),
         storage={0x0: 0x60A7},
     )
+    # Source: Yul
+    # {
+    #    mstore(0, gasprice())
+    #
+    #
+    #
+    #    // Here the result is is mload(0).
+    #    return(0x00, 0x20)
+    # }
     pre[callee_3] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -29010,6 +29042,14 @@ def test_gas_price_diff_places_osaka(
             + Op.RETURN(offset=0x0, size=0x20)
         ),
     )
+    # Source: Yul
+    # {
+    #    mstore(0, gasprice())
+    #
+    #
+    #    sstore(0,mload(0))
+    #    revert(0,0x20)
+    # }
     pre[callee_4] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -29020,6 +29060,17 @@ def test_gas_price_diff_places_osaka(
         ),
         storage={0x0: 0x60A7},
     )
+    # Source: Yul
+    # {
+    #    let addr := 0x20C0DE
+    #    let length := extcodesize(addr)
+    #
+    #    // Read the code from 0x20C0DE
+    #    extcodecopy(addr, 0, 0, length)
+    #
+    #    // Return this memory as the code for the contract
+    #    return(0, length)
+    # }
     pre[callee_5] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -29036,6 +29087,13 @@ def test_gas_price_diff_places_osaka(
             + Op.RETURN
         ),
     )
+    # Source: Yul
+    # {
+    #   if iszero(call(gas(), 0xca11, 0, 0, 0, 0, 0x20))
+    #      { revert(0,0x20) }
+    #
+    #   return(0, 0x20)     // return the result as our return value
+    # }
     pre[callee_6] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -29059,6 +29117,13 @@ def test_gas_price_diff_places_osaka(
             + Op.REVERT(offset=0x0, size=0x20)
         ),
     )
+    # Source: Yul
+    # {
+    #   if iszero(callcode(gas(), 0xca11, 0, 0, 0, 0, 0x20))
+    #      { revert(0,0x20) }
+    #
+    #   return(0, 0x20)     // return the result as our return value
+    # }
     pre[callee_7] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -29082,6 +29147,13 @@ def test_gas_price_diff_places_osaka(
             + Op.REVERT(offset=0x0, size=0x20)
         ),
     )
+    # Source: Yul
+    # {
+    #   if iszero(delegatecall(gas(), 0xca11, 0, 0, 0, 0x20))
+    #      { revert(0,0x20) }
+    #
+    #   return(0, 0x20)     // return the result as our return value
+    # }
     pre[callee_8] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -29104,6 +29176,13 @@ def test_gas_price_diff_places_osaka(
             + Op.REVERT(offset=0x0, size=0x20)
         ),
     )
+    # Source: Yul
+    # {
+    #   if iszero(staticcall(gas(), 0xca11, 0, 0, 0, 0x20))
+    #      { revert(0,0x20) }
+    #
+    #   return(0, 0x20)     // return the result as our return value
+    # }
     pre[callee_9] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -29126,11 +29205,38 @@ def test_gas_price_diff_places_osaka(
             + Op.REVERT(offset=0x0, size=0x20)
         ),
     )
+    # Source: Yul
+    # {
+    #    selfdestruct(0)
+    # }
     pre[callee_10] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
         code=Op.SELFDESTRUCT(address=0x0),
     )
+    # Source: Yul
+    # {
+    #    let depth := calldataload(0)
+    #
+    #    if eq(depth,0) {
+    #        mstore(0, gasprice())
+    #
+    #
+    #        return(0, 0x20)
+    #    }
+    #
+    #    // Dig deeper
+    #    mstore(0, sub(depth,1))
+    #
+    #    // Call yourself with depth-1
+    #    if iszero(call(gas(), 0x60BACCFA57, 0, 0, 0x20, 0, 0x20)) {
+    #       // Propagate failure if we failed
+    #       revert(0, 0x20)
+    #    }
+    #
+    #    // Propagate success
+    #    return (0, 0x20)
+    # }
     pre[callee_11] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,
@@ -29163,6 +29269,38 @@ def test_gas_price_diff_places_osaka(
         ),
     )
     pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=1)
+    # Source: Yul
+    # {
+    #    let action := calldataload(4)
+    #    let res := 1   // If the result of a call is revert, revert here too
+    #    let addr := 1  // If the result of CREATE[2] is zero, it reverted
+    #
+    #    // For when we need code in our memory
+    #    let codeBuffer := 0x20
+    #    // When running the template in the constructor
+    #    let codeLength := extcodesize(0xC0DE)
+    #    // When running the template in the created code
+    #    let codeLength2 := extcodesize(0xC0DEC0DE)
+    #
+    #    // Goat should be overwritten
+    #    mstore(0, 0x60A7)
+    #
+    #    switch action
+    #    case 0 {  // run the code snippet as normal code
+    #       mstore(0, gasprice())
+    #
+    #
+    #    }
+    #
+    #    // One level of call stack
+    #    case 0xF1 {  // call a contract to run this code
+    #       res := call(gas(), 0xca11, 0, 0, 0, 0, 0x20) // call template code
+    #    }
+    #    case 0xF2 {  // callcode a contract to run this code
+    #       res := callcode(gas(), 0xca11, 0, 0, 0, 0, 0x20)
+    #    }
+    #    case 0xF4 {  // delegate call a contract to run this code
+    # ... (269 more lines)
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,

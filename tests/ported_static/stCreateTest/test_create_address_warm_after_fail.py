@@ -1703,6 +1703,38 @@ def test_create_address_warm_after_fail(
         gas_limit=3000000000,
     )
 
+    # Source: Yul
+    # {
+    #     code {
+    #       let failType := calldataload(4)
+    #       let initcode_size
+    #
+    #       // The return values of various actions. Done twice to see if there is a difference  # noqa: E501
+    #       let create_1 := 0
+    #       let call_created_1 := 2
+    #       let call_created_2 := 3
+    #       let call_empty_1 := 4
+    #       let call_empty_2 := 5
+    #
+    #       // The costs of those operations
+    #       let create_1_cost := 10
+    #       let call_created_1_cost := 12
+    #       let call_created_2_cost := 13
+    #       let call_empty_1_cost := 14
+    #       let call_empty_2_cost := 15
+    #
+    #       // Make the storage cells we use here are warm
+    #       sstore(create_1, 0xdead60A7)
+    #       sstore(call_created_1, 0xdead60A7)
+    #       sstore(call_created_2, 0xdead60A7)
+    #       sstore(call_empty_1, 0xdead60A7)
+    #       sstore(call_empty_2, 0xdead60A7)
+    #       sstore(call_created_1_cost, 0xdead60A7)
+    #       sstore(call_created_2_cost, 0xdead60A7)
+    #       sstore(call_empty_1_cost, 0xdead60A7)
+    #       sstore(call_empty_2_cost, 0xdead60A7)
+    #
+    # ... (172 more lines)
     pre[contract] = Account(
         balance=4096,
         nonce=0,
@@ -1743,6 +1775,19 @@ def test_create_address_warm_after_fail(
             "00d4e7ae083132925a4927c1f5816238ba17b82a65"
         ),
     )
+    # Source: Yul
+    # {
+    #     code {
+    #       datacopy(0, dataoffset("dummy"), datasize("dummy"))
+    #       sstore(0, create(0, 0, datasize("dummy")))
+    #       stop()
+    #     }
+    #     object "dummy" {
+    #       code {
+    #         return(0,0x6000)
+    #     }
+    #   }
+    #  }
     pre[callee] = Account(
         balance=4096,
         nonce=1,
@@ -1757,6 +1802,19 @@ def test_create_address_warm_after_fail(
             + Op.RETURN(offset=0x0, size=0x6000)
         ),
     )
+    # Source: Yul
+    # {
+    #     code {
+    #       datacopy(0, dataoffset("dummy"), datasize("dummy"))
+    #       sstore(0, create(0, 0, datasize("dummy")))
+    #       stop()
+    #     }
+    #     object "dummy" {
+    #       code {
+    #         return(0,0x20)
+    #     }
+    #   }
+    #  }
     pre[callee_1] = Account(
         balance=4096,
         nonce=18446744073709551615,
@@ -1771,6 +1829,19 @@ def test_create_address_warm_after_fail(
             + Op.RETURN(offset=0x0, size=0x20)
         ),
     )
+    # Source: Yul
+    # {
+    #     code {
+    #       datacopy(0, dataoffset("dummy"), datasize("dummy"))
+    #       sstore(0, create2(0, 0, datasize("dummy"), 0))
+    #       stop()
+    #     }
+    #     object "dummy" {
+    #       code {
+    #         return(0,0x6000)
+    #     }
+    #   }
+    #  }
     pre[callee_2] = Account(
         balance=4096,
         nonce=1,

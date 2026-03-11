@@ -5279,6 +5279,7 @@ def test_jumpi(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5303,6 +5304,7 @@ def test_jumpi(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5336,6 +5338,7 @@ def test_jumpi(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5356,6 +5359,7 @@ def test_jumpi(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_6] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5366,6 +5370,7 @@ def test_jumpi(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: raw bytecode
     pre[callee_7] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5376,6 +5381,7 @@ def test_jumpi(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: raw bytecode
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5386,6 +5392,11 @@ def test_jumpi(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: LLL
+    # {
+    #   @0 (- 0 1)
+    #   (asm 0 0 mload jumpi 0x600D 0x00 sstore)
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5417,6 +5428,7 @@ def test_jumpi(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_12] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5437,6 +5449,7 @@ def test_jumpi(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_14] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5449,6 +5462,7 @@ def test_jumpi(
             + Op.SSTORE
         ),
     )
+    # Source: raw bytecode
     pre[callee_15] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5458,6 +5472,7 @@ def test_jumpi(
             + Op.JUMPI(pc=0x6, condition=0x6)
         ),
     )
+    # Source: raw bytecode
     pre[callee_16] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5470,6 +5485,7 @@ def test_jumpi(
             + Op.SSTORE
         ),
     )
+    # Source: raw bytecode
     pre[callee_17] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5482,6 +5498,7 @@ def test_jumpi(
             + Op.JUMPI(pc=0x3, condition=0x1)
         ),
     )
+    # Source: raw bytecode
     pre[callee_18] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5492,6 +5509,7 @@ def test_jumpi(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: raw bytecode
     pre[callee_19] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5502,6 +5520,7 @@ def test_jumpi(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: raw bytecode
     pre[callee_20] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5512,6 +5531,7 @@ def test_jumpi(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: raw bytecode
     pre[callee_21] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5523,6 +5543,7 @@ def test_jumpi(
             + Op.SSTORE(key=0x1, value=Op.GAS)
         ),
     )
+    # Source: raw bytecode
     pre[callee_22] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5534,6 +5555,7 @@ def test_jumpi(
             + Op.SSTORE(key=0x1, value=Op.GAS)
         ),
     )
+    # Source: raw bytecode
     pre[callee_23] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5544,6 +5566,7 @@ def test_jumpi(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: raw bytecode
     pre[callee_24] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5554,6 +5577,11 @@ def test_jumpi(
             + Op.SSTORE(key=0x0, value=0x600D)
         ),
     )
+    # Source: LLL
+    # {
+    #   @0 (- 0 1)
+    #   (asm 1 0 mload jumpi 0x600D 0x00 sstore)
+    # }
     pre[callee_25] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -5566,6 +5594,11 @@ def test_jumpi(
         ),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
+    # Source: LLL
+    # {
+    #     ; limited gas because of the endless loop
+    #     (delegatecall 0x10000 $4 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

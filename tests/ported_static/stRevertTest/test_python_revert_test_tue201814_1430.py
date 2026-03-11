@@ -171,6 +171,7 @@ def test_python_revert_test_tue201814_1430(
         ),
     )
     pre[sender] = Account(balance=0xAB56295C9D120548, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x845252B8509DC215,
         nonce=29,
@@ -338,6 +339,7 @@ def test_python_revert_test_tue201814_1430(
             )
         ),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0x5B1936A53E6E440F,
         nonce=21,
@@ -425,6 +427,7 @@ def test_python_revert_test_tue201814_1430(
             + Op.REVERT(offset=0x1AD, size=0x200)
         ),
     )
+    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=0x54C814F188394C8,
         nonce=29,

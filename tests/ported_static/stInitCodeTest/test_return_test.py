@@ -45,6 +45,8 @@ def test_return_test(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {(CALL 2000 0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b 0 30 1 31 1) [[0]](MLOAD 0) (RETURN 30 2)}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -66,6 +68,8 @@ def test_return_test(
         ),
     )
     pre[sender] = Account(balance=0x989680, nonce=0)
+    # Source: LLL
+    # {(MSTORE 0 0x15) (RETURN 31 1)}
     pre[callee] = Account(
         balance=0x186A0,
         nonce=0,

@@ -90,6 +90,8 @@ def test_callcodecallcodecall_110_oogm_before(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  [[ 0 ]] (CALLCODE 800000 <contract:0x1000000000000000000000000000000000000001> 0 0 64 0 64 ) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

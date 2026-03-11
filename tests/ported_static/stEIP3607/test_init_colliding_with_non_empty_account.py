@@ -60,12 +60,14 @@ def test_init_colliding_with_non_empty_account(
     )
 
     pre[coinbase] = Account(balance=0, nonce=1)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x0),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: raw bytecode
     pre[callee_1] = Account(balance=0, nonce=0, code=bytes.fromhex("00"))
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

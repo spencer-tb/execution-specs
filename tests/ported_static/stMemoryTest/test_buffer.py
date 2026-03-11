@@ -197257,11 +197257,24 @@ def test_buffer(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {
+    #       (return 0 0x120)
+    # }
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.RETURN(offset=0x0, size=0x120) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #        ; We get length from the caller
+    #        (def 'length $0)
+    #        (def 'offset $0x20)
+    #
+    #        [[0]] 0    ; capricide
+    #        (return offset length)
+    # }
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -197275,6 +197288,14 @@ def test_buffer(
         ),
         storage={0x0: 0x60A7},
     )
+    # Source: LLL
+    # {
+    #        ; We get length from the caller
+    #        (def 'length $0)
+    #        (def 'offset $0x20)
+    #
+    #        (revert offset length)
+    # }
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -197287,6 +197308,38 @@ def test_buffer(
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #    (def 'opcode $4)
+    #    (def 'bufferType $36)
+    #    (def 'NOP 0)
+    #
+    #    ; Variables
+    #    (def 'length     0x2020)
+    #    (def 'offset     0x2040)
+    #
+    #    ; bufferTypes  0 is normal, 1 is length zero, 2 is negative length
+    #    ; bufferType 3 is excessively long, for opcodes with bounds checking
+    #    ; Add 0 for offset 0x100, 10 for offset 0x0
+    #
+    #    ; High offsets:
+    #    ; 20 for 2^256-10
+    #    ; 21 for 2^31-1
+    #    ; 22 for 2^31
+    #    ; 23 for 2^32-1
+    #    ; 24 for 2^32
+    #    ; 25 for 2^63-1
+    #    ; 26 for 2^63
+    #    ; 27 for 2^64-1
+    #    ; 28 for 2^64
+    #    (if (= bufferType 0) {
+    #            [length] 10
+    #            [offset] 0x100
+    #      } NOP)
+    #    (if (= bufferType 1) {
+    #            [length] 0
+    #            [offset] 0x100
+    # ... (113 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

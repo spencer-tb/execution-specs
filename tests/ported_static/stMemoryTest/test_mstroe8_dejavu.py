@@ -45,6 +45,7 @@ def test_mstroe8_dejavu(
     )
 
     pre[sender] = Account(balance=0x271000000000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -81,6 +81,35 @@ def test_subcall_return_more_then_expected(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   ;; Get returndata from a subcall
+    #   (CALL 200000 <contract:0x194f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 12)  # noqa: E501
+    #   [[0]] (MLOAD 0)
+    #   (MSTORE 0 0x0000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #   (DELEGATECALL 200000 <contract:0x194f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 12)  # noqa: E501
+    #   [[1]] (MLOAD 0)
+    #   (MSTORE 0 0x0000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #   (STATICCALL 200000 <contract:0x194f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 12)  # noqa: E501
+    #   [[2]] (MLOAD 0)
+    #   (MSTORE 0 0x0000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #   (CALLCODE 200000 <contract:0x194f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 12)  # noqa: E501
+    #   [[3]] (MLOAD 0)
+    #   (MSTORE 0 0x0000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #
+    #   ;; Get revert data from a subcall
+    #   (CALL 200000 <contract:0x294f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 12)  # noqa: E501
+    #   [[4]] (MLOAD 0)
+    #   (MSTORE 0 0x0000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #   (DELEGATECALL 200000 <contract:0x294f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 12)  # noqa: E501
+    #   [[5]] (MLOAD 0)
+    #   (MSTORE 0 0x0000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #   (STATICCALL 200000 <contract:0x294f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 12)  # noqa: E501
+    #   [[6]] (MLOAD 0)
+    #   (MSTORE 0 0x0000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #   (CALLCODE 200000 <contract:0x294f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 12)  # noqa: E501
+    #   [[7]] (MLOAD 0)
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

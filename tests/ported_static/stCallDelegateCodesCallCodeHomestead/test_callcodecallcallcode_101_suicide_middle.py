@@ -50,6 +50,8 @@ def test_callcodecallcallcode_101_suicide_middle(
         gas_limit=30000000,
     )
 
+    # Source: LLL
+    # {  [[ 0 ]] (DELEGATECALL 150000 0x1000000000000000000000000000000000000001 0 64 0 64 ) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -68,6 +70,8 @@ def test_callcodecallcallcode_101_suicide_middle(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  [[ 1 ]] (CALLCODE 100000 0x1000000000000000000000000000000000000002 0 0 64 0 64 ) }  # noqa: E501
     pre[callee] = Account(
         balance=0x2540BE400,
         nonce=0,
@@ -87,6 +91,8 @@ def test_callcodecallcallcode_101_suicide_middle(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (SELFDESTRUCT 0x1000000000000000000000000000000000000000) [[ 2 ]] (DELEGATECALL 50000 0x1000000000000000000000000000000000000003 0 64 0 64 ) }  # noqa: E501
     pre[callee_1] = Account(
         balance=0x2540BE400,
         nonce=0,
@@ -106,6 +112,8 @@ def test_callcodecallcallcode_101_suicide_middle(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  (SSTORE 3 1) }
     pre[callee_2] = Account(
         balance=0x2540BE400,
         nonce=0,

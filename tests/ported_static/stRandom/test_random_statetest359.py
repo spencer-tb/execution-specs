@@ -45,6 +45,7 @@ def test_random_statetest359(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -57,6 +58,7 @@ def test_random_statetest359(
             "ffffffffffffffffffffffffffffffffffff428d06809e75f26764867d853b0555"  # noqa: E501
         ),
     )
+    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=46,
         nonce=0,

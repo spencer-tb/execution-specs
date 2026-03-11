@@ -2349,6 +2349,10 @@ def test_sha3(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #     [[0]] (sha3 0x1000000 2)
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2357,6 +2361,10 @@ def test_sha3(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   [[ 0 ]] (sha3 960 1)
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2364,6 +2372,10 @@ def test_sha3(
             Op.SSTORE(key=0x0, value=Op.SHA3(offset=0x3C0, size=0x1)) + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   [[ 0 ]] (sha3 992 1)
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2371,6 +2383,10 @@ def test_sha3(
             Op.SSTORE(key=0x0, value=Op.SHA3(offset=0x3E0, size=0x1)) + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   [[ 0 ]] (sha3 1024 1)
+    # }
     pre[callee_11] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2378,6 +2394,10 @@ def test_sha3(
             Op.SSTORE(key=0x0, value=Op.SHA3(offset=0x400, size=0x1)) + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   [[ 0 ]] (sha3 1984 1)
+    # }
     pre[callee_12] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2385,6 +2405,10 @@ def test_sha3(
             Op.SSTORE(key=0x0, value=Op.SHA3(offset=0x7C0, size=0x1)) + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   [[ 0 ]] (sha3 2016 1)
+    # }
     pre[callee_13] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2392,6 +2416,10 @@ def test_sha3(
             Op.SSTORE(key=0x0, value=Op.SHA3(offset=0x7E0, size=0x1)) + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   [[ 0 ]] (sha3 2048 1)
+    # }
     pre[callee_14] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2399,6 +2427,10 @@ def test_sha3(
             Op.SSTORE(key=0x0, value=Op.SHA3(offset=0x800, size=0x1)) + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   [[ 0 ]] (sha3 1024 0)
+    # }
     pre[callee_15] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2415,6 +2447,12 @@ def test_sha3(
         ),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
+    # Source: LLL
+    # {
+    #     (call (- 0 1) (+ 0x1000 $4) 0
+    #        0x0F 0x10   ; arg offset and length to get the 0x1234...f0 value
+    #        0x20 0x40)  ; return offset and length
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

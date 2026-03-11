@@ -47,6 +47,7 @@ def test_random_statetest646(
 
     pre[sender] = Account(balance=0x54465EF1C769628B, nonce=0)
     pre[callee] = Account(balance=0x33888D4CE6B934, nonce=7)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xD61773F0C27B842F,
         nonce=28,

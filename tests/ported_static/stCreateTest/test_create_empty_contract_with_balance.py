@@ -48,6 +48,8 @@ def test_create_empty_contract_with_balance(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { [[0]](GAS) [[1]] (CREATE 1 0 32) [[100]] (GAS) }
     pre[contract] = Account(
         balance=1,
         nonce=0,

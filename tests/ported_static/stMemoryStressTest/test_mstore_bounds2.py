@@ -72,6 +72,8 @@ def test_mstore_bounds2(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,  # noqa: E501
         nonce=0,
     )
+    # Source: LLL
+    # {  (MSTORE 0xffffffffff 1)}
     pre[contract] = Account(
         balance=0,
         nonce=0,

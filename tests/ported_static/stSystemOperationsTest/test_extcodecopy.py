@@ -45,6 +45,7 @@ def test_extcodecopy(
         gas_limit=1478962728,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x5C81EB0,
         nonce=254,
@@ -66,6 +67,7 @@ def test_extcodecopy(
             + Op.MLOAD
         ),
     )
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0x4D6769F8,
         nonce=221,

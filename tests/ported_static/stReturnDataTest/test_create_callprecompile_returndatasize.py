@@ -60,6 +60,8 @@ def test_create_callprecompile_returndatasize(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (seq (CREATE 0 0 (lll (seq (mstore 0 0x112233) (CALL 0x9000 4 0 0 32 0 32) (SSTORE 0 (RETURNDATASIZE)) (RETURN 0 32) (STOP) ) 0)) (SSTORE 0 (RETURNDATASIZE)) (STOP) )}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

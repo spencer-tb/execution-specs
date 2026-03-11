@@ -48,6 +48,12 @@ def test_opcode_blobhash_out_of_range(
         gas_limit=68719476736,
     )
 
+    # Source: LLL
+    # {
+    #    ; Can also add lll style comments here
+    #    [[0]] (BLOBHASH 0)
+    #    [[1]] (BLOBHASH 10)
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -46,6 +46,10 @@ def test_create_transaction_refund_ef(
         gas_limit=1000000,
     )
 
+    # Source: Yul
+    # {
+    #   sstore(0,0)
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

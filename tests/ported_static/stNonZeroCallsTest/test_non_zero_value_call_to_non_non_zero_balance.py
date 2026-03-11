@@ -48,6 +48,8 @@ def test_non_zero_value_call_to_non_non_zero_balance(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [0](GAS) [[1]] (CALL 60000 <eoa:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 1 0 0 0 0) [[100]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

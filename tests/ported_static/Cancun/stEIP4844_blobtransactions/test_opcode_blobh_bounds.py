@@ -49,6 +49,16 @@ def test_opcode_blobh_bounds(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # {
+    #    ; Can also add lll style comments here
+    #    [[0]] (BLOBHASH 0)
+    #    [[1]] (BLOBHASH 10)
+    #    [[2]] (BLOBHASH 0xffffffff) ; 32
+    #    [[3]] (BLOBHASH 0xffffffffffffffff)  ; 64
+    #    [[4]] (BLOBHASH 0xffffffffffffffffffffffffffffffff) ; 128
+    #    [[5]] (BLOBHASH 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) ; 256  # noqa: E501
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -48,6 +48,7 @@ def test_delegate_call_on_eip_with_mem_expanding_calls(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -67,6 +68,7 @@ def test_delegate_call_on_eip_with_mem_expanding_calls(
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0,
         nonce=0,

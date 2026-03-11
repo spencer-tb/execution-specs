@@ -47,6 +47,8 @@ def test_call_ecrecover_invalid_signature(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (MSTORE 128 0x1122334455667788991011121314151617181920212223242526272829303132) (CALL 300000 1 0 0 128 128 32) [[ 0 ]] (MLOAD 128) }  # noqa: E501
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

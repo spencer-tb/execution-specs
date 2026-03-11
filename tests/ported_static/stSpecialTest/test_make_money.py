@@ -45,6 +45,8 @@ def test_make_money(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { (MSTORE 0 0x601080600c6000396000f20060003554156009570060203560003555) (CALL 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffec <contract:0xaaaaaaaaace5edbc8e2a8697c15331677e6ebf0b> 23 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -65,6 +67,7 @@ def test_make_money(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

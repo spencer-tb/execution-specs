@@ -47,6 +47,8 @@ def test_create_init_fail_oo_gduring_init2(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (CREATE 1 0  (lll(seq [[1]] 1 (KECCAK256 0x00 0x2fffff) )0))   }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

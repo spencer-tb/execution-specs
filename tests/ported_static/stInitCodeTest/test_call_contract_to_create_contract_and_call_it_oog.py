@@ -47,6 +47,8 @@ def test_call_contract_to_create_contract_and_call_it_oog(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {(MSTORE 0 0x600c60005566602060406000f060205260076039f3)[[0]](CREATE 1 11 21)(CALL 1000 (SLOAD 0) 0 0 0 0 0)}  # noqa: E501
     pre[contract] = Account(
         balance=1000,
         nonce=0,

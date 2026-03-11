@@ -46,6 +46,7 @@ def test_callcode_ripemd160_0(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

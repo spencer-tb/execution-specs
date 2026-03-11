@@ -46,6 +46,8 @@ def test_returndatasize_initial(
         gas_limit=111669149696,
     )
 
+    # Source: LLL
+    # { (SSTORE 0 (RETURNDATASIZE)) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

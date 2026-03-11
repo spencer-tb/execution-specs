@@ -47,6 +47,8 @@ def test_call_zero_v_call_suicide(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [0](GAS) (CALL 60000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[100]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

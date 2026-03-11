@@ -99,6 +99,7 @@ def test_revert_sub_call_storage_oog2(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=1,
         nonce=0,

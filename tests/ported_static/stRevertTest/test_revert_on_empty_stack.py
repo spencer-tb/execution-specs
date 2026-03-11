@@ -44,6 +44,7 @@ def test_revert_on_empty_stack(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(balance=0, nonce=0, code=Op.REVERT)
     pre[sender] = Account(balance=0x5AF3107A4000, nonce=0)
 

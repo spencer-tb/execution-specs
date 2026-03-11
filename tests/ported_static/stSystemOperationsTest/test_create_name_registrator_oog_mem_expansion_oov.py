@@ -47,6 +47,8 @@ def test_create_name_registrator_oog_mem_expansion_oov(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { (MSTORE 0 0x601080600c6000396000f3006000355415600957005b60203560003555) [[ 0 ]] (CREATE 11000 3 0xffffffffffffffffffffff) }  # noqa: E501
     pre[contract] = Account(
         balance=0x2710,
         nonce=0,

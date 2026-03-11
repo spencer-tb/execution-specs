@@ -74,6 +74,8 @@ def test_mload32bit_bound_msize(
         gas_limit=175923205248920000,
     )
 
+    # Source: LLL
+    # { [4294967295] 1 [[ 0 ]] (MSIZE)}
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

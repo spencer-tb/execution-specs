@@ -45,11 +45,13 @@ def test_random_statetest397(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
         code=bytes.fromhex("413443f3404242433389ff723810"),
     )
+    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=46,
         nonce=0,

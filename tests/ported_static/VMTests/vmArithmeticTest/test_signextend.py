@@ -1882,16 +1882,30 @@ def test_signextend(
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.SIGNEXTEND(0x0, 0x122F6A)) + Op.STOP,
     )
+    # Source: LLL
+    # {  ; Extend the sign of 0x6af4, which is a positive 16 bit number
+    #    [[0]] (signextend 1 0x126af4)
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.SIGNEXTEND(0x1, 0x126AF4)) + Op.STOP,
     )
+    # Source: LLL
+    # {  ; The first two bytes are 0xfaf4, which is a negative 16 bit number
+    #    ; (-1292). The sign is extended from the first two bytes to the entire
+    #    ; value
+    #    [[0]] (signextend 1 0x12faf4)
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.SIGNEXTEND(0x1, 0x12FAF4)) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    [[0]] (signextend 0x010000000000000001 0x8000)
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1902,6 +1916,10 @@ def test_signextend(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    [[0]] (signextend 0xf0000000000001 0xFFFF)
+    # }
     pre[callee_11] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1910,16 +1928,28 @@ def test_signextend(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    [[0]] (signextend 0 0x122ff4)
+    # }
     pre[callee_12] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.SIGNEXTEND(0x0, 0x122FF4)) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    [[0]] (signextend 31 1)
+    # }
     pre[callee_13] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.SIGNEXTEND(0x1F, 0x1)) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    [[0]] (signextend 31 (sub 0 1))
+    # }
     pre[callee_14] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1929,6 +1959,10 @@ def test_signextend(
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (call 0xffffff (+ 0x1000 $4) 0 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

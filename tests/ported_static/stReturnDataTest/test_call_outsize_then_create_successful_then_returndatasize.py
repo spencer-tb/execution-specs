@@ -61,6 +61,8 @@ def test_call_outsize_then_create_successful_then_returndatasize(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (seq (CALL 0x0900000000 <contract:0x0aabbccdd5c57f15886f9b263e2f6d2d6c7b5ec6> 0 0 0 0 0x20) (CREATE 0 0 (lll (seq (mstore 0 0x112233) (RETURN 0 32)  (STOP) ) 0)) (SSTORE 0 (RETURNDATASIZE)) (STOP) )}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

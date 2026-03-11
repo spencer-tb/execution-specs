@@ -198,6 +198,14 @@ def test_double_selfdestruct_touch_paris(
     pre[sender] = Account(balance=0x5F5E102, nonce=0)
     pre[callee_1] = Account(balance=10, nonce=0)
     pre[callee_2] = Account(balance=10, nonce=0)
+    # Source: Yul
+    # {
+    #   let v0 := callvalue()
+    #   let v1 := shr(1, v0)
+    #   let r1 := call(70000, <contract:0x000000000000000000000000000000000000dead>, v1, 0, 0, 0, 0)  # noqa: E501
+    #   let v2 := sub(v0, v1)
+    #   let r2 := call(70000, <contract:0x000000000000000000000000000000000000dead>, v2, 0, 0, 0, 0)  # noqa: E501
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

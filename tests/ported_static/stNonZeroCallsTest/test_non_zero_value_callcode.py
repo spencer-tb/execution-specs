@@ -47,6 +47,8 @@ def test_non_zero_value_callcode(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { [0](GAS) [[1]] (CALLCODE 60000 0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b 1 0 0 0 0) [[100]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=100,
         nonce=0,

@@ -4368,6 +4368,17 @@ def test_ecpairing_inputs(
         gas_limit=15000000,
     )
 
+    # Source: Yul
+    # {
+    #   let size := calldatasize()
+    #   calldatacopy(0, 0, size)
+    #   let status := staticcall(0xffffffff, 8, 0, size, 0, 0x20)
+    #   let result := 0xfe
+    #   if status {
+    #     result := mload(0)
+    #   }
+    #   sstore(1, result)
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -48,6 +48,8 @@ def test_call_recursive_bomb0(
         gas_limit=11000000000,
     )
 
+    # Source: LLL
+    # {  (CALL 100000000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 23 0 0 0 0)  }  # noqa: E501
     pre[contract] = Account(
         balance=0x77359400,
         nonce=0,

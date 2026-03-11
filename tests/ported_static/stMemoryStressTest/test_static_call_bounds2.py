@@ -110,6 +110,8 @@ def test_static_call_bounds2(
             Op.SSTORE(key=0x0, value=Op.ADD(0x1, Op.SLOAD(key=0x0))) + Op.STOP
         ),
     )
+    # Source: LLL
+    # {   (STATICCALL 0x7ffffffffffffff <contract:0x1000000000000000000000000000000000000001> 0xfffffff 0xfffffff 0xfffffff 0xfffffff)   }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

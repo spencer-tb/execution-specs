@@ -46,6 +46,8 @@ def test_suicide_send_ether_to_me(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (SELFDESTRUCT (ADDRESS) )}
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

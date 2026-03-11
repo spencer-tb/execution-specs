@@ -48,6 +48,7 @@ def test_call_and_callcode_consume_more_gas_then_transaction_has_with_mem_expand
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -80,6 +81,7 @@ def test_call_and_callcode_consume_more_gas_then_transaction_has_with_mem_expand
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0,
         nonce=0,

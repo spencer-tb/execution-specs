@@ -916,6 +916,7 @@ def test_state_revert(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -923,6 +924,11 @@ def test_state_revert(
             "610103600155600060006000600061dead6175305a03f450ba"
         ),
     )
+    # Source: LLL
+    # {
+    #     [[0]] 0x60A7
+    #     (delegatecall (gas) (+ 0x1000 $4) 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -964,6 +970,7 @@ def test_state_revert(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -982,6 +989,7 @@ def test_state_revert(
             + Op.ADD(Op.ADD, Op.ADD)
         ),
     )
+    # Source: raw bytecode
     pre[callee_5] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1000,6 +1008,7 @@ def test_state_revert(
             + Op.JUMP(pc=0x0)
         ),
     )
+    # Source: raw bytecode
     pre[callee_6] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

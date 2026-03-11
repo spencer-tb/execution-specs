@@ -48,6 +48,8 @@ def test_revert_prefound_empty_paris(
     )
 
     pre[callee] = Account(balance=10, nonce=0)
+    # Source: LLL
+    # { [[0]] (CREATE 0 0 32) [[1]]12 }
     pre[contract] = Account(
         balance=1,
         nonce=0,

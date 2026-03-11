@@ -48,6 +48,8 @@ def test_raw_call_gas_value_transfer_ask(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [0] (GAS) (CALL 3000000 <contract:0x094f5374fce5edbc8e2a8697c15331677e6ebf0b> 10 0 0 0 0) [[1]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

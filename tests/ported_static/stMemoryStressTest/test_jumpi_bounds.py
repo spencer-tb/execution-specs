@@ -86,6 +86,8 @@ def test_jumpi_bounds(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # { (JUMPI 0xffffffff 1) (JUMPI 0xffffffffffffffff 1) (JUMPI 0xffffffffffffffffffffffffffffffff 1) (JUMPI 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff 1) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

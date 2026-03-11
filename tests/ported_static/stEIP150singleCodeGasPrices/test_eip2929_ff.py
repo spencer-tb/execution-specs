@@ -1533,13 +1533,50 @@ def test_eip2929_ff(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {
+    #      (selfdestruct 0xDE57)
+    # }
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
         code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP,
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(balance=0, nonce=0, code=bytes.fromhex("00"))
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #    (def 'operation $4)
+    #
+    #    (def 'measurementCost 0x08)
+    #
+    #    ; Make sure not to be overwritten by extcodecopy
+    #    (def 'gasB4     0x100)
+    #    (def 'gasAfter  0x120)
+    #
+    #    ; Write something so the storage won't be new
+    #    [gasB4] 0xFF
+    #    [gasAfter] 0xFF
+    #
+    #    (def 'NOP 0)
+    #    (def 'dest 0xDE57)   ; destination address
+    #
+    #    ; Read so access to that account later won't trigger EIP2929 costs
+    #    (balance 0xca11)
+    #
+    #    ; If we need to add the destination address to the active set,
+    #    ; do so.
+    #    (if (= operation 0x31) (balance dest) NOP)
+    #    (if (= operation 0x3B) (extcodesize dest) NOP)
+    #    (if (= operation 0x3C) (extcodecopy dest 0 0 1) NOP)
+    #    (if (= operation 0x3F) (extcodehash dest) NOP)
+    #    (if (= operation 0xF1) (call 0x10000 dest 0 0 0 0 0) NOP)
+    #    (if (= operation 0xF2) (callcode 0x10000 dest 0 0 0 0 0) NOP)
+    #    (if (= operation 0xF4) (delegatecall 0x10000 dest 0 0 0 0) NOP)
+    #    (if (= operation 0xFA) (staticcall 0x10000 dest 0 0 0 0) NOP)
+    #
+    # ... (18 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

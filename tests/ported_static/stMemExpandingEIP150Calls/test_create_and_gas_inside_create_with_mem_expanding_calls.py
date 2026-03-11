@@ -48,6 +48,7 @@ def test_create_and_gas_inside_create_with_mem_expanding_calls(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -430,6 +430,7 @@ def test_gas_cost_jump(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -437,21 +438,56 @@ def test_gas_cost_jump(
             Op.PUSH1[0x0] + Op.PUSH1[0x0] + Op.JUMPDEST + Op.JUMPDEST + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.PUSH1[0x0] + Op.JUMP(pc=0x5) + Op.JUMPDEST + Op.STOP,
     )
+    # Source: raw bytecode
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.JUMPI(pc=0x5, condition=0x1) + Op.JUMPDEST + Op.STOP,
     )
+    # Source: raw bytecode
     pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.JUMPI(pc=0x5, condition=0x0) + Op.JUMPDEST + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Initialization
+    #
+    #   ; Variables (0x20 byte wide)
+    #   (def 'gasB4             0x000)  ; Before the action being measured
+    #
+    #   ; Gas cost for a baseline operation (call a contract that does mstore
+    #   ; and then mload)
+    #   (def 'gasBaseline       0x020)
+    #
+    #   ; Gas for for the action intself (call a contract plus <whatever>)
+    #   (def 'gasAction         0x040)
+    #
+    #   ; Understand CALLDATA. It is four bytes of function
+    #   ; selector (irrelevant) followed by 32 byte words
+    #   ; of the parameters
+    #   (def 'action        $4 )
+    #   (def 'expectedCost  $36)
+    #
+    #   ; Constants
+    #   (def  'NOP    0) ; No operation (for if statements)
+    #
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Define the actions
+    #
+    #   ; Store the gas amount
+    #   (def 'gas0 [gasB4]    (gas))
+    #
+    #   ; Get the baseline cost
+    # ... (51 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

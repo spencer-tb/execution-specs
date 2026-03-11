@@ -6751,6 +6751,32 @@ def test_storage_costs(
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # { ; TO_ADDR_VALID   TO_ADDR_INVALID_ADDR    TO_ADDR_INVALID_CELL
+    #   ; Call a different contract
+    #   (call (gas) (+ 0x1000 $4) 0 0 0 0 0)
+    #
+    #   ; Read @@0, and see how much gas that cost.
+    #     [0]   (gas)
+    #     @@0x60A7
+    #     [0]   (- @0 (gas) 19)
+    #    [[1]] @0
+    #
+    #
+    #   ; Write to @@0, and see how much gas that cost. It should
+    #   ; cost more when it is not declared storage
+    #     [0]   (gas)
+    #    [[0]]  0x02
+    #     [0]   (- @0 (gas) 17)
+    #    [[2]] @0
+    #
+    #   ; The 17 is the cost of the extra opcodes:
+    #   ; PUSH1 0x00, MSTORE
+    #   ; PUSH1 0x02, PUSH1 0x00, (and then comes the SSTORE we are measuring)
+    #   ; GAS
+    #
+    #
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

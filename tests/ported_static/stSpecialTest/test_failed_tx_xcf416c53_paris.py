@@ -48,6 +48,7 @@ def test_failed_tx_xcf416c53_paris(
     )
 
     pre[callee] = Account(balance=10, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

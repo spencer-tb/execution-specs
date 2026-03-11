@@ -29749,12 +29749,48 @@ def test_buffer_src_offset(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {
+    #       (return 0 0x120)
+    # }
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.RETURN(offset=0x0, size=0x120) + Op.STOP,
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #    (def 'opcode $4)
+    #    (def 'bufferType $36)
+    #    (def 'bufferLength $68)
+    #    (def 'NOP 0)
+    #
+    #    ; Variables
+    #    (def 'srcOffset  0x2020)
+    #    (def 'offset     0x2040)
+    #    (def 'length     0x2060)
+    #
+    #    [offset] 0    ; Write to the first word in memory
+    #
+    #    ; bufferType 0  is no offset (0x0)
+    #    ; bufferType 1  is a reasonable number as an offset (0x10)
+    #    ; bufferType 2  is a high number that could happen in theory (0x100000)  # noqa: E501
+    #    ; bufferType 3  is a negative number (- 0 0x10)
+    #    ; bufferType 4  is 2^31-1 0x7FFFFFFF
+    #    ; bufferType 5  is 2^31   0x80000000
+    #    ; bufferType 6  is 2^32-1 0xFFFFFFFF
+    #    ; bufferType 7  is 2^32   0x0100000000
+    #    ; bufferType 8  is 2^63-1 0x7FFFFFFFFFFFFFFF
+    #    ; bufferType 9  is 2^63   0x8000000000000000
+    #    ; bufferType 10 is 2^64-1 0xFFFFFFFFFFFFFFFF
+    #    ; bufferType 11 is 2^64   0x010000000000000000
+    #    (if (= bufferType 0)  [srcOffset] 0 NOP)
+    #    (if (= bufferType 1)  [srcOffset] 0x10 NOP)
+    #    (if (= bufferType 2)  [srcOffset] 0100000 NOP)
+    #    (if (= bufferType 3)  [srcOffset] (- 0 0x10) NOP)
+    #    (if (= bufferType 4)  [srcOffset] 0x7FFFFFFF NOP)
+    # ... (40 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

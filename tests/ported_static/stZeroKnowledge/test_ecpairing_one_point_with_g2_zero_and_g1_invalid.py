@@ -552,6 +552,7 @@ def test_ecpairing_one_point_with_g2_zero_and_g1_invalid(
     pre[callee_13] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[sender] = Account(balance=0xDE0B6B3A754D9F4, nonce=6)
     pre[callee_14] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=1,

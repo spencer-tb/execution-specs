@@ -44,6 +44,8 @@ def test_callcode_emptycontract(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[ 0 ]] (CALLCODE 50000 0x945304eb96065b2a98b57a48a06ae28d285a71b5 1000 0 64 0 64 )}  # noqa: E501
     pre[contract] = Account(
         balance=1000,
         nonce=0,

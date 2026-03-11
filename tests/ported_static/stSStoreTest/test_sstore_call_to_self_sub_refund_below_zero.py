@@ -48,6 +48,7 @@ def test_sstore_call_to_self_sub_refund_below_zero(
     )
 
     pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFF, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

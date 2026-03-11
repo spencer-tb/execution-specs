@@ -46,6 +46,8 @@ def test_refund_oog(
 
     pre[sender] = Account(balance=0x7A120, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)
+    # Source: LLL
+    # { [[ 1 ]] 0 }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

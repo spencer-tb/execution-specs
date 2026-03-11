@@ -1929,6 +1929,14 @@ def test_log4(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {        ; maxTopic
+    #    (def 'neg1 (- 0 1))
+    #
+    #    (mstore8 0 0xFF)
+    #    (log4 31 1 neg1 neg1 neg1 neg1)
+    #    [[0]] 0x600D
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1946,6 +1954,12 @@ def test_log4(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {        ; pc
+    #    [0] 0xaabbffffffffffffffffffffffffffffffffffffffffffffffffffffffffccdd
+    #    (log4 31 1 (pc) (pc) (pc) (pc))
+    #    [[0]] 0x600D
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -1967,6 +1981,10 @@ def test_log4(
         ),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
+    # Source: LLL
+    # {
+    #     (delegatecall (gas) (+ 0x1000 $4) 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

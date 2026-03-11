@@ -49,11 +49,13 @@ def test_transaction_colliding_with_non_empty_account_calls(
         gas_limit=71794957647893862,
     )
 
+    # Source: raw bytecode
     pre[sender] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x0),
     )
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

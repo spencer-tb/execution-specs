@@ -47,6 +47,8 @@ def test_call_ecrecover0_0input(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[ 2 ]] (CALL 300000 1 0 0 128 128 32) [[ 0 ]] (MOD (MLOAD 128) (EXP 2 160)) }  # noqa: E501
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

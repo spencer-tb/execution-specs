@@ -47,6 +47,8 @@ def test_balance_input_address_too_big(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { [[ 0 ]] (BALANCE <eoa:sender:0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b>aa ) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

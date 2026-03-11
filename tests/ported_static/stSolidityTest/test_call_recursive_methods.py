@@ -47,6 +47,7 @@ def test_call_recursive_methods(
     )
 
     pre[sender] = Account(balance=0x12A05F200, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,

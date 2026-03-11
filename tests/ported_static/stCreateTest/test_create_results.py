@@ -10200,12 +10200,48 @@ def test_create_results(
         gas_limit=4294967296,
     )
 
+    # Source: LLL
+    # {
+    #   [[0]] 0x60A7
+    # }   ; end of LLL code
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=0x60A7) + Op.STOP,
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #   ; Variables are 0x20 bytes (= 256 bits) apart, except for
+    #   ; code buffers that get 0x100 (256 bytes)
+    #   (def 'creation          0x100)
+    #   (def 'callType          0x120)
+    #   (def 'constructor       0x140)
+    #   (def 'contractCode      0x200)
+    #   (def 'constructorCode   0x300)
+    #   (def 'extCode           0x400)
+    #   (def 'contractLength    0x520)
+    #   (def 'constructorLength 0x540)
+    #   (def 'extLength         0x560)
+    #   (def 'addr1             0x600)
+    #   (def 'addr2             0x620)
+    #   (def 'callRet           0x640)
+    #   (def 'retData0          0x160)   ; storage for returned data
+    #   ; Other constants
+    #   (def 'NOP 0)   ; No OPeration
+    #   ; Understand the input.
+    #   [creation]       $0x04
+    #   [callType]       $0x24
+    #   [constructor]    $0x44
+    #   ; The contract code
+    #   (def 'contractMacro
+    #             (lll
+    #                (call 0xFFFF 0x60A7 0 0 0 0 0)
+    #                contractCode
+    #             ) ; inner lll
+    #   )
+    #   ; I did not want to rely on knowing the address at which the contract
+    # ... (138 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

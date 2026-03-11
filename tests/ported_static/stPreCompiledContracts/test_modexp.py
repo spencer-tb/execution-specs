@@ -4287,6 +4287,8 @@ def test_modexp(
         gas_limit=10000000000,
     )
 
+    # Source: LLL
+    # { (CALLDATACOPY 0 0 (CALLDATASIZE)) [[1]] (CALLCODE (GAS) 5 0 0 (CALLDATASIZE) 1000 32) [[2]](MLOAD 1000) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

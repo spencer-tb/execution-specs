@@ -7501,6 +7501,10 @@ def test_oog(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    codecopy(0,0,0x1000)
+    # }
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7508,6 +7512,10 @@ def test_oog(
             Op.CODECOPY(dest_offset=Op.DUP1, offset=0x0, size=0x1000) + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    extcodecopy(address(),0,0,0x1000)
+    # }
     pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7521,6 +7529,13 @@ def test_oog(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    // Make sure there is return data to be copied
+    #    pop(call(gas(), 0x1113e, 0, 0, 0x20, 0, 0x20))
+    #
+    #    returndatacopy(0x1000,0,0x10)
+    # }
     pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7555,16 +7570,28 @@ def test_oog(
         nonce=1,
         code=Op.MSTORE8(offset=0x1000, value=0xFF) + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #    log0(0x10000, 0x20)
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=Op.LOG0(offset=0x10000, size=0x20) + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #    log1(0x10000, 0x20, 0x1)
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=Op.LOG1(offset=0x10000, size=0x20, topic_1=0x1) + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #    log2(0x10000, 0x20, 0x1, 0x2)
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7573,6 +7600,10 @@ def test_oog(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    log3(0x10000, 0x20, 0x1, 0x2, 0x3)
+    # }
     pre[callee_11] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7587,6 +7618,10 @@ def test_oog(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    log4(0x10000, 0x20, 0x1, 0x2, 0x3, 0x4)
+    # }
     pre[callee_12] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7602,11 +7637,19 @@ def test_oog(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    pop(create(0, 0x10000, 0x20))
+    # }
     pre[callee_13] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=Op.CREATE(value=0x0, offset=0x10000, size=0x20) + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #    pop(call(gas(), 0x111f1, 0, 0x10000, 0, 0, 0))
+    # }
     pre[callee_14] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7623,6 +7666,10 @@ def test_oog(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    pop(callcode(gas(), 0x111f1, 0, 0x10000, 0, 0, 0))
+    # }
     pre[callee_15] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7639,11 +7686,19 @@ def test_oog(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    return(0x10000, 0x20)
+    # }
     pre[callee_16] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=Op.RETURN(offset=0x10000, size=0x20),
     )
+    # Source: Yul
+    # {
+    #    pop(delegatecall(gas(), 0x111f1, 0x10000, 0, 0, 0))
+    # }
     pre[callee_17] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7659,6 +7714,10 @@ def test_oog(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    pop(create2(0, 0x10000, 0x20, 0x5a17))
+    # }
     pre[callee_18] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7667,6 +7726,10 @@ def test_oog(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    pop(staticcall(gas(), 0x111f1, 0x10000, 0, 0, 0))
+    # }
     pre[callee_19] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7682,6 +7745,11 @@ def test_oog(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    mstore(0, 0x0102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F20)  # noqa: E501
+    #    return(0,0x20)
+    # }
     pre[callee_20] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -7693,12 +7761,24 @@ def test_oog(
             + Op.RETURN(offset=0x0, size=0x20)
         ),
     )
+    # Source: Yul
+    # {
+    #    stop()
+    # }
     pre[callee_21] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=bytes.fromhex("00"),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: Yul
+    # {
+    #    let op     := calldataload(0x04)
+    #    let gasAmt := calldataload(0x24)
+    #
+    #    // Call the function that actually goes OOG (or not)
+    #    sstore(0, call(gasAmt, add(0x10000,op), 0, 0, 0, 0, 0))
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,

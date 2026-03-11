@@ -753,11 +753,29 @@ def test_transaction64_rule_integer_boundaries(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #   let initialgas := gas()
+    #   let callgas := calldataload(0)
+    #
+    #   pop(call(callgas, 0x1000, 0, 0, 0, 0, 0x20))
+    #   sstore(0, lt(gas(), initialgas))
+    #
+    #   pop(callcode(callgas, 0x1000, 0, 0, 0, 0, 0x20))
+    #   sstore(1, lt(gas(), initialgas))
+    #
+    #   pop(delegatecall(callgas, 0x1000, 0, 0x20, 0, 0x20))
+    #   sstore(2, lt(gas(), initialgas))
+    #
+    #   pop(staticcall(callgas, 0x1000, 0, 0x20, 0, 0x20))
+    #   sstore(3, lt(gas(), initialgas))
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

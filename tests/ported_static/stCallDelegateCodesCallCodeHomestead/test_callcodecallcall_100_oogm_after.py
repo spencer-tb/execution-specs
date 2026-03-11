@@ -70,6 +70,8 @@ def test_callcodecallcall_100_oogm_after(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  [[ 0 ]] (DELEGATECALL 800000 <contract:0x1000000000000000000000000000000000000001> 0 64 0 64 ) [[11]] 1 }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

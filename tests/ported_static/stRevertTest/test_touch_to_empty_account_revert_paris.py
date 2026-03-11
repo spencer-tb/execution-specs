@@ -49,6 +49,8 @@ def test_touch_to_empty_account_revert_paris(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[0]](CALL 30000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[2]] 1 }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

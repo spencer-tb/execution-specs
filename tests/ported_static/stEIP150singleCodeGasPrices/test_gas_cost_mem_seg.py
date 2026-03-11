@@ -7646,6 +7646,38 @@ def test_gas_cost_mem_seg(
     )
 
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Initialization
+    #
+    #   ; Variables (0x20 byte wide)
+    #   (def 'gasB4             0x000)  ; Before the action being measured
+    #   (def 'gasAfter          0x020)  ; After the action being measured
+    #
+    #   (def 'afterVars         0x100)  ; Memory after the variables,
+    #                                   ; safe to copy into
+    #
+    #   ; Understand CALLDATA. It is four bytes of function
+    #   ; selector (irrelevant) followed by 32 byte words
+    #   ; of the parameters
+    #   (def 'opcode     $4 )
+    #   (def 'length     $36)
+    #   (def 'expectedCost $68)
+    #
+    #   ; NOP for if statements
+    #   (def 'NOP     0)
+    #
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Run the operation
+    #
+    #   ; SHA3
+    #   (if (= opcode 0x20) {
+    #       [gasB4]    (gas)
+    #       (sha3 0 length)
+    #       [gasAfter] (gas)
+    #   } NOP)
+    # ... (70 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

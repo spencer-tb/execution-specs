@@ -47,6 +47,7 @@ def test_call_oog_additional_gas_costs1(
         gas_limit=3000000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -54,6 +55,8 @@ def test_call_oog_additional_gas_costs1(
     )
     pre[coinbase] = Account(balance=0, nonce=1)
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # { (CALL 6000 <contract:0x1000000000000000000000000000000000000001> 0 0 64 0 64 ) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

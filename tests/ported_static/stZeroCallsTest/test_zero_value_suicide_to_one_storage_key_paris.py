@@ -49,6 +49,8 @@ def test_zero_value_suicide_to_one_storage_key_paris(
     )
 
     pre[callee] = Account(balance=10, nonce=0, storage={0x0: 0x1})
+    # Source: LLL
+    # { (SELFDESTRUCT <eoa:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b>) }
     pre[contract] = Account(
         balance=0,
         nonce=0,

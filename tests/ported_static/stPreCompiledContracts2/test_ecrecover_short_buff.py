@@ -47,6 +47,38 @@ def test_ecrecover_short_buff(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
+    # Source: Yul
+    # {
+    #   let maxLength := 0xA0
+    #
+    #   // Initialization
+    #   for { let i := 0 } lt(i, maxLength) { i := add(i, 1) } {
+    #      // Initialize storage to verify it gets overwritten
+    #      sstore(i, 0xdead60A7)
+    #      sstore(add(0x1000,i), 0xdead60A7)
+    #   }
+    #
+    #   // Create a legitimate signature
+    #   mstore(0, 0)
+    #
+    #   // The signature (for zero)
+    #   mstore(0x20, 27)  // v
+    #   mstore(0x40, 0x184870a8e4faa6065ddf65c873935d3e48e3d1c7b7853f25cd79b8247f771910) // r  # noqa: E501
+    #   mstore(0x60, 0x226140b6b66554c7fcfa38589e433cc148ebe5c8482eb3093ab1d9a932c96f58) // s  # noqa: E501
+    #
+    #
+    #
+    #   // Call ecrecover with every possible length that's too short, the right length  # noqa: E501
+    #   // (0x80), and some excessive lengths
+    #   for { let len := 0 } lt(len, maxLength) { len := add(len,1) } {
+    #      // Call ecrecoer
+    #      sstore(len, call(gas(), 1, 0, 0, len, 0x100, 0x20))
+    #
+    #      // The expected retval is one, so to avoid specifying every length
+    #      // in the expect: section we subtract one.
+    #      sstore(len, sub(sload(len), 1))
+    #
+    # ... (4 more lines)
     pre[contract] = Account(
         balance=0,
         nonce=1,

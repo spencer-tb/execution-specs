@@ -47,6 +47,8 @@ def test_callcode_ripemd160_3_postfixed0(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (MSTORE 0 0xf34578907f00) [[ 2 ]] (CALLCODE 6000 3 0 0 37 0 32) [[ 0 ]] (MLOAD 0)}  # noqa: E501
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

@@ -2586,6 +2586,14 @@ def test_create_oo_gafter_max_codesize(
         gas_limit=4294967296,
     )
 
+    # Source: Yul
+    # {
+    #   // If calldata > 0, self-destruct, otherwise
+    #   sstore(0, codesize())
+    #   if gt(calldatasize(), 0) {
+    #     selfdestruct(0)
+    #   }
+    # }
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -2597,6 +2605,13 @@ def test_create_oo_gafter_max_codesize(
             + Op.SELFDESTRUCT(address=0x0)
         ),
     )
+    # Source: Yul
+    # {
+    #   // Init code that uses max codesize and can be called to selfdestruct
+    #   let code_addr := 0x00000000000000000000000000000000000c0de0
+    #   extcodecopy(code_addr, 0, 0, extcodesize(code_addr))
+    #   return(0, 0x6000)
+    # }
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -2610,6 +2625,38 @@ def test_create_oo_gafter_max_codesize(
             + Op.RETURN(offset=0x0, size=0x6000)
         ),
     )
+    # Source: Yul
+    # {
+    #
+    #   // Get the amount of contracts to create on this level
+    #   let delegate_contract_count := calldataload(4)
+    #
+    #   // Get the amount of contracts to create on the sub level call
+    #   let subcall_contract_count := calldataload(36)
+    #
+    #   // Get whether the subcall should oog
+    #   let subcall_oog := calldataload(68)
+    #
+    #   // Get count of contracts to call to self-destruct
+    #   let selfdestruct_count := calldataload(100)
+    #
+    #   // Delegate call for contract creation
+    #   mstore(0, delegate_contract_count)
+    #   mstore(32, 0)
+    #   let returnStart := 64
+    #   let returnLength := mul(delegate_contract_count, 32)
+    #   let retcode := delegatecall(div(gas(), 2), 0x00000000000000000000000000000000000c0deb, 0, 64, returnStart, returnLength)  # noqa: E501
+    #
+    #   if eq(retcode, 0) {
+    #     // We oog'd, fail test
+    #     revert(0, 0)
+    #   }
+    #
+    #   // Call for OOG contract creation
+    #   mstore(0, subcall_contract_count)
+    #   mstore(32, subcall_oog)
+    #   returnStart := add(64, mul(delegate_contract_count, 32))
+    # ... (30 more lines)
     pre[contract] = Account(
         balance=0,
         nonce=1,
@@ -2703,6 +2750,28 @@ def test_create_oo_gafter_max_codesize(
             + Op.REVERT(offset=Op.DUP1, size=0x0)
         ),
     )
+    # Source: Yul
+    # {
+    #   sstore (1, 1)
+    #   let contract_count := calldataload(0)
+    #   let should_oog := calldataload(32)
+    #
+    #   // get the init code that returns max codesize from another contract
+    #   let initcode_addr := 0x00000000000000000000000000000000000c0de1
+    #   let initcode_size := extcodesize(initcode_addr)
+    #   extcodecopy(initcode_addr, 0, 0, initcode_size)
+    #
+    #   // create contracts with max codesize in loop
+    #   for { let i := 0 } lt(i, contract_count) { i := add(i, 1) }
+    #   {
+    #       let address_created := create(0, 0, initcode_size)
+    #       mstore( add(initcode_size, mul(i, 32)), address_created )
+    #   }
+    #   if gt(should_oog, 0) {
+    #     invalid()
+    #   }
+    #   return(initcode_size, mul(contract_count, 32))
+    # }
     pre[callee_2] = Account(
         balance=0,
         nonce=1,

@@ -49,6 +49,8 @@ def test_non_zero_value_suicide_to_non_non_zero_balance(
     )
 
     pre[callee] = Account(balance=100, nonce=0)
+    # Source: LLL
+    # { (SELFDESTRUCT <eoa:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b>) }
     pre[contract] = Account(
         balance=1,
         nonce=0,

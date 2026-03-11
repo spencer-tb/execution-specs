@@ -55,6 +55,8 @@ def test_suicide_to_existing_contract(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { [0] (GAS) (CALL 60000 <contract:0x1000000000000000000000000000000000000118> 0 0 0 0 0) [[1]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

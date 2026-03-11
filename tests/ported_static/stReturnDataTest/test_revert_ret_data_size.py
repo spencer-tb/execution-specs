@@ -16078,21 +16078,25 @@ def test_revert_ret_data_size(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.POP + Op.STOP,
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.JUMP(pc=0x0),
     )
+    # Source: raw bytecode
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.JUMPI(pc=0x1, condition=0x1),
     )
+    # Source: raw bytecode
     pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -16109,6 +16113,38 @@ def test_revert_ret_data_size(
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {   ;  $4 is the type of thing that fails
+    #     ; $36 is the failure itself
+    #
+    #     (def 'callType   $4)
+    #     (def 'call         0xf1)
+    #     (def 'callcode     0xf2)
+    #     (def 'delegatecall 0xf4)
+    #     (def 'staticcall   0xfa)
+    #     (def 'create       0xf0)
+    #     (def 'create2      0xf5)
+    #
+    #     (def 'failureType $36)
+    #     (def 'oog 0)
+    #
+    #     ; We need these values for CREATE(2)
+    #     (def 'uf        0x0200)
+    #     (def 'jmp       0x0300)
+    #     (def 'jmpi      0x0400)
+    #     (def 'badOpcode 0x0500)
+    #     (def 'badCall   0xFF00)
+    #
+    #     (def 'NOP 0)
+    #
+    #     ; Code for CREATE(2) to fail
+    #
+    #     (def 'codeLoc      0x0000)
+    #     (def 'codeLength   0x0100)
+    #
+    #     (if (= failureType oog)
+    #        [codeLength] (lll (sha3 0 (- 0 1)) codeLoc)
+    # ... (170 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

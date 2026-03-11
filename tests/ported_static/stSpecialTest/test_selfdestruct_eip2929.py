@@ -50,6 +50,7 @@ def test_selfdestruct_eip2929(
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[callee] = Account(balance=0, nonce=1)
     pre[callee_1] = Account(balance=0, nonce=1)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=1,
         nonce=1,
@@ -246,6 +247,7 @@ def test_selfdestruct_eip2929(
             + Op.SSTORE(key=0x1, value=0x1)
         ),
     )
+    # Source: raw bytecode
     pre[callee_2] = Account(
         balance=1,
         nonce=1,

@@ -48,12 +48,16 @@ def test_contract_creation_oo_gdont_leave_empty_contract_via_transaction(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # {(SSTORE 1 1)}
     pre[contract] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
     )
     pre[sender] = Account(balance=0x10C8E0, nonce=0)
+    # Source: LLL
+    # {(CALL 50000 0x1000000000000000000000000000000000000001 0 0 64 0 64)}
     pre[callee_1] = Account(
         balance=0x186A0,
         nonce=0,

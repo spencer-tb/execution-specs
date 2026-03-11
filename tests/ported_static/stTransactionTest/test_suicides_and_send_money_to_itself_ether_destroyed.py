@@ -48,6 +48,8 @@ def test_suicides_and_send_money_to_itself_ether_destroyed(
     )
 
     pre[sender] = Account(balance=0x7459280, nonce=0)
+    # Source: LLL
+    # {(SELFDESTRUCT <contract:target:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b>)}  # noqa: E501
     pre[contract] = Account(
         balance=1000,
         nonce=0,

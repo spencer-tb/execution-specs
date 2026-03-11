@@ -764,6 +764,8 @@ def test_callcode_dynamic_code(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # {(seq [[10]] (CREATE 0 0 (lll(seq  (RETURN 0 (lll(seq [[0]] 1  [[20]] (ADDRESS) [[21]] (ORIGIN) [[22]] (CALLER)   )0) )  )0)   )  [[11]] (CALLCODE 100000 (SLOAD 10) 0 0 64 0 64)                   )}  # noqa: E501
     pre[callee] = Account(
         balance=0x2710,
         nonce=0,
@@ -800,6 +802,8 @@ def test_callcode_dynamic_code(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL 800000 (CALLDATALOAD 0) 0 0 0 0 0) }
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -816,6 +820,8 @@ def test_callcode_dynamic_code(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {(seq [[10]] (CREATE2 0 0 (lll(seq  (RETURN 0 (lll(seq [[0]] 1  [[20]] (ADDRESS) [[21]] (ORIGIN) [[22]] (CALLER)  )0) )  )0)  0 )  [[11]] (CALLCODE 100000 (SLOAD 10) 0 0 64 0 64)                   )}  # noqa: E501
     pre[callee_1] = Account(
         balance=1000,
         nonce=0,
@@ -853,6 +859,8 @@ def test_callcode_dynamic_code(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {(seq (CREATE 0 0 (lll(seq       [[10]] (CREATE 0 0 (lll(seq  (RETURN 0 (lll(seq [[0]] 1  [[20]] (ADDRESS)  [[21]] (ORIGIN) [[22]] (CALLER)  )0) )  )0)   )  [[11]] (CALLCODE 100000 (SLOAD 10) 0 0 64 0 64)            )0))       )}  # noqa: E501
     pre[callee_2] = Account(
         balance=0x2710,
         nonce=0,
@@ -896,6 +904,8 @@ def test_callcode_dynamic_code(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {(seq (CREATE 0 0 (lll(seq       [[10]] (CREATE2 0 0 (lll(seq  (RETURN 0 (lll(seq [[0]] 1  [[20]] (ADDRESS)  [[21]] (ORIGIN) [[22]] (CALLER)  )0) )  )0)  0 )  [[11]] (CALLCODE 100000 (SLOAD 10) 0 0 64 0 64)            )0))       )}  # noqa: E501
     pre[callee_3] = Account(
         balance=0x2710,
         nonce=0,

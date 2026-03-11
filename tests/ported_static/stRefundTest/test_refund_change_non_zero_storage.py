@@ -47,6 +47,8 @@ def test_refund_change_non_zero_storage(
     )
 
     pre[sender] = Account(balance=0x3C336080, nonce=0)
+    # Source: LLL
+    # { [[ 1 ]] 23 }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

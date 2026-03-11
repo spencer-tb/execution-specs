@@ -57,6 +57,8 @@ def test_returndatacopy_following_create(
         gas_limit=47244640256,
     )
 
+    # Source: LLL
+    # { (CREATE2 0 0 (lll (seq (MSTORE 0 0x0000111122223333444455556666777788889999aaaabbbbccccddddeeeeffff) (RETURN 0 32)) 0) 0) (RETURNDATACOPY 0 0 32) (SSTORE 0 (MLOAD 0)) }  # noqa: E501
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -80,6 +82,8 @@ def test_returndatacopy_following_create(
         ),
         storage={0x0: 0x1},
     )
+    # Source: LLL
+    # { (CALL (GAS) (CALLDATALOAD 0) 0 0 0 0 0) }
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -96,6 +100,8 @@ def test_returndatacopy_following_create(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (seq (create2 0 0 (lll (STOP) 0) 0) (RETURNDATACOPY 0 0 32) (SSTORE 0 (MLOAD 0)) )}  # noqa: E501
     pre[callee_1] = Account(
         balance=0,
         nonce=0,

@@ -160,6 +160,15 @@ def test_coinbase_t01(
         gas_limit=71794957647893862,
     )
 
+    # Source: Yul
+    # {
+    #   mstore(0, gas())
+    #   pop(call(gas(), <eoa:0x000000000000000000000000000000000000ba5e>, 1000000, 0, 0, 0, 0))  # noqa: E501
+    #   mstore(0x20, gas())
+    #
+    #   // The 24 is the cost of twi gas(), seven pushes(), a pop(), and an mstore()  # noqa: E501
+    #   sstore(0, sub(sub(mload(0), mload(0x20)),33))
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,

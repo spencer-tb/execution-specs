@@ -66,6 +66,8 @@ def test_returndatasize_bug(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL 1 <contract:0x1f572e5295c57f15886f9b263e2f6d2d6c7b5ec6> 50000 0 0 0 0) (SSTORE 0 (RETURNDATASIZE)) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

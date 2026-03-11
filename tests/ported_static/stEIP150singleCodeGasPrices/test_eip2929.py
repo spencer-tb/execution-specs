@@ -22171,22 +22171,63 @@ def test_eip2929(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=bytes.fromhex("00"),
     )
+    # Source: LLL
+    # {
+    #     @@0x100
+    # }
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SLOAD(key=0x100) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #      (balance 0xca11)
+    # }
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.BALANCE(address=0xCA11) + Op.STOP,
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #    (def 'oper1 $4)
+    #    (def 'oper2 $36)
+    #    (def 'oper3 $68)
+    #
+    #    (def 'NOP 0)
+    #    (def 'measurementCost 0x022a)
+    #
+    #    (def 'gasB4     0x00)
+    #    (def 'gasAfter  0x20)
+    #    (def 'operation 0x40)
+    #
+    #    ; Write to the memory so memory allocation won't affect the
+    #    ; measurement
+    #    [gasB4] (gas)
+    #    [gasAfter] (gas)
+    #
+    #    ; Read addresses so that won't affect the measurement
+    #    (balance 0xca1100ca11)
+    #    (balance   0xca110100)
+    #
+    #    (def 'tests {
+    #        (if (= @operation 1) @@0x100 NOP) ; SLOAD
+    #        (if (= @operation 2) [[0x100]] 5 NOP) ; SSTORE
+    #        (if (= @operation 11) (balance 0xca11) NOP) ; BALANCE
+    #        (if (= @operation 12) (extcodesize 0xca11) NOP) ; EXTCODESIZE
+    #        (if (= @operation 13) (extcodecopy 0xca11 0 0 0) NOP) ; EXTCODECOPY  # noqa: E501
+    #        (if (= @operation 14) (extcodehash 0xca11) NOP) ; EXTCODEHASH
+    #        (if (= @operation 21) (call 0x1000 0xca11 0 0 0 0 0) NOP) ; CALL
+    #        (if (= @operation 22) (callcode 0x1000 0xca11 0 0 0 0 0) NOP) ; CALLCODE  # noqa: E501
+    # ... (35 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

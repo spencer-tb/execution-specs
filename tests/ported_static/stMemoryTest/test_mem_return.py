@@ -44,6 +44,8 @@ def test_mem_return(
         gas_limit=42949672960,
     )
 
+    # Source: LLL
+    # { (CALLDATACOPY 0 0 (CALLDATASIZE)) (RETURN 0 (MSIZE))  }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

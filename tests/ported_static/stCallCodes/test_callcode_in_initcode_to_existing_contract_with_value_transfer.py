@@ -48,6 +48,8 @@ def test_callcode_in_initcode_to_existing_contract_with_value_transfer(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { (MSTORE 0 0x6040600060406000600573945304eb96065b2a98b57a48a06ae28d285a71b562) (MSTORE 32 0x0186a0f260005500000000000000000000000000000000000000000000000000) (CREATE 5 0 64) }  # noqa: E501
     pre[contract] = Account(
         balance=0x2710,
         nonce=0,
@@ -64,6 +66,8 @@ def test_callcode_in_initcode_to_existing_contract_with_value_transfer(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (SSTORE 2 1) }
     pre[callee] = Account(
         balance=0,
         nonce=0,

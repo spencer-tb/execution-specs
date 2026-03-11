@@ -972,6 +972,8 @@ def test_revert_opcode_return(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { [[1]](CALL 150000 (CALLDATALOAD 0) 0 0 0 0 32) [[2]] (MLOAD 0) }
     pre[contract] = Account(
         balance=0,
         nonce=0,

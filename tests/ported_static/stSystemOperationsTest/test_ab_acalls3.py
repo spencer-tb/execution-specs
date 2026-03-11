@@ -45,6 +45,8 @@ def test_ab_acalls3(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {  [[ 0 ]] (ADD (SLOAD 0) 1) (CALL (- (GAS) 100000) <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5> 1 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0xFA3E8,
         nonce=0,

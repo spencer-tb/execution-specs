@@ -58,6 +58,8 @@ def test_returndatacopy_after_failing_staticcall(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (STATICCALL 0 <contract:0x1000000000000000000000000000000000000002> 0 0 0 0) (RETURNDATACOPY 0x0 0x0 32) ( SSTORE 0 (MLOAD 0))}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

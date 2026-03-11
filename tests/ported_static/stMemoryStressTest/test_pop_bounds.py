@@ -53,6 +53,8 @@ def test_pop_bounds(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # { (POP 0) (POP 0xffffffff) (POP 0xffffffffffffffff) (POP 0xffffffffffffffffffffffffffffffff) (POP 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -636,6 +636,8 @@ def test_create_collision_to_empty2(
     )
 
     pre[callee] = Account(balance=0, nonce=2)
+    # Source: LLL
+    # { (MSTORE 0 0x6001600155) [[1]] (CREATE 0 27 5) }
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -648,6 +650,8 @@ def test_create_collision_to_empty2(
         ),
     )
     pre[callee_2] = Account(balance=10, nonce=0)
+    # Source: LLL
+    # { (CALL 80000 (CALLDATALOAD 0) 0 0 0 0 0) }
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -664,6 +668,8 @@ def test_create_collision_to_empty2(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (MSTORE 0 0x6001600155) [[1]] (CREATE 0 27 5) }
     pre[callee_3] = Account(
         balance=0,
         nonce=0,
@@ -675,6 +681,8 @@ def test_create_collision_to_empty2(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (MSTORE 0 0x6001600155) [[1]] (CREATE 0 27 5) }
     pre[callee_4] = Account(
         balance=0,
         nonce=0,
@@ -686,6 +694,7 @@ def test_create_collision_to_empty2(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_5] = Account(
         balance=0,
         nonce=0,

@@ -45,6 +45,31 @@ def test_mem_copy_self(
     )
 
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: Yul
+    # {
+    #    let idPrecomp := 0x04
+    #
+    #    for { let i := 0} lt(i, 0x0F) { i := add(i, 1) }
+    #    {
+    #        mstore8(i, mul(add(i, 1), 0x11))
+    #    }
+    #
+    #    // The initial memory value
+    #    sstore(0, mload(0))
+    #
+    #    // Call idPrecomp
+    #    pop(call(gas(), idPrecomp, 0,
+    #      0, 10,     // input buffer
+    #      2, 10      // output buffer (overlapping the input)
+    #    ))
+    #
+    #    // Memory value immediately after the call
+    #    sstore(1, mload(0))
+    #
+    #    // Copy the return data (to check if it is corrupt)
+    #    returndatacopy(0x20, 0, 10)
+    #    sstore(2, mload(0x20))
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,

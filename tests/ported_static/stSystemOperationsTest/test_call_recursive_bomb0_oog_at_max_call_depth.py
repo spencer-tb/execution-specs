@@ -48,6 +48,8 @@ def test_call_recursive_bomb0_oog_at_max_call_depth(
         gas_limit=110000000000,
     )
 
+    # Source: LLL
+    # { [[ 0 ]] (+ (SLOAD 0) 1) [[ 2 ]] (MUL (DIV @@0 0x0402) 0xfffffffffffffffffff) [[ 1 ]] (CALL (- (GAS) 1024) (ADDRESS) 0 0 (MUL (DIV @@0 0x0402) 0xfffffffffffffffffff) 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

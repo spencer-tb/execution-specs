@@ -49,6 +49,8 @@ def test_callcodecall_10_ooge(
         gas_limit=30000000,
     )
 
+    # Source: LLL
+    # {  [[ 0 ]] (DELEGATECALL 800000 <contract:0x1000000000000000000000000000000000000001> 0 64 0 64 ) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

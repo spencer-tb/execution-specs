@@ -47,6 +47,36 @@ def test_code_copy_zero_paris(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {
+    #
+    #   ;; EXTCODECOPY of nonexistent account
+    #   (EXTCODECOPY 0xa222000000000000000000000000000000000000 0 0 32)
+    #   (SSTORE 0x10 (MLOAD 0))
+    #   (SSTORE 0x11 (EXTCODESIZE 0xa222000000000000000000000000000000000000))
+    #   (SSTORE 0x12 (EXTCODEHASH 0xa222000000000000000000000000000000000000))
+    #   (SSTORE 0x13 (CALLCODE 50000 0xa222000000000000000000000000000000000000 0 0 0 0 0))  # noqa: E501
+    #
+    #
+    #   ;; EXTCODECOPY of account with empty code
+    #   (EXTCODECOPY 0xa200000000000000000000000000000000000000 0 0 32)
+    #   (SSTORE 0x20 (MLOAD 0))
+    #   (SSTORE 0x21 (EXTCODESIZE 0xa200000000000000000000000000000000000000))
+    #   (SSTORE 0x22 (EXTCODEHASH 0xa200000000000000000000000000000000000000))
+    #   (SSTORE 0x23 (CALLCODE 50000 0xa200000000000000000000000000000000000000 0 0 0 0 0))  # noqa: E501
+    #
+    #
+    #   ;; EXTCODECOPY of empty account with empty code
+    #   (EXTCODECOPY 0xa300000000000000000000000000000000000000 0 0 32)
+    #   (SSTORE 0x30 (MLOAD 0))
+    #   (SSTORE 0x31 (EXTCODESIZE 0xa300000000000000000000000000000000000000))
+    #   (SSTORE 0x32 (EXTCODEHASH 0xa300000000000000000000000000000000000000))
+    #   (SSTORE 0x33 (CALLCODE 50000 0xa300000000000000000000000000000000000000 0 0 0 0 0))  # noqa: E501
+    #
+    #   ;; CODECOPY of dynamic account which has empty code
+    #   (CALL 550000 0xa100000000000000000000000000000000000000 0 0 0 0 32)
+    #   (SSTORE 0x40 (MLOAD 0))
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -159,6 +189,26 @@ def test_code_copy_zero_paris(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   (MSTORE 0
+    #     (CREATE2 0 0
+    #       (lll
+    #       {
+    #         ;; codecopy of empty code
+    #         (CODECOPY 0 0 32)
+    #         [[0x50]] (MLOAD 0)
+    #         [[0x51]] (EXTCODESIZE (ADDRESS))
+    #         [[0x52]] (EXTCODEHASH (ADDRESS))
+    #         [[0x53]] (EXTCODESIZE (CALLCODE 50000 (ADDRESS) 0 0 0 0 0))
+    #         (EXTCODECOPY (ADDRESS) 0 0 32)
+    #         (SSTORE 0x54 (MLOAD 0))
+    #       }
+    #       0)
+    #     0))
+    #    (RETURN 0 32)
+    #    (STOP)
+    # }
     pre[callee] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

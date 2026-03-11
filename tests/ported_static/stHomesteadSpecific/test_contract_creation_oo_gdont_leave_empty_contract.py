@@ -47,6 +47,8 @@ def test_contract_creation_oo_gdont_leave_empty_contract(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { (SSTORE 1 0x10) (MSTORE 0 0x6001600155601080600c6000396000f3006000355415600957005b6020356000 ) (CREATE 0 0 32)}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

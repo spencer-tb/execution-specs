@@ -50642,6 +50642,7 @@ def test_jump_to_push(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -50652,6 +50653,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -50662,6 +50664,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_2] = Account(
         balance=0,
         nonce=0,
@@ -50672,6 +50675,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_3] = Account(
         balance=0,
         nonce=0,
@@ -50682,6 +50686,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_4] = Account(
         balance=0,
         nonce=0,
@@ -50692,6 +50697,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_5] = Account(
         balance=0,
         nonce=0,
@@ -50702,6 +50708,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_6] = Account(
         balance=0,
         nonce=0,
@@ -50712,6 +50719,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_7] = Account(
         balance=0,
         nonce=0,
@@ -50722,6 +50730,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_8] = Account(
         balance=0,
         nonce=0,
@@ -50732,6 +50741,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_9] = Account(
         balance=0,
         nonce=0,
@@ -50742,6 +50752,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_10] = Account(
         balance=0,
         nonce=0,
@@ -50752,6 +50763,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_11] = Account(
         balance=0,
         nonce=0,
@@ -50762,6 +50774,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_12] = Account(
         balance=0,
         nonce=0,
@@ -50772,6 +50785,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_13] = Account(
         balance=0,
         nonce=0,
@@ -50782,6 +50796,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_14] = Account(
         balance=0,
         nonce=0,
@@ -50792,6 +50807,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_15] = Account(
         balance=0,
         nonce=0,
@@ -50802,6 +50818,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_16] = Account(
         balance=0,
         nonce=0,
@@ -50812,6 +50829,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_17] = Account(
         balance=0,
         nonce=0,
@@ -50822,6 +50840,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_18] = Account(
         balance=0,
         nonce=0,
@@ -50832,6 +50851,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_19] = Account(
         balance=0,
         nonce=0,
@@ -50842,6 +50862,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_20] = Account(
         balance=0,
         nonce=0,
@@ -50852,6 +50873,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_21] = Account(
         balance=0,
         nonce=0,
@@ -50862,6 +50884,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_22] = Account(
         balance=0,
         nonce=0,
@@ -50872,6 +50895,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_23] = Account(
         balance=0,
         nonce=0,
@@ -50882,6 +50906,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_24] = Account(
         balance=0,
         nonce=0,
@@ -50892,6 +50917,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_25] = Account(
         balance=0,
         nonce=0,
@@ -50902,6 +50928,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_26] = Account(
         balance=0,
         nonce=0,
@@ -50912,6 +50939,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_27] = Account(
         balance=0,
         nonce=0,
@@ -50922,6 +50950,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_28] = Account(
         balance=0,
         nonce=0,
@@ -50932,6 +50961,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_29] = Account(
         balance=0,
         nonce=0,
@@ -50942,6 +50972,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_30] = Account(
         balance=0,
         nonce=0,
@@ -50952,6 +50983,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_31] = Account(
         balance=0,
         nonce=0,
@@ -50962,6 +50994,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_32] = Account(
         balance=0,
         nonce=0,
@@ -50972,6 +51005,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_33] = Account(
         balance=0,
         nonce=0,
@@ -50982,6 +51016,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_34] = Account(
         balance=0,
         nonce=0,
@@ -50992,6 +51027,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_35] = Account(
         balance=0,
         nonce=0,
@@ -51002,6 +51038,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_36] = Account(
         balance=0,
         nonce=0,
@@ -51012,6 +51049,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_37] = Account(
         balance=0,
         nonce=0,
@@ -51022,6 +51060,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_38] = Account(
         balance=0,
         nonce=0,
@@ -51032,6 +51071,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_39] = Account(
         balance=0,
         nonce=0,
@@ -51042,6 +51082,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_40] = Account(
         balance=0,
         nonce=0,
@@ -51052,6 +51093,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_41] = Account(
         balance=0,
         nonce=0,
@@ -51062,6 +51104,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_42] = Account(
         balance=0,
         nonce=0,
@@ -51072,6 +51115,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_43] = Account(
         balance=0,
         nonce=0,
@@ -51082,6 +51126,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_44] = Account(
         balance=0,
         nonce=0,
@@ -51092,6 +51137,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_45] = Account(
         balance=0,
         nonce=0,
@@ -51102,6 +51148,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_46] = Account(
         balance=0,
         nonce=0,
@@ -51112,6 +51159,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_47] = Account(
         balance=0,
         nonce=0,
@@ -51122,6 +51170,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_48] = Account(
         balance=0,
         nonce=0,
@@ -51132,6 +51181,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_49] = Account(
         balance=0,
         nonce=0,
@@ -51142,6 +51192,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_50] = Account(
         balance=0,
         nonce=0,
@@ -51152,6 +51203,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_51] = Account(
         balance=0,
         nonce=0,
@@ -51162,6 +51214,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_52] = Account(
         balance=0,
         nonce=0,
@@ -51172,6 +51225,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_53] = Account(
         balance=0,
         nonce=0,
@@ -51182,6 +51236,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_54] = Account(
         balance=0,
         nonce=0,
@@ -51192,6 +51247,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_55] = Account(
         balance=0,
         nonce=0,
@@ -51202,6 +51258,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_56] = Account(
         balance=0,
         nonce=0,
@@ -51212,6 +51269,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_57] = Account(
         balance=0,
         nonce=0,
@@ -51222,6 +51280,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_58] = Account(
         balance=0,
         nonce=0,
@@ -51232,6 +51291,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_59] = Account(
         balance=0,
         nonce=0,
@@ -51242,6 +51302,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_60] = Account(
         balance=0,
         nonce=0,
@@ -51252,6 +51313,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_61] = Account(
         balance=0,
         nonce=0,
@@ -51262,6 +51324,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_62] = Account(
         balance=0,
         nonce=0,
@@ -51272,6 +51335,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_63] = Account(
         balance=0,
         nonce=0,
@@ -51282,6 +51346,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_64] = Account(
         balance=0,
         nonce=0,
@@ -51292,6 +51357,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_65] = Account(
         balance=0,
         nonce=0,
@@ -51302,6 +51368,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_66] = Account(
         balance=0,
         nonce=0,
@@ -51312,6 +51379,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_67] = Account(
         balance=0,
         nonce=0,
@@ -51322,6 +51390,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_68] = Account(
         balance=0,
         nonce=0,
@@ -51332,6 +51401,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_69] = Account(
         balance=0,
         nonce=0,
@@ -51342,6 +51412,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_70] = Account(
         balance=0,
         nonce=0,
@@ -51352,6 +51423,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_71] = Account(
         balance=0,
         nonce=0,
@@ -51362,6 +51434,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_72] = Account(
         balance=0,
         nonce=0,
@@ -51372,6 +51445,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_73] = Account(
         balance=0,
         nonce=0,
@@ -51382,6 +51456,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_74] = Account(
         balance=0,
         nonce=0,
@@ -51392,6 +51467,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_75] = Account(
         balance=0,
         nonce=0,
@@ -51402,6 +51478,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_76] = Account(
         balance=0,
         nonce=0,
@@ -51412,6 +51489,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_77] = Account(
         balance=0,
         nonce=0,
@@ -51424,6 +51502,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_78] = Account(
         balance=0,
         nonce=0,
@@ -51436,6 +51515,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_79] = Account(
         balance=0,
         nonce=0,
@@ -51448,6 +51528,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_80] = Account(
         balance=0,
         nonce=0,
@@ -51460,6 +51541,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_81] = Account(
         balance=0,
         nonce=0,
@@ -51472,6 +51554,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_82] = Account(
         balance=0,
         nonce=0,
@@ -51484,6 +51567,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_83] = Account(
         balance=0,
         nonce=0,
@@ -51496,6 +51580,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_84] = Account(
         balance=0,
         nonce=0,
@@ -51508,6 +51593,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_85] = Account(
         balance=0,
         nonce=0,
@@ -51520,6 +51606,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_86] = Account(
         balance=0,
         nonce=0,
@@ -51532,6 +51619,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_87] = Account(
         balance=0,
         nonce=0,
@@ -51544,6 +51632,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_88] = Account(
         balance=0,
         nonce=0,
@@ -51556,6 +51645,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_89] = Account(
         balance=0,
         nonce=0,
@@ -51568,6 +51658,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_90] = Account(
         balance=0,
         nonce=0,
@@ -51580,6 +51671,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_91] = Account(
         balance=0,
         nonce=0,
@@ -51592,6 +51684,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_92] = Account(
         balance=0,
         nonce=0,
@@ -51604,6 +51697,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_93] = Account(
         balance=0,
         nonce=0,
@@ -51616,6 +51710,7 @@ def test_jump_to_push(
             + Op.JUMPDEST
         ),
     )
+    # Source: raw bytecode
     pre[callee_94] = Account(
         balance=0,
         nonce=0,
@@ -51629,6 +51724,11 @@ def test_jump_to_push(
         ),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
+    # Source: Yul
+    # {
+    #   let addr := calldataload(4)
+    #   pop(delegatecall(sub(gas(), 5000), addr, 0, 0, 0, 0))
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -90,6 +90,8 @@ def test_create_oo_gafter_init_code_returndata2(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0 0x6460016001556000526005601bf3) (CREATE 0 18 14) [[ 1 ]] (RETURNDATASIZE) (RETURNDATACOPY 0 0 0) [[ 2 ]] (MLOAD 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

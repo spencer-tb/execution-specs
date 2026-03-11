@@ -48,6 +48,7 @@ def test_callcode_to_name_registrator_addres_too_big_left(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=23,
         nonce=0,

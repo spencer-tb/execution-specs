@@ -45,6 +45,38 @@ def test_shift_signed_combinations(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {
+    #   (def 'sstore_n 0)
+    #   (MSTORE sstore_n 0x0ff)
+    #
+    #   ;; Number of the first args
+    #   (def 'counter_i 32)
+    #   (def 'counter_i_max 6)
+    #
+    #   ;; Number of the second args
+    #   (def 'counter_j 64)
+    #   (def 'counter_j_max 14)
+    #
+    #   ;; Set of the first args
+    #   (def 'data_istart 10100)
+    #   (MSTORE (ADD data_istart (MUL 32 0)) 0x0000000000000000000000000000000000000000000000000000000000000080)  # noqa: E501
+    #   (MSTORE (ADD data_istart (MUL 32 1)) 0x0000000000000000000000000000000000000000000000000000000000008000)  # noqa: E501
+    #   (MSTORE (ADD data_istart (MUL 32 2)) 0x0000000000000000000000000000000000000000000000000000000080000000)  # noqa: E501
+    #   (MSTORE (ADD data_istart (MUL 32 3)) 0x0000000000000000000000000000000000000000000000008000000000000000)  # noqa: E501
+    #   (MSTORE (ADD data_istart (MUL 32 4)) 0x0000000000000000000000000000000080000000000000000000000000000000)  # noqa: E501
+    #   (MSTORE (ADD data_istart (MUL 32 5)) 0x8000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #
+    #   ;; Set of the second args
+    #   (def 'data_jstart 20100)
+    #   (MSTORE (ADD data_jstart (MUL 32 0)) 0x0000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #   (MSTORE (ADD data_jstart (MUL 32 1)) 0x0000000000000000000000000000000000000000000000000000000000000001)  # noqa: E501
+    #   (MSTORE (ADD data_jstart (MUL 32 2)) 0x0000000000000000000000000000000000000000000000000000000000000002)  # noqa: E501
+    #   (MSTORE (ADD data_istart (MUL 32 3)) 0x0000000000000000000000000000000000000000000000000000000000000005)  # noqa: E501
+    #   (MSTORE (ADD data_jstart (MUL 32 4)) 0x00000000000000000000000000000000000000000000000000000000000000fe)  # noqa: E501
+    #   (MSTORE (ADD data_jstart (MUL 32 5)) 0x00000000000000000000000000000000000000000000000000000000000000ff)  # noqa: E501
+    #   (MSTORE (ADD data_jstart (MUL 32 6)) 0x0000000000000000000000000000000000000000000000000000000000000100)  # noqa: E501
+    # ... (99 more lines)
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

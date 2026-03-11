@@ -47,6 +47,8 @@ def test_create_init_fail_stack_size_larger_than1024(
         gas_limit=1000000000,
     )
 
+    # Source: LLL
+    # {(MSTORE 0 0x6103ff6000525b7f0102030405060708090a0102030405060708090a01020304) (MSTORE 32 0x05060708090a0102600160005103600052600051600657000000000000000000 ) (SELFDESTRUCT (CREATE 1 0 64)) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -56,6 +56,8 @@ def test_staticcall_createfails(
     )
 
     pre[sender] = Account(balance=0x38BEEC8FEECA2598, nonce=0)
+    # Source: LLL
+    # { [[1]] (STATICCALL 70000 (CALLDATALOAD 0) 0 0 0 0) }
     pre[contract] = Account(
         balance=0,
         nonce=63,
@@ -75,6 +77,8 @@ def test_staticcall_createfails(
         ),
         storage={0x1: 0x1},
     )
+    # Source: LLL
+    # { (MSTORE 1 1) [[2]] (CREATE 1 1 1) }
     pre[callee] = Account(
         balance=0,
         nonce=63,
@@ -86,6 +90,7 @@ def test_staticcall_createfails(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0,
         nonce=63,

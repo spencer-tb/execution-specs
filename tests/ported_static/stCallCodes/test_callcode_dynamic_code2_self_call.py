@@ -224,6 +224,8 @@ def test_callcode_dynamic_code2_self_call(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {(seq [[10]] (CREATE 0 0 (lll(seq  [[122]] (CALLCODE 100000 0x13136008b64ff592819b2fa6d43f2835c452020e 0 0 64 0 64)  (RETURN 0 (lll(seq [[0]] 1  [[20]] (ADDRESS) [[21]] (ORIGIN) [[22]] (CALLER)   )0) )  )0)   )  [[11]] (CALLCODE 100000 (SLOAD 10) 0 0 64 0 64)                   )}  # noqa: E501
     pre[callee] = Account(
         balance=0x2710,
         nonce=0,
@@ -272,6 +274,8 @@ def test_callcode_dynamic_code2_self_call(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL 800000 (CALLDATALOAD 0) 0 0 0 0 0) }
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -288,6 +292,8 @@ def test_callcode_dynamic_code2_self_call(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  (MSTORE 0 0x604060006040600060007313136008b64ff592819b2fa6d43f2835c452020e62) (MSTORE 32 0x0186a0f2600b5533600c55000000000000000000000000000000000000000000)  (CREATE 1 0 64) }  # noqa: E501
     pre[callee_1] = Account(
         balance=0x2710,
         nonce=0,

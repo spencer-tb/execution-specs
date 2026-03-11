@@ -48,6 +48,8 @@ def test_create_e_contract_then_call_to_non_existent_acc(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { [[0]](GAS) [[1]] (CREATE 0 0 32) [[2]](GAS) [[3]] (CALL 60000 0xe1ecf98489fa9ed60a664fc4998db699cfa39d40 0 0 0 0 0) [[100]] (GAS) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

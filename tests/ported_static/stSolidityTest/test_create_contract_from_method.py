@@ -46,6 +46,7 @@ def test_create_contract_from_method(
         gas_limit=100000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,

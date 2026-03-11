@@ -47,12 +47,14 @@ def test_random_statetest_default_tue_07_58_41_15153_575192(
         gas_limit=20000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=28,
         code=Op.SELFDESTRUCT(address=0xABCDEF),
     )
     pre[sender] = Account(balance=0x5D8FDD3FF54298B4, nonce=28)
+    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=0,
         nonce=28,

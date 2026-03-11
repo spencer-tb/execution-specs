@@ -68,6 +68,8 @@ def test_jump_bounds(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # { (JUMP 0) }
     pre[contract] = Account(balance=0, nonce=0, code=Op.JUMP(pc=0x0) + Op.STOP)
     pre[sender] = Account(balance=0x7FFFFFFFFFFFFFFF, nonce=0)
 

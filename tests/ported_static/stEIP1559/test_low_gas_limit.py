@@ -100,6 +100,10 @@ def test_low_gas_limit(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
+    # Source: Yul
+    # {
+    #     sstore(0, add(1,1))
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

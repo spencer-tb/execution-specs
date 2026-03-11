@@ -45,6 +45,28 @@ def test_exp_power2(
     )
 
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (def 'storageJump 0x10)
+    #
+    #     (def 'calc (m) {
+    #          (def 'n (exp 2 m))
+    #
+    #          [[(* storageJump m)]]       (exp 2 n)
+    #          [[(+ (* storageJump m) 1)]] (exp 2 (- n 1))
+    #          [[(+ (* storageJump m) 2)]] (exp 2 (+ n 1))
+    #       }
+    #     )
+    #
+    #     (calc 1)
+    #     (calc 2)
+    #     (calc 3)
+    #     (calc 4)
+    #     (calc 5)
+    #     (calc 6)
+    #     (calc 7)
+    #     (calc 8)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

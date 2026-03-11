@@ -44,6 +44,8 @@ def test_store_gas_on_create(
     )
 
     pre[sender] = Account(balance=0x17D78400, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0 0x5a60fd55) (CREATE 0 28 4)}
     pre[coinbase] = Account(
         balance=0,
         nonce=0,

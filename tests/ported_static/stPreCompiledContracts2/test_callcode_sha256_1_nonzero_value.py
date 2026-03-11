@@ -47,6 +47,8 @@ def test_callcode_sha256_1_nonzero_value(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # { [[ 2 ]] (CALLCODE 200000 2 0x13 0 0 0 32) [[ 0 ]] (MLOAD 0)}
     pre[contract] = Account(
         balance=0xBEBC200,
         nonce=0,

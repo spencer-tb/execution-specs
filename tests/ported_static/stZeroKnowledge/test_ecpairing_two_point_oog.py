@@ -552,6 +552,7 @@ def test_ecpairing_two_point_oog(
     pre[callee_13] = Account(balance=0xDE0B6B3A7640000, nonce=0)
     pre[sender] = Account(balance=0xDE0B6B3A73C5C72, nonce=12)
     pre[callee_14] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=1,

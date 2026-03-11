@@ -6614,6 +6614,7 @@ def test_push0(
         gas_limit=89128960,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -6677,6 +6678,7 @@ def test_push0(
             "1717171717171717171717171717171717171717171717171717171717171760019055"  # noqa: E501
         ),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -7708,6 +7710,7 @@ def test_push0(
             + Op.PUSH0
         ),
     )
+    # Source: raw bytecode
     pre[callee_2] = Account(
         balance=0,
         nonce=0,
@@ -7737,6 +7740,7 @@ def test_push0(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_4] = Account(
         balance=0,
         nonce=0,
@@ -7745,6 +7749,7 @@ def test_push0(
             + Op.RETURN(offset=0x0, size=0x1)
         ),
     )
+    # Source: raw bytecode
     pre[callee_5] = Account(
         balance=0,
         nonce=0,
@@ -7756,12 +7761,18 @@ def test_push0(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_6] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=Op.PUSH0, value=0x1),
     )
     pre[sender] = Account(balance=0x100000000000, nonce=0)
+    # Source: Yul
+    # {
+    #     sstore(0, call(100000, shr(96, calldataload(0)), 0, 0, 0, 0, 0))
+    #     sstore(1, 1)
+    #   }
     pre[contract] = Account(
         balance=0,
         nonce=0,

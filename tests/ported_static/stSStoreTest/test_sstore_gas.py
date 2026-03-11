@@ -45,6 +45,38 @@ def test_sstore_gas(
     )
 
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: Yul
+    # {
+    #    // Use storage of 0x1000 and above for gas figures
+    #    let storageLoc := 0x1000
+    #
+    #    // Gas spent on the measurement (two PUSHs, GAS, and SWAPs as
+    #    // needed for the variables)
+    #    let measureGas := 8
+    #
+    #    let gas0, gas1
+    #
+    #    // Cold storage, non-zero to non-zero
+    #    gas0 := gas()
+    #    sstore(0, 0xBEEF)
+    #    gas1 := gas()
+    #    sstore(storageLoc, sub(sub(gas0, gas1), measureGas))
+    #    storageLoc := add(storageLoc, 1)
+    #
+    #    // Warm storage, non-zero to non-zero
+    #    gas0 := gas()
+    #    sstore(0, 0xDEADBEEF)
+    #    gas1 := gas()
+    #    sstore(storageLoc, sub(sub(gas0, gas1), measureGas))
+    #    storageLoc := add(storageLoc, 1)
+    #
+    #    // Warm storage, non-zero to zero
+    #    gas0 := gas()
+    #    sstore(0, 0)
+    #    gas1 := gas()
+    #    sstore(storageLoc, sub(sub(gas0, gas1), measureGas))
+    #    storageLoc := add(storageLoc, 1)
+    # ... (49 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,

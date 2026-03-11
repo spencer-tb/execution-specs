@@ -1181,6 +1181,24 @@ def test_ecrecover_weird_v(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
+    # Source: Yul
+    # {
+    #    let ecRecoverAddr := 1
+    #
+    #    // Call ecRecover
+    #
+    #    // Not the most efficient code, but it is more readable to see what each parameter means  # noqa: E501
+    #    mstore(0x00, calldataload(0x04))    // msgHash
+    #    mstore(0x20, calldataload(0x24))    // v
+    #    mstore(0x40, calldataload(0x44))    // r
+    #    mstore(0x60, calldataload(0x64))    // s
+    #    let res := staticcall(gas(), ecRecoverAddr, 0, 0x80, 0x100, 0x100)
+    #
+    #    // write results
+    #    sstore(0, res)
+    #    sstore(1, mload(0x100))
+    #    sstore(2, mload(0x120))
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=1,

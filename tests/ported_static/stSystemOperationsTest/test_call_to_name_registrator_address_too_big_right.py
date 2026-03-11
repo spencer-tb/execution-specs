@@ -48,6 +48,7 @@ def test_call_to_name_registrator_address_too_big_right(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=23,
         nonce=0,
@@ -64,6 +65,8 @@ def test_call_to_name_registrator_address_too_big_right(
             )
         ),
     )
+    # Source: LLL
+    # { (MSTORE 0 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) (MSTORE 32 0xaaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaa ) [[ 0 ]] (CALL 1000 <contract:0x945304eb96065b2a98b57a48a06ae28d285a71b5>aa 23 0 64 64 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

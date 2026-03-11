@@ -48,6 +48,8 @@ def test_execute_call_that_ask_fore_gas_then_trabsaction_has(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[1]] (CALL 600000 <contract:0x1000000000000000000000000000000000000001> 0 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

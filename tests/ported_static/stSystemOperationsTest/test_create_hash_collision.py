@@ -47,6 +47,8 @@ def test_create_hash_collision(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # { (MSTORE 0 0x601080600c6000396000f3006000355415600957005b60203560003555) [[ 0 ]] (CREATE 23 3 29) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -63,6 +65,7 @@ def test_create_hash_collision(
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=42,
         nonce=0,

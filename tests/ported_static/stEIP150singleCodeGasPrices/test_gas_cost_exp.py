@@ -298,6 +298,36 @@ def test_gas_cost_exp(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Initialization
+    #
+    #   ; Variables (0x20 byte wide)
+    #   (def 'powerOf           0x000)  ; A to the power of @powerOf
+    #   (def 'expectedCost      0x020)  ; Expected gas cost
+    #   (def 'gasB4             0x040)  ; Before the action being measured
+    #   (def 'gasAfter          0x060)  ; After the action being measured
+    #
+    #   ; Understand CALLDATA. It is four bytes of function
+    #   ; selector (irrelevant) followed by 32 byte words
+    #   ; of the parameters
+    #   [powerOf]       $4
+    #   [expectedCost]  $36
+    #
+    #
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Run the operation
+    #   [gasB4]    (gas)
+    #   (exp 2 @powerOf)
+    #   [gasAfter] (gas)
+    #
+    #
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Return value
+    #
+    #   [[0]] (- @gasB4 @gasAfter @expectedCost)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

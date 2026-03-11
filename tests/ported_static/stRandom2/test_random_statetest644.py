@@ -93,6 +93,7 @@ def test_random_statetest644(
             + Op.ORIGIN
         ),
     )
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0x23C22AEB4961B17E,
         nonce=148,
@@ -122,6 +123,7 @@ def test_random_statetest644(
         ),
     )
     pre[sender] = Account(balance=0x236D08FE524712CB, nonce=0)
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0x9183FD5B40D86E03,
         nonce=28,

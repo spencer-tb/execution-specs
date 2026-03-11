@@ -1461,6 +1461,17 @@ def test_create_large_result(
         gas_limit=100000000,
     )
 
+    # Source: Yul
+    # {
+    #    // Store some data
+    #    mstore(0, not(0))
+    #
+    #    // Copy the requested length from the constructor code
+    #    codecopy(0x100, 0x100, 0x20)
+    #
+    #    // Return it as the new contract
+    #    return(0, mload(0x100))
+    # }
     pre[callee] = Account(
         balance=0,
         nonce=1,
@@ -1471,6 +1482,38 @@ def test_create_large_result(
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: Yul
+    # {
+    #   sstore(1, gas())
+    #
+    #   // The operation to run
+    #   // F0 - CREATE
+    #   // F5 - CREATE2
+    #   let operation := calldataload(0x04)
+    #
+    #   // The constructor ends with
+    #   // F3 - RETURN
+    #   // FD - REVERT
+    #   let constructorEnd := calldataload(0x24)
+    #
+    #   // The size of the contract getting created
+    #   let contractSize := calldataload(0x44)
+    #
+    #   // Create the constructor.
+    #   let codeSize := extcodesize(0xC0DE)
+    #   extcodecopy(0xC0DE, 0, 0, codeSize)
+    #
+    #   // Modify the last opcode
+    #   mstore8(sub(codeSize, 1), constructorEnd)
+    #
+    #   // Include the requested contract size
+    #   mstore(0x100, contractSize)
+    #
+    #   // Create the contract
+    #   let newAddr
+    #   switch operation
+    #   case 0xF0 { newAddr := create(0, 0, 0x120) }
+    # ... (9 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,

@@ -184,6 +184,8 @@ def test_modexp_modsize0_returndatasize(
         gas_limit=100000000000,
     )
 
+    # Source: LLL
+    # { (CALLDATACOPY 0 0 (CALLDATASIZE)) [[1]] (CALLCODE (GAS) 5 0 0 (CALLDATASIZE) 1000 32) [[2]](MLOAD 1000) [[3]](RETURNDATASIZE) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

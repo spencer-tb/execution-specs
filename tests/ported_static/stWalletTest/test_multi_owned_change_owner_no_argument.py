@@ -46,6 +46,7 @@ def test_multi_owned_change_owner_no_argument(
         gas_limit=10000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=100,
         nonce=0,

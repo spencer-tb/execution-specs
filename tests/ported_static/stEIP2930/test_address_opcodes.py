@@ -9493,6 +9493,17 @@ def test_address_opcodes(
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # {
+    #     ; relay the parameters
+    #     [0x100] $4
+    #     [0x120] $36
+    #     (call (gas) 0x1000 0 0x100 0x40 0 0x40)
+    #
+    #     ; Write the returned results, if any
+    #     [[0]] @0x00
+    #     [[1]] @0x20
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

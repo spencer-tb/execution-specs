@@ -44,6 +44,8 @@ def test_refund50_1(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { [[ 1 ]] 0 [[ 2 ]] 0 [[ 3 ]] 0 [[ 4 ]] 0 [[ 5 ]] 0 }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

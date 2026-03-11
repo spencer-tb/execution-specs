@@ -98,6 +98,7 @@ def test_random_statetest645(
         gas_limit=13175566155172316,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0xBCBAF5A33577F162,
         nonce=29,
@@ -112,6 +113,7 @@ def test_random_statetest645(
         ),
     )
     pre[callee_1] = Account(balance=0xB3508C0F8A22F8A1, nonce=28)
+    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=0x2BE1CFD5D6D6B0B7,
         nonce=175,

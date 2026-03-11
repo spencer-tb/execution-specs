@@ -48,6 +48,38 @@ def test_gas_cost_return(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Initialization
+    #
+    #   ; Variables (0x20 byte wide)
+    #   (def 'gasB4         0x000)  ; Before the action being measured
+    #
+    #   ; Gas for the STOP call
+    #   (def 'gasSTOP       0x020)
+    #
+    #   ; Gas for the RETURN call
+    #   (def 'gasRETURN     0x040)
+    #
+    #   ; Play with the variables here to avoid having the memory allocation
+    #   ; affect the gas calculation
+    #   [gasB4] 0x60A7
+    #   [gasSTOP] 0x60A7
+    #   [gasRETURN] 0x60A7
+    #
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Run the operation
+    #
+    #   [gasB4] (gas)
+    #   (call 0x10000 0x1000 0 0 0 0 0)
+    #   [gasSTOP] (- @gasB4 (gas))
+    #
+    #
+    #   [gasB4] (gas)
+    #   (call 0x10000 0x2000 0 0 0 0 0)
+    #   [gasRETURN] (- @gasB4 (gas))
+    # ... (11 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -93,12 +125,14 @@ def test_gas_cost_return(
         ),
         storage={0x0: 0x60A7},
     )
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.RETURN(offset=0xFF, size=0x0),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

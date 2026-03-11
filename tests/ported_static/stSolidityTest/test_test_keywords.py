@@ -45,6 +45,7 @@ def test_test_keywords(
     )
 
     pre[sender] = Account(balance=0x5F5E100, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,

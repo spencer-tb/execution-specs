@@ -453,6 +453,8 @@ def test_revert_precompiled_touch_paris(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  (CALLCODE (GAS) (CALLDATALOAD 0) 0 0 0 0 0) }
     pre[contract] = Account(
         balance=0,
         nonce=0,

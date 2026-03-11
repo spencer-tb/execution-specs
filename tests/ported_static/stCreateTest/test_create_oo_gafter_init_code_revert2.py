@@ -170,6 +170,8 @@ def test_create_oo_gafter_init_code_revert2(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (CALL (GAS) (CALLDATALOAD 0) 0 0 0 0 0) }
     pre[contract] = Account(
         balance=0xE8D4A51000,
         nonce=0,
@@ -187,6 +189,8 @@ def test_create_oo_gafter_init_code_revert2(
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0 0x6460016001556000526005601bf3) (CREATE 0 18 14) (REVERT 0 32) }  # noqa: E501
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -197,6 +201,8 @@ def test_create_oo_gafter_init_code_revert2(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL 33000 0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b 0 0 0 0 32) [[ 1 ]] (MLOAD 0) }  # noqa: E501
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -217,6 +223,8 @@ def test_create_oo_gafter_init_code_revert2(
         ),
         storage={0x1: 0xFF},
     )
+    # Source: LLL
+    # { (CALL 23000 0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b 0 0 0 0 32) [[ 1 ]] (MLOAD 0) }  # noqa: E501
     pre[callee_2] = Account(
         balance=0,
         nonce=0,

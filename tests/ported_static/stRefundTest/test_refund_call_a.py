@@ -45,6 +45,8 @@ def test_refund_call_a(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { [[ 0 ]] (CALL 5500 <contract:0xaaae7baea6a6c7c4c2dfeb977efac326af552aaa> 0 0 0 0 0 )}  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -99,6 +99,8 @@ def test_delegatecall_bounds2(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # { (DELEGATECALL 0x7ffffffffffffff <contract:0x1000000000000000000000000000000000000001> 0xffffffff 0xffffffff 0xffffffff 0xffffffff) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

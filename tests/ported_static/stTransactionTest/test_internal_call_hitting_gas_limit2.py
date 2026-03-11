@@ -48,6 +48,8 @@ def test_internal_call_hitting_gas_limit2(
         gas_limit=47766,
     )
 
+    # Source: LLL
+    # { (CALL 25000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 1 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

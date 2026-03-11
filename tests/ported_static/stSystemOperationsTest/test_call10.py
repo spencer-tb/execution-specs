@@ -47,6 +47,8 @@ def test_call10(
 
     pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, nonce=0)
     pre[callee] = Account(balance=7000, nonce=0)
+    # Source: LLL
+    # { (def 'i 0x80) (for {} (< @i 10) [i](+ @i 1) [[ 0 ]](CALL 0xfffffffffff <eoa:0xaaaf5374fce5edbc8e2a8697c15331677e6ebf0b> 1 0 50000 0 0) ) [[ 1 ]] @i}  # noqa: E501
     pre[contract] = Account(
         balance=1000,
         nonce=0,

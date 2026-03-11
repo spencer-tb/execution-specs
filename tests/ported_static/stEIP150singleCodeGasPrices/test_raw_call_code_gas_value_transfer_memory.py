@@ -53,6 +53,8 @@ def test_raw_call_code_gas_value_transfer_memory(
         nonce=0,
         code=Op.SSTORE(key=0x2, value=Op.GAS) + Op.STOP,
     )
+    # Source: LLL
+    # { [0] (GAS) (CALLCODE 30000 <contract:0x094f5374fce5edbc8e2a8697c15331677e6ebf0b> 10 0 8000 0 8000) [[1]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

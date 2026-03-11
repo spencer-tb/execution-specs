@@ -48,6 +48,38 @@ def test_10_revert_undoes_store_after_return(
     )
 
     pre[sender] = Account(balance=0x3635C9ADC5DEA00000, nonce=0)
+    # Source: Yul
+    # {
+    #   switch selector()
+    #
+    #   case 0x70ac643e { // doFirstCall()
+    #     doFirstCall()
+    #   }
+    #
+    #   case 0x76b85d23 { // doCallThenRevert()
+    #     doCallThenRevert()
+    #   }
+    #
+    #   case 0x4ccca553 { // doSuccessfulStore()
+    #     doSuccessfulStore()
+    #   }
+    #
+    #   function doFirstCall() {
+    #     verbatim_2i_0o(hex"5D", 0, 5)
+    #
+    #     let v := verbatim_1i_1o(hex"5C", 0)
+    #     sstore(0, v)
+    #
+    #     mstore(0, hex"76b85d23") // calls doCallThenRevert()
+    #     let fail := call(gas(), address(), 0, 0, 32, 0, 32)
+    #
+    #     sstore(1, fail) // should be 0 (revert)
+    #     sstore(2, mload(0)) // load 1 (successful call)
+    #
+    #     let val := verbatim_1i_1o(hex"5C", 0)
+    #     sstore(3, val)
+    #   }
+    # ... (23 more lines)
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -46,6 +46,8 @@ def test_call_ripemd160_5(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # { (MSTORE 0 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) [[ 2 ]] (CALL 6000 3 0 0 1000000 0 32) [[ 0 ]] (MLOAD 0)}  # noqa: E501
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

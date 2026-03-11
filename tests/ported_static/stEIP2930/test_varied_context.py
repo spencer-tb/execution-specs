@@ -23533,6 +23533,34 @@ def test_varied_context(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; 0xC057: DELEGATE_VALID DELEGATE_INVALID
+    #    ;         CALL_INVALID CALL_VALID
+    #    ;         CALLCODE_VALID CALLCODE_INVALID
+    #
+    #
+    #  ; Write to [[0]], and see how much gas that cost. It should
+    #  ; cost more when it is not declared storage
+    #    [0]   (gas)
+    #   [[0]]  0x02
+    #    [0]   (- @0 (gas) 17)
+    #   [[1]] @0
+    #
+    #  ; The 17 is the cost of the extra opcodes:
+    #  ; PUSH1 0x00, MSTORE
+    #  ; PUSH1 0x02, PUSH1 0x00, (and then comes the SSTORE we are measuring)
+    #  ; GAS
+    #
+    #  ; Read [[0x60A7]], and see how much gas that cost. It should
+    #  ; cost more when it is not declared storage
+    #    [0]   (gas)
+    #   [0x20] @@0x60A7
+    #    [0]   (- @0 (gas) 16)
+    #   [[2]] @0
+    #
+    #  ; The 16 is the cost of the extra opcodes
+    # }
     pre[callee_18] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -23555,6 +23583,14 @@ def test_varied_context(
         ),
         storage={0x60A7: 0xDEAD},
     )
+    # Source: LLL
+    # {  ; STATIC_WRITE_VALID     STATIC_WRITE_INVALID
+    #    [[0]] 0xDEAD60A7
+    #
+    #    ; If we get here, GOOD
+    #    [0] 0x600D
+    #    (return 0 0x20)
+    # }
     pre[callee_19] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -23565,12 +23601,22 @@ def test_varied_context(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  ; WRITE_INVALID_OOG    WRITE_VALID_NO_OOG
+    #
+    #   [[0]] 0x600D
+    # }
     pre[callee_20] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=0x600D) + Op.STOP,
         storage={0x0: 0xBAD},
     )
+    # Source: LLL
+    # {  ; READ_INVALID_OOG    READ_VALID_NO_OOG
+    #    [0] @@0x60A7
+    #    [[0]] 0x600D
+    # }
     pre[callee_21] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -23581,6 +23627,17 @@ def test_varied_context(
         ),
         storage={0x0: 0xBAD, 0x60A7: 0xDEAD},
     )
+    # Source: LLL
+    # {
+    #   ; CALL_TWICE_VALID     CALL_TWICE_INVALID
+    #   [0] (gas)
+    #   [[0x00]] 0x60A7
+    #   [0] (- @0 (gas))
+    #
+    #   ; If @@1 is empty, write to it. Otherwise, write to @@2
+    #   (if (= @@1 0) {[[1]] @0} {[[2]] @0})
+    #
+    # }
     pre[callee_22] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -23597,6 +23654,13 @@ def test_varied_context(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; CALL_WRITE_SUICIDE_VALID      CALL_WRITE_SUICIDE_INVALID
+    #    [[0]] 0xDEAD
+    #
+    #    (selfdestruct 0)
+    # }
     pre[callee_23] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -23606,6 +23670,13 @@ def test_varied_context(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; CALL_READ_SUICIDE_VALID      CALL_READ_SUICIDE_INVALID
+    #    @@0
+    #
+    #    (selfdestruct 0)
+    # }
     pre[callee_24] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -23614,6 +23685,20 @@ def test_varied_context(
         ),
         storage={0x0: 0xDEAD0060A7},
     )
+    # Source: LLL
+    # {
+    #  ;   STATICCALL_VALID  STATICCALL_INVALID
+    #
+    #
+    #  ; Read [[0x60A7]], and see how much gas that cost. It should
+    #  ; cost more when it is not declared storage
+    #    [0]   (gas)
+    #  [0x20] @@0x60A7
+    #    [0]   (- @0 (gas) 19)
+    #  ; The 19 is the cost of the extra opcodes
+    #
+    #  (return 0x00 0x20) ; a.k.a. @0
+    # }
     pre[callee_25] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -23630,6 +23715,15 @@ def test_varied_context(
         storage={0x60A7: 0xDEAD},
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # {
+    #     ; ccc...ccc  revert and suicide contract
+    #     (call (gas) (+ 0x1000 $4) 0 0 0 0 0x40)
+    #
+    #     ; Write the returned results, if any
+    #     [[0]] @0x00
+    #     [[1]] @0x20
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

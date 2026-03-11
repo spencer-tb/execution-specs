@@ -103,6 +103,8 @@ def test_call_bounds2a(
         balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
         nonce=0,
     )
+    # Source: LLL
+    # {   (CALL 0x7ffffffffffffff <contract:0x1000000000000000000000000000000000000001> 0 0xffffffff 0xffffffff 0xffffffff 0xffffffff)  }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

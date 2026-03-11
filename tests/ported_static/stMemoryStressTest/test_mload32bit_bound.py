@@ -71,6 +71,8 @@ def test_mload32bit_bound(
     )
 
     pre[sender] = Account(balance=0x3E801F4FA93760, nonce=0)
+    # Source: LLL
+    # { [[ 1 ]] (MLOAD 4294967296) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

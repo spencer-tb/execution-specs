@@ -47,6 +47,8 @@ def test_raw_create_gas(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { [0] (GAS) (CREATE 0 0 0) [[1]] (SUB @0 (GAS)) }
     pre[contract] = Account(
         balance=0,
         nonce=0,

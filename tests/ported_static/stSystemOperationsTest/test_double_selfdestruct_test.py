@@ -741,6 +741,38 @@ def test_double_selfdestruct_test(
         gas_limit=10000000000,
     )
 
+    # Source: Yul
+    # {
+    #    // If there's data, call this again and then
+    #    // try to selfdestruct.
+    #    // Necessary to use data, because delegatecall and staticcall don't
+    #    // affect calldata
+    #    if gt(calldatasize(), 2) {
+    #      // Type of call to make
+    #      let opcode := shr(248, calldataload(0))
+    #
+    #      // Address for caller selfdestruct
+    #      let caller_ff := and(shr(232, calldataload(0)), 0xFFFF)
+    #
+    #      // Address for called selfdestruct, which we need to send with the call  # noqa: E501
+    #      let called_ff := and(shr(216, calldataload(0)), 0xFFFF)
+    #      mstore8(0, and(shr(8, called_ff), 0xFF))
+    #      mstore8(1, and(called_ff, 0xFF))
+    #
+    #      if eq(opcode, 0xF1) { pop(call(gas(), 0xc0de, 0, 0,2, 0,0)) }
+    #      if eq(opcode, 0xF2) { pop(callcode(gas(), 0xc0de, 0, 0,2, 0,0)) }
+    #      if eq(opcode, 0xF4) { pop(delegatecall(gas(), 0xc0de, 0,2, 0,0)) }
+    #      if eq(opcode, 0xFA) { pop(staticcall(gas(), 0xc0de, 0,2, 0,0)) }
+    #      selfdestruct(caller_ff)
+    #    }
+    #
+    #    // If there are only two bytes of call data, that is the
+    #    // selfdestruct address
+    #    let called_ff := and(shr(240, calldataload(0)), 0xFFFF)
+    #    if eq(calldatasize(), 2) {
+    #      selfdestruct(called_ff)
+    #    }
+    # ... (1 more lines)
     pre[contract] = Account(
         balance=0xF4240,
         nonce=1,

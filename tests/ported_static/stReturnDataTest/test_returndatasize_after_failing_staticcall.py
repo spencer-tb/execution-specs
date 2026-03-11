@@ -49,8 +49,11 @@ def test_returndatasize_after_failing_staticcall(
         gas_limit=111669149696,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(balance=0x6400000000, nonce=0, code=Op.REVERT)
     pre[callee_1] = Account(balance=0x100000, nonce=0)
+    # Source: LLL
+    # { (seq (STATICCALL 60000 <contract:0x1000000000000000000000000000000000000002> 0 0 0 0) (SSTORE 0 (RETURNDATASIZE)))}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

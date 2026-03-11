@@ -454,6 +454,8 @@ def test_revert_precompiled_touch_noncestorage(
         ),
     )
     pre[callee_10] = Account(balance=0, nonce=1, storage={0x0: 0x1})
+    # Source: LLL
+    # {  (CALLCODE (GAS) (CALLDATALOAD 0) 0 0 0 0 0) }
     pre[contract] = Account(
         balance=0,
         nonce=0,

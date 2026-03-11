@@ -44,6 +44,7 @@ def test_log1_dejavu(
         gas_limit=52949672960,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

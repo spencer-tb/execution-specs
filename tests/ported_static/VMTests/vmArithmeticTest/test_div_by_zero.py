@@ -8776,6 +8776,20 @@ def test_div_by_zero(
     )
 
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (def 'NOP 0)
+    #     (def 'opcode $4)
+    #     (def 'a      $36)
+    #     (def 'b      $68)
+    #
+    #     (if (= opcode 0x04) [[0]] (div a 0) NOP)
+    #     (if (= opcode 0x05) [[0]] (sdiv a 0) NOP)
+    #     (if (= opcode 0x06) [[0]] (mod a 0) NOP)
+    #     (if (= opcode 0x07) [[0]] (smod a 0) NOP)
+    #     (if (= opcode 0x08) [[0]] (addmod a b 0) NOP)
+    #     (if (= opcode 0x09) [[0]] (mulmod a b 0) NOP)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

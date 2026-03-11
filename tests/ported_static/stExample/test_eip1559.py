@@ -45,6 +45,11 @@ def test_eip1559(
         gas_limit=16777216,
     )
 
+    # Source: LLL
+    # {
+    #    (sstore 0 (gasprice))
+    #    (sstore 1 (basefee))
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,

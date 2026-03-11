@@ -153,6 +153,8 @@ def test_ab_acalls_suicide1(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {  (MSTORE 0 (CALLDATALOAD 0)) [[ (PC) ]] (CALL (CALLDATALOAD 0) 0x945304eb96065b2a98b57a48a06ae28d285a71b5 24 0 32 0 0)   }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
@@ -173,6 +175,8 @@ def test_ab_acalls_suicide1(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  (MSTORE 0 (CALLDATALOAD 0)) [[ (PC) ]] (ADD 1 (CALL (SUB (CALLDATALOAD 0) 50000) 0x095e7baea6a6c7c4c2dfeb977efac326af552d87 23 0 32 0 0)) (SELFDESTRUCT 0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6) }  # noqa: E501
     pre[callee] = Account(
         balance=23,
         nonce=0,

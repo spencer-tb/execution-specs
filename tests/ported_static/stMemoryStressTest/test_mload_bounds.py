@@ -72,6 +72,8 @@ def test_mload_bounds(
         gas_limit=9223372036854775807,
     )
 
+    # Source: LLL
+    # { (MLOAD 0) (MLOAD 0xffffffff) }
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -720,6 +720,30 @@ def test_eoa_empty_paris(
     pre[callee_1] = Account(balance=0, nonce=1)
     pre[callee_2] = Account(balance=1, nonce=1)
     pre[callee_3] = Account(balance=10, nonce=0, storage={0xDEAD: 0xBEEF})
+    # Source: Yul
+    # {
+    #    let eoa := origin()   // external owner account
+    #    sstore(0, eoa)
+    #    sstore(0x31, balance(eoa))   // balance at this point, where it is assumed we used gasLimit gas  # noqa: E501
+    #    sstore(0x3B, extcodesize(eoa))
+    #    sstore(0x3F, extcodehash(eoa))
+    #    sstore(0x013F, extcodehash(add(eoa, 0x1)))
+    #    sstore(0xBAD1, extcodehash(0xBAD1))
+    #    sstore(0xBAD2, extcodehash(0xBAD2))
+    #    sstore(0xBAD3, extcodehash(0xBAD3))
+    #    sstore(0xBAD4, extcodehash(0xBAD4))
+    #    sstore(0xBAD5, extcodehash(0xBAD5))
+    #
+    #    // The gas cost of calling the EOA (it should be warm)
+    #    let gas0 := gas()
+    #    pop(call(gas(), eoa, calldataload(4), 0, 0, 0, 0))
+    #    sstore(0xF1, sub(gas0, gas()))
+    #
+    #    // Gas cost of selfdestruct going to the EOA (should also be warm)
+    #    gas0 := gas()
+    #    pop(call(gas(), 0xDEAD, 0, 0, 0, 0, 0))
+    #    sstore(0xFF, sub(gas0, gas()))
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=1,
@@ -769,6 +793,10 @@ def test_eoa_empty_paris(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    selfdestruct(origin())
+    # }
     pre[callee_4] = Account(
         balance=0x2710,
         nonce=1,

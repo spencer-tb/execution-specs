@@ -48,6 +48,8 @@ def test_call_and_callcode_consume_more_gas_then_transaction_has(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (SSTORE 8 (GAS)) (SSTORE 9 (CALL 600000 <contract:0x1000000000000000000000000000000000000103> 0 0 0 0 0)) (SSTORE 10 (CALLCODE 600000 <contract:0x1000000000000000000000000000000000000103> 0 0 0 0 0)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

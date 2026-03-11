@@ -1746,6 +1746,37 @@ def test_too_long_return_data_copy(
             + Op.RETURN
         ),
     )
+    # Source: Yul
+    # {
+    #    let lengthReturned := calldataload(0x04)
+    #    let offsetCopied   := calldataload(0x24)
+    #    let lengthCopied   := calldataload(0x44)
+    #    let contract       := calldataload(0x64)
+    #    mstore(0, lengthReturned)
+    #
+    #    // The length of the buffer to be returned is part of the calldata
+    #    // for this contract. However, it is necessary to send it to the
+    #    // contract we're calling (either <contract:0x000000000000000000000000000000000000c0de> or <contract:0x0000000000000000000000000000000000000bad>) so it will know  # noqa: E501
+    #    // what size of buffer to return to us
+    #    let retVal := call(gas(), contract, 0,
+    #       0, 0x20,    // input buffer with lengthReturned
+    #       0, 0x100)    // output buffer
+    #
+    #    // Copy the return data (which fails if
+    #    // offsetCopied+lengthCopied > lengthReturned)
+    #    returndatacopy(0x100, offsetCopied, lengthCopied)
+    #
+    #
+    #    // Show that other copies of excess length work (otherwise
+    #    // the goat will never die)
+    #    extcodecopy(<contract:0x000000000000000000000000000000000000c0de>, 0,0, add(0x20,extcodesize(<contract:0x000000000000000000000000000000000000c0de>)))  # noqa: E501
+    #    calldatacopy(0,0, add(0x20,calldatasize()))
+    #    codecopy(0,0, add(0x20,codesize()))
+    #
+    #
+    #    // If we get here, kill the goat to show success
+    #    sstore(0, 0xDEAD)
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,

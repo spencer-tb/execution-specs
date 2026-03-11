@@ -46,6 +46,7 @@ def test_test_store_gas_prices(
     )
 
     pre[sender] = Account(balance=0x746A528800, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,

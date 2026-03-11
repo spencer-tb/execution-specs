@@ -59,6 +59,8 @@ def test_code_copy_offset(
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: Yul
+    # { mstore(0, 0x0123456789abcdef)  pop(call(0xffff, <contract:0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee>, 0, 0, 0x0f, 0, 0))  }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,

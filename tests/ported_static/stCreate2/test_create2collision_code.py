@@ -97,8 +97,11 @@ def test_create2collision_code(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: raw bytecode
     pre[contract] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
+    # Source: raw bytecode
     pre[callee_1] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
+    # Source: raw bytecode
     pre[callee_2] = Account(balance=0, nonce=0, code=Op.SUB(Op.MUL, Op.ADD))
 
     tx_data = bytes.fromhex(tx_data_hex) if tx_data_hex else b""

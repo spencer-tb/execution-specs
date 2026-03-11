@@ -46,6 +46,8 @@ def test_suicide_caller(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[0]] (CALLER) (SELFDESTRUCT (CALLER))}
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

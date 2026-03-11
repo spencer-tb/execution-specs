@@ -1409,6 +1409,11 @@ def test_operation_diff_gas(
         gas_limit=100000000,
     )
 
+    # Source: Yul
+    # {
+    #    mstore(0, 0xDEADBEEF)
+    #    return(0, 0x100)
+    # }
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1417,11 +1422,20 @@ def test_operation_diff_gas(
             + Op.RETURN(offset=0x0, size=0x100)
         ),
     )
+    # Source: Yul
+    # {
+    #    let useless := keccak256(0,0xBEEF)
+    # }
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=Op.SHA3(offset=0x0, size=0xBEEF) + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #   let addr := 0xCA11
+    #   extcodecopy(addr, 0, 0, extcodesize(addr))
+    # }
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1435,21 +1449,37 @@ def test_operation_diff_gas(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    let useless := mload(0xBEEF)
+    # }
     pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=Op.MLOAD(offset=0xBEEF) + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #    mstore(0xBEEF, 0xFF)
+    # }
     pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=Op.MSTORE(offset=0xBEEF, value=0xFF) + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #    mstore8(0xBEEF, 0xFF)
+    # }
     pre[callee_5] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
         code=Op.MSTORE8(offset=0xBEEF, value=0xFF) + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #    sstore(0,create(0, 0, 0x200))
+    # }
     pre[callee_6] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1461,6 +1491,10 @@ def test_operation_diff_gas(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    let retval := call(gas(), 0xCA11, 0, 0, 0x100, 0, 0x100)
+    # }
     pre[callee_7] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1477,6 +1511,10 @@ def test_operation_diff_gas(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    let retval := callcode(gas(), 0xCA11, 0, 0, 0x100, 0, 0x100)
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1493,6 +1531,10 @@ def test_operation_diff_gas(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    let retval := delegatecall(gas(), 0xCA11, 0, 0x100, 0, 0x100)
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1508,6 +1550,10 @@ def test_operation_diff_gas(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    sstore(0,create2(0, 0, 0x200, 0x5A17))
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1524,6 +1570,10 @@ def test_operation_diff_gas(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    let retval := staticcall(gas(), 0xCA11, 0, 0x100, 0, 0x100)
+    # }
     pre[callee_11] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -1540,6 +1590,20 @@ def test_operation_diff_gas(
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: Yul
+    # {
+    #   // Run the operation with gasAmt, gasAmt+gasDiff, gasAmt+2*gasDiff, etc.  # noqa: E501
+    #   let gasAmt := calldataload(0x24)
+    #   let gasDiff := calldataload(0x44)
+    #   let addr := add(0xC0DE00, calldataload(0x04))
+    #   let result := 0
+    #
+    #   for { } eq(result, 0) { } {     // Until the operation is successful
+    #      result := call(gasAmt, addr, 0, 0, 0, 0, 0)
+    #      gasAmt := add(gasAmt, gasDiff)
+    #   }
+    #   sstore(0, sub(gasAmt, gasDiff))
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,

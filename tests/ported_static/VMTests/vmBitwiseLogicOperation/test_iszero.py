@@ -181,6 +181,10 @@ def test_iszero(
         code=Op.SSTORE(key=0x0, value=Op.ISZERO(Op.SUB(0x0, 0x2))) + Op.STOP,
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (call 0xffffff (+ 0x1000 $4) 0 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

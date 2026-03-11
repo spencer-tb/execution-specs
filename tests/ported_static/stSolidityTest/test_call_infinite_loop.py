@@ -46,6 +46,7 @@ def test_call_infinite_loop(
 
     pre[sender] = Account(balance=0x1DCD6500, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,

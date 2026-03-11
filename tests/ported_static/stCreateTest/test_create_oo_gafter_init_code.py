@@ -82,6 +82,8 @@ def test_create_oo_gafter_init_code(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0 0x6460016001556000526005601bf3) (CREATE 0 18 14) }
     pre[contract] = Account(
         balance=0,
         nonce=0,

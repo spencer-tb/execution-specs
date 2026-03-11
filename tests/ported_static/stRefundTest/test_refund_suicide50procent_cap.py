@@ -143,6 +143,8 @@ def test_refund_suicide50procent_cap(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { [22] (GAS) [[ 10 ]] 1 [[ 11 ]] (CALL (CALLDATALOAD 0) <contract:0xaaae7baea6a6c7c4c2dfeb977efac326af552aaa> 0 0 0 0 0 ) [[ 1 ]] 0 [[ 2 ]] 0 [[ 3 ]] 0 [[ 4 ]] 0 [[ 5 ]] 0 [[ 6 ]] 0 [[ 7 ]] 0 [[ 8 ]] 0 [[ 23 ]] (SUB @22 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

@@ -45,6 +45,19 @@ def test_fib(
     )
 
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #    (def 'fib (n) [[n]] (+ @@(- n 1) @@(- n 2)))
+    #    (fib  2)
+    #    (fib  3)
+    #    (fib  4)
+    #    (fib  5)
+    #    (fib  6)
+    #    (fib  7)
+    #    (fib  8)
+    #    (fib  9)
+    #    (fib 10)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

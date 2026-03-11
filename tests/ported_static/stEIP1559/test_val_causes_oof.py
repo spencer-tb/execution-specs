@@ -308,6 +308,14 @@ def test_val_causes_oof(
     )
 
     pre[sender] = Account(balance=0x5F5E100, nonce=1)
+    # Source: Yul
+    # {
+    #     // This loop runs a number of times specified in the data,
+    #     // so the gas cost depends on the data
+    #     for { let i := calldataload(4) } gt(i,0) { i := sub(i,1) } {
+    #        sstore(i, 0x60A7)
+    #     }     // for loop
+    # }
     pre[contract] = Account(
         balance=0x5AF3107A4000,
         nonce=0,

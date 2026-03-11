@@ -44,6 +44,21 @@ def test_refund_max(
         gas_limit=16777216,
     )
 
+    # Source: Yul
+    # {
+    #    let newVal := 0
+    #    sstore(0x00,newVal)
+    #    sstore(0x01,newVal)
+    #    sstore(0x02,newVal)
+    #    sstore(0x03,newVal)
+    #    sstore(0x04,newVal)
+    #    sstore(0x05,newVal)
+    #    sstore(0x06,newVal)
+    #    sstore(0x07,newVal)
+    #
+    #    // Get rid of Yul optimizations
+    #    newVal := msize()
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,

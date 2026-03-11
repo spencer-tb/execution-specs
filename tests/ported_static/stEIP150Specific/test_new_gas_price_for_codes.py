@@ -53,6 +53,7 @@ def test_new_gas_price_for_codes(
         nonce=0,
         code=Op.SSTORE(key=0x64, value=0x11) + Op.STOP,
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=111,
         nonce=0,
@@ -61,6 +62,8 @@ def test_new_gas_price_for_codes(
         ),
     )
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { [999] (GAS) (SSTORE 1 (EXTCODESIZE <contract:0x1000000000000000000000000000000000000010>)) (EXTCODECOPY <contract:0x1000000000000000000000000000000000000010> 0 0 20) (SSTORE 2 (MLOAD 0)) (SSTORE 4 (SLOAD 0)) (SSTORE 5 (CALL 30000 <contract:0x1000000000000000000000000000000000000011> 1 0 0 0 0)) (SSTORE 6 (CALLCODE 30000 <contract:0x1000000000000000000000000000000000000011> 1 0 0 0 0)) (SSTORE 7 (DELEGATECALL 30000 <contract:0x1000000000000000000000000000000000000011> 0 0 0 0)) (SSTORE 8 (CALL 30000 0x1000000000000000000000000000000000000013 0 0 0 0 0)) (SSTORE 3 (BALANCE <eoa:sender:0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b>)) (SSTORE 10 (SUB (MLOAD 999) (GAS))) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

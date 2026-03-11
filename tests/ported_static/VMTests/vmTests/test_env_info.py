@@ -708,17 +708,29 @@ def test_env_info(
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.GASPRICE) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    [[0]] (origin)
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.ORIGIN) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    [[0]] (calldatasize)
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.CALLDATASIZE) + Op.STOP,
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (call 0xffffff (+ 0x1000 $4) 0x10 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

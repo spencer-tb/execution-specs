@@ -44,6 +44,7 @@ def test_eip2315_not_removed(
         gas_limit=9223372036854775807,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

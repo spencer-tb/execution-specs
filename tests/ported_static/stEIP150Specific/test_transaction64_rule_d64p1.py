@@ -47,6 +47,8 @@ def test_transaction64_rule_d64p1(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [0] (GAS) (CALL 160000 <contract:0x1000000000000000000000000000000000000118> 0 0 0 0 0) [[2]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

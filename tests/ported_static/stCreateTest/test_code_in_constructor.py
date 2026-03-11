@@ -379,6 +379,13 @@ def test_code_in_constructor(
         gas_limit=4294967296,
     )
 
+    # Source: LLL
+    # {
+    #     (def 'counterLoc 0)
+    #     (def 'counterVal @@counterLoc)
+    #     [[counterVal]] $0
+    #     [[counterLoc]] (+ counterVal 1)
+    # }
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -390,6 +397,38 @@ def test_code_in_constructor(
         storage={0x0: 0x1},
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #   ; Variables are 0x20 bytes (= 256 bits) apart, except for
+    #   ; code buffers that get 0x100 (256 bytes)
+    #   (def 'constructorCode   0x000)
+    #   (def 'contractCode      0x100)
+    #   (def 'contractLength    0x200)
+    #   (def 'constructorLength 0x220)
+    #   (def 'addr              0x240)
+    #   (def 'dataLoc           0x260)
+    #   ; The type of CREATE to use
+    #   (def 'createType        $ 4)
+    #   ; Other constants
+    #   (def 'NOP 0)   ; No OPeration
+    #   ; Send data to 0x00da7a
+    #   (def 'sendData (data) {
+    #      [dataLoc] data
+    #      (call 0xFFFFFF 0xda7a 0 dataLoc 0x20 0 0)
+    #   })
+    #   ; Buffer length (use for constructor and contract)
+    #   (def 'bufLength     0x100)
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Create the contract and a constructor to pass to CREATE[2]
+    #   ;
+    #   ;
+    #   [contractLength]
+    #     (lll
+    #       (sstore 0 0xFF)
+    #       contractCode
+    #     )
+    #   [constructorLength]
+    # ... (36 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

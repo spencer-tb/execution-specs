@@ -47,6 +47,8 @@ def test_extcodesize_to_epmty_paris(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [0](GAS) [[1]] (EXTCODESIZE <eoa:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b>) [[100]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

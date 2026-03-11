@@ -47,6 +47,8 @@ def test_create_and_gas_inside_create(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { [100] (GAS) (MSTORE 0 0x5a60fd55) (SSTORE 11 (CREATE 0 28 4)) (SSTORE 9 (SUB @100 (GAS))) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

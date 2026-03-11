@@ -1783,6 +1783,8 @@ def test_create2check_fields_in_initcode(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { (CALL (GAS) 0xf000000000000000000000000000000000000000 0 0 0 0 0) }
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -1799,6 +1801,8 @@ def test_create2check_fields_in_initcode(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CREATE2 0 0 (lll (seq (CALL (GAS) 0xf000000000000000000000000000000000000000 0 0 0 0 0) (STOP) ) 0) 0) (STOP) }  # noqa: E501
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
@@ -1827,6 +1831,8 @@ def test_create2check_fields_in_initcode(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALLCODE (GAS) 0xf000000000000000000000000000000000000000 0 0 0 0 0) }
     pre[callee_2] = Account(
         balance=0,
         nonce=0,
@@ -1843,6 +1849,8 @@ def test_create2check_fields_in_initcode(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CREATE2 0 0 (lll (seq (CALLCODE (GAS) 0xf000000000000000000000000000000000000000 0 0 0 0 0) (STOP) ) 0) 0)  (STOP) }  # noqa: E501
     pre[callee_3] = Account(
         balance=0,
         nonce=0,
@@ -1871,6 +1879,8 @@ def test_create2check_fields_in_initcode(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (DELEGATECALL (GAS) 0xf000000000000000000000000000000000000000 0 0 0 0) (STOP) }  # noqa: E501
     pre[callee_4] = Account(
         balance=0,
         nonce=0,
@@ -1889,6 +1899,8 @@ def test_create2check_fields_in_initcode(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CREATE2 0 0 (lll (seq (DELEGATECALL (GAS) 0xf000000000000000000000000000000000000000 0 0 0 0) (STOP) ) 0) 0) (STOP) }  # noqa: E501
     pre[callee_5] = Account(
         balance=0,
         nonce=0,
@@ -1916,6 +1928,8 @@ def test_create2check_fields_in_initcode(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (STATICCALL (GAS) 0xf200000000000000000000000000000000000000 0 0 0 256) [[10]] (MLOAD 0) }  # noqa: E501
     pre[callee_6] = Account(
         balance=0,
         nonce=0,
@@ -1934,6 +1948,8 @@ def test_create2check_fields_in_initcode(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CREATE2 0 0 (lll (seq (STATICCALL (GAS) 0xf200000000000000000000000000000000000000 0 0 0 256) [[10]] (MLOAD 0)  (STOP) ) 0) 0 ) }  # noqa: E501
     pre[callee_7] = Account(
         balance=0,
         nonce=0,
@@ -1962,6 +1978,8 @@ def test_create2check_fields_in_initcode(
         ),
     )
     pre[sender] = Account(balance=0x56BC75E2D63100000, nonce=0)
+    # Source: LLL
+    # { (CALL (GAS) (CALLDATALOAD 0) 0 0 0 0 0) }
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -1978,6 +1996,8 @@ def test_create2check_fields_in_initcode(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CREATE2 0 0 (lll (seq   [[0]] (ADDRESS) [[1]] (BALANCE (ADDRESS)) [[2]] (ORIGIN) [[3]] (CALLER) [[4]] (CALLVALUE) [[5]] (CALLDATASIZE) [[6]] (CODESIZE) [[7]] (GASPRICE) (STOP)   ) 0) 0) (STOP) }  # noqa: E501
     pre[callee_8] = Account(
         balance=0,
         nonce=0,
@@ -2003,6 +2023,8 @@ def test_create2check_fields_in_initcode(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CREATE2 0 0 (lll (seq   [0] (ADDRESS) [32] (BALANCE (ADDRESS)) [64] (ORIGIN) [96] (CALLER) [128] (CALLVALUE) [160] (CALLDATASIZE) [192] (CODESIZE) [224] (GASPRICE) (RETURN 0 256)  (STOP)   ) 0) 0)  }  # noqa: E501
     pre[callee_9] = Account(
         balance=0,
         nonce=0,

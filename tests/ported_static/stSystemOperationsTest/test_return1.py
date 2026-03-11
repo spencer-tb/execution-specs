@@ -44,6 +44,8 @@ def test_return1(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (MSTORE8 0 55) (RETURN 0 2)}
     pre[contract] = Account(
         balance=23,
         nonce=0,

@@ -77,6 +77,8 @@ def test_callcall_00_ooge_value_transfer(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {  [[ 0 ]] (CALL 800000 <contract:0x1000000000000000000000000000000000000001> 20 0 64 0 64 ) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

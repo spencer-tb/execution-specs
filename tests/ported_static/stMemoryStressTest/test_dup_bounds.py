@@ -54,6 +54,7 @@ def test_dup_bounds(
         gas_limit=9223372036854775807,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,

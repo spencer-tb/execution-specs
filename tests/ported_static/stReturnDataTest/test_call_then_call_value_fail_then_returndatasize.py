@@ -48,6 +48,8 @@ def test_call_then_call_value_fail_then_returndatasize(
         gas_limit=111669149696,
     )
 
+    # Source: LLL
+    # { (seq (CALL 0x0900000000 <contract:0x0aabbccdd5c57f15886f9b263e2f6d2d6c7b5ec6> 0 0 0 0 0x20) (CALL 0x0900000000 <contract:0x0aabbccdd5c57f15886f9b263e2f6d2d6c7b5ec6> 0xffffffffffff 0 0 0 0x20) (SSTORE 0 (RETURNDATASIZE)) )}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

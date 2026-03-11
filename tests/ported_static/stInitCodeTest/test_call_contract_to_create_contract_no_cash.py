@@ -47,6 +47,8 @@ def test_call_contract_to_create_contract_no_cash(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {(MSTORE 0 0x600c60005566602060406000f060205260076039f3)[[0]](CREATE 100000 11 21)}  # noqa: E501
     pre[contract] = Account(
         balance=0x2710,
         nonce=0,

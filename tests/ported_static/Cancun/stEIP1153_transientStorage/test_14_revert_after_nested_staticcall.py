@@ -47,6 +47,38 @@ def test_14_revert_after_nested_staticcall(
         gas_limit=4503599627370496,
     )
 
+    # Source: Yul
+    # {
+    #   switch selector()
+    #
+    #   case 0xf5f40590 { // doStoreAndStaticCall()
+    #     doStoreAndStaticCall()
+    #   }
+    #
+    #   case 0xf8dfc2d0 { // doCallToStore()
+    #     doCallToStore()
+    #   }
+    #
+    #   case 0x62fdb9be { // doStore()
+    #     doStore()
+    #   }
+    #
+    #   function doStoreAndStaticCall() {
+    #     verbatim_2i_0o(hex"5D", 0, 10)
+    #
+    #     let v := verbatim_1i_1o(hex"5C", 0)
+    #     sstore(0, v)
+    #
+    #     mstore(0, hex"f8dfc2d0") // doCallToStore()
+    #     let success := staticcall(0xffff, address(), 0, 32, 0, 32)
+    #
+    #     sstore(1, mload(0)) // should be 0 from nested unsuccessful call
+    #     sstore(2, success) // should be 1
+    #
+    #     let val := verbatim_1i_1o(hex"5C", 0)
+    #     sstore(3, val)
+    #   }
+    # ... (17 more lines)
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

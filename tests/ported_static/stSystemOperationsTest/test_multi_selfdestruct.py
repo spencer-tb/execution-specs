@@ -675,6 +675,28 @@ def test_multi_selfdestruct(
         gas_limit=71794957647893862,
     )
 
+    # Source: Yul
+    # {
+    #    let operation := shr(248, calldataload(0))
+    #    let recipient := and(shr(232, calldataload(0)), 0xFFFF)
+    #
+    #    // Don't do anything
+    #    if eq(operation, 0) {
+    #      stop()
+    #    }
+    #
+    #    // Selfdestruct
+    #    if eq(operation, 0xFF) {
+    #      selfdestruct(recipient)
+    #    }
+    #
+    #    // Send value
+    #    // If the call fails, revert
+    #    if eq(call(gas(), recipient, operation, 0,0, 0,0),0) {
+    #       revert(0,0)
+    #    }
+    #
+    # }
     pre[callee] = Account(
         balance=3,
         nonce=1,
@@ -701,6 +723,38 @@ def test_multi_selfdestruct(
         ),
     )
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=1)
+    # Source: Yul
+    # {
+    #    let delme
+    #
+    #    // Selfdestruct, send balance to 0x1000
+    #    // SUC000
+    #    mstore8(0, 0xFF)
+    #    mstore8(1, 0x10)
+    #    mstore8(2, 0x00)
+    #    delme := call(gas(), 0xdead, 0, 0,3, 0,0)
+    #    sstore(0x00, delme)
+    #    sstore(0x01, balance(0x1000))
+    #    sstore(0x02, balance(0xdead))
+    #
+    #    let test := shr(248, calldataload(0))
+    #    switch test
+    #    case 1 {
+    #        // call with all zeros, so it won't do anything
+    #        delme := call(gas(), 0xdead, 2, 3,3, 0,0)
+    #    }
+    #    case 2 {
+    #        // Another suicide to 0x1000
+    #        delme := call(gas(), 0xdead, 2, 0,3, 0,0)
+    #    }
+    #    case 3 {
+    #        // Suicide to 0x1001
+    #        mstore8(2, 1)
+    #        delme := call(gas(), 0xdead, 2, 0,3, 0,0)
+    #    }
+    #    case 4 {
+    #        // Attempt to transfer WEI you don't have to 0x1001
+    # ... (21 more lines)
     pre[contract] = Account(
         balance=0x5F5E100,
         nonce=1,

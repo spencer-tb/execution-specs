@@ -56,6 +56,8 @@ def test_returndatacopy_initial_256(
         gas_limit=111669149696,
     )
 
+    # Source: LLL
+    # { (RETURNDATACOPY (- 0 (CALLDATALOAD 0)) 0 0x64) (MSTORE 0 0x112233445566778899aabbccddeeff) (SSTORE 0 (MLOAD 0)) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

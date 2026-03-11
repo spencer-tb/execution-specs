@@ -2379,6 +2379,15 @@ def test_mulmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    (def 'pow2_255 0x8000000000000000000000000000000000000000000000000000000000000000)  # noqa: E501
+    #
+    #    ; 2^255%5 = 3
+    #    ;     2%5 = 2
+    #    ; ((3+1) * 2) % 5 = 3
+    #    [[0]] (mulmod (+ pow2_255 1) 2 5)
+    # }
     pre[callee_8] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2397,6 +2406,13 @@ def test_mulmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; smod   is signed mod, -5%3 = -1
+    #    ; mulmod is unsigned mod, -5%3 = 2
+    #    ; -1 != 2
+    #    [[0]] (= (smod (- 0 5) 3) (mulmod (- 0 5) 1 3))
+    # }
     pre[callee_9] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2411,6 +2427,12 @@ def test_mulmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; mod and mulmod are both unsigned mod
+    #    ; equal
+    #    [[0]] (= (mod (- 0 5) 3) (mulmod (- 0 5) 1 3))
+    # }
     pre[callee_10] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2425,6 +2447,13 @@ def test_mulmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; (mulmod a b -c) is usually a*b, because -c is
+    #    ; actually 2^256-c, which is huge
+    #    ; not equal
+    #    [[0]] (= (mulmod 5 1 (- 0 3)) 2)
+    # }
     pre[callee_11] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2436,16 +2465,31 @@ def test_mulmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; (mulmod x y 0) is zero
+    #    [[0]] (mulmod 0 1 0)
+    # }
     pre[callee_12] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.MULMOD(0x0, 0x1, 0x0)) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    ; (mulmod x y 0) is zero
+    #    [[0]] (mulmod 1 0 0)
+    # }
     pre[callee_13] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.MULMOD(0x1, 0x0, 0x0)) + Op.STOP,
     )
+    # Source: LLL
+    # {
+    #    ; (mulmod x y 0) is zero
+    #    [[0]] (- 1 (mulmod 0 0 0))
+    # }
     pre[callee_14] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -2454,12 +2498,21 @@ def test_mulmod(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    ; (mulmod x y 0) is zero
+    #    [[0]] (mulmod 5 1 0)
+    # }
     pre[callee_15] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         code=Op.SSTORE(key=0x0, value=Op.MULMOD(0x5, 0x1, 0x0)) + Op.STOP,
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
+    # Source: LLL
+    # {
+    #     (call 0xffffff (+ 0x1000 $4) 0 0 0 0 0)
+    # }
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

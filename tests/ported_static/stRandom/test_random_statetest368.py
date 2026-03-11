@@ -44,6 +44,7 @@ def test_random_statetest368(
         gas_limit=9223372036854775807,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -57,6 +58,7 @@ def test_random_statetest368(
             "96065b2a98b57a48a06ae28d285a71b54206f06d870339356057907760005155"
         ),
     )
+    # Source: raw bytecode
     pre[coinbase] = Account(
         balance=46,
         nonce=0,

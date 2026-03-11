@@ -47,6 +47,7 @@ def test_random_statetest642(
     )
 
     pre[callee] = Account(balance=0x11BAE0BB79D6A164, nonce=163)
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0x577686E8D1344340,
         nonce=112,

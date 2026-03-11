@@ -50,6 +50,8 @@ def test_returndatasize_after_oog_after_deeper(
         gas_limit=111669149696,
     )
 
+    # Source: LLL
+    # { (seq (SSTORE 2 (CALL 100000 <contract:0x1000000000000000000000000000000000000002> 0 0 0 0 32)) (SSTORE 0 (RETURNDATASIZE))) (SSTORE 1 (MLOAD 0))}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -45,12 +45,37 @@ def test_create2_refund_ef(
         gas_limit=1000000,
     )
 
+    # Source: Yul
+    # {
+    #   sstore(0,0)
+    # }
     pre[callee] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=Op.DUP1, value=0x0) + Op.STOP,
         storage={0x0: 0x1},
     )
+    # Source: Yul
+    # {
+    #   code {
+    #     let s := datasize("initcode")
+    #     let o := dataoffset("initcode")
+    #     codecopy(0, o, s)
+    #     let r := create2(0, 0, s, 0)
+    #     sstore(0, r)
+    #     stop()
+    #   }
+    #
+    #   object "initcode" {
+    #     code {
+    #       // call gas refund provider
+    #       let r := call(50000, 0x5ef94d, 0, 0, 0, 0, 0)
+    #       // return 0xEF
+    #       mstore8(0,0xEF)
+    #       return(0,1)
+    #     }
+    #   }
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

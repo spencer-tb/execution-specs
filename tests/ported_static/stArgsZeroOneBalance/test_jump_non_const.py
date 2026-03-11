@@ -54,6 +54,8 @@ def test_jump_non_const(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # { (JUMP (BALANCE <contract:target:0x095e7baea6a6c7c4c2dfeb977efac326af552d87>)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

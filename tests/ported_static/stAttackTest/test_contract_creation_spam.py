@@ -44,6 +44,7 @@ def test_contract_creation_spam(
         gas_limit=100000000000,
     )
 
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

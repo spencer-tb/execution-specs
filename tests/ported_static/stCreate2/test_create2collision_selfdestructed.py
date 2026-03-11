@@ -99,16 +99,22 @@ def test_create2collision_selfdestructed(
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000, nonce=0)
+    # Source: LLL
+    # { (SELFDESTRUCT 0x10) }
     pre[contract] = Account(
         balance=1,
         nonce=0,
         code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
     )
+    # Source: LLL
+    # { (SELFDESTRUCT 0x10) }
     pre[callee_1] = Account(
         balance=1,
         nonce=0,
         code=Op.SELFDESTRUCT(address=0x10) + Op.STOP,
     )
+    # Source: LLL
+    # { (SELFDESTRUCT 0x10) }
     pre[callee_2] = Account(
         balance=1,
         nonce=0,

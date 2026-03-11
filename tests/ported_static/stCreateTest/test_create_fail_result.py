@@ -2263,6 +2263,11 @@ def test_create_fail_result(
         gas_limit=100000000,
     )
 
+    # Source: Yul
+    # {
+    #    mstore(0, 0x0BAD0BAD0BAD)
+    #    revert(0, 0x20)
+    # }
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -2271,6 +2276,11 @@ def test_create_fail_result(
             + Op.REVERT(offset=0x0, size=0x20)
         ),
     )
+    # Source: Yul
+    # {
+    #    mstore(0, 0x600D)
+    #    return(0, 0x20)
+    # }
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -2279,6 +2289,14 @@ def test_create_fail_result(
             + Op.RETURN(offset=0x0, size=0x20)
         ),
     )
+    # Source: Yul
+    # {
+    #     mstore(0x00, 0xDEADBEEF)
+    #     mstore(0x20, 0x60A7)
+    #
+    #     // Return with two words of data
+    #     return(0, 0x40)
+    # }
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -2288,6 +2306,29 @@ def test_create_fail_result(
             + Op.RETURN(offset=0x0, size=0x40)
         ),
     )
+    # Source: Yul
+    # {
+    #    // Before the main call, call DA7A to fill up the return buffer
+    #    sstore(0x10, call(gas(), 0xDA7A, 0, 0, 0, 0x100, 0x40))
+    #    sstore(0x11, returndatasize())
+    #    sstore(0x12, mload(0x100))
+    #    sstore(0x13, mload(0x120))
+    #
+    #    // Read the constructor code from the appropriate contract
+    #    let srcAddr := calldataload(0)   // either 600D or BAD
+    #
+    #    let codeSize := extcodesize(srcAddr)
+    #    extcodecopy(srcAddr, 0, 0, codeSize)
+    #
+    #    // Create
+    #    sstore(0,create(0, 0, codeSize))
+    #
+    #    // If we have a returned buffer, see what it is
+    #    sstore(1,returndatasize())
+    #    returndatacopy(0x200, 0, returndatasize())
+    #    sstore(2, mload(0x200))
+    #    sstore(3, mload(0x220))
+    # }
     pre[callee_3] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -2329,6 +2370,30 @@ def test_create_fail_result(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    // Before the main call, call DA7A to fill up the return buffer
+    #    sstore(0x10, call(gas(), 0xDA7A, 0, 0, 0, 0x100, 0x40))
+    #    sstore(0x11, returndatasize())
+    #    sstore(0x12, mload(0x100))
+    #    sstore(0x13, mload(0x120))
+    #
+    #
+    #    // Read the constructor code from the appropriate contract
+    #    let srcAddr := calldataload(0)   // either 600D or BAD
+    #
+    #    let codeSize := extcodesize(srcAddr)
+    #    extcodecopy(srcAddr, 0, 0, codeSize)
+    #
+    #    // Create
+    #    sstore(0,create(0, 0, codeSize))
+    #
+    #    // If we have a returned buffer, see what it is
+    #    sstore(1,returndatasize())
+    #    returndatacopy(0x200, 0, returndatasize())
+    #    sstore(2, mload(0x200))
+    #    sstore(3, mload(0x220))
+    # }
     pre[callee_4] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -2370,6 +2435,29 @@ def test_create_fail_result(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    // Before the main call, call DA7A to fill up the return buffer
+    #    sstore(0x10, call(gas(), 0xDA7A, 0, 0, 0, 0x100, 0x40))
+    #    sstore(0x11, returndatasize())
+    #    sstore(0x12, mload(0x100))
+    #    sstore(0x13, mload(0x120))
+    #
+    #    // Read the constructor code from the appropriate contract
+    #    let srcAddr := calldataload(0)   // either 600D or BAD
+    #
+    #    let codeSize := extcodesize(srcAddr)
+    #    extcodecopy(srcAddr, 0, 0, codeSize)
+    #
+    #    // Create
+    #    sstore(0,create2(0, 0, codeSize, 0x5A17))
+    #
+    #    // If we have a returned buffer, see what it is
+    #    sstore(1,returndatasize())
+    #    returndatacopy(0x200, 0, returndatasize())
+    #    sstore(2, mload(0x200))
+    #    sstore(3, mload(0x220))
+    # }
     pre[callee_5] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -2412,6 +2500,29 @@ def test_create_fail_result(
             + Op.STOP
         ),
     )
+    # Source: Yul
+    # {
+    #    // Before the main call, call DA7A to fill up the return buffer
+    #    sstore(0x10, call(gas(), 0xDA7A, 0, 0, 0, 0x100, 0x40))
+    #    sstore(0x11, returndatasize())
+    #    sstore(0x12, mload(0x100))
+    #    sstore(0x13, mload(0x120))
+    #
+    #    // Read the constructor code from the appropriate contract
+    #    let srcAddr := calldataload(0)   // either 600D or BAD
+    #
+    #    let codeSize := extcodesize(srcAddr)
+    #    extcodecopy(srcAddr, 0, 0, codeSize)
+    #
+    #    // Create
+    #    sstore(0,create2(0, 0, codeSize, 0xBAD05A17))
+    #
+    #    // If we have a returned buffer, see what it is
+    #    sstore(1,returndatasize())
+    #    returndatacopy(0x200, 0, returndatasize())
+    #    sstore(2, mload(0x200))
+    #    sstore(3, mload(0x220))
+    # }
     pre[callee_6] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -2454,17 +2565,51 @@ def test_create_fail_result(
             + Op.STOP
         ),
     )
+    # Source: raw bytecode
     pre[callee_7] = Account(
         balance=0x600D,
         nonce=1,
         code=Op.PUSH1[0x1] + Op.STOP,
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: raw bytecode
     pre[callee_8] = Account(
         balance=0x600D,
         nonce=1,
         code=Op.PUSH1[0x1] + Op.STOP,
     )
+    # Source: Yul
+    # {
+    #   // The operation to run
+    #   // F0 - CREATE
+    #   // F5 - CREATE2
+    #   let oper := calldataload(0x04)
+    #
+    #   // The condition for it
+    #   // 0x0006 - OUT OF GAS
+    #   // 0x0BAD - REVERT with data
+    #   // 0x600D - Success
+    #   let cond := calldataload(0x24)
+    #   let addr := add(0xC0DE00, oper)
+    #
+    #
+    #
+    #   // Before the main call, call DA7A to fill up the return buffer
+    #   sstore(0x10, call(gas(), 0xDA7A, 0, 0, 0, 0x100, 0x40))
+    #   sstore(0x11, returndatasize())
+    #   sstore(0x12, mload(0x100))
+    #   sstore(0x13, mload(0x120))
+    #
+    #
+    #   let gasAmt := gas()
+    #
+    #   // Out Of Gas, CREATE[2] always costs more than 32k in gas
+    #   // but we need to also pay for the four SSTOREs that verify DA7A was
+    #   // called correctly
+    #   if eq(cond,0x0006) { gasAmt := add(30000,mul(22100,4)) }
+    #
+    #   // Send the condition to the contract we call so it'll know whether
+    # ... (13 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=1,
@@ -2508,6 +2653,7 @@ def test_create_fail_result(
             + Op.JUMP(pc=0x3F)
         ),
     )
+    # Source: raw bytecode
     pre[callee_9] = Account(
         balance=0x600D,
         nonce=1,

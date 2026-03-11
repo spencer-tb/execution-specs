@@ -46,6 +46,8 @@ def test_callcode_ripemd160_1(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { [[ 2 ]] (CALLCODE 600 3 0 0 0 0 32) [[ 0 ]] (MLOAD 0)}
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

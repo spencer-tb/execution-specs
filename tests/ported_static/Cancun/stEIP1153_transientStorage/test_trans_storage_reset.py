@@ -6748,6 +6748,17 @@ def test_trans_storage_reset(
         gas_limit=100000000,
     )
 
+    # Source: Yul
+    # {
+    #   let reverter := calldataload(4)
+    #   let dead     := calldataload(36)
+    #   let param := calldataload(68)
+    #   sstore(0, reverter)
+    #   mstore(0, reverter)
+    #   mstore(32, dead)
+    #   mstore(64, param)
+    #   sstore(1, call(gas(), reverter, 0, 0, 96, 0, 0))
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=1,

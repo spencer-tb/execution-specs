@@ -47,6 +47,8 @@ def test_callcode_sha256_3_prefix0(
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # { (MSTORE 0 0x00f34578907f) [[ 2 ]] (CALLCODE 500 2 0 0 37 0 32) [[ 0 ]] (MLOAD 0)}  # noqa: E501
     pre[contract] = Account(
         balance=0x1312D00,
         nonce=0,

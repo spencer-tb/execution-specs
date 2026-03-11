@@ -44,6 +44,8 @@ def test_add11(
         gas_limit=71794957647893862,
     )
 
+    # Source: LLL
+    # { [[0]] (ADD 1 1) }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

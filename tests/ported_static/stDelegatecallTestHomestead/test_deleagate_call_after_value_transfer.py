@@ -59,6 +59,8 @@ def test_deleagate_call_after_value_transfer(
         ),
     )
     pre[sender] = Account(balance=0x2386F26FC10000, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0 0x01) (DELEGATECALL 100000 <contract:0x1000000000000000000000000000000000000001> 0 64 0 64) }  # noqa: E501
     pre[contract] = Account(
         balance=0x10C8E0,
         nonce=0,

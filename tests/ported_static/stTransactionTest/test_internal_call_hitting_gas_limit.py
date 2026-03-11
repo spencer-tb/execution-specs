@@ -53,6 +53,8 @@ def test_internal_call_hitting_gas_limit(
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x37) + Op.STOP,
     )
+    # Source: LLL
+    # { (CALL 5000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 1 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0xF4240,
         nonce=0,

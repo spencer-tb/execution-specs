@@ -240,6 +240,7 @@ def test_returndatacopy_python_bug_tue_03_48_41_1432(
     )
 
     pre[sender] = Account(balance=0x38BEEC8FEECA2598, nonce=0)
+    # Source: raw bytecode
     pre[callee] = Account(
         balance=0x161150E7531F1933,
         nonce=29,
@@ -311,6 +312,7 @@ def test_returndatacopy_python_bug_tue_03_48_41_1432(
             "e811712211cf72f489a4e83a2f5427eab647b075a91064929de0a65517"
         ),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(
         balance=0x442F5872DD93B01A,
         nonce=28,
@@ -331,6 +333,7 @@ def test_returndatacopy_python_bug_tue_03_48_41_1432(
             "9579a68b50eefdc639ca0b62ab4d5230"
         ),
     )
+    # Source: raw bytecode
     pre[contract] = Account(
         balance=0x16B3E0323B4F717D,
         nonce=28,
@@ -369,6 +372,7 @@ def test_returndatacopy_python_bug_tue_03_48_41_1432(
             "b4e7a261037c6101f76103e13e"
         ),
     )
+    # Source: raw bytecode
     pre[callee_2] = Account(
         balance=0x2CE99FC81ED55962,
         nonce=63,

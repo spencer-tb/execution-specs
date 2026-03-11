@@ -13280,6 +13280,26 @@ def test_trans_storage_ok(
         gas_limit=100000000,
     )
 
+    # Source: Yul
+    # {
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     // There is calldata, so write to Trans[0]
+    #     if calldatasize() {
+    #        tstore_temp(0, 0x60A7)
+    #     }
+    #
+    #     // Return Trans[0]
+    #     // This happens whether we are called with data or not.
+    #     mstore(0, tload_temp(0))
+    #     return(0,32)
+    # }
     pre[callee] = Account(
         balance=0,
         nonce=1,
@@ -13309,6 +13329,18 @@ def test_trans_storage_ok(
             + Op.JUMP
         ),
     )
+    # Source: Yul
+    # {
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     tstore_temp(0, add(tload_temp(0), 1))
+    # }
     pre[callee_1] = Account(
         balance=0,
         nonce=1,
@@ -13333,6 +13365,38 @@ def test_trans_storage_ok(
             + Op.JUMP
         ),
     )
+    # Source: Yul
+    # {
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     // We are inside the loop
+    #     if eq(caller(), address()) {
+    #       let counter := tload_temp(0)
+    #
+    #       // If counter is zero, we're at an end of the loop (a leaf of
+    #       // the tree), return.
+    #       if eq(counter,0) {
+    #         return(0,0)
+    #       }
+    #
+    #       // If counter isn't zero, call yourself with counter-1 twice and
+    #       // add one to Trans[1]
+    #       tstore_temp(0, sub(counter, 1))
+    #       let res := call(gas(), address(), 0, 0,0, 0,0)
+    #       if iszero(res) { // If the call failed, fail too
+    #          revert(0,0)
+    #       }
+    #
+    #       // We need to repair Trans[0] because it got overwritten in
+    #       // the previous call
+    #       tstore_temp(0, sub(counter, 1))
+    # ... (22 more lines)
     pre[callee_2] = Account(
         balance=0,
         nonce=1,
@@ -13437,6 +13501,38 @@ def test_trans_storage_ok(
             + Op.JUMP
         ),
     )
+    # Source: Yul
+    # {
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     // If we are called by 0xca11bacc, this is part of the loop
+    #     if eq(caller(), 0xca11bacc) {
+    #       let counter := tload_temp(0)
+    #
+    #       // If the counter is equal to zero, we're done - return.
+    #       if eq(counter,0) {
+    #         return(0,0)
+    #       }
+    #
+    #       // If counter isn't zero, add counter to Trans[1] and do recursion
+    #       tstore_temp(1, add(tload_temp(1), counter))
+    #
+    #       // Change the loop variable and call 0xca11bacc, which calls us back.  # noqa: E501
+    #       tstore_temp(0, sub(counter, 1))
+    #       let res := call(gas(), 0xca11bacc, 0, 0,0, 0,0)
+    #       if iszero(res) { // If the call failed, fail too
+    #          revert(0,0)
+    #       }
+    #     }
+    #
+    #     // If called by a different address from 0xca11bacc, we are the first
+    # ... (12 more lines)
     pre[callee_3] = Account(
         balance=0,
         nonce=1,
@@ -13518,6 +13614,22 @@ def test_trans_storage_ok(
             + Op.JUMP
         ),
     )
+    # Source: Yul
+    # {
+    #     // Set up Trans[0] with a regular call.
+    #     sstore(0x10,call(gas(), 0x57A7, 0, 0,1, 0,32))
+    #     sstore(0, mload(0))
+    #
+    #     // Use staticcall to read Trans[0] of 0x0..57A7.
+    #     mstore(0,0)
+    #     sstore(0x11,staticcall(gas(), 0x57A7, 0,0, 0,32))
+    #     sstore(1, mload(0))
+    #
+    #     // Try to use staticall to write Trans[0]. This should fail.
+    #     mstore(0,0)
+    #     sstore(0x12,staticcall(gas(), 0x57A7, 0,1, 0,32))
+    #     sstore(2, mload(0))
+    # }
     pre[callee_4] = Account(
         balance=0,
         nonce=1,
@@ -13565,6 +13677,38 @@ def test_trans_storage_ok(
         ),
         storage={0x2: 0x60A7, 0x12: 0x60A7},
     )
+    # Source: Yul
+    # {
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     // If we are called by ourselves, this is part of the loop.
+    #     if eq(caller(), address()) {
+    #       let counter := tload_temp(0)
+    #
+    #       // Loop ended, return
+    #       if eq(counter,0) {
+    #         return(0,0)
+    #       }
+    #
+    #
+    #       // Change the loop variable and call yourself
+    #       tstore_temp(1, add(tload_temp(1), counter))
+    #       tstore_temp(0, sub(counter, 1))
+    #       let res := callcode(gas(), address(), 0, 0,0, 0,0)
+    #       if iszero(res) { // If the call failed, fail too
+    #          revert(0,0)
+    #       }
+    #     }
+    #
+    #     // If called by a different address, we are the first call and need
+    #     // to setup Trans[0] before starting the loop.
+    # ... (15 more lines)
     pre[callee_5] = Account(
         balance=0,
         nonce=1,
@@ -13646,6 +13790,38 @@ def test_trans_storage_ok(
             + Op.JUMP
         ),
     )
+    # Source: Yul
+    # {
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     // If we are in the loop
+    #     if eq(caller(), address()) {
+    #       let counter := tload_temp(0)
+    #
+    #       // If the counter is zero, we're at loop's end, return
+    #       if eq(counter,0) {
+    #         return(0,0)
+    #       }
+    #
+    #       // If counter isn't zero
+    #       // Call yourself with counter-1 twice then add 1 to Trans[1]
+    #       // Note that one call is callcode() and the other delegatecall().
+    #       // This way the same test checks both of them.
+    #
+    #       tstore_temp(0, sub(counter, 1))
+    #       let res := callcode(gas(), address(), 0, 0,0, 0,0)
+    #       if iszero(res) { // If the call failed, fail too
+    #          revert(0,0)
+    #       }
+    #
+    #       // We need to repair Trans[0] because it got overwritten in
+    # ... (25 more lines)
     pre[callee_6] = Account(
         balance=0,
         nonce=1,
@@ -13749,6 +13925,32 @@ def test_trans_storage_ok(
             + Op.JUMP
         ),
     )
+    # Source: Yul
+    # {
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     // The initial value of the counter is zero
+    #     sstore(0, tload_temp(0))
+    #
+    #     // CALLCODE increments our Trans[0]
+    #     sstore(0x11, callcode(gas(), 0xadd1, 0, 0,0, 0,0))
+    #     sstore(1, tload_temp(0))
+    #
+    #     // DELEGATECALL increments our Trans[0]
+    #     sstore(0x12, delegatecall(gas(), 0xadd1, 0,0, 0,0))
+    #     sstore(2, tload_temp(0))
+    #
+    #     // CALL does not increment our Trans[0], it means a different
+    #     // transient storage
+    #     sstore(0x13, call(gas(), 0xadd1, 0, 0,0, 0,0))
+    #     sstore(3, tload_temp(0))
+    # }
     pre[callee_7] = Account(
         balance=0,
         nonce=1,
@@ -13820,6 +14022,38 @@ def test_trans_storage_ok(
         ),
         storage={0x0: 0x60A7},
     )
+    # Source: Yul
+    # {
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     // If we are called by ourselves, this is part of the loop.
+    #     if eq(caller(), address()) {
+    #       let counter := tload_temp(0)
+    #
+    #       // If the counter is equal to zero, we're done - return.
+    #       if eq(counter,0) {
+    #         return(0,0)
+    #       }
+    #
+    #       // Change the loop variable and call yourself
+    #       tstore_temp(1, add(tload_temp(1), counter))
+    #       tstore_temp(0, sub(counter, 1))
+    #       let res := delegatecall(gas(), address(), 0,0, 0,0)
+    #       if iszero(res) { // If the call failed, fail too
+    #          revert(0,0)
+    #       }
+    #     }
+    #
+    #
+    #     // If called by a different address, we are the first call and need
+    #     // to setup Trans[0] before starting the loop.
+    # ... (15 more lines)
     pre[callee_8] = Account(
         balance=0,
         nonce=1,
@@ -13900,6 +14134,38 @@ def test_trans_storage_ok(
             + Op.JUMP
         ),
     )
+    # Source: Yul
+    # {
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     // If we are at the bottom of the call stack, increment
+    #     // the counter and return
+    #     if eq(calldatasize(), 0) {
+    #        tstore_temp(0, add(tload_temp(0),1))
+    #        return(0,0)
+    #     }
+    #
+    #     // If we are at the top of the stack (called by a different contract),  # noqa: E501
+    #     // set the counter to one
+    #     if iszero(eq(address(), caller())) {
+    #        tstore_temp(0, 1)
+    #     }
+    #
+    #     // Read the most significant byte of the input.
+    #     // Luckily for us the input is top justified - if the caller provided
+    #     // just n bytes (n<20), they will be the top n bytes of calldataload(0).  # noqa: E501
+    #     let callType := shr(
+    #         248,
+    #         calldataload(0)
+    #     )
+    #
+    # ... (32 more lines)
     pre[callee_9] = Account(
         balance=0,
         nonce=1,
@@ -13997,6 +14263,22 @@ def test_trans_storage_ok(
             + Op.JUMP
         ),
     )
+    # Source: Yul
+    # {
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     // Write these values to storage (overwriting the 0x60A7's).
+    #     // If these values are not zero, there is a problem.
+    #     sstore(0, tload_temp(0))
+    #     sstore(1, tload_temp(1))
+    #     pop(call(gas(), caller(), 0, 0,0, 0,0))
+    # }
     pre[callee_10] = Account(
         balance=0,
         nonce=1,
@@ -14030,6 +14312,38 @@ def test_trans_storage_ok(
         ),
         storage={0x0: 0x60A7, 0x1: 0x60A7},
     )
+    # Source: Yul
+    # {
+    #     // These two functions use transient storage.
+    #     // Once the relevant opcodes are added to Yul, simply remove
+    #     // them (from all contracts) and remove the _temp suffices.
+    #     function tload_temp(loc) -> val {
+    #       val := verbatim_1i_1o(hex"5C", loc)
+    #     }
+    #
+    #     function tstore_temp(loc, val) {
+    #       verbatim_2i_0o(hex"5D", loc, val)
+    #     }
+    #
+    #     // If we are called by ourselves, this is part of the loop.
+    #     if eq(caller(), address()) {
+    #       let counter := tload_temp(0)
+    #
+    #       // If the counter is equal to zero, we're done - return.
+    #       if eq(counter,0) {
+    #         return(0,0)
+    #       }
+    #
+    #       // If counter isn't zero, add counter to Trans[1] and do recursion
+    #       tstore_temp(1, add(tload_temp(1), counter))
+    #
+    #       // Change the loop variable and call yourself
+    #       tstore_temp(0, sub(counter, 1))
+    #       let res := call(gas(), address(), 0, 0,0, 0,0)
+    #       if iszero(res) { // If the call failed, fail too
+    #          revert(0,0)
+    #       }
+    # ... (15 more lines)
     pre[callee_11] = Account(
         balance=0,
         nonce=1,
@@ -14112,6 +14426,14 @@ def test_trans_storage_ok(
         ),
     )
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
+    # Source: Yul
+    # {
+    #   let func := shr(224, calldataload(0))
+    #   let param := calldataload(4)
+    #   sstore(0, func)
+    #   mstore(0, param)
+    #   sstore(1, call(gas(), func, 0, 0,32, 0,0))
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=1,

@@ -97,12 +97,16 @@ def test_contract_creation_make_call_that_ask_more_gas_then_transaction_provided
         gas_limit=10000000,
     )
 
+    # Source: LLL
+    # {(SSTORE 1 1)}
     pre[contract] = Account(
         balance=0x186A0,
         nonce=0,
         code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
     )
     pre[sender] = Account(balance=0x10C8E0, nonce=0)
+    # Source: LLL
+    # {(CALL 50000 0x1000000000000000000000000000000000000001 0 0 64 0 64)}
     pre[callee_1] = Account(
         balance=0x186A0,
         nonce=0,

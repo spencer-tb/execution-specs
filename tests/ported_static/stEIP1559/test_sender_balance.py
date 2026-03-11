@@ -48,6 +48,10 @@ def test_sender_balance(
         gas_limit=30000000,
     )
 
+    # Source: Yul
+    # {
+    #   sstore(0, balance(caller()))
+    # }
     pre[contract] = Account(
         balance=0,
         nonce=0,

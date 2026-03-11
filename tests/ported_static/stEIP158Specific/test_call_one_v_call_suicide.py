@@ -55,6 +55,8 @@ def test_call_one_v_call_suicide(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { [0](GAS) (CALL 60000 <contract:0xc94f5374fce5edbc8e2a8697c15331677e6ebf0b> 1 0 0 0 0) [[100]] (SUB @0 (GAS)) }  # noqa: E501
     pre[contract] = Account(
         balance=100,
         nonce=0,

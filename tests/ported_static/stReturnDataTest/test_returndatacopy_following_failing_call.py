@@ -48,7 +48,10 @@ def test_returndatacopy_following_failing_call(
         gas_limit=111669149696,
     )
 
+    # Source: raw bytecode
     pre[callee] = Account(balance=0, nonce=0, code=Op.REVERT)
+    # Source: LLL
+    # { (CALL 0x0900000000 <contract:0x0aabbccdd5c57f15886f9b263e2f6d2d6c7b5ec6> 0 0 0 0 0) (RETURNDATACOPY 0 1 32) (SSTORE 0 (MLOAD 0)) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

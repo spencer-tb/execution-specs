@@ -49,6 +49,8 @@ def test_create2_oo_gafter_init_code_returndata3(
     )
 
     pre[sender] = Account(balance=0xE8D4A51000, nonce=0)
+    # Source: LLL
+    # { (MSTORE 0 0x6460016001556000526005601bf3) (CREATE2 0 18 14 0) }
     pre[callee] = Account(
         balance=0,
         nonce=0,
@@ -58,6 +60,8 @@ def test_create2_oo_gafter_init_code_returndata3(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALLCODE (GAS) 0xb94f5374fce5edbc8e2a8697c15331677e6ebf0b 0 0 0 0 32) (RETURNDATACOPY 0 0 32) [[ 1 ]] (MLOAD 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

@@ -45,6 +45,12 @@ def test_merge_test(
         gas_limit=16777216,
     )
 
+    # Source: LLL
+    # {
+    #    (sstore 0 (gasprice))
+    #    (sstore 1 (basefee))
+    #    (sstore 2 (difficulty))
+    # }
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=1,

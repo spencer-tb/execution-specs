@@ -61,11 +61,13 @@ def test_transaction_colliding_with_non_empty_account_init_paris(
     )
 
     pre[contract] = Account(balance=10, nonce=0)
+    # Source: raw bytecode
     pre[sender] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
         code=bytes.fromhex("00"),
     )
+    # Source: raw bytecode
     pre[callee_1] = Account(balance=10, nonce=0, code=bytes.fromhex("00"))
     pre[coinbase] = Account(balance=0, nonce=1)
 

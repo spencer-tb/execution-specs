@@ -18296,6 +18296,11 @@ def test_gas_cost_memory(
         gas_limit=100000000,
     )
 
+    # Source: LLL
+    # {
+    #    (mstore $0 0x60A7)
+    #    (mload $0)
+    # }
     pre[callee] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -18305,6 +18310,12 @@ def test_gas_cost_memory(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    (mstore $0 0x60A7)
+    #    (mload $0)
+    #    (mload $0)
+    # }
     pre[callee_1] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -18315,6 +18326,12 @@ def test_gas_cost_memory(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #    (mstore $0 0x60A7)
+    #    (mload $0)
+    #    (mstore $0 0x60A7)
+    # }
     pre[callee_2] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
@@ -18325,6 +18342,38 @@ def test_gas_cost_memory(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {
+    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    #   ; Initialization
+    #
+    #   ; Variables (0x20 byte wide)
+    #   (def 'action            0x000)  ; Action to take with the memory
+    #   (def 'addr              0x020)  ; Address to read / write
+    #   (def 'expectedCost      0x040)  ; Expected gas cost
+    #   (def 'gasB4             0x060)  ; Before the action being measured
+    #   (def 'gasAfter          0x080)  ; After the action being measured
+    #
+    #   ; Gas cost for a baseline operation (call a contract that does mstore
+    #   ; and then mload)
+    #   (def 'gasBaseline       0x0A0)
+    #
+    #   ; Gas for for the action intself (call a contract plus <whatever>)
+    #   (def 'gasAction         0x0C0)
+    #
+    #   ; Temporary values
+    #   (def 'temp              0x0E0)
+    #
+    #   ; Understand CALLDATA. It is four bytes of function
+    #   ; selector (irrelevant) followed by 32 byte words
+    #   ; of the parameters
+    #   [action]        $4
+    #   [addr]          $36
+    #   [expectedCost]  $68
+    #
+    #   ; Constants
+    #   (def  'NOP    0) ; No operation (for if statements)
+    # ... (103 more lines)
     pre[contract] = Account(
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,

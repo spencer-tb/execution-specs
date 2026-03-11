@@ -50,7 +50,10 @@ def test_returndatasize_after_failing_callcode(
     )
 
     pre[callee] = Account(balance=0x10000000, nonce=0)
+    # Source: raw bytecode
     pre[callee_1] = Account(balance=0x6400000000, nonce=0, code=Op.REVERT)
+    # Source: LLL
+    # { (seq (CALLCODE 100000 <contract:0x1000000000000000000000000000000000000002> 0 0 0 0 0) (SSTORE 0 (RETURNDATASIZE)))}  # noqa: E501
     pre[contract] = Account(
         balance=0,
         nonce=0,

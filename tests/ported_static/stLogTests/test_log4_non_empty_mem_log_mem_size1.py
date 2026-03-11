@@ -47,6 +47,8 @@ def test_log4_non_empty_mem_log_mem_size1(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { [[ 0 ]] (CALL 1000 <contract:0x0f572e5295c57f15886f9b263e2f6d2d6c7b5ec6> 23 0 0 0 0) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,

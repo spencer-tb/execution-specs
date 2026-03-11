@@ -46,6 +46,8 @@ def test_self_balance_equals_balance(
         gas_limit=10000000000,
     )
 
+    # Source: LLL
+    # { [[ 1 ]] (EQ (SELFBALANCE) (BALANCE (ADDRESS))) }
     pre[contract] = Account(
         balance=500,
         nonce=0,

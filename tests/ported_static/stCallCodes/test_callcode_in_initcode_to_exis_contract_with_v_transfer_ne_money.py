@@ -188,6 +188,8 @@ def test_callcode_in_initcode_to_exis_contract_with_v_transfer_ne_money(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # {(seq (CREATE 0 0 (lll (seq  [[1]] (CALLCODE 500000 0x1000000000000000000000000000000000000001 1 0 0 0 0)) 0)   )           )}  # noqa: E501
     pre[callee] = Account(
         balance=0x2710,
         nonce=0,
@@ -214,11 +216,15 @@ def test_callcode_in_initcode_to_exis_contract_with_v_transfer_ne_money(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (SSTORE 2 1) }
     pre[callee_1] = Account(
         balance=0,
         nonce=0,
         code=Op.SSTORE(key=0x2, value=0x1) + Op.STOP,
     )
+    # Source: LLL
+    # { (CALL 300000 (CALLDATALOAD 0) 0 0 0 0 0) }
     pre[contract] = Account(
         balance=0,
         nonce=0,
@@ -235,6 +241,8 @@ def test_callcode_in_initcode_to_exis_contract_with_v_transfer_ne_money(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # {(seq (CREATE2 0 0 (lll (seq  [[1]] (CALLCODE 500000 0x1000000000000000000000000000000000000001 1 0 0 0 0)) 0)   0)           )}  # noqa: E501
     pre[callee_2] = Account(
         balance=0x2710,
         nonce=0,

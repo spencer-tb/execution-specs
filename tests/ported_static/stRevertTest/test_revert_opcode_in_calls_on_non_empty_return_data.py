@@ -1510,6 +1510,8 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
             + Op.STOP
         ),
     )
+    # Source: LLL
+    # { (CALL 0 <contract:0xffff5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 0 0 0) [[10]] (CALL 260000 (CALLDATALOAD 0) 0 0 0 0 0)}  # noqa: E501
     pre[contract] = Account(
         balance=1,
         nonce=0,

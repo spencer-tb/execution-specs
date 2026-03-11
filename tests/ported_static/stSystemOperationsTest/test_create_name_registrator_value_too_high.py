@@ -47,6 +47,8 @@ def test_create_name_registrator_value_too_high(
         gas_limit=1000000,
     )
 
+    # Source: LLL
+    # { (MSTORE 0 0x601080600c6000396000f3006000355415600957005b60203560003555) [[ 0 ]] (CREATE 1000000000000000001 3 29) }  # noqa: E501
     pre[contract] = Account(
         balance=0xDE0B6B3A7640000,
         nonce=0,
