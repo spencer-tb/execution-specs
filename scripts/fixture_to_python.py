@@ -2204,7 +2204,9 @@ def find_fixture_files(fixtures_dir: Path) -> list[Path]:
         if ".meta" in p.parts:
             continue
         rel = str(p.relative_to(fixtures_dir))
-        # Must be under a for_* directory (state test output)
+        # Must be under state_tests/for_* (not blockchain_tests)
+        if not rel.startswith("state_tests/") and "/state_tests/" not in rel:
+            continue
         if "/for_" not in rel and not rel.startswith("for_"):
             continue
         # Skip ported_static outputs
