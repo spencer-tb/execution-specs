@@ -68,9 +68,8 @@ def test_random_statetest82(
         nonce=0,
         address=Address("0x3d8eef1923018c3cae225f836ab9821321d39496"),  # noqa: E501
     )
-    pre[coinbase] = Account(
-        balance=46,
-        nonce=0,
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=(
             Op.JUMPI(
                 pc=0x9,
@@ -83,6 +82,9 @@ def test_random_statetest82(
                 value=Op.CALLDATALOAD(offset=0x20),
             )
         ),
+        balance=46,
+        nonce=0,
+        address=coinbase,  # noqa: E501
     )
 
     tx = Transaction(

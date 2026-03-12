@@ -921,6 +921,7 @@ def generate_account_setup(
     source_comment: str = "",
     is_sender: bool = False,
     var_is_used: bool = True,
+    already_defined: bool = False,
 ) -> str:
     """
     Generate pre-state account setup code.
@@ -928,6 +929,10 @@ def generate_account_setup(
     For EOAs and the sender, emit pre[var] = Account(...).
     For contracts, emit var = pre.deploy_contract(...).
     For oversized contracts (>24576 bytes), keep pre[var] = Account(...).
+
+    When already_defined is True, the variable (e.g. coinbase, sender) was
+    already emitted earlier, so deploy_contract is called without assignment
+    and uses address=var_name instead of a literal Address.
     """
     lines = []
     code_hex = account.get("code", "0x")
@@ -942,13 +947,8 @@ def generate_account_setup(
     raw_hex = code_hex[2:] if code_hex.startswith("0x") else code_hex
     is_oversized = len(raw_hex) > 49152
 
-    # Use deploy_contract for non-sender, non-coinbase, non-oversized contracts
-    use_deploy = (
-        not is_eoa
-        and not is_sender
-        and var_name != "coinbase"
-        and not is_oversized
-    )
+    # Use deploy_contract for non-oversized contracts
+    use_deploy = not is_eoa and not is_oversized
 
     if use_deploy:
         # Build deploy_contract call
@@ -970,13 +970,16 @@ def generate_account_setup(
         # nonce: omit if 1 (deploy_contract default), emit otherwise
         if nonce != 1:
             deploy_parts.append(f"nonce={nonce}")
-        padded = _pad_address(address)
-        addr_part = f'address=Address("{padded}")'
+        if already_defined:
+            addr_part = f"address={var_name}"
+        else:
+            padded = _pad_address(address)
+            addr_part = f'address=Address("{padded}")'
 
         # Always use multi-line for deploy_contract (address line needs
         # noqa: E501 and the call is almost always long).
         deploy_parts.append(addr_part)
-        if var_is_used:
+        if var_is_used and not already_defined:
             lines.append(f"{indent}{var_name} = pre.deploy_contract(")
         else:
             lines.append(f"{indent}pre.deploy_contract(")
@@ -1968,12 +1971,7 @@ def generate_test_file(
         is_eoa_acct = code_hex in ("0x", "")
         is_oversized_acct = len(raw_hex) > 49152
         is_sender_acct = var == "sender"
-        if (
-            not is_eoa_acct
-            and not is_sender_acct
-            and var != "coinbase"
-            and not is_oversized_acct
-        ):
+        if not is_eoa_acct and not is_oversized_acct:
             deploy_contract_vars.add(var)
 
     # Address variables — only emit if used somewhere
@@ -1982,7 +1980,8 @@ def generate_test_file(
     sender_emitted = False
     for addr, var, _ in var_names:
         # Skip vars that will be assigned by deploy_contract
-        if var in deploy_contract_vars:
+        # (but not coinbase — it must be defined before env)
+        if var in deploy_contract_vars and var != "coinbase":
             continue
         used = (
             addr in pre_addrs
@@ -2026,6 +2025,10 @@ def generate_test_file(
             bool(re.search(rf"\b{re.escape(var)}\b", all_code))
             or var == "coinbase"
         )
+        # coinbase and sender are already defined (as Address / EOA)
+        # before the pre-state section, so deploy_contract should not
+        # re-assign them.
+        is_already_defined = var in ("coinbase", "sender")
         account_code = generate_account_setup(
             addr_l,
             pre[addr],
@@ -2034,6 +2037,7 @@ def generate_test_file(
             source_comment=src_comment,
             is_sender=is_sender_acct,
             var_is_used=is_var_used,
+            already_defined=is_already_defined,
         )
         out.append(account_code)
 

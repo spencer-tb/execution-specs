@@ -46,14 +46,16 @@ def test_store_gas_on_create(
     )
 
     pre[sender] = Account(balance=0x17D78400)
-    pre[coinbase] = Account(
-        balance=0,
-        nonce=0,
+    # Source: LLL
+    # { (MSTORE 0 0x5a60fd55) (CREATE 0 28 4)}
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x0, value=0x5A60FD55)
             + Op.CREATE(value=0x0, offset=0x1C, size=0x4)
             + Op.STOP
         ),
+        nonce=0,
+        address=coinbase,  # noqa: E501
     )
 
     tx = Transaction(

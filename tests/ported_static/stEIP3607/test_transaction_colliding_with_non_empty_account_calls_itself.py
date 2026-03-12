@@ -50,9 +50,12 @@ def test_transaction_colliding_with_non_empty_account_calls_itself(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(
-        balance=0xDE0B6B3A7640000,
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x1, value=0x0),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=sender,  # noqa: E501
     )
     pre[coinbase] = Account(balance=0, nonce=1)
 

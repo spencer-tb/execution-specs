@@ -55,9 +55,8 @@ def test_random_statetest_default_minus_tue_07_58_41_minus_15153_minus_575192_lo
         address=Address("0x589d1b72331c25effee38732d79f48f729681853"),  # noqa: E501
     )
     pre[sender] = Account(balance=0x5D8FDD3FF54298B4, nonce=28)
-    pre[coinbase] = Account(
-        balance=0,
-        nonce=28,
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=(
             Op.PUSH2[0xDEAD]
             + Op.CALL(
@@ -71,6 +70,8 @@ def test_random_statetest_default_minus_tue_07_58_41_minus_15153_minus_575192_lo
             )
             + Op.SSTORE(key=0x1, value=Op.EXTCODEHASH(address=0xABCDEF))
         ),
+        nonce=28,
+        address=coinbase,  # noqa: E501
     )
 
     tx = Transaction(

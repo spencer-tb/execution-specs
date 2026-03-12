@@ -73,9 +73,8 @@ def test_random_statetest645(
         address=Address("0x322c72dedad1a81092ab9ba908fbec8779ce1c32"),  # noqa: E501
     )
     pre[callee_1] = Account(balance=0xB3508C0F8A22F8A1, nonce=28)
-    pre[coinbase] = Account(
-        balance=0x2BE1CFD5D6D6B0B7,
-        nonce=175,
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=(
             Op.MSTORE(offset=0x1D72DE, value=0xCBB01282)
             + Op.LOG1(
@@ -84,6 +83,9 @@ def test_random_statetest645(
                 topic_1=0x22948F746C938A0CB,
             )
         ),
+        balance=0x2BE1CFD5D6D6B0B7,
+        nonce=175,
+        address=coinbase,  # noqa: E501
     )
     pre[sender] = Account(balance=0x6F1F70FEA641F30A)
 

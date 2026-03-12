@@ -429,9 +429,8 @@ def test_python_revert_test_tue201814_minus_1430(
         nonce=21,
         address=Address("0xe7e620c9cf6045209edcad4d6ef43413bedf0949"),  # noqa: E501
     )
-    pre[coinbase] = Account(
-        balance=0x54C814F188394C8,
-        nonce=29,
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=bytes.fromhex(
             "610326610100f379c940b5f2046740058558468f238b85db7f6bbe3f3d51e92a3e3268b7"  # noqa: E501
             "f7c4147541c695f376705288410b81b217e80726fb9e4c5c7b4c49eca0c1b6b97e117c16"  # noqa: E501
@@ -442,6 +441,9 @@ def test_python_revert_test_tue201814_minus_1430(
             "c4204720e3ce66874cead08499d57a547b97d37744ce205e051f296fb116fc9e5f3c2809"  # noqa: E501
             "19aff3c93c5d5cefff9a6102d86103ca6364b68c8ef07d"
         ),
+        balance=0x54C814F188394C8,
+        nonce=29,
+        address=coinbase,  # noqa: E501
     )
 
     tx = Transaction(

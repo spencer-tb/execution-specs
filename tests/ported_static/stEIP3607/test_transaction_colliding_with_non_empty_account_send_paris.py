@@ -37,10 +37,10 @@ def test_transaction_colliding_with_non_empty_account_send_paris(
 ) -> None:
     """Account with non-empty code attempts to send tx to another..."""
     coinbase = Address("0xeb201d2887816e041f6e807e804f64f3a7a226fe")
+    contract = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
     sender = EOA(
         key=0x402790500EA083A617EC567407D9EC3BBB3A5C8B812547D9F66E8D7878B8A75D
     )
-    contract = Address("0x76fae819612a29489a1a43208613d8f8557b8898")
 
     env = Environment(
         fee_recipient=coinbase,
@@ -51,9 +51,12 @@ def test_transaction_colliding_with_non_empty_account_send_paris(
         gas_limit=71794957647893862,
     )
 
-    pre[sender] = Account(
-        balance=0xDE0B6B3A7640000,
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=Op.SSTORE(key=0x1, value=0x0),
+        balance=0xDE0B6B3A7640000,
+        nonce=0,
+        address=sender,  # noqa: E501
     )
     pre[contract] = Account(balance=10, nonce=0)
     pre[coinbase] = Account(balance=0, nonce=1)

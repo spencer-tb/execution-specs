@@ -55,9 +55,8 @@ def test_fill_stack(
         gas_limit=9223372036854775807,
     )
 
-    pre[coinbase] = Account(
-        balance=46,
-        nonce=0,
+    # Source: raw bytecode
+    pre.deploy_contract(
         code=(
             Op.JUMPI(
                 pc=0x9,
@@ -70,6 +69,9 @@ def test_fill_stack(
                 value=Op.CALLDATALOAD(offset=0x20),
             )
         ),
+        balance=46,
+        nonce=0,
+        address=coinbase,  # noqa: E501
     )
     # Source: raw bytecode
     contract = pre.deploy_contract(

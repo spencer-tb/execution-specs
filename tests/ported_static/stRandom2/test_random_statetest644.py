@@ -46,9 +46,7 @@ def test_random_statetest644(
         gas_limit=27244094167015944,
     )
 
-    pre[coinbase] = Account(
-        balance=0x532F42C819FA5BED,
-        nonce=28,
+    pre.deploy_contract(
         code=(
             Op.PUSH24[0x351C4C5A02C8F13FA7C7F5800FA5C9BA2F3B971C13764F9B]
             + Op.PUSH2[0xC2DB]
@@ -92,6 +90,9 @@ def test_random_statetest644(
             + Op.CREATE(value=0x17EF5652, offset=0x958980, size=0x3402AF)
             + Op.ORIGIN
         ),
+        balance=0x532F42C819FA5BED,
+        nonce=28,
+        address=coinbase,  # noqa: E501
     )
     # Source: raw bytecode
     pre.deploy_contract(
