@@ -87,6 +87,10 @@ def _parse_entry(path: Path, root: Path) -> tuple[FixtureKey, str] | None:
         return None
 
     name = _normalize_name(path.stem)
+    # Strip leading test_ prefix so compiled "AddNonConst" and filled
+    # "test_add_non_const" both normalize to "add_non_const".
+    if name.startswith("test_"):
+        name = name[5:]
     return ((category, name), fork)
 
 
@@ -112,7 +116,7 @@ def _index(
     """
     idx: dict[FixtureKey, dict[str, Path]] = defaultdict(dict)
     for p in root.rglob("*.json"):
-        if ".meta" in p.parts:
+        if ".meta" in p.parts or "ported_static" in p.parts:
             continue
         result = _parse_entry(p, root)
         if result is None:
