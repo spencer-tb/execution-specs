@@ -81,7 +81,6 @@ def test_raw_call_gas_value_transfer_ask(
         sender=sender,
         to=contract,
         gas_limit=500000,
-        gas_price=10,
         value=10,
     )
 

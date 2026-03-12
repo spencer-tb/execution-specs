@@ -84,7 +84,6 @@ def test_revert_opcode_create(
         to=contract,
         data=bytes.fromhex("600160005560016000fe6011600155"),
         gas_limit=tx_gas_limit,
-        gas_price=10,
     )
 
     post = expected_post

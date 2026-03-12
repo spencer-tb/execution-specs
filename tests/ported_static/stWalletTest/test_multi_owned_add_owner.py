@@ -132,7 +132,6 @@ def test_multi_owned_add_owner(
             "7065cb480000000000000000000000003fb1cd2cd96c6d5c0b5eb3322d807b34482481d4"  # noqa: E501
         ),
         gas_limit=10000000,
-        gas_price=10,
         nonce=1,
         value=100,
     )

@@ -80,7 +80,6 @@ def test_call_contract_to_create_contract_oog(
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=100000,
-        gas_price=10,
     )
 
     post: dict = {}

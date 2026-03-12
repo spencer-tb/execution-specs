@@ -160,7 +160,6 @@ def test_random_statetest639(
         sender=sender,
         to=contract,
         gas_limit=1612042127,
-        gas_price=10,
         value=1237321880,
     )
 

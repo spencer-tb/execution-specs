@@ -69,7 +69,6 @@ def test_create_empty_contract_with_balance(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

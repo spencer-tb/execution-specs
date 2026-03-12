@@ -68,7 +68,6 @@ def test_create_init_fail_stack_underflow(
         sender=sender,
         to=contract,
         gas_limit=2200000,
-        gas_price=10,
         value=100000,
     )
 

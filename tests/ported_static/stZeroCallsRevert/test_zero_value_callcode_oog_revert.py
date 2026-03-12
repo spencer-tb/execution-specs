@@ -80,7 +80,6 @@ def test_zero_value_callcode_oog_revert(
         sender=sender,
         to=contract,
         gas_limit=135000,
-        gas_price=10,
     )
 
     post: dict = {}

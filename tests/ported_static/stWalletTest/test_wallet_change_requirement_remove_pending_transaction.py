@@ -192,7 +192,6 @@ def test_wallet_change_requirement_remove_pending_transaction(
             "ba51a6df0000000000000000000000000000000000000000000000000000000000000002"  # noqa: E501
         ),
         gas_limit=10000000,
-        gas_price=10,
     )
 
     post = {

@@ -107,7 +107,6 @@ def test_create2_on_depth1024(
         sender=sender,
         to=contract,
         gas_limit=9151314442816847871,
-        gas_price=10,
     )
 
     post = {

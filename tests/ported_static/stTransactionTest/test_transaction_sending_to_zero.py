@@ -53,7 +53,6 @@ def test_transaction_sending_to_zero(
         sender=sender,
         to=contract,
         gas_limit=25000,
-        gas_price=10,
         value=1,
     )
 

@@ -106,7 +106,6 @@ def test_callcode_ecrecover_v_prefixedf0(
         to=contract,
         data=tx_data,
         gas_limit=3652240,
-        gas_price=10,
         value=100000,
     )
 

@@ -119,7 +119,6 @@ def test_call_to_name_registrator_zeor_size_mem_expansion(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=100000,
     )
 

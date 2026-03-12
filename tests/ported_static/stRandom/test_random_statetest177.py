@@ -193,7 +193,6 @@ def test_random_statetest177(
             "eef00dcd5355c37d900a2ce940246fcaada0526acdd4eaf98a420bae34e22b37"
         ),
         gas_limit=100000,
-        gas_price=10,
         value=1928806571,
     )
 

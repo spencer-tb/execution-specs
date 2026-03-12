@@ -63,7 +63,6 @@ def test_mem0b_single_byte(
         sender=sender,
         to=contract,
         gas_limit=100000,
-        gas_price=10,
         value=10,
     )
 

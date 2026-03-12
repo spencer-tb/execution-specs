@@ -78,7 +78,6 @@ def test_self_balance_update(
         sender=sender,
         to=contract,
         gas_limit=200000,
-        gas_price=10,
     )
 
     post = {

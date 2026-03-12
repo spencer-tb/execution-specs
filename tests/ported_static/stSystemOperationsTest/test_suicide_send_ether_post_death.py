@@ -182,7 +182,6 @@ def test_suicide_send_ether_post_death(
         to=contract,
         data=bytes.fromhex("4d536fe3"),
         gas_limit=3000000,
-        gas_price=10,
         value=100000,
     )
 

@@ -189,7 +189,6 @@ def test_wallet_construction_oog(
             "cab91f525b5ae7a03d02fabe"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         nonce=1,
         value=100,
     )

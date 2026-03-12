@@ -65,7 +65,6 @@ def test_point_at_infinity_ec_recover(
         sender=sender,
         to=contract,
         gas_limit=10000000,
-        gas_price=10,
     )
 
     post = {

@@ -82,7 +82,6 @@ def test_call_lose_gas_oog(
         sender=sender,
         to=contract,
         gas_limit=200000,
-        gas_price=10,
         value=10,
     )
 

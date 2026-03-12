@@ -79,7 +79,6 @@ def test_create_message_reverted(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=100,
     )
 

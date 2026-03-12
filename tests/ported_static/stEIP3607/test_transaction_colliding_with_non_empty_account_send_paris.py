@@ -65,7 +65,6 @@ def test_transaction_colliding_with_non_empty_account_send_paris(
         sender=sender,
         to=contract,
         gas_limit=400000,
-        gas_price=10,
         value=100000,
         error=TransactionException.SENDER_NOT_EOA,
     )

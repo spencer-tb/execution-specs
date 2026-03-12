@@ -267,7 +267,6 @@ def test_sstore_0to0(
         to=None,
         data=tx_data,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=1,
     )
 

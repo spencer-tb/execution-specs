@@ -82,7 +82,6 @@ def test_out_of_gas_contract_creation(
         to=None,
         data=tx_data,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=1,
     )
 

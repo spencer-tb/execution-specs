@@ -85,7 +85,6 @@ def test_contract_store_clears_success(
         sender=sender,
         to=contract,
         gas_limit=130000,
-        gas_price=10,
         value=10,
     )
 

@@ -58,7 +58,6 @@ def test_revert_in_create_in_init_paris(
             "6211223360005260206000fd00"
         ),
         gas_limit=200000,
-        gas_price=10,
     )
 
     post = {

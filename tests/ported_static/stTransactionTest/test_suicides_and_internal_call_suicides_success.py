@@ -102,7 +102,6 @@ def test_suicides_and_internal_call_suicides_success(
         to=contract,
         data=tx_data,
         gas_limit=150000,
-        gas_price=10,
         value=10,
     )
 

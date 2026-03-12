@@ -84,7 +84,6 @@ def test_create_js_no_collision(
             "0000000000000000000000000000000000000000000000000023"
         ),
         gas_limit=600000,
-        gas_price=10,
         value=100000,
     )
 

@@ -109,7 +109,6 @@ def test_ext_code_copy_tests_paris(
         sender=sender,
         to=contract,
         gas_limit=400000,
-        gas_price=10,
     )
 
     post = {

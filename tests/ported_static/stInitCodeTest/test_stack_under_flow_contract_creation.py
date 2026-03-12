@@ -55,7 +55,6 @@ def test_stack_under_flow_contract_creation(
         to=None,
         data=bytes.fromhex("6000f1"),
         gas_limit=72000,
-        gas_price=10,
     )
 
     post: dict = {}

@@ -72,7 +72,6 @@ def test_create_name_registrator_out_of_memory_bonds0(
         sender=sender,
         to=contract,
         gas_limit=300000,
-        gas_price=10,
         value=100000,
     )
 

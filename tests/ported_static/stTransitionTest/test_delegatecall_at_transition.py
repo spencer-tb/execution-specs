@@ -84,7 +84,6 @@ def test_delegatecall_at_transition(
         sender=sender,
         to=contract,
         gas_limit=3000000,
-        gas_price=10,
     )
 
     post = {

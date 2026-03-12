@@ -124,7 +124,6 @@ def test_ab_acalls_suicide1(
         to=contract,
         data=tx_data,
         gas_limit=10000000,
-        gas_price=10,
         value=100000,
     )
 

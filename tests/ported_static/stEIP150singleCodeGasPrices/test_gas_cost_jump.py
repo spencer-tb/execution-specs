@@ -235,7 +235,6 @@ def test_gas_cost_jump(
         to=contract,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
         value=1,
     )
 

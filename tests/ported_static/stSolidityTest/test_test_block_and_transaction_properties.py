@@ -263,7 +263,6 @@ def test_test_block_and_transaction_properties(
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=350000,
-        gas_price=10,
         value=100,
     )
 

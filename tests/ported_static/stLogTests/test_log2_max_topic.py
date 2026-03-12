@@ -91,7 +91,6 @@ def test_log2_max_topic(
         sender=sender,
         to=contract,
         gas_limit=210000,
-        gas_price=10,
         value=100000,
     )
 

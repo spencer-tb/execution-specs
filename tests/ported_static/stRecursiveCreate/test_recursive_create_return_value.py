@@ -70,7 +70,6 @@ def test_recursive_create_return_value(
         sender=sender,
         to=contract,
         gas_limit=1000000000,
-        gas_price=10,
         value=100000,
     )
 

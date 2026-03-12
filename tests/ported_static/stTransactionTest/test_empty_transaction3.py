@@ -52,7 +52,6 @@ def test_empty_transaction3(
         sender=sender,
         to=None,
         gas_limit=55000,
-        gas_price=10,
     )
 
     post: dict = {}

@@ -67,7 +67,6 @@ def test_call_contract_to_create_contract_which_would_create_contract_in_init_co
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=200000,
-        gas_price=10,
     )
 
     post = {

@@ -86490,7 +86490,6 @@ def test_underflow_test(
         to=contract,
         data=tx_data,
         gas_limit=8000000,
-        gas_price=10,
         value=1,
     )
 

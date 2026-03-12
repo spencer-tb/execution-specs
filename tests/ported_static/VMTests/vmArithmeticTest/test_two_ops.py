@@ -3540,7 +3540,6 @@ def test_two_ops(
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=16777216,
-        gas_price=10,
         value=1,
     )
 

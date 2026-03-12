@@ -84,7 +84,6 @@ def test_log3_empty_mem(
         sender=sender,
         to=contract,
         gas_limit=210000,
-        gas_price=10,
         value=100000,
     )
 

@@ -59,7 +59,6 @@ def test_mload8bit_bound(
         sender=sender,
         to=contract,
         gas_limit=220000,
-        gas_price=10,
         value=10,
     )
 

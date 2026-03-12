@@ -83,7 +83,6 @@ def test_log1_caller(
         sender=sender,
         to=contract,
         gas_limit=210000,
-        gas_price=10,
         value=100000,
     )
 

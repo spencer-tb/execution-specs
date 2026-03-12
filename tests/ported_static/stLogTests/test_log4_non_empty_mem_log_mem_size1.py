@@ -95,7 +95,6 @@ def test_log4_non_empty_mem_log_mem_size1(
         sender=sender,
         to=contract,
         gas_limit=210000,
-        gas_price=10,
         value=100000,
     )
 

@@ -279,7 +279,6 @@ def test_recursive_create_contracts(
             "a444f5e90000000000000000000000000000000000000000000000000000000000000304"  # noqa: E501
         ),
         gas_limit=300000,
-        gas_price=10,
         value=1,
     )
 

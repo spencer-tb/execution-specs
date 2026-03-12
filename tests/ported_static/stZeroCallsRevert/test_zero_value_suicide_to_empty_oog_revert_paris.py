@@ -87,7 +87,6 @@ def test_zero_value_suicide_to_empty_oog_revert_paris(
         sender=sender,
         to=contract,
         gas_limit=75000,
-        gas_price=10,
     )
 
     post: dict = {}

@@ -97,7 +97,6 @@ def test_touch_to_empty_account_revert_paris(
         sender=sender,
         to=contract,
         gas_limit=70000,
-        gas_price=10,
     )
 
     post: dict = {}

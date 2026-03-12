@@ -265,7 +265,6 @@ def test_selfdestruct_eip2929(
         sender=sender,
         to=contract,
         gas_limit=8000000,
-        gas_price=10,
     )
 
     post = {

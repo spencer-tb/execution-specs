@@ -58,7 +58,6 @@ def test_failed_create_reverts_deletion_paris(
             "3050600d80601360003960006000f050fe00fe6211223360005260206000fd00"
         ),
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = {

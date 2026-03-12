@@ -96,7 +96,6 @@ def test_ab_acalls0(
         sender=sender,
         to=contract,
         gas_limit=1000000,
-        gas_price=10,
         value=100000,
     )
 

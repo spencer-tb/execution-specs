@@ -88,7 +88,6 @@ def test_call_recursive_bomb0_oog_at_max_call_depth(
         sender=sender,
         to=contract,
         gas_limit=100000000000,
-        gas_price=10,
         value=100000,
     )
 

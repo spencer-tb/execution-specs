@@ -68,7 +68,6 @@ def test_suicide_caller_addres_too_big_right(
         sender=sender,
         to=contract,
         gas_limit=1000000,
-        gas_price=10,
         value=100000,
     )
 

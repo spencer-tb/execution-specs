@@ -257,7 +257,6 @@ def test_ecpairing_two_points_with_one_g2_zero(
             "8dcb408fe3d1e7690c43d37b4ce6cc0166fa7daa"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         nonce=10,
     )
 

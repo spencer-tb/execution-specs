@@ -182,7 +182,6 @@ def test_sstore_gas_left(
         to=None,
         data=tx_data,
         gas_limit=200000,
-        gas_price=10,
         value=1,
     )
 

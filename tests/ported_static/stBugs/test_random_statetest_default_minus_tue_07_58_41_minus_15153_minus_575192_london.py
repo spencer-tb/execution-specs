@@ -78,7 +78,6 @@ def test_random_statetest_default_minus_tue_07_58_41_minus_15153_minus_575192_lo
         sender=sender,
         to=coinbase,
         gas_limit=6282759,
-        gas_price=10,
         nonce=28,
     )
 

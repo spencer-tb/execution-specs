@@ -79,7 +79,6 @@ def test_callcode_check_pc(
         sender=sender,
         to=contract,
         gas_limit=1100000,
-        gas_price=10,
     )
 
     post = {

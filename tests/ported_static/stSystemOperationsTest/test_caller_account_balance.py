@@ -61,7 +61,6 @@ def test_caller_account_balance(
         sender=sender,
         to=contract,
         gas_limit=10000000,
-        gas_price=10,
         value=100000,
     )
 

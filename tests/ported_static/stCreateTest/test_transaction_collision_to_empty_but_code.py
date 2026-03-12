@@ -73,7 +73,6 @@ def test_transaction_collision_to_empty_but_code(
         to=None,
         data=bytes.fromhex("6001600155"),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=tx_value,
     )
 

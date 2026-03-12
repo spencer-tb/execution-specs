@@ -107,7 +107,6 @@ def test_call_goes_oog_on_second_level(
         sender=sender,
         to=contract,
         gas_limit=2200000,
-        gas_price=10,
     )
 
     post = {

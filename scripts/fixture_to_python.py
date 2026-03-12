@@ -1620,7 +1620,8 @@ def generate_test_file(
             else:
                 tx_parts.append(f'data=bytes.fromhex("{data_raw}")')
         # Omit data=b"" (default)
-        tx_parts.append(f"gas_limit={case['gas_limit']}")
+        if case["gas_limit"] != 21000:
+            tx_parts.append(f"gas_limit={case['gas_limit']}")
     else:
         if data_varies:
             tx_parts.append("data=tx_data")
@@ -1646,7 +1647,8 @@ def generate_test_file(
         if gas_varies:
             tx_parts.append("gas_limit=tx_gas_limit")
         else:
-            tx_parts.append(f"gas_limit={cases_for_fork[0]['gas_limit']}")
+            if cases_for_fork[0]["gas_limit"] != 21000:
+                tx_parts.append(f"gas_limit={cases_for_fork[0]['gas_limit']}")
 
     gas_price = tx.get("gasPrice")
     max_fee = tx.get("maxFeePerGas")
@@ -1656,11 +1658,11 @@ def generate_test_file(
 
     if max_fee:
         tx_parts.append(f"max_fee_per_gas={hex_to_int(max_fee)}")
-        if max_priority:
+        if max_priority and hex_to_int(max_priority) != 0:
             tx_parts.append(
                 f"max_priority_fee_per_gas={hex_to_int(max_priority)}"
             )
-    elif gas_price:
+    elif gas_price and hex_to_int(gas_price) != 10:
         tx_parts.append(f"gas_price={hex_to_int(gas_price)}")
 
     if max_fee_blob:

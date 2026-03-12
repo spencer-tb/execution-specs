@@ -54,7 +54,6 @@ def test_high_gas_limit(
         to=contract,
         data=bytes.fromhex("3240349548983454"),
         gas_limit=100000,
-        gas_price=10,
         value=900,
     )
 

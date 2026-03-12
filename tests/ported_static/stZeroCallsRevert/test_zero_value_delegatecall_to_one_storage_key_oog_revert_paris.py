@@ -81,7 +81,6 @@ def test_zero_value_delegatecall_to_one_storage_key_oog_revert_paris(
         sender=sender,
         to=contract,
         gas_limit=135000,
-        gas_price=10,
     )
 
     post = {

@@ -75,7 +75,6 @@ def test_mload32bit_bound_return2(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
     )
 
     post = expected_post

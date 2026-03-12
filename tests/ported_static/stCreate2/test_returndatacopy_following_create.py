@@ -129,7 +129,6 @@ def test_returndatacopy_following_create(
         to=contract,
         data=tx_data,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = {

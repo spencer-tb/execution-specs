@@ -102,7 +102,6 @@ def test_internal_call_store_clears_oog(
         sender=sender,
         to=contract,
         gas_limit=160000,
-        gas_price=10,
         value=10,
     )
 

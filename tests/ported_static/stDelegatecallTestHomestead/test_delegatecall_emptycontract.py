@@ -75,7 +75,6 @@ def test_delegatecall_emptycontract(
         sender=sender,
         to=contract,
         gas_limit=105044,
-        gas_price=10,
     )
 
     post = {

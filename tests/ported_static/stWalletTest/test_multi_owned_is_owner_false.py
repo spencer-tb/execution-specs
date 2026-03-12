@@ -134,7 +134,6 @@ def test_multi_owned_is_owner_false(
             "2f54bf6e000000000000000000000000aaaf5374fce5edbc8e2a8697c15331677e6ebaaa"  # noqa: E501
         ),
         gas_limit=10000000,
-        gas_price=10,
         nonce=1,
         value=100,
     )

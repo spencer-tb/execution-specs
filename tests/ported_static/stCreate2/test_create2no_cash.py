@@ -82,7 +82,6 @@ def test_create2no_cash(
         to=None,
         data=tx_data,
         gas_limit=400000,
-        gas_price=10,
         value=1,
     )
 

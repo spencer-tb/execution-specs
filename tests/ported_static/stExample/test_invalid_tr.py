@@ -62,7 +62,6 @@ def test_invalid_tr(
         sender=sender,
         to=contract,
         gas_limit=1000,
-        gas_price=10,
         value=100000,
         error=TransactionException.INTRINSIC_GAS_TOO_LOW,
     )

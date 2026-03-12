@@ -63,7 +63,6 @@ def test_mem32kb_single_byte_minus_31(
         sender=sender,
         to=contract,
         gas_limit=100000,
-        gas_price=10,
         value=10,
     )
 

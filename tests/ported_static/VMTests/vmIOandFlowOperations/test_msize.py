@@ -197,7 +197,6 @@ def test_msize(
         to=contract,
         data=tx_data,
         gas_limit=268435456,
-        gas_price=10,
         value=1,
     )
 

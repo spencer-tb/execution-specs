@@ -155,7 +155,6 @@ def test_test_keywords(
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=350000,
-        gas_price=10,
         value=1,
     )
 

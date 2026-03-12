@@ -86,7 +86,6 @@ def test_delegatecall_and_oo_gat_tx_level(
         sender=sender,
         to=contract,
         gas_limit=3000000,
-        gas_price=10,
     )
 
     post = {

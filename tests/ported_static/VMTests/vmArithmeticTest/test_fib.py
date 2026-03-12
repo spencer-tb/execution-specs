@@ -137,7 +137,6 @@ def test_fib(
         to=contract,
         data=bytes.fromhex("01"),
         gas_limit=16777216,
-        gas_price=10,
         value=1,
     )
 

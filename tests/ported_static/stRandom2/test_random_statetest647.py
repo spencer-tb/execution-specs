@@ -62,7 +62,6 @@ def test_random_statetest647(
         sender=sender,
         to=contract,
         gas_limit=5786929,
-        gas_price=10,
     )
 
     post: dict = {}

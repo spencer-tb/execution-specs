@@ -135,7 +135,6 @@ def test_create2_first_byte_loop(
         to=contract,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
     )
 
     post = expected_post

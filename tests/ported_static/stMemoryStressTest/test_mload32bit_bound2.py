@@ -71,7 +71,6 @@ def test_mload32bit_bound2(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=10,
     )
 

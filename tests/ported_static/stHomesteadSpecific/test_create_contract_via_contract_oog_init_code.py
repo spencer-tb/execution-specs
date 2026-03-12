@@ -65,7 +65,6 @@ def test_create_contract_via_contract_oog_init_code(
         sender=sender,
         to=contract,
         gas_limit=105044,
-        gas_price=10,
     )
 
     post: dict = {}

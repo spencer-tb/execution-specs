@@ -120,7 +120,6 @@ def test_callcodecallcall_100_oogm_after(
         sender=sender,
         to=contract,
         gas_limit=1000000,
-        gas_price=10,
     )
 
     post = {

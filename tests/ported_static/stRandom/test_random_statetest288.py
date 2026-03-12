@@ -77,7 +77,6 @@ def test_random_statetest288(
         to=contract,
         data=bytes.fromhex("42"),
         gas_limit=400000,
-        gas_price=10,
         value=100000,
     )
 

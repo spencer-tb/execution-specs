@@ -62,7 +62,6 @@ def test_push0_gas(
         sender=sender,
         to=contract,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = {

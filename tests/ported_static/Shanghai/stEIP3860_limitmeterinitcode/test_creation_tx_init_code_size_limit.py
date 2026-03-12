@@ -78,7 +78,6 @@ def test_creation_tx_init_code_size_limit(
         to=None,
         data=tx_data,
         gas_limit=15000000,
-        gas_price=10,
         error=tx_error,
     )
 

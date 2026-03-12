@@ -619,7 +619,6 @@ def test_callcode_to_precompile_from_called_contract(
         sender=sender,
         to=contract,
         gas_limit=4000000,
-        gas_price=10,
         value=100,
     )
 

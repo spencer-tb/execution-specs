@@ -223,7 +223,6 @@ def test_shallow_stack(
         to=None,
         data=tx_data,
         gas_limit=300000,
-        gas_price=10,
     )
 
     post: dict = {}

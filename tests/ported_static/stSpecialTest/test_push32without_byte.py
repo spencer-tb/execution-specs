@@ -56,7 +56,6 @@ def test_push32without_byte(
         sender=sender,
         to=contract,
         gas_limit=500000,
-        gas_price=10,
         nonce=1,
     )
 

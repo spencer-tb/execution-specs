@@ -119,7 +119,6 @@ def test_callcode_to_name_registrator_zero_mem_expanion(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=100000,
     )
 

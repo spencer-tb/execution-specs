@@ -72,7 +72,6 @@ def test_create_message_reverted_oog_in_init2(
         to=None,
         data=bytes.fromhex("69600c600055600d6001556000526000600a60166000f500"),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=100,
     )
 

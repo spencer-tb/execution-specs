@@ -102,7 +102,6 @@ def test_call_recursive_methods(
         to=contract,
         data=bytes.fromhex("981a3165"),
         gas_limit=60000,
-        gas_price=10,
         value=1,
     )
 

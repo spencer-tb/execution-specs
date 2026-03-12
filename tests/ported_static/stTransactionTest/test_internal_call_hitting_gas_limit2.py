@@ -77,7 +77,6 @@ def test_internal_call_hitting_gas_limit2(
         sender=sender,
         to=contract,
         gas_limit=47766,
-        gas_price=10,
         value=10,
     )
 

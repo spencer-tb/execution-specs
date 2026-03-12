@@ -56,7 +56,6 @@ def test_create_name_registrator_per_txs(
             "6001600155601080600c6000396000f3006000355415600957005b60203560003555"  # noqa: E501
         ),
         gas_limit=1250528,
-        gas_price=10,
         value=100000,
     )
 

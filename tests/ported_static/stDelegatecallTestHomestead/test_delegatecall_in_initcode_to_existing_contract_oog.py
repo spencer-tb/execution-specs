@@ -80,7 +80,6 @@ def test_delegatecall_in_initcode_to_existing_contract_oog(
         sender=sender,
         to=contract,
         gas_limit=153096,
-        gas_price=10,
     )
 
     post = {

@@ -840,7 +840,6 @@ def test_create_results(
         to=contract,
         data=tx_data,
         gas_limit=9437184,
-        gas_price=10,
     )
 
     post = expected_post

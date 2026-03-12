@@ -83,7 +83,6 @@ def test_suicides_and_internal_call_suicides_bonus_gas_at_call_failed(
         sender=sender,
         to=contract,
         gas_limit=50000,
-        gas_price=10,
         value=10,
     )
 

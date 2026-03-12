@@ -184,7 +184,6 @@ def test_wallet_execute_under_daily_limit(
             "00000000000000000000000000000000000000000000000000000060"
         ),
         gas_limit=10000000,
-        gas_price=10,
         nonce=1,
     )
 

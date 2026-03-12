@@ -78,7 +78,6 @@ def test_revert_prefound_empty_call_paris(
         sender=sender,
         to=contract,
         gas_limit=94000,
-        gas_price=10,
     )
 
     post = {

@@ -185,7 +185,6 @@ def test_wallet_execute_over_daily_limit_only_one_owner_new(
             "00000000000000000000000000000000000000000000000000000060"
         ),
         gas_limit=10000000,
-        gas_price=10,
         nonce=1,
     )
 

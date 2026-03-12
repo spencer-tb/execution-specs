@@ -134,7 +134,6 @@ def test_multi_owned_revoke_nothing(
             "b75c7dc66e369836487c234b9e553ef3f787c2d8865520739d340c67b3d251a33986e58d"  # noqa: E501
         ),
         gas_limit=10000000,
-        gas_price=10,
         nonce=1,
         value=100,
     )

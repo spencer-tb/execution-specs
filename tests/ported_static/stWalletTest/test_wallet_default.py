@@ -176,7 +176,6 @@ def test_wallet_default(
         sender=sender,
         to=contract,
         gas_limit=10000000,
-        gas_price=10,
         nonce=1,
         value=100,
     )

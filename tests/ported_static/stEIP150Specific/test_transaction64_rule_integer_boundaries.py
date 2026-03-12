@@ -251,7 +251,6 @@ def test_transaction64_rule_integer_boundaries(
         to=contract,
         data=tx_data,
         gas_limit=800000,
-        gas_price=10,
     )
 
     post = expected_post

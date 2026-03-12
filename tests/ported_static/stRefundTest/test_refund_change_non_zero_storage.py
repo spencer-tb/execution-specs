@@ -63,7 +63,6 @@ def test_refund_change_non_zero_storage(
         sender=sender,
         to=contract,
         gas_limit=228500,
-        gas_price=10,
         value=10,
     )
 

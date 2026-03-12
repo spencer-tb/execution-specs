@@ -54,7 +54,6 @@ def test_transaction_create_auto_suicide_contract(
         to=None,
         data=bytes.fromhex("600a80600c6000396000fff2ffff600160008035811a81"),
         gas_limit=55000,
-        gas_price=10,
         value=15,
     )
 

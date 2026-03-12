@@ -64,7 +64,6 @@ def test_create_message_success(
         sender=sender,
         to=contract,
         gas_limit=131882,
-        gas_price=10,
         value=100,
     )
 

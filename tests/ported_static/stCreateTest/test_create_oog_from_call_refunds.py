@@ -1173,7 +1173,6 @@ def test_create_oog_from_call_refunds(
         to=contract,
         data=tx_data,
         gas_limit=400000,
-        gas_price=10,
         nonce=1,
     )
 

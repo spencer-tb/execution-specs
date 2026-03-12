@@ -82,7 +82,6 @@ def test_create_empty_contract_and_call_it_1wei(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

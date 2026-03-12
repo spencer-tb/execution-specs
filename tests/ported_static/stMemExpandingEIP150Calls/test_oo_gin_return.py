@@ -187,7 +187,6 @@ def test_oo_gin_return(
         to=contract,
         data=tx_data,
         gas_limit=9437184,
-        gas_price=10,
     )
 
     post = expected_post

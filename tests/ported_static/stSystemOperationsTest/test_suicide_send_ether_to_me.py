@@ -61,7 +61,6 @@ def test_suicide_send_ether_to_me(
         sender=sender,
         to=contract,
         gas_limit=1000000,
-        gas_price=10,
         value=100000,
     )
 

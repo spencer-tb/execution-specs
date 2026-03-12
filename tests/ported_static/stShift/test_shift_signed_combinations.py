@@ -347,7 +347,6 @@ def test_shift_signed_combinations(
         sender=sender,
         to=contract,
         gas_limit=80000000,
-        gas_price=10,
         value=1,
     )
 

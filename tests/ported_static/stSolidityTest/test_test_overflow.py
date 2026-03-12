@@ -174,7 +174,6 @@ def test_test_overflow(
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = {

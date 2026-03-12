@@ -118,7 +118,6 @@ def test_manual_create(
         to=None,
         data=bytes.fromhex("5a3031505a90036001555a60ff6000555a900360005500"),
         gas_limit=400000,
-        gas_price=10,
         nonce=1,
         access_list=tx_access_list,
     )

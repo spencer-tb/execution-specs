@@ -55,7 +55,6 @@ def test_non_zero_value_transaction_call_to_empty_paris(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
         value=1,
     )
 

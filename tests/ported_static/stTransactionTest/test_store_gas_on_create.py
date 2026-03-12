@@ -62,7 +62,6 @@ def test_store_gas_on_create(
         sender=sender,
         to=coinbase,
         gas_limit=131882,
-        gas_price=10,
         value=100,
     )
 

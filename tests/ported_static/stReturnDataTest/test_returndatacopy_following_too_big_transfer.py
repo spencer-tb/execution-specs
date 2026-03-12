@@ -89,7 +89,6 @@ def test_returndatacopy_following_too_big_transfer(
         sender=sender,
         to=contract,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = {

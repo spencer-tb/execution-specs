@@ -63,7 +63,6 @@ def test_transaction_data_costs652(
         to=contract,
         data=bytes.fromhex("00000000000000000000112233445566778f32"),
         gas_limit=tx_gas_limit,
-        gas_price=10,
     )
 
     post: dict = {}

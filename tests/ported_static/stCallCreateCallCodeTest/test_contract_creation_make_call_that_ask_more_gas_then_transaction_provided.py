@@ -101,7 +101,6 @@ def test_contract_creation_make_call_that_ask_more_gas_then_transaction_provided
             "6040600060406000600073100000000000000000000000000000000000000161c350f1"  # noqa: E501
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
     )
 
     post = expected_post

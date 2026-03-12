@@ -104,7 +104,6 @@ def test_callcodecallcode_11_ooge(
         sender=sender,
         to=contract,
         gas_limit=1000000,
-        gas_price=10,
     )
 
     post = {

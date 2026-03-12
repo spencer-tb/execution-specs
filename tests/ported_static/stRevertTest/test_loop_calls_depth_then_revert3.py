@@ -80,7 +80,6 @@ def test_loop_calls_depth_then_revert3(
         sender=sender,
         to=contract,
         gas_limit=9214364837600034817,
-        gas_price=10,
     )
 
     post = {

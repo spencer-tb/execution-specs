@@ -256,7 +256,6 @@ def test_ecpairing_two_point_match_4(
             "688728c9972c8512e9789e9567aae23e302ccd75"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         nonce=15,
     )
 

@@ -119,7 +119,6 @@ def test_refund_call_to_suicide_storage(
         to=contract,
         data=tx_data,
         gas_limit=10000000,
-        gas_price=10,
         value=10,
     )
 

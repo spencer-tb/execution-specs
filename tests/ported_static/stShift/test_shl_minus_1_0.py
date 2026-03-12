@@ -67,7 +67,6 @@ def test_shl_minus_1_0(
         sender=sender,
         to=contract,
         gas_limit=400000,
-        gas_price=10,
         value=100000,
     )
 

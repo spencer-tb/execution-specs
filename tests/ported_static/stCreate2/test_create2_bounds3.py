@@ -169,7 +169,6 @@ def test_create2_bounds3(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
     )
 
     post = expected_post

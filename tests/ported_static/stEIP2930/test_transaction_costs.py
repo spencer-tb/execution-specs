@@ -399,7 +399,6 @@ def test_transaction_costs(
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=400000,
-        gas_price=10,
         value=100000,
         access_list=tx_access_list,
     )

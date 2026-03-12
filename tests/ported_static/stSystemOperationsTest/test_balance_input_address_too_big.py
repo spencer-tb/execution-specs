@@ -70,7 +70,6 @@ def test_balance_input_address_too_big(
         sender=sender,
         to=contract,
         gas_limit=300000,
-        gas_price=10,
         value=100000,
     )
 

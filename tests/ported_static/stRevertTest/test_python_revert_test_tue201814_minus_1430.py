@@ -481,7 +481,6 @@ def test_python_revert_test_tue201814_minus_1430(
             "4e98dc3bc44f7d651d7191ead455"
         ),
         gas_limit=2643883,
-        gas_price=10,
         value=625999040,
     )
 

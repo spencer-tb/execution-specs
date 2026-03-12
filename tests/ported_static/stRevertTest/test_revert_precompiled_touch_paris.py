@@ -477,7 +477,6 @@ def test_revert_precompiled_touch_paris(
         to=contract,
         data=tx_data,
         gas_limit=100000,
-        gas_price=10,
         nonce=1,
     )
 

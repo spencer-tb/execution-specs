@@ -252,7 +252,6 @@ def test_ecpairing_one_point_not_in_subgroup(
             "5fd774c26f1bcb87"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         nonce=20,
     )
 

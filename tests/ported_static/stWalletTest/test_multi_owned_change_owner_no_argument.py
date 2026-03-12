@@ -133,7 +133,6 @@ def test_multi_owned_change_owner_no_argument(
         to=contract,
         data=bytes.fromhex("f00d4b5d"),
         gas_limit=770743,
-        gas_price=10,
         nonce=1,
         value=100,
     )

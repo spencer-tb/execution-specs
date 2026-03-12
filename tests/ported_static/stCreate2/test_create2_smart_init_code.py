@@ -144,7 +144,6 @@ def test_create2_smart_init_code(
         to=contract,
         data=tx_data,
         gas_limit=400000,
-        gas_price=10,
     )
 
     post = expected_post

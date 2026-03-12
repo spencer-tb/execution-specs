@@ -103,7 +103,6 @@ def test_staticcall_createfails(
         to=contract,
         data=tx_data,
         gas_limit=120000,
-        gas_price=10,
     )
 
     post: dict = {}

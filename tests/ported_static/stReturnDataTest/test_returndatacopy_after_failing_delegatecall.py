@@ -85,7 +85,6 @@ def test_returndatacopy_after_failing_delegatecall(
         sender=sender,
         to=contract,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = {

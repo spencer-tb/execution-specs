@@ -90,7 +90,6 @@ def test_call_with_high_value_oo_gin_call(
         sender=sender,
         to=contract,
         gas_limit=3000000,
-        gas_price=10,
     )
 
     post = {

@@ -134,7 +134,6 @@ def test_create_contract_from_method(
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=350000,
-        gas_price=10,
         value=1,
     )
 

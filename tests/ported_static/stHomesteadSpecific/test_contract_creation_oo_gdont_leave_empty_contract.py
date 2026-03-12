@@ -69,7 +69,6 @@ def test_contract_creation_oo_gdont_leave_empty_contract(
         sender=sender,
         to=contract,
         gas_limit=93056,
-        gas_price=10,
     )
 
     post = {

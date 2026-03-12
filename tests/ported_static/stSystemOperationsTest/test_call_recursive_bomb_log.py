@@ -99,7 +99,6 @@ def test_call_recursive_bomb_log(
         sender=sender,
         to=contract,
         gas_limit=10000000000,
-        gas_price=10,
         value=100000,
     )
 

@@ -477,7 +477,6 @@ def test_jumpdest_attack(
         sender=sender,
         to=contract,
         gas_limit=100000000,
-        gas_price=10,
         value=100000,
     )
 

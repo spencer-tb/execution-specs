@@ -77,7 +77,6 @@ def test_callcode_sha256_3(
         sender=sender,
         to=contract,
         gas_limit=365224,
-        gas_price=10,
         value=100000,
     )
 

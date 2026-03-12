@@ -65,7 +65,6 @@ def test_eip2315_not_removed(
         sender=sender,
         to=contract,
         gas_limit=400000,
-        gas_price=10,
     )
 
     post: dict = {}

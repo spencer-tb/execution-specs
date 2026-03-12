@@ -113,7 +113,6 @@ def test_fill_stack(
             "000000000000000000000000000000000000000000c3504357155320803a97"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=264050067,
     )
 

@@ -133,7 +133,6 @@ def test_refund_suicide50procent_cap(
         to=contract,
         data=tx_data,
         gas_limit=10000000,
-        gas_price=10,
     )
 
     post = expected_post

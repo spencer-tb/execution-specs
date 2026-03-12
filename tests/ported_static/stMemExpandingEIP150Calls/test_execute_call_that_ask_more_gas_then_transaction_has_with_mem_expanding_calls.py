@@ -80,7 +80,6 @@ def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_
         sender=sender,
         to=contract,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = {

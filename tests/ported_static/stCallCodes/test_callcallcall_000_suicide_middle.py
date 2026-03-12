@@ -122,7 +122,6 @@ def test_callcallcall_000_suicide_middle(
         sender=sender,
         to=contract,
         gas_limit=3000000,
-        gas_price=10,
     )
 
     post = {

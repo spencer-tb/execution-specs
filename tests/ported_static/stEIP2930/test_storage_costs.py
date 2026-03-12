@@ -1463,7 +1463,6 @@ def test_storage_costs(
         to=contract,
         data=tx_data,
         gas_limit=400000,
-        gas_price=10,
         value=100000,
         access_list=tx_access_list,
     )

@@ -53,7 +53,6 @@ def test_create_contract_via_transaction_cost53000(
         sender=sender,
         to=None,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post: dict = {}

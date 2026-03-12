@@ -110,7 +110,6 @@ def test_mem_copy_self(
         sender=sender,
         to=contract,
         gas_limit=16777216,
-        gas_price=10,
         nonce=1,
     )
 

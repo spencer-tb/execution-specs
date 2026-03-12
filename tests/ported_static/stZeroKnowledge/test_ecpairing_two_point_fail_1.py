@@ -246,7 +246,6 @@ def test_ecpairing_two_point_fail_1(
             "8dcb408fe3d1e7690c43d37b4ce6cc0166fa7daa"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         nonce=9,
     )
 

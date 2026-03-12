@@ -86,7 +86,6 @@ def test_call_output3partial(
         sender=sender,
         to=contract,
         gas_limit=900000,
-        gas_price=10,
         value=100000,
     )
 

@@ -78,7 +78,6 @@ def test_raw_ext_code_size_gas(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

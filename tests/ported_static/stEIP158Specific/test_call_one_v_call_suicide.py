@@ -84,7 +84,6 @@ def test_call_one_v_call_suicide(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

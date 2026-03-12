@@ -78,7 +78,6 @@ def test_zero_value_delegatecall_to_one_storage_key_paris(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

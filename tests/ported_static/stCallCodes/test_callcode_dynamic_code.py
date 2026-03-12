@@ -312,7 +312,6 @@ def test_callcode_dynamic_code(
         to=contract,
         data=tx_data,
         gas_limit=1000000,
-        gas_price=10,
     )
 
     post = expected_post

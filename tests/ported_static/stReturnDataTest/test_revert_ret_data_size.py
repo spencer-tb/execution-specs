@@ -878,7 +878,6 @@ def test_revert_ret_data_size(
         to=contract,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
         value=1,
     )
 

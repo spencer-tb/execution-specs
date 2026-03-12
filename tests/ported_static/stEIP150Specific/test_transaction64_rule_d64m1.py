@@ -80,7 +80,6 @@ def test_transaction64_rule_d64m1(
         sender=sender,
         to=contract,
         gas_limit=160061,
-        gas_price=10,
     )
 
     post = {

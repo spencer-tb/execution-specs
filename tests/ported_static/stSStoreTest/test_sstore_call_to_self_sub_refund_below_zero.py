@@ -77,7 +77,6 @@ def test_sstore_call_to_self_sub_refund_below_zero(
         sender=sender,
         to=contract,
         gas_limit=2367154,
-        gas_price=10,
     )
 
     post = {

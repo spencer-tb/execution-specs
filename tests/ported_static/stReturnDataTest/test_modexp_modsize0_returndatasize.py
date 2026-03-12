@@ -126,7 +126,6 @@ def test_modexp_modsize0_returndatasize(
         to=contract,
         data=tx_data,
         gas_limit=10000000,
-        gas_price=10,
     )
 
     post = expected_post

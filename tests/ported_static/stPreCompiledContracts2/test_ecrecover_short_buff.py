@@ -159,7 +159,6 @@ def test_ecrecover_short_buff(
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=7400000,
-        gas_price=10,
         nonce=1,
         value=100000,
     )

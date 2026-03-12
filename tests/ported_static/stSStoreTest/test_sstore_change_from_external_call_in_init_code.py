@@ -283,7 +283,6 @@ def test_sstore_change_from_external_call_in_init_code(
         to=None,
         data=tx_data,
         gas_limit=200000,
-        gas_price=10,
     )
 
     post = expected_post

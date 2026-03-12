@@ -93,7 +93,6 @@ def test_callcode_ecrecover0(
         sender=sender,
         to=contract,
         gas_limit=3652240,
-        gas_price=10,
         value=100000,
     )
 

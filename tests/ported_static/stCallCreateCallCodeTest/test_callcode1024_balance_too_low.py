@@ -80,7 +80,6 @@ def test_callcode1024_balance_too_low(
         sender=sender,
         to=contract,
         gas_limit=9151332035002892287,
-        gas_price=10,
         value=10,
     )
 

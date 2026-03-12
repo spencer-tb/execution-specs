@@ -95,7 +95,6 @@ def test_call_ecrecover0_no_gas(
         sender=sender,
         to=contract,
         gas_limit=365224,
-        gas_price=10,
         value=100000,
     )
 

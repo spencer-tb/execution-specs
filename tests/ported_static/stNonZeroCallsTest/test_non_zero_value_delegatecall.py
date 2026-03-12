@@ -77,7 +77,6 @@ def test_non_zero_value_delegatecall(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

@@ -81,7 +81,6 @@ def test_call_contract_to_create_contract_oog_bonus_gas(
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=200000,
-        gas_price=10,
     )
 
     post = {

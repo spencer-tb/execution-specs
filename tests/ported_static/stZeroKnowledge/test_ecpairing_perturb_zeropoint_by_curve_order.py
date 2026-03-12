@@ -252,7 +252,6 @@ def test_ecpairing_perturb_zeropoint_by_curve_order(
             "4ce6cc0166fa7daa"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         nonce=22,
     )
 

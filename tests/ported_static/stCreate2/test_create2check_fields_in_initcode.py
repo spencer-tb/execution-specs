@@ -431,7 +431,6 @@ def test_create2check_fields_in_initcode(
         to=contract,
         data=tx_data,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = expected_post

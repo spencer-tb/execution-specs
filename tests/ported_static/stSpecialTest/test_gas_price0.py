@@ -58,7 +58,6 @@ def test_gas_price0(
         sender=sender,
         to=contract,
         gas_limit=656192,
-        gas_price=10,
         value=100000,
     )
 

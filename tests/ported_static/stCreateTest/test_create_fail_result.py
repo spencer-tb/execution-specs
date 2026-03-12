@@ -598,7 +598,6 @@ def test_create_fail_result(
         to=contract,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
         nonce=1,
     )
 

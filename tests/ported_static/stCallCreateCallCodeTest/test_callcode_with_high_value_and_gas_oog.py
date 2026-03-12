@@ -95,7 +95,6 @@ def test_callcode_with_high_value_and_gas_oog(
         sender=sender,
         to=contract,
         gas_limit=3000000,
-        gas_price=10,
         value=100000,
     )
 

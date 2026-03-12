@@ -125,7 +125,6 @@ def test_day_limit_construction_partial(
             "004c0be60200faa20559308cb7b5a1bb3255c16cb1cab91f525b5ae7a03d02fabe"  # noqa: E501
         ),
         gas_limit=817082,
-        gas_price=10,
         nonce=1,
         value=100,
     )

@@ -78,7 +78,6 @@ def test_create_oo_gafter_init_code_returndata(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
     )
 
     post = expected_post

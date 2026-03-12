@@ -179,7 +179,6 @@ def test_wallet_kill_to_wallet(
             "cbf0b0c0000000000000000000000000ec0e71ad0a90ffe1909d27dac207f7680abba42d"  # noqa: E501
         ),
         gas_limit=10000000,
-        gas_price=10,
         nonce=1,
         value=100,
     )

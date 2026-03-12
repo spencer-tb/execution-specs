@@ -76,7 +76,6 @@ def test_out_of_gas_prefunded_contract_creation(
             "600980601160003960006001f0500000fe621122336000550000"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=1,
     )
 

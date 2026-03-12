@@ -84,7 +84,6 @@ def test_contract_store_clears_oog(
         sender=sender,
         to=contract,
         gas_limit=23000,
-        gas_price=10,
         value=10,
     )
 

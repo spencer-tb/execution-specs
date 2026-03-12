@@ -73,7 +73,6 @@ def test_delegatecall_in_initcode_to_empty_contract(
         sender=sender,
         to=contract,
         gas_limit=453081,
-        gas_price=10,
     )
 
     post = {

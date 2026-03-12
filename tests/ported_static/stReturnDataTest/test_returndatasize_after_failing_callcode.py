@@ -85,7 +85,6 @@ def test_returndatasize_after_failing_callcode(
         sender=sender,
         to=contract,
         gas_limit=200000,
-        gas_price=10,
     )
 
     post: dict = {}

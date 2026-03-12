@@ -141,7 +141,6 @@ def test_ext_code_hash_created_and_deleted_account_recheck_in_outer_call(
         sender=sender,
         to=contract,
         gas_limit=400000,
-        gas_price=10,
         value=1,
     )
 

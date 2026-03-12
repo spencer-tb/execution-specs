@@ -134,7 +134,6 @@ def test_multi_owned_change_requirement_to2(
             "ba51a6df0000000000000000000000000000000000000000000000000000000000000002"  # noqa: E501
         ),
         gas_limit=10000000,
-        gas_price=10,
         nonce=1,
         value=100,
     )

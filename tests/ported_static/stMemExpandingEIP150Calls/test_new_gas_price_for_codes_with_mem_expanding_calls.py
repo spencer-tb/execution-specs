@@ -145,7 +145,6 @@ def test_new_gas_price_for_codes_with_mem_expanding_calls(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

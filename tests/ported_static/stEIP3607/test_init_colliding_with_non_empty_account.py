@@ -82,7 +82,6 @@ def test_init_colliding_with_non_empty_account(
         to=None,
         data=tx_data,
         gas_limit=400000,
-        gas_price=10,
         value=100000,
     )
 

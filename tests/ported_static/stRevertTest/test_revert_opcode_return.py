@@ -226,7 +226,6 @@ def test_revert_opcode_return(
         to=contract,
         data=tx_data,
         gas_limit=tx_gas_limit,
-        gas_price=10,
     )
 
     post = expected_post

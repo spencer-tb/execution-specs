@@ -63,7 +63,6 @@ def test_codesize_valid(
         to=None,
         data=tx_data,
         gas_limit=15000000,
-        gas_price=10,
         value=1,
     )
 

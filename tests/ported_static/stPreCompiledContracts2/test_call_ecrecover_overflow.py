@@ -177,7 +177,6 @@ def test_call_ecrecover_overflow(
         to=contract,
         data=tx_data,
         gas_limit=100000,
-        gas_price=10,
         value=100000,
     )
 

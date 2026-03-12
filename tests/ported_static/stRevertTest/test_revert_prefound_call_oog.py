@@ -77,7 +77,6 @@ def test_revert_prefound_call_oog(
         sender=sender,
         to=contract,
         gas_limit=63000,
-        gas_price=10,
     )
 
     post: dict = {}

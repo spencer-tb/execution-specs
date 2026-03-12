@@ -80,7 +80,6 @@ def test_raw_delegate_call_gas_memory(
         sender=sender,
         to=contract,
         gas_limit=500000,
-        gas_price=10,
     )
 
     post = {

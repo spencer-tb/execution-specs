@@ -182,7 +182,6 @@ def test_revert_depth_create_address_collision_berlin(
         to=contract,
         data=tx_data,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=tx_value,
     )
 

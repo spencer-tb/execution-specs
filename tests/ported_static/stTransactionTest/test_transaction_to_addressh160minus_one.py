@@ -54,7 +54,6 @@ def test_transaction_to_addressh160minus_one(
         sender=sender,
         to=contract,
         gas_limit=22000,
-        gas_price=10,
         value=100,
     )
 

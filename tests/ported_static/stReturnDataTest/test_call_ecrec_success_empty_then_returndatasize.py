@@ -76,7 +76,6 @@ def test_call_ecrec_success_empty_then_returndatasize(
         sender=sender,
         to=contract,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post: dict = {}

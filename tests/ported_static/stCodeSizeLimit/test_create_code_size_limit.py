@@ -102,7 +102,6 @@ def test_create_code_size_limit(
         to=contract,
         data=tx_data,
         gas_limit=15000000,
-        gas_price=10,
     )
 
     post = expected_post

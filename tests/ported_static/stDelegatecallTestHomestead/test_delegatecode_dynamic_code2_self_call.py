@@ -73,7 +73,6 @@ def test_delegatecode_dynamic_code2_self_call(
         sender=sender,
         to=contract,
         gas_limit=453081,
-        gas_price=10,
     )
 
     post = {

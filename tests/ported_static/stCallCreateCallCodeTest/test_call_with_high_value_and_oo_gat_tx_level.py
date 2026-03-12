@@ -108,7 +108,6 @@ def test_call_with_high_value_and_oo_gat_tx_level(
         sender=sender,
         to=contract,
         gas_limit=3000000,
-        gas_price=10,
         value=tx_value,
     )
 

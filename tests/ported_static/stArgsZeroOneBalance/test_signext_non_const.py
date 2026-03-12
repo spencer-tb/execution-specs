@@ -90,7 +90,6 @@ def test_signext_non_const(
         sender=sender,
         to=contract,
         gas_limit=400000,
-        gas_price=10,
         value=tx_value,
     )
 

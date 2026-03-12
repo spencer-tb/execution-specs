@@ -127,7 +127,6 @@ def test_revert_opcode_direct_call(
             "000000000000000000000000ceb48d108c874b5b014acdd1a2466d65a3d01de6"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
     )
 
     post = expected_post

@@ -576,7 +576,6 @@ def test_revert_opcode_multiple_sub_calls(
         to=contract,
         data=tx_data,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=tx_value,
     )
 

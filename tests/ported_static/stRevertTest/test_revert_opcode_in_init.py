@@ -60,7 +60,6 @@ def test_revert_opcode_in_init(
         to=None,
         data=bytes.fromhex("600160005560016000fd6011600155"),
         gas_limit=160000,
-        gas_price=10,
         value=tx_value,
     )
 

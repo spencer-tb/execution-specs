@@ -172,7 +172,6 @@ def test_ext_code_hash_subcall_suicide(
         sender=sender,
         to=contract,
         gas_limit=500000,
-        gas_price=10,
         value=1,
     )
 

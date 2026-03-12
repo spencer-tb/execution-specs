@@ -66,7 +66,6 @@ def test_call_recursive_contract(
         to=contract,
         data=bytes.fromhex("00"),
         gas_limit=400000,
-        gas_price=10,
         value=1,
     )
 

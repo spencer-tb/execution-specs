@@ -83,7 +83,6 @@ def test_make_money(
         sender=sender,
         to=contract,
         gas_limit=228500,
-        gas_price=10,
         value=10,
     )
 

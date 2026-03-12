@@ -83,7 +83,6 @@ def test_contract_creation_oo_gdont_leave_empty_contract_via_transaction(
             "6040600060406000600073100000000000000000000000000000000000000161c350f1"  # noqa: E501
         ),
         gas_limit=96000,
-        gas_price=10,
     )
 
     post = {

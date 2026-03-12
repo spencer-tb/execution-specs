@@ -137,7 +137,6 @@ def test_day_limit_set_daily_limit(
             "b20d30a90000000000000000000000000000000000000000000000000000000000000002"  # noqa: E501
         ),
         gas_limit=635701,
-        gas_price=10,
         nonce=1,
         value=100,
     )

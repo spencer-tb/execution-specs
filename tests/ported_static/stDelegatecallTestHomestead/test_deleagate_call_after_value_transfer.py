@@ -83,7 +83,6 @@ def test_deleagate_call_after_value_transfer(
         sender=sender,
         to=contract,
         gas_limit=453081,
-        gas_price=10,
     )
 
     post = {

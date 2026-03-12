@@ -77,7 +77,6 @@ def test_revert_in_static_call(
         sender=sender,
         to=contract,
         gas_limit=105044,
-        gas_price=10,
     )
 
     post: dict = {}

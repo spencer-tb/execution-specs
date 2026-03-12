@@ -169,7 +169,6 @@ def test_wallet_construction_partial(
             "cab91f525b5ae7a03d02fabe"
         ),
         gas_limit=2225022,
-        gas_price=10,
         nonce=1,
         value=100,
     )

@@ -81,7 +81,6 @@ def test_suicides_stop_after_suicide(
         sender=sender,
         to=contract,
         gas_limit=83700,
-        gas_price=10,
         value=10,
     )
 

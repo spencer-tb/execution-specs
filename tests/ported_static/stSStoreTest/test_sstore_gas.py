@@ -179,7 +179,6 @@ def test_sstore_gas(
         sender=sender,
         to=contract,
         gas_limit=16777216,
-        gas_price=10,
         nonce=1,
     )
 

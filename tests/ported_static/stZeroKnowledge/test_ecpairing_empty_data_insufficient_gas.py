@@ -215,7 +215,6 @@ def test_ecpairing_empty_data_insufficient_gas(
             "0000000000000000000000000000000000000000000000000000000000000000"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         nonce=1,
     )
 

@@ -537,7 +537,6 @@ def test_callcode_to_precompile_from_contract_initialization(
             "620a200051610a2055620b200051610b205500"
         ),
         gas_limit=4000000,
-        gas_price=10,
         value=100,
     )
 

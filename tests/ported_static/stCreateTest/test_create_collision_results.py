@@ -285,7 +285,6 @@ def test_create_collision_results(
         to=contract,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
     )
 
     post = expected_post

@@ -61,7 +61,6 @@ def test_refund_no_oog_1(
         sender=sender,
         to=contract,
         gas_limit=26006,
-        gas_price=10,
     )
 
     post: dict = {}

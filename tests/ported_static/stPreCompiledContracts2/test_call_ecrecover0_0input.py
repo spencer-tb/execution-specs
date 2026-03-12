@@ -80,7 +80,6 @@ def test_call_ecrecover0_0input(
         sender=sender,
         to=contract,
         gas_limit=3652240,
-        gas_price=10,
         value=100000,
     )
 

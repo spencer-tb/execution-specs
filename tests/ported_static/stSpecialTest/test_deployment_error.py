@@ -169,7 +169,6 @@ def test_deployment_error(
             "0000000000000000000000000aa87bee538000"
         ),
         gas_limit=5000000,
-        gas_price=10,
     )
 
     post = {

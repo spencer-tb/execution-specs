@@ -112,7 +112,6 @@ def test_labels_example(
         to=contract,
         data=tx_data,
         gas_limit=400000,
-        gas_price=10,
         value=100000,
     )
 

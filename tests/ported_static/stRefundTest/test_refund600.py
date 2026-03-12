@@ -80,7 +80,6 @@ def test_refund600(
         sender=sender,
         to=contract,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = {

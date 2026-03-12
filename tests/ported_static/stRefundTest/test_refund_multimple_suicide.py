@@ -162,7 +162,6 @@ def test_refund_multimple_suicide(
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=300000,
-        gas_price=10,
     )
 
     post: dict = {}

@@ -630,7 +630,6 @@ def test_contract_creation_spam(
         sender=sender,
         to=contract,
         gas_limit=10000000,
-        gas_price=10,
     )
 
     post = {

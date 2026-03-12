@@ -66,7 +66,6 @@ def test_suicides_and_send_money_to_itself_ether_destroyed(
         sender=sender,
         to=contract,
         gas_limit=31700,
-        gas_price=10,
         value=10,
     )
 

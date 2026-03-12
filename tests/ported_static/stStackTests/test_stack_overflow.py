@@ -95,7 +95,6 @@ def test_stack_overflow(
         to=None,
         data=tx_data,
         gas_limit=6000000,
-        gas_price=10,
     )
 
     post: dict = {}

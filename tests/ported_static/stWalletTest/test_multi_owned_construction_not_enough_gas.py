@@ -121,7 +121,6 @@ def test_multi_owned_construction_not_enough_gas(
             "004c0be60200faa20559308cb7b5a1bb3255c16cb1cab91f525b5ae7a03d02fabe"  # noqa: E501
         ),
         gas_limit=256449,
-        gas_price=10,
     )
 
     post: dict = {}

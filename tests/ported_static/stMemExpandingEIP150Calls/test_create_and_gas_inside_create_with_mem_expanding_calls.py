@@ -67,7 +67,6 @@ def test_create_and_gas_inside_create_with_mem_expanding_calls(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

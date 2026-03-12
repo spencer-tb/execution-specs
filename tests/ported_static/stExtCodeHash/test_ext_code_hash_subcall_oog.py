@@ -394,7 +394,6 @@ def test_ext_code_hash_subcall_oog(
         to=contract,
         data=tx_data,
         gas_limit=400000,
-        gas_price=10,
         value=1,
     )
 

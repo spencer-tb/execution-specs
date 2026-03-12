@@ -106,7 +106,6 @@ def test_call_recursive_bomb_pre_call(
         sender=sender,
         to=contract,
         gas_limit=9214364837600034817,
-        gas_price=10,
     )
 
     post = {

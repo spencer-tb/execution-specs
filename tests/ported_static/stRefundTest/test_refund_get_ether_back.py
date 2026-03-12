@@ -61,7 +61,6 @@ def test_refund_get_ether_back(
         sender=sender,
         to=contract,
         gas_limit=228500,
-        gas_price=10,
         value=10,
     )
 

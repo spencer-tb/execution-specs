@@ -160,7 +160,6 @@ def test_callcode_in_initcode_to_empty_contract(
         to=contract,
         data=tx_data,
         gas_limit=1453081,
-        gas_price=10,
     )
 
     post = expected_post

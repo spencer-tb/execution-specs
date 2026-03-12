@@ -2027,7 +2027,6 @@ def test_clear_return_buffer(
         to=contract,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
         nonce=1,
         value=1,
     )

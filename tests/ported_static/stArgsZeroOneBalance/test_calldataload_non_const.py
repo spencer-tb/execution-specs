@@ -106,7 +106,6 @@ def test_calldataload_non_const(
         to=contract,
         data=tx_data,
         gas_limit=400000,
-        gas_price=10,
         value=tx_value,
     )
 

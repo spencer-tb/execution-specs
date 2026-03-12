@@ -139,7 +139,6 @@ def test_day_limit_reset_spent_today(
         to=contract,
         data=bytes.fromhex("5c52c2f5"),
         gas_limit=635701,
-        gas_price=10,
         nonce=1,
         value=100,
     )

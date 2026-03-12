@@ -110,7 +110,6 @@ def test_create2_suicide(
         to=None,
         data=tx_data,
         gas_limit=600000,
-        gas_price=10,
         value=10,
     )
 

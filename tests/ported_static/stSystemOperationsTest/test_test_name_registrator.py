@@ -75,7 +75,6 @@ def test_test_name_registrator(
             "fffffffffffffffffffffffffffffffffffffffffffffffffffffffa"
         ),
         gas_limit=1000000,
-        gas_price=10,
         value=100000,
     )
 

@@ -1379,7 +1379,6 @@ def test_ecpairing_inputs(
         to=contract,
         data=tx_data,
         gas_limit=15000000,
-        gas_price=10,
     )
 
     post = expected_post

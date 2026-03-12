@@ -1089,7 +1089,6 @@ def test_address_opcodes(
         to=contract,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
         value=100000,
         access_list=tx_access_list,
     )

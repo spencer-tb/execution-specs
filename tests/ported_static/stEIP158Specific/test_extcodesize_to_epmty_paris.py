@@ -73,7 +73,6 @@ def test_extcodesize_to_epmty_paris(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

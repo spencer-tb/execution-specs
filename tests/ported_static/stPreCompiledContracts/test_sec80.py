@@ -103,7 +103,6 @@ def test_sec80(
         sender=sender,
         to=contract,
         gas_limit=10000000,
-        gas_price=10,
         value=100000,
     )
 

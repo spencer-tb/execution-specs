@@ -4982,7 +4982,6 @@ def test_precomps_eip2929_cancun(
         to=contract,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
         value=100000,
     )
 

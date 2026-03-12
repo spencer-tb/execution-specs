@@ -84,7 +84,6 @@ def test_suicide_to_not_existing_contract(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

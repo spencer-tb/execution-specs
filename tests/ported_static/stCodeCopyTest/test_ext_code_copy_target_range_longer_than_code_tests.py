@@ -89,7 +89,6 @@ def test_ext_code_copy_target_range_longer_than_code_tests(
         sender=sender,
         to=contract,
         gas_limit=400000,
-        gas_price=10,
     )
 
     post = {

@@ -76,7 +76,6 @@ def test_revert_prefound_call(
         sender=sender,
         to=contract,
         gas_limit=94000,
-        gas_price=10,
     )
 
     post = {

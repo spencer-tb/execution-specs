@@ -61,7 +61,6 @@ def test_refund_oog(
         sender=sender,
         to=contract,
         gas_limit=26005,
-        gas_price=10,
         value=10,
     )
 

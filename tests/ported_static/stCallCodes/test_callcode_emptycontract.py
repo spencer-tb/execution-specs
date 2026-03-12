@@ -73,7 +73,6 @@ def test_callcode_emptycontract(
         sender=sender,
         to=contract,
         gas_limit=1050440,
-        gas_price=10,
     )
 
     post = {

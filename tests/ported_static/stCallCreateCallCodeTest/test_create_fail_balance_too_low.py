@@ -87,7 +87,6 @@ def test_create_fail_balance_too_low(
         sender=sender,
         to=contract,
         gas_limit=253021,
-        gas_price=10,
         value=tx_value,
     )
 

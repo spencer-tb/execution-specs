@@ -85,7 +85,6 @@ def test_call_output2(
         sender=sender,
         to=contract,
         gas_limit=900000,
-        gas_price=10,
         value=100000,
     )
 

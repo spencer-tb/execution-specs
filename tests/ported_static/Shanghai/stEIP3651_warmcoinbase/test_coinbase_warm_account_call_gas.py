@@ -302,7 +302,6 @@ def test_coinbase_warm_account_call_gas(
         to=contract,
         data=tx_data,
         gas_limit=80000,
-        gas_price=10,
         nonce=1,
     )
 

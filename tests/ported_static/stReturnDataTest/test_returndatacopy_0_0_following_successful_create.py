@@ -76,7 +76,6 @@ def test_returndatacopy_0_0_following_successful_create(
         sender=sender,
         to=contract,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = {

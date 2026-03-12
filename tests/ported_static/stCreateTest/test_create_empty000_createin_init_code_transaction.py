@@ -66,7 +66,6 @@ def test_create_empty000_createin_init_code_transaction(
             "600060006000f0"
         ),
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

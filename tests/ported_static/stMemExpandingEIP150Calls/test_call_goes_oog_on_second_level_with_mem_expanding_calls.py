@@ -105,7 +105,6 @@ def test_call_goes_oog_on_second_level_with_mem_expanding_calls(
         sender=sender,
         to=contract,
         gas_limit=220000,
-        gas_price=10,
     )
 
     post = {

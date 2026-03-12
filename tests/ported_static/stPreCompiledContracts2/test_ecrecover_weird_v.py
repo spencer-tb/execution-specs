@@ -437,7 +437,6 @@ def test_ecrecover_weird_v(
         to=contract,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
         nonce=1,
     )
 

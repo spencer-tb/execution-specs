@@ -86,7 +86,6 @@ def test_log0_log_memsize_zero(
         sender=sender,
         to=contract,
         gas_limit=210000,
-        gas_price=10,
         value=100000,
     )
 

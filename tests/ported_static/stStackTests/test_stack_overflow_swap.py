@@ -111,7 +111,6 @@ def test_stack_overflow_swap(
             "600060006000600060006000600060006000600060006000600060006000600090"  # noqa: E501
         ),
         gas_limit=6000000,
-        gas_price=10,
         value=1,
     )
 

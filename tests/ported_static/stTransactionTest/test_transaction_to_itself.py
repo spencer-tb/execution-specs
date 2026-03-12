@@ -52,7 +52,6 @@ def test_transaction_to_itself(
         sender=sender,
         to=sender,
         gas_limit=25000,
-        gas_price=10,
         value=1,
     )
 

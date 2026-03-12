@@ -83,7 +83,6 @@ def test_create_e_contract_create_ne_contract_in_init_oog_tr(
             "6d64600c6000556000526005601bf3600052600e60126000f0"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
     )
 
     post = expected_post

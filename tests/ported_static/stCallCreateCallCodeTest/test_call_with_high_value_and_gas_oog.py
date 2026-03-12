@@ -129,7 +129,6 @@ def test_call_with_high_value_and_gas_oog(
         sender=sender,
         to=contract,
         gas_limit=6000000,
-        gas_price=10,
         value=tx_value,
     )
 

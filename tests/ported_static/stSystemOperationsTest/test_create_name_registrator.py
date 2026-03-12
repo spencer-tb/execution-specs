@@ -72,7 +72,6 @@ def test_create_name_registrator(
         sender=sender,
         to=contract,
         gas_limit=300000,
-        gas_price=10,
         value=100000,
     )
 

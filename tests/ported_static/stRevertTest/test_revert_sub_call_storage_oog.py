@@ -88,7 +88,6 @@ def test_revert_sub_call_storage_oog(
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=tx_value,
     )
 

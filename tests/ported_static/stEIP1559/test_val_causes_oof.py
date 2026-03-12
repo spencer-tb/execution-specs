@@ -216,7 +216,6 @@ def test_val_causes_oof(
         data=tx_data,
         gas_limit=tx_gas_limit,
         max_fee_per_gas=1000,
-        max_priority_fee_per_gas=0,
         nonce=1,
         value=tx_value,
         error=tx_error,

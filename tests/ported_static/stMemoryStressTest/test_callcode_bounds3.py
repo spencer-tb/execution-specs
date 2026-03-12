@@ -90,7 +90,6 @@ def test_callcode_bounds3(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=1,
     )
 

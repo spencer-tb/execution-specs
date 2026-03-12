@@ -261,7 +261,6 @@ def test_code_copy_zero_paris(
         sender=sender,
         to=contract,
         gas_limit=1400000,
-        gas_price=10,
         value=1,
     )
 

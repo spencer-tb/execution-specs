@@ -80,7 +80,6 @@ def test_call_oog_additional_gas_costs1(
         sender=sender,
         to=contract,
         gas_limit=30000,
-        gas_price=10,
     )
 
     post: dict = {}

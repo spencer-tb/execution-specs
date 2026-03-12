@@ -76,7 +76,6 @@ def test_create_high_nonce(
         sender=sender,
         to=contract,
         gas_limit=16777216,
-        gas_price=10,
     )
 
     post = {

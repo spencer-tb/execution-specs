@@ -96,7 +96,6 @@ def test_post_to_return1(
         sender=sender,
         to=contract,
         gas_limit=300000,
-        gas_price=10,
         value=100000,
     )
 

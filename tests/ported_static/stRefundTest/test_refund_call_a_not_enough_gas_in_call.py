@@ -85,7 +85,6 @@ def test_refund_call_a_not_enough_gas_in_call(
         sender=sender,
         to=contract,
         gas_limit=85000,
-        gas_price=10,
         value=10,
     )
 

@@ -218,7 +218,6 @@ def test_modexp_0_0_0_20500(
             "0000000000000000000000000000000000000000"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         nonce=1,
     )
 

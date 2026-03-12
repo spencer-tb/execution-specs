@@ -177,7 +177,6 @@ def test_call_low_level_creates_solidity(
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=350000,
-        gas_price=10,
         value=1,
     )
 

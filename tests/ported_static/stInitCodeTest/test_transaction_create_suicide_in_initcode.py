@@ -55,7 +55,6 @@ def test_transaction_create_suicide_in_initcode(
         to=None,
         data=bytes.fromhex("30ff00"),
         gas_limit=155000,
-        gas_price=10,
         value=1,
     )
 

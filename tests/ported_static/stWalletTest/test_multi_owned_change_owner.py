@@ -133,7 +133,6 @@ def test_multi_owned_change_owner(
             "000000000000000000000000aaaf5374fce5edbc8e2a8697c15331677e6ebaaa"
         ),
         gas_limit=10000000,
-        gas_price=10,
         nonce=1,
         value=100,
     )

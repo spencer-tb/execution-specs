@@ -93,7 +93,6 @@ def test_call_and_callcode_consume_more_gas_then_transaction_has(
         sender=sender,
         to=contract,
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

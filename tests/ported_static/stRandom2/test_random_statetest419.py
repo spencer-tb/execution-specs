@@ -104,7 +104,6 @@ def test_random_statetest419(
             "fffffffffffffffffffffffffffffffffffffffe6f73095b7ee211595a6b80a311900a78"  # noqa: E501
         ),
         gas_limit=100000,
-        gas_price=10,
         value=1783425972,
     )
 

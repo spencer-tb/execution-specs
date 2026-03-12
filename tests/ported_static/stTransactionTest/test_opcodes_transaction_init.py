@@ -461,7 +461,6 @@ def test_opcodes_transaction_init(
         to=None,
         data=tx_data,
         gas_limit=400000,
-        gas_price=10,
         value=100000,
     )
 

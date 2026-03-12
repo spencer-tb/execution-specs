@@ -221,7 +221,6 @@ def test_contract_inheritance(
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=35000000,
-        gas_price=10,
     )
 
     post = {

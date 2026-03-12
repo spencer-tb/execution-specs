@@ -100,7 +100,6 @@ def test_callcode_lose_gas_oog(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=10,
     )
 

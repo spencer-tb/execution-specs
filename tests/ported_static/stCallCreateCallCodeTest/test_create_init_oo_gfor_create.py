@@ -78,7 +78,6 @@ def test_create_init_oo_gfor_create(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=100000,
     )
 

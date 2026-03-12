@@ -85,7 +85,6 @@ def test_delegatecall1024_oog(
         sender=sender,
         to=contract,
         gas_limit=15720826,
-        gas_price=10,
         value=10,
     )
 

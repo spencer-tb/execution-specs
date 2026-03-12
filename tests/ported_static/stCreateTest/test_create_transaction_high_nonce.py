@@ -66,7 +66,6 @@ def test_create_transaction_high_nonce(
         to=None,
         data=bytes.fromhex("60016000f3"),
         gas_limit=90000,
-        gas_price=10,
         nonce=18446744073709551615,
         value=tx_value,
         error=TransactionException.NONCE_IS_MAX,

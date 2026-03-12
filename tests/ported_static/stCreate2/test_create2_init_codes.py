@@ -125,7 +125,6 @@ def test_create2_init_codes(
         to=None,
         data=tx_data,
         gas_limit=800000,
-        gas_price=10,
         value=1,
     )
 

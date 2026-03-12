@@ -1157,7 +1157,6 @@ def test_create_oo_gafter_max_codesize(
         to=contract,
         data=tx_data,
         gas_limit=4294967296,
-        gas_price=10,
     )
 
     post = expected_post

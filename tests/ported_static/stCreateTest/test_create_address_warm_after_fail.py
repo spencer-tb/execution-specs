@@ -808,7 +808,6 @@ def test_create_address_warm_after_fail(
         to=contract,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
         value=tx_value,
     )
 

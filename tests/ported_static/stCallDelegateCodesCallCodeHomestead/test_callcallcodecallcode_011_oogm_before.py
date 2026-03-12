@@ -119,7 +119,6 @@ def test_callcallcodecallcode_011_oogm_before(
         sender=sender,
         to=contract,
         gas_limit=172000,
-        gas_price=10,
     )
 
     post = {

@@ -107,7 +107,6 @@ def test_store_clears_and_internal_call_store_clears_success(
         sender=sender,
         to=contract,
         gas_limit=200000,
-        gas_price=10,
         value=10,
     )
 

@@ -157,7 +157,6 @@ def test_callcode_in_initcode_to_exis_contract_with_v_transfer_ne_money(
         to=contract,
         data=tx_data,
         gas_limit=1000000,
-        gas_price=10,
     )
 
     post = expected_post

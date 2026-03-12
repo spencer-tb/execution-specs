@@ -179,7 +179,6 @@ def test_revert_depth_create2_oog(
         to=contract,
         data=tx_data,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=tx_value,
     )
 

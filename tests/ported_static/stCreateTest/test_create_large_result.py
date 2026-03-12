@@ -318,7 +318,6 @@ def test_create_large_result(
         to=contract,
         data=tx_data,
         gas_limit=80000000,
-        gas_price=10,
         nonce=1,
     )
 

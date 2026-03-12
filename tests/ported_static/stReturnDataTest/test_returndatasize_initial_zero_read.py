@@ -80,7 +80,6 @@ def test_returndatasize_initial_zero_read(
         to=contract,
         data=tx_data,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = expected_post

@@ -251,7 +251,6 @@ def test_ecpairing_one_point_with_g2_zero_and_g1_invalid(
             "0000000000000000"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         nonce=6,
     )
 

@@ -64,7 +64,6 @@ def test_codesize_oog_invalid_size(
         to=None,
         data=tx_data,
         gas_limit=15000000,
-        gas_price=10,
         value=1,
     )
 

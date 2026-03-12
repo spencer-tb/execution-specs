@@ -68,7 +68,6 @@ def test_mem_return(
             "aaaaaaaaaaaaaaaa"
         ),
         gas_limit=100000,
-        gas_price=10,
         value=10,
     )
 

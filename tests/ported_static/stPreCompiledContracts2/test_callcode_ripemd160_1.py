@@ -76,7 +76,6 @@ def test_callcode_ripemd160_1(
         sender=sender,
         to=contract,
         gas_limit=365224,
-        gas_price=10,
         value=100000,
     )
 

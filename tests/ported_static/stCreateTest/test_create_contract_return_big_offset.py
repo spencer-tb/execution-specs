@@ -66,7 +66,6 @@ def test_create_contract_return_big_offset(
         to=None,
         data=tx_data,
         gas_limit=16777216,
-        gas_price=10,
     )
 
     post: dict = {}

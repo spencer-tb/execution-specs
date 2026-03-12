@@ -66,7 +66,6 @@ def test_create_e_contract_create_e_contract_in_init_tr(
             "602060006000f0"
         ),
         gas_limit=600000,
-        gas_price=10,
     )
 
     post = {

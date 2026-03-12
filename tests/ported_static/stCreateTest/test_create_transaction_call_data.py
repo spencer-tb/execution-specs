@@ -68,7 +68,6 @@ def test_create_transaction_call_data(
         to=None,
         data=tx_data,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = expected_post

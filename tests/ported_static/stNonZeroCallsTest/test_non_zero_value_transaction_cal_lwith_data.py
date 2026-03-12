@@ -55,7 +55,6 @@ def test_non_zero_value_transaction_cal_lwith_data(
         to=contract,
         data=bytes.fromhex("1122334455667788991011121314151617181920"),
         gas_limit=600000,
-        gas_price=10,
         value=1,
     )
 

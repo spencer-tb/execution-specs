@@ -100,7 +100,6 @@ def test_call_infinite_loop(
         to=contract,
         data=bytes.fromhex("296df0df"),
         gas_limit=300000,
-        gas_price=10,
         value=1,
     )
 

@@ -82,7 +82,6 @@ def test_refund_call_a(
         sender=sender,
         to=contract,
         gas_limit=200000,
-        gas_price=10,
         value=10,
     )
 

@@ -64,7 +64,6 @@ def test_refund_tx_to_suicide(
         sender=sender,
         to=contract,
         gas_limit=61003,
-        gas_price=10,
         value=10,
     )
 

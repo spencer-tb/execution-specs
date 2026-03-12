@@ -74,7 +74,6 @@ def test_create_name_registratorendowment_too_high(
         sender=sender,
         to=contract,
         gas_limit=300000,
-        gas_price=10,
     )
 
     post: dict = {}

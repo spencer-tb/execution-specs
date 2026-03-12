@@ -66,7 +66,6 @@ def test_vitalik_transaction_test_paris(
             "0080610108600039610108565b6000f3"
         ),
         gas_limit=2097151,
-        gas_price=10,
         nonce=335,
     )
 

@@ -108,7 +108,6 @@ def test_call1024_oog(
         sender=sender,
         to=contract,
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=10,
     )
 

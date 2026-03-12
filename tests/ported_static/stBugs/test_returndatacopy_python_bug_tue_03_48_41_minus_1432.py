@@ -253,7 +253,6 @@ def test_returndatacopy_python_bug_tue_03_48_41_minus_1432(
             "4bf078faa8e34791ed3692f5784a35b7bbe3db838dcea84ce1955eec"
         ),
         gas_limit=tx_gas_limit,
-        gas_price=10,
         value=tx_value,
     )
 

@@ -81,7 +81,6 @@ def test_nashatyrev_suicide_revert(
         to=contract,
         data=bytes.fromhex("c0406226"),
         gas_limit=500000,
-        gas_price=10,
     )
 
     post: dict = {}

@@ -74,7 +74,6 @@ def test_revert_opcode_in_create_returns(
         sender=sender,
         to=contract,
         gas_limit=100000,
-        gas_price=10,
     )
 
     post = {

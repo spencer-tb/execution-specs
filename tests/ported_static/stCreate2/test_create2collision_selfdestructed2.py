@@ -86,7 +86,6 @@ def test_create2collision_selfdestructed2(
         to=None,
         data=tx_data,
         gas_limit=400000,
-        gas_price=10,
     )
 
     post = expected_post

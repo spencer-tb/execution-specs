@@ -66,7 +66,6 @@ def test_raw_create_fail_gas_value_transfer(
         sender=sender,
         to=contract,
         gas_limit=500000,
-        gas_price=10,
         value=10,
     )
 

@@ -1318,7 +1318,6 @@ def test_push0(
         to=contract,
         data=tx_data,
         gas_limit=700000,
-        gas_price=10,
     )
 
     post = expected_post

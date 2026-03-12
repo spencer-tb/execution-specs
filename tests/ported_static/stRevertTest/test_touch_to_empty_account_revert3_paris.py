@@ -125,7 +125,6 @@ def test_touch_to_empty_account_revert3_paris(
         sender=sender,
         to=contract,
         gas_limit=200000,
-        gas_price=10,
     )
 
     post = {

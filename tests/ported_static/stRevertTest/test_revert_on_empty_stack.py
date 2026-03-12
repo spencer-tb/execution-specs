@@ -57,7 +57,6 @@ def test_revert_on_empty_stack(
         sender=sender,
         to=contract,
         gas_limit=2000000,
-        gas_price=10,
     )
 
     post: dict = {}

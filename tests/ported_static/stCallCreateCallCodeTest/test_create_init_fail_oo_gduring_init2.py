@@ -73,7 +73,6 @@ def test_create_init_fail_oo_gduring_init2(
         sender=sender,
         to=contract,
         gas_limit=1000000,
-        gas_price=10,
         value=100000,
     )
 

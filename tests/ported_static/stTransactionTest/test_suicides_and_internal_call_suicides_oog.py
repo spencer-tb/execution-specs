@@ -81,7 +81,6 @@ def test_suicides_and_internal_call_suicides_oog(
         sender=sender,
         to=contract,
         gas_limit=50000,
-        gas_price=10,
         value=10,
     )
 
