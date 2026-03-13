@@ -81,6 +81,81 @@ def fork_before(fork_name: str) -> str | None:
     return FORK_ORDER[idx - 1]
 
 
+def _next_fork(fork_name: str) -> str | None:
+    """Return the fork immediately after the given fork in FORK_ORDER."""
+    if fork_name not in FORK_RANK:
+        return None
+    idx = FORK_RANK[fork_name]
+    if idx + 1 >= len(FORK_ORDER):
+        return None
+    return FORK_ORDER[idx + 1]
+
+
+def detect_fork_ranges(
+    earliest_fixture: dict[str, Any],
+    other_fixtures: dict[str, dict[str, Any]],
+    earliest_fork: str,
+) -> list[tuple[str, str | None, dict[str, Any]]]:
+    """Detect fork ranges where post-states are identical.
+
+    Compare post-state hashes from the earliest fork's fixture against
+    other forks' fixtures.  Return a list of
+    (valid_from, valid_until, fixture_data) tuples where valid_until
+    is the last fork in the range (None = no upper bound).
+
+    If no divergence is found, returns a single range covering all forks.
+    """
+    # Available forks in order
+    avail_forks = sorted(
+        [earliest_fork] + list(other_fixtures.keys()),
+        key=lambda f: FORK_RANK.get(f, 999),
+    )
+
+    # Build per-case post-state hashes for each fork
+    def _post_hashes(data: dict, fork: str) -> list[str]:
+        hashes = []
+        for key in sorted(data.keys()):
+            post = data[key].get("post", {})
+            entries = post.get(fork, [])
+            if isinstance(entries, list) and entries:
+                hashes.append(entries[0].get("hash", ""))
+            else:
+                hashes.append("")
+        return hashes
+
+    fork_hashes: dict[str, list[str]] = {}
+    fork_hashes[earliest_fork] = _post_hashes(
+        earliest_fixture, earliest_fork
+    )
+    for fork, data in other_fixtures.items():
+        fork_hashes[fork] = _post_hashes(data, fork)
+
+    # Find fork transitions where hashes change
+    # Group consecutive forks with identical hashes into ranges
+    ranges: list[tuple[str, str | None, dict[str, Any]]] = []
+    range_start = avail_forks[0]
+    range_fixture = earliest_fixture
+
+    for i in range(len(avail_forks) - 1):
+        cur = avail_forks[i]
+        nxt = avail_forks[i + 1]
+        cur_h = fork_hashes.get(cur, [])
+        nxt_h = fork_hashes.get(nxt, [])
+        if cur_h != nxt_h:
+            # Hashes differ — close current range
+            ranges.append((range_start, cur, range_fixture))
+            range_start = nxt
+            range_fixture = (
+                other_fixtures[nxt]
+                if nxt in other_fixtures
+                else earliest_fixture
+            )
+
+    # Close the final range (no upper bound)
+    ranges.append((range_start, None, range_fixture))
+    return ranges
+
+
 def parse_network_upper_bound(network_str: str) -> str | None:
     """
     Parse the upper fork bound from a network string.
@@ -1370,8 +1445,19 @@ def generate_test_file(
     filler_full_path: Path | None = None,  # noqa: ARG001
     code_sources: _FillerCodeSources | None = None,
     slow: bool = False,
+    fork_for_post: str | None = None,
+    func_name_suffix: str = "",
 ) -> str:
-    """Generate a complete Python test file from fixture data."""
+    """Generate a complete Python test file from fixture data.
+
+    Parameters
+    ----------
+    fork_for_post
+        If set, extract post-state from this fork instead of the
+        earliest fork.  Used for fork-range-specific test functions.
+    func_name_suffix
+        Appended to the test function name (e.g. "_from_prague").
+    """
     # Compiled fixtures have one top-level key per (case × fork).
     # Collect all forks, find the earliest, then collect cases for that fork.
     all_keys = list(fixture_data.keys())
@@ -1396,13 +1482,17 @@ def generate_test_file(
     # fixture post keys
     fork_name = valid_from_override or earliest_fork(all_forks)
 
+    # When generating for a specific fork range, use that fork's
+    # post-state instead of the earliest fork's.
+    post_fork = fork_for_post or fork_name
+
     # Collect all cases for this fork
     cases_for_fork: list[dict[str, Any]] = []
     for key in all_keys:
         test = fixture_data[key]
-        if fork_name in test["post"]:
+        if post_fork in test["post"]:
             tx = test["transaction"]
-            post_entry = test["post"][fork_name][0]
+            post_entry = test["post"][post_fork][0]
             post_state = post_entry.get("state", {})
             expect_exception = post_entry.get("expectException")
             # accessLists is a list of access lists (one per case index)
@@ -1432,7 +1522,7 @@ def generate_test_file(
 
     # Determine test name
     filler_stem = Path(filler_path).stem  # e.g. "callcode_checkPCFiller"
-    test_func_name = filler_name_to_test_name(filler_stem)
+    test_func_name = filler_name_to_test_name(filler_stem) + func_name_suffix
 
     # Identify accounts
     sender_addr = tx.get("sender", "").lower()
@@ -2187,18 +2277,14 @@ def _extract_fork_from_path(path: Path, root: Path) -> str | None:
     return None
 
 
-def find_fixture_files(fixtures_dir: Path) -> list[Path]:
-    """Find state_test fixture JSON files from static fillers.
+def _group_fixture_candidates(
+    fixtures_dir: Path,
+) -> dict[str, list[tuple[str, Path]]]:
+    """Group fixture JSON files by identity across for_* directories.
 
-    Supports two output layouts:
-      - with ``static/``:  state_tests/for_*/static/state_tests/{cat}/…
-      - without:           state_tests/for_*/{cat}/…
-
-    When the same fixture exists across multiple for_* directories
-    (e.g. for_cancun, for_prague), only the earliest fork's file is
-    kept so that valid_from is set correctly.
+    Return a dict mapping identity (path after for_*/) to list of
+    (fork_name, path) pairs.
     """
-    # Collect all fixture files under state_tests/for_*
     candidates: list[Path] = []
     for p in fixtures_dir.rglob("*.json"):
         if ".meta" in p.parts:
@@ -2209,22 +2295,17 @@ def find_fixture_files(fixtures_dir: Path) -> list[Path]:
             continue
         if "/for_" not in rel and not rel.startswith("for_"):
             continue
-        # Skip ported_static outputs
         if "ported_static" in rel:
             continue
         candidates.append(p)
 
-    # Group by identity and keep earliest fork.
-    # Identity = path after "static/" if present, else after "for_*/"
     groups: dict[str, list[tuple[str, Path]]] = {}
     for p in candidates:
         rel = str(p.relative_to(fixtures_dir))
-        # Try "static/" layout first
         idx = rel.find("/static/")
         if idx >= 0:
             identity = rel[idx + len("/static/"):]
         else:
-            # No "static/" — extract everything after "for_*/"
             import re as _re
             m = _re.search(r"/for_[^/]+/", rel)
             if m:
@@ -2238,11 +2319,25 @@ def find_fixture_files(fixtures_dir: Path) -> list[Path]:
         if fork is None:
             continue
         groups.setdefault(identity, []).append((fork, p))
+    return groups
+
+
+def find_fixture_files(fixtures_dir: Path) -> list[Path]:
+    """Find state_test fixture JSON files from static fillers.
+
+    Supports two output layouts:
+      - with ``static/``:  state_tests/for_*/static/state_tests/{cat}/…
+      - without:           state_tests/for_*/{cat}/…
+
+    When the same fixture exists across multiple for_* directories
+    (e.g. for_cancun, for_prague), only the earliest fork's file is
+    kept so that valid_from is set correctly.
+    """
+    groups = _group_fixture_candidates(fixtures_dir)
 
     # Pick the earliest fork per fixture
     results = []
     for identity, fork_paths in groups.items():
-        # Sort by FORK_RANK to find earliest
         known = [
             (f, p) for f, p in fork_paths if f in FORK_RANK
         ]
@@ -2250,10 +2345,35 @@ def find_fixture_files(fixtures_dir: Path) -> list[Path]:
             known.sort(key=lambda fp: FORK_RANK[fp[0]])
             results.append(known[0][1])
         else:
-            # Unknown fork — just take first
             results.append(fork_paths[0][1])
 
     return sorted(results)
+
+
+def find_fixture_files_grouped(
+    fixtures_dir: Path,
+) -> list[tuple[Path, dict[str, Path]]]:
+    """Find fixture files and return with all fork variants.
+
+    Return a list of (earliest_path, {fork: path}) for each unique
+    fixture identity.
+    """
+    groups = _group_fixture_candidates(fixtures_dir)
+
+    results = []
+    for identity, fork_paths in groups.items():
+        known = [
+            (f, p) for f, p in fork_paths if f in FORK_RANK
+        ]
+        if not known:
+            fp_dict = {fork_paths[0][0]: fork_paths[0][1]}
+            results.append((fork_paths[0][1], fp_dict))
+            continue
+        known.sort(key=lambda fp: FORK_RANK[fp[0]])
+        fp_dict = {f: p for f, p in known}
+        results.append((known[0][1], fp_dict))
+
+    return sorted(results, key=lambda x: x[0])
 
 
 def fixture_to_filler_path(fixture_data: dict) -> str | None:
@@ -2269,8 +2389,17 @@ def process_single_fixture(
     fixture_path: Path,
     fillers_dir: Path,
     output_dir: Path,
+    all_fork_paths: dict[str, Path] | None = None,
 ) -> tuple[bool, str]:
-    """Process a single fixture file. Returns (success, message)."""
+    """Process a single fixture file. Returns (success, message).
+
+    Parameters
+    ----------
+    all_fork_paths
+        If provided, a dict mapping fork name to fixture path for all
+        forks that have this test.  Used to detect fork divergence and
+        generate fork-range-specific test functions.
+    """
     with open(fixture_path) as f:
         fixture_data = json.load(f)
 
@@ -2316,20 +2445,101 @@ def process_single_fixture(
     top_category = Path(category).parts[0] if category else ""
     is_slow = top_category in SLOW_CATEGORIES
 
-    # Generate Python test
-    try:
-        python_code = generate_test_file(
-            fixture_data,
-            filler_path,
-            filler_comment,
-            valid_until=valid_until,
-            valid_from_override=filler_lower_bound,
-            filler_full_path=filler_full_path,
-            code_sources=code_sources,
-            slow=is_slow,
+    # Detect fork divergence when multiple fork fixtures are available
+    fork_ranges = None
+    if all_fork_paths and len(all_fork_paths) > 1:
+        # Determine the earliest fork from the fixture
+        ef = earliest_fork(set(all_fork_paths.keys()))
+        other_fixtures: dict[str, dict[str, Any]] = {}
+        for fork, fp in all_fork_paths.items():
+            if fork != ef:
+                with open(fp) as f:
+                    other_fixtures[fork] = json.load(f)
+        fork_ranges = detect_fork_ranges(
+            fixture_data, other_fixtures, ef
         )
-    except Exception as e:
-        return False, f"Error generating {fixture_path}: {e}"
+
+    # Single range or no divergence — generate one test function
+    if not fork_ranges or len(fork_ranges) == 1:
+        try:
+            python_code = generate_test_file(
+                fixture_data,
+                filler_path,
+                filler_comment,
+                valid_until=valid_until,
+                valid_from_override=filler_lower_bound,
+                filler_full_path=filler_full_path,
+                code_sources=code_sources,
+                slow=is_slow,
+            )
+        except Exception as e:
+            return False, f"Error generating {fixture_path}: {e}"
+    else:
+        # Multiple fork ranges — generate one test function per range.
+        # First range gets the base test file (with imports, module doc).
+        # Subsequent ranges append only the test function.
+        parts: list[str] = []
+        for range_idx, (vf, vu, range_data) in enumerate(fork_ranges):
+            suffix = (
+                ""
+                if range_idx == 0
+                else f"_from_{vf.lower()}"
+            )
+            # Skip ranges that start after the filler's valid_until
+            if valid_until and FORK_RANK.get(vf, 0) > FORK_RANK.get(
+                valid_until, 999
+            ):
+                continue
+
+            # valid_until: use the range's upper bound fork, unless
+            # the filler itself has a tighter bound.
+            range_valid_until = vu
+            if valid_until:
+                filler_vu_rank = FORK_RANK.get(valid_until, 999)
+                if vu:
+                    # Use the tighter (earlier) bound
+                    if filler_vu_rank < FORK_RANK.get(vu, 999):
+                        range_valid_until = valid_until
+                else:
+                    range_valid_until = valid_until
+
+            try:
+                code = generate_test_file(
+                    range_data,
+                    filler_path,
+                    filler_comment,
+                    valid_until=range_valid_until,
+                    valid_from_override=vf,
+                    filler_full_path=filler_full_path,
+                    code_sources=code_sources,
+                    slow=is_slow,
+                    fork_for_post=vf,
+                    func_name_suffix=suffix,
+                )
+            except Exception as e:
+                return (
+                    False,
+                    f"Error generating {fixture_path} "
+                    f"(range {vf}): {e}",
+                )
+
+            if range_idx == 0:
+                parts.append(code)
+            else:
+                # Extract only the test function (after the last
+                # REFERENCE_SPEC line) to avoid duplicate imports
+                lines = code.split("\n")
+                func_start = None
+                for li, line in enumerate(lines):
+                    if line.startswith("@pytest.mark.ported_from"):
+                        # Include the blank line before the decorator
+                        func_start = li - 1 if li > 0 else li
+                        break
+                if func_start is not None:
+                    parts.append("\n".join(lines[func_start:]))
+                else:
+                    parts.append(code)
+        python_code = "\n".join(parts)
 
     out_dir = output_dir / category if category else output_dir
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -2393,23 +2603,31 @@ def main() -> None:
             filter_set = {line.strip() for line in f if line.strip()}
 
     if args.single:
-        files = [args.single]
+        # Single mode: no fork grouping
+        entries: list[tuple[Path, dict[str, Path] | None]] = [
+            (args.single, None),
+        ]
     else:
-        files = find_fixture_files(args.fixtures)
+        grouped = find_fixture_files_grouped(args.fixtures)
+        entries = [
+            (fp, fork_paths) for fp, fork_paths in grouped
+        ]
 
     # Filter fixtures to only those matching the filter list
     if filter_set is not None:
         filtered = []
-        for fp in files:
+        for fp, fork_paths in entries:
             with open(fp) as f:
                 data = json.load(f)
             filler_path = fixture_to_filler_path(data)
             if filler_path and filler_path in filter_set:
-                filtered.append(fp)
-        print(f"Filtered: {len(filtered)}/{len(files)} fixtures match")
-        files = filtered
+                filtered.append((fp, fork_paths))
+        print(
+            f"Filtered: {len(filtered)}/{len(entries)} fixtures match"
+        )
+        entries = filtered
 
-    if not files:
+    if not entries:
         print("No fixture files found.")
         sys.exit(1)
 
@@ -2417,9 +2635,10 @@ def main() -> None:
 
     success_count = 0
     fail_count = 0
-    for fixture_path in files:
+    for fixture_path, fork_paths in entries:
         ok, msg = process_single_fixture(
-            fixture_path, args.fillers, args.output
+            fixture_path, args.fillers, args.output,
+            all_fork_paths=fork_paths,
         )
         if ok:
             success_count += 1
