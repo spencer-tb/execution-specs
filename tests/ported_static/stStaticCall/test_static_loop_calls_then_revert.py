@@ -55,6 +55,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ],
     ids=["case0", "case1"],
 )
+@pytest.mark.slow
 @pytest.mark.pre_alloc_mutable
 def test_static_loop_calls_then_revert(
     state_test: StateTestFiller,

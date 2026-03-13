@@ -42,6 +42,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ],
     ids=["case0", "case1"],
 )
+@pytest.mark.slow
 @pytest.mark.pre_alloc_mutable
 def test_return50000_2(
     state_test: StateTestFiller,
