@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_callcallcode_01_OOGE_2Filler.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex",
     [
@@ -36,6 +36,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_callcallcode_01_ooge_2(
     state_test: StateTestFiller,
     pre: Alloc,

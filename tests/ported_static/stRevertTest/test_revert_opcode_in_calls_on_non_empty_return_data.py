@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stRevertTest/RevertOpcodeInCallsOnNonEmptyReturnDataFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, tx_gas_limit, expected_post",
     [

@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/Cancun/stEIP1153_transientStorage/10_revertUndoesStoreAfterReturnFiller.yml",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
 def test_10_revert_undoes_store_after_return(
     state_test: StateTestFiller,

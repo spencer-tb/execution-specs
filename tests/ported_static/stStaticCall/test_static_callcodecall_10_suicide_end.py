@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_callcodecall_10_SuicideEndFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
@@ -38,7 +38,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 1: 0x2CF4C4}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000703b936fd4d674f0ff5d6957f61097152f8781b8",
             {
@@ -46,11 +46,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 1: 0x2C3183}
                 )
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_callcodecall_10_suicide_end(
     state_test: StateTestFiller,
     pre: Alloc,

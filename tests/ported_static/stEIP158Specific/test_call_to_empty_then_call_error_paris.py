@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stEIP158Specific/callToEmptyThenCallErrorParisFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
 def test_call_to_empty_then_call_error_paris(
     state_test: StateTestFiller,

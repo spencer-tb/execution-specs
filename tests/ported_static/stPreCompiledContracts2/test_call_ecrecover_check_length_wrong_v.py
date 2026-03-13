@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stPreCompiledContracts2/CallEcrecoverCheckLengthWrongVFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
 def test_call_ecrecover_check_length_wrong_v(
     state_test: StateTestFiller,

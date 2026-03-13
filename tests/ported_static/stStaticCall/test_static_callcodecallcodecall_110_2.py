@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_callcodecallcodecall_110_2Filler.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_value, expected_post",
     [
@@ -38,7 +38,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             1,
             {
@@ -46,7 +46,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             2,
             {
@@ -54,11 +54,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_callcodecallcodecall_110_2(
     state_test: StateTestFiller,
     pre: Alloc,

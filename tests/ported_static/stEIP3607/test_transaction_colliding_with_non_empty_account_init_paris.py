@@ -13,7 +13,6 @@ from execution_testing import (
     Address,
     Alloc,
     Environment,
-    Op,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -28,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stEIP3607/transactionCollidingWithNonEmptyAccount_init_ParisFiller.yml",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex",
     [
@@ -65,14 +64,14 @@ def test_transaction_colliding_with_non_empty_account_init_paris(
     pre[contract] = Account(balance=10, nonce=0)
     # Source: raw bytecode
     pre.deploy_contract(
-        code=Op.STOP,
+        code=bytes.fromhex("00"),
         balance=0xDE0B6B3A7640000,
         nonce=0,
         address=sender,  # noqa: E501
     )
     # Source: raw bytecode
     pre.deploy_contract(
-        code=Op.STOP,
+        code=bytes.fromhex("00"),
         balance=10,
         nonce=0,
         address=Address("0xcc7c3c64708397216f5f8aeb34a43f1749693fa9"),  # noqa: E501

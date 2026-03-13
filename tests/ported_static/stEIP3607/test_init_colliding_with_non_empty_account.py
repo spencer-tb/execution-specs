@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stEIP3607/initCollidingWithNonEmptyAccountFiller.yml",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex",
     [
@@ -70,7 +70,7 @@ def test_init_colliding_with_non_empty_account(
     pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
     pre.deploy_contract(
-        code=Op.STOP,
+        code=bytes.fromhex("00"),
         nonce=0,
         address=Address("0xd0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0"),  # noqa: E501
     )

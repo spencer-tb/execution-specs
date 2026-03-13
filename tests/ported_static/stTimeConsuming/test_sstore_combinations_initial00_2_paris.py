@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stTimeConsuming/sstore_combinations_initial00_2_ParisFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
@@ -10665,6 +10665,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_sstore_combinations_initial00_2_paris(
     state_test: StateTestFiller,
     pre: Alloc,

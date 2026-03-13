@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_Call1024BalanceTooLowFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
@@ -41,7 +41,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000e8f28ee50521b0388cf0a623b1a89e43d022c039",
             {
@@ -49,11 +49,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_call1024_balance_too_low(
     state_test: StateTestFiller,
     pre: Alloc,

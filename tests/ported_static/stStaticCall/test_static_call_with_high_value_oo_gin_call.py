@@ -27,8 +27,9 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_callWithHighValueOOGinCallFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_call_with_high_value_oo_gin_call(
     state_test: StateTestFiller,
     pre: Alloc,

@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stEIP150singleCodeGasPrices/eip2929-ffFiller.yml",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
@@ -149,7 +149,7 @@ def test_eip2929_minus_ff(
     )
     # Source: raw bytecode
     pre.deploy_contract(
-        code=Op.STOP,
+        code=bytes.fromhex("00"),
         nonce=0,
         address=Address("0x000000000000000000000000000000000000de57"),  # noqa: E501
     )

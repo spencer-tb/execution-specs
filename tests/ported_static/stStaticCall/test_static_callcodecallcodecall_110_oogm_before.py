@@ -27,8 +27,9 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_callcodecallcodecall_110_OOGMBeforeFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_callcodecallcodecall_110_oogm_before(
     state_test: StateTestFiller,
     pre: Alloc,

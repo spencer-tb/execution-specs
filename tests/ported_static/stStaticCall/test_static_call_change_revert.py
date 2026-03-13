@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_callChangeRevertFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
@@ -37,11 +37,11 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 1: 1, 2: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000ea22ec955ac71d8e4380541212bd20818d704567",
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000002c004389edaae817e664b6d660f46735756b56d3",
             {
@@ -49,11 +49,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 2: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=["case0", "case1", "case2"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_call_change_revert(
     state_test: StateTestFiller,
     pre: Alloc,

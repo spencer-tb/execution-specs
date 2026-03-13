@@ -24,8 +24,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["tests/static/state_tests/stStaticCall/static_calldelcode_01Filler.json"],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_calldelcode_01(
     state_test: StateTestFiller,
     pre: Alloc,

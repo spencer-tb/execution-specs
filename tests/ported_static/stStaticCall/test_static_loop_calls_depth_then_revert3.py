@@ -27,9 +27,10 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_LoopCallsDepthThenRevert3Filler.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_loop_calls_depth_then_revert3(
     state_test: StateTestFiller,
     pre: Alloc,

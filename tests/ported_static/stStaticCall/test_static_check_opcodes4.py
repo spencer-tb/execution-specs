@@ -24,7 +24,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["tests/static/state_tests/stStaticCall/static_CheckOpcodes4Filler.json"],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_gas_limit, tx_value, expected_post",
     [
@@ -44,7 +44,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     }
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             335000,
             100,
@@ -60,11 +60,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     }
                 )
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_check_opcodes4(
     state_test: StateTestFiller,
     pre: Alloc,

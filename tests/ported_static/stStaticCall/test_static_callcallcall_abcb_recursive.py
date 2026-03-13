@@ -27,8 +27,9 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_callcallcall_ABCB_RECURSIVEFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_callcallcall_abcb_recursive(
     state_test: StateTestFiller,
     pre: Alloc,

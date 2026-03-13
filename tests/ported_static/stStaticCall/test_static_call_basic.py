@@ -24,7 +24,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["tests/static/state_tests/stStaticCall/static_callBasicFiller.json"],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
@@ -38,7 +38,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000ead198f480fb91a5fbedcf5eb28cd369ee4c6cf2",
             {
@@ -49,7 +49,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000eb015f637a39c63f8b6db67505f5c02c613defc1",
             {
@@ -60,7 +60,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000d5b64fa2ca1e471b45b639a5e9c259ca24c28ace",
             {
@@ -71,11 +71,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_call_basic(
     state_test: StateTestFiller,
     pre: Alloc,

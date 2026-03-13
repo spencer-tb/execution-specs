@@ -27,8 +27,9 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_InternalCallHittingGasLimitFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_internal_call_hitting_gas_limit(
     state_test: StateTestFiller,
     pre: Alloc,

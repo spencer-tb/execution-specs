@@ -24,7 +24,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["tests/static/state_tests/stBadOpcode/measureGasFiller.yml"],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
@@ -158,7 +158,7 @@ def test_measure_gas(
     #    stop()
     # }
     pre.deploy_contract(
-        code=Op.STOP,
+        code=bytes.fromhex("00"),
         balance=0xBA1A9CE0BA1A9CE,
         address=Address("0x000000000000000000000000000000000000ca11"),  # noqa: E501
     )

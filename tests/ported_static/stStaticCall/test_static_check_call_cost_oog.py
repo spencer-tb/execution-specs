@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_CheckCallCostOOGFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
@@ -36,6 +36,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_check_call_cost_oog(
     state_test: StateTestFiller,
     pre: Alloc,

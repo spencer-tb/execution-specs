@@ -27,8 +27,9 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_ZeroValue_SUICIDE_OOGRevertFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_zero_value_suicide_oog_revert(
     state_test: StateTestFiller,
     pre: Alloc,

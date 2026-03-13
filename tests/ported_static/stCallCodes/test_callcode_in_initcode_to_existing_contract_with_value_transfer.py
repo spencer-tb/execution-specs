@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stCallCodes/callcodeInInitcodeToExistingContractWithValueTransferFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
 def test_callcode_in_initcode_to_existing_contract_with_value_transfer(
     state_test: StateTestFiller,

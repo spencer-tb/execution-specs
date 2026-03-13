@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_Call50000_identity2Filler.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
@@ -41,7 +41,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 50000, 2: 42}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000b02bd8691a1a4f5fd4432b5b17c68dde3013fc35",
             {
@@ -49,11 +49,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_call50000_identity2(
     state_test: StateTestFiller,
     pre: Alloc,

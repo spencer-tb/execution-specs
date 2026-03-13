@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stQuadraticComplexityTest/Return50000Filler.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
     [
@@ -38,11 +38,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 1: 50000}
                 )
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_return50000(
     state_test: StateTestFiller,
     pre: Alloc,

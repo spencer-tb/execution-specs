@@ -24,7 +24,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["tests/static/state_tests/stStaticCall/static_CheckOpcodes3Filler.json"],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, tx_value, expected_post",
     [
@@ -36,7 +36,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000f697c2d8963df21523b18e96caaf6c7703a1882e",
             100,
@@ -45,17 +45,17 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000009b68a6b37af295c7fd23aa2269db8c875c2b86b4",
             0,
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000009b68a6b37af295c7fd23aa2269db8c875c2b86b4",
             100,
             {},
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000ba044a82b25080bc96678b9fa77678e014605c48",
             0,
@@ -64,7 +64,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000ba044a82b25080bc96678b9fa77678e014605c48",
             100,
@@ -73,7 +73,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000e541572ce4b4ccbb2b92aab0fb852f018d51c512",
             0,
@@ -82,7 +82,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             "000000000000000000000000e541572ce4b4ccbb2b92aab0fb852f018d51c512",
             100,
@@ -91,7 +91,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000008113f9fc0868700534ecbecf1120a812cb1af0ac",
             0,
@@ -100,7 +100,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000008113f9fc0868700534ecbecf1120a812cb1af0ac",
             100,
@@ -109,7 +109,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 )
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=[
         "case0",
@@ -122,9 +122,10 @@ REFERENCE_SPEC_VERSION = "N/A"
         "case7",
         "case8",
         "case9",
-    ],  # noqa: E501
+    ],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_check_opcodes3(
     state_test: StateTestFiller,
     pre: Alloc,

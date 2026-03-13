@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stCallDelegateCodesCallCodeHomestead/callcallcodecallcode_011_SuicideMiddleFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
 def test_callcallcodecallcode_011_suicide_middle(
     state_test: StateTestFiller,

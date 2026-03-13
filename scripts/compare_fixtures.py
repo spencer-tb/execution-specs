@@ -116,7 +116,7 @@ def _index(
     """
     idx: dict[FixtureKey, dict[str, Path]] = defaultdict(dict)
     for p in root.rglob("*.json"):
-        if ".meta" in p.parts or "ported_static" in p.parts:
+        if ".meta" in p.parts:
             continue
         result = _parse_entry(p, root)
         if result is None:

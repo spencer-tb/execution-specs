@@ -29,7 +29,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/Cancun/stEIP4844_blobtransactions/opcodeBlobhashOutOfRangeFiller.yml",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
 def test_opcode_blobhash_out_of_range(
     state_test: StateTestFiller,

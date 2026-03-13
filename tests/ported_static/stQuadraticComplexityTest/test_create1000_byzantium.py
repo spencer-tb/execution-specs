@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stQuadraticComplexityTest/Create1000ByzantiumFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
@@ -38,6 +38,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_create1000_byzantium(
     state_test: StateTestFiller,
     pre: Alloc,

@@ -27,8 +27,9 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_CallContractToCreateContractWhichWouldCreateContractIfCalledFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_call_contract_to_create_contract_which_would_create_contract_if_called(  # noqa: E501
     state_test: StateTestFiller,
     pre: Alloc,

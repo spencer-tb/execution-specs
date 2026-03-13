@@ -26,8 +26,9 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_callcode_checkPCFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_callcode_check_pc(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -48,7 +49,7 @@ def test_static_callcode_check_pc(
     )
 
     pre.deploy_contract(
-        code=Op.STOP,
+        code=bytes.fromhex("00"),
         balance=0x2540BE400,
         nonce=0,
         address=Address("0x0fa032348694ad238cccc23b44fe450999cdc0fe"),  # noqa: E501

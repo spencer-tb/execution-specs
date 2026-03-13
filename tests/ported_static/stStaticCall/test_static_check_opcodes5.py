@@ -24,7 +24,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["tests/static/state_tests/stStaticCall/static_CheckOpcodes5Filler.json"],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, tx_gas_limit, tx_value, expected_post",
     [
@@ -33,13 +33,13 @@ REFERENCE_SPEC_VERSION = "N/A"
             50000,
             0,
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b",
             50000,
             100,
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b",
             335000,
@@ -52,7 +52,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000002c073c9d611d927ca91e4819bbb2dff859a8732b",
             335000,
@@ -65,19 +65,19 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000007761311ee56479da378519606cc4da58e17251ab",
             50000,
             0,
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000007761311ee56479da378519606cc4da58e17251ab",
             50000,
             100,
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000007761311ee56479da378519606cc4da58e17251ab",
             335000,
@@ -90,7 +90,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000007761311ee56479da378519606cc4da58e17251ab",
             335000,
@@ -103,19 +103,19 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3",
             50000,
             0,
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3",
             50000,
             100,
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3",
             335000,
@@ -128,7 +128,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000009c40928b20ac4236f0f3920567f28539c2e158b3",
             335000,
@@ -141,19 +141,19 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb",
             50000,
             0,
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb",
             50000,
             100,
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb",
             335000,
@@ -166,7 +166,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000008a6781f0d54ed3cb8963ffc233e98041de8bdadb",
             335000,
@@ -179,19 +179,19 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5",
             50000,
             0,
             {},
-        ),  # noqa: E501
+        ),
         (
             "00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5",
             50000,
             100,
             {},
-        ),  # noqa: E501
+        ),
         (
             "00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5",
             335000,
@@ -204,7 +204,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
         (
             "00000000000000000000000009fce828cbd5c5bdc742fe5a63776e2a76a111e5",
             335000,
@@ -217,7 +217,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={1: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=[
         "case0",
@@ -240,9 +240,10 @@ REFERENCE_SPEC_VERSION = "N/A"
         "case17",
         "case18",
         "case19",
-    ],  # noqa: E501
+    ],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_check_opcodes5(
     state_test: StateTestFiller,
     pre: Alloc,

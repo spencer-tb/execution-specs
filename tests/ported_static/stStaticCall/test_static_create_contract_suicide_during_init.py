@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_CREATE_ContractSuicideDuringInitFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
@@ -51,6 +51,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ids=["case0", "case1", "case2", "case3"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_create_contract_suicide_during_init(
     state_test: StateTestFiller,
     pre: Alloc,

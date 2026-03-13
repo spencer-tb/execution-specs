@@ -27,14 +27,14 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_CallAndCallcodeConsumeMoreGasThenTransactionHasFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_data_hex, expected_post",
     [
         (
             "000000000000000000000000438f316ba8e30f69666a3477a7f5cd26235d3cbb",
             {},
-        ),  # noqa: E501
+        ),
         (
             "0000000000000000000000007d77eaf6dc93e2b7b83a8e06314af1ce47cd2596",
             {
@@ -45,11 +45,12 @@ REFERENCE_SPEC_VERSION = "N/A"
                     storage={0: 1, 1: 1}
                 ),
             },
-        ),  # noqa: E501
+        ),
     ],
     ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_call_and_callcode_consume_more_gas_then_transaction_has(
     state_test: StateTestFiller,
     pre: Alloc,

@@ -13,7 +13,6 @@ from execution_testing import (
     Alloc,
     Environment,
     Hash,
-    Op,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -26,7 +25,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["tests/static/state_tests/stTransactionTest/NoSrcAccount1559Filler.yml"],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.parametrize(
     "tx_gas_limit, tx_value, tx_access_list, tx_error",
     [
@@ -355,7 +354,7 @@ def test_no_src_account1559(
 
     # Source: raw bytecode
     contract = pre.deploy_contract(
-        code=Op.STOP,
+        code=bytes.fromhex("00"),
         nonce=0,
         address=Address("0x4d7b154e5bf8310a4d8220c8eed80020e4b8f86f"),  # noqa: E501
     )
@@ -363,7 +362,7 @@ def test_no_src_account1559(
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=Op.STOP,
+        data=bytes.fromhex("00"),
         gas_limit=tx_gas_limit,
         max_fee_per_gas=2000,
         max_priority_fee_per_gas=10,

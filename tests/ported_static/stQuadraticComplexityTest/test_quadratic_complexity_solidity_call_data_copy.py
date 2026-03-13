@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stQuadraticComplexityTest/QuadraticComplexitySolidity_CallDataCopyFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
     "tx_gas_limit, expected_post",
@@ -38,6 +38,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ids=["case0", "case1"],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_quadratic_complexity_solidity_call_data_copy(
     state_test: StateTestFiller,
     pre: Alloc,

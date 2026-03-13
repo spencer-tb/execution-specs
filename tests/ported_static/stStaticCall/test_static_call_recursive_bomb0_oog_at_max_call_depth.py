@@ -27,9 +27,10 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_CallRecursiveBomb0_OOG_atMaxCallDepthFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_call_recursive_bomb0_oog_at_max_call_depth(
     state_test: StateTestFiller,
     pre: Alloc,

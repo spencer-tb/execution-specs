@@ -26,8 +26,9 @@ REFERENCE_SPEC_VERSION = "N/A"
         "tests/static/state_tests/stStaticCall/static_callToStaticOpCodeCheckFiller.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Prague")
+@pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.slow
 def test_static_call_to_static_op_code_check(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -150,7 +151,7 @@ def test_static_call_to_static_op_code_check(
         to=contract,
         data=bytes.fromhex(
             "0000000000000000000000005e93bf4d3e4a5f90ae3a7a68dbd03e6c47f1245a"
-        ),  # noqa: E501
+        ),
         gas_limit=1000000,
         value=100000,
     )
