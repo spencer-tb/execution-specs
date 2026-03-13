@@ -158,7 +158,7 @@ def test_measure_gas(
     #    stop()
     # }
     pre.deploy_contract(
-        code=bytes.fromhex("00"),
+        code=Op.STOP,
         balance=0xBA1A9CE0BA1A9CE,
         address=Address("0x000000000000000000000000000000000000ca11"),  # noqa: E501
     )

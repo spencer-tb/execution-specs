@@ -52,8 +52,9 @@ def test_calldatacopy_dejavu2(
         code=(
             Op.MSTORE8(offset=0x1F, value=0x42)
             + Op.CALLDATACOPY(dest_offset=0x1F, offset=0x0, size=0x103)
-            + Op.JUMPI(pc=0x1F, condition=Op.EQ(Op.MLOAD(offset=0x0), 0x60))
+            + Op.JUMPI(pc=0x20, condition=Op.EQ(Op.MLOAD(offset=0x0), 0x60))
             + Op.SSTORE(key=0xFF, value=0xBADC0FFEE)
+            + Op.STOP
             + Op.JUMPDEST
             + Op.STOP
         ),

@@ -394,7 +394,7 @@ def test_eip2929(
 
     # Source: raw bytecode
     pre.deploy_contract(
-        code=bytes.fromhex("00"),
+        code=Op.STOP,
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         address=Address("0x000000000000000000000000000000000000ca11"),  # noqa: E501

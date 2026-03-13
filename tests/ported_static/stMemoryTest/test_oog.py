@@ -626,7 +626,7 @@ def test_oog(
     #    stop()
     # }
     pre.deploy_contract(
-        code=bytes.fromhex("00"),
+        code=Op.STOP,
         balance=0xBA1A9CE0BA1A9CE,
         address=Address("0x00000000000000000000000000000000000111f1"),  # noqa: E501
     )
