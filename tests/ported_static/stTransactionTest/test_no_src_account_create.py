@@ -13,6 +13,7 @@ from execution_testing import (
     Alloc,
     Environment,
     Hash,
+    Op,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -501,7 +502,7 @@ def test_no_src_account_create(
 
     # Source: raw bytecode
     pre.deploy_contract(
-        code=bytes.fromhex("00"),
+        code=Op.STOP,
         nonce=0,
         address=Address("0x4d7b154e5bf8310a4d8220c8eed80020e4b8f86f"),  # noqa: E501
     )

@@ -14,6 +14,7 @@ from execution_testing import (
     Alloc,
     Environment,
     Hash,
+    Op,
     StateTestFiller,
     Transaction,
 )
@@ -387,7 +388,7 @@ def test_transaction_costs(
 
     # Source: raw bytecode
     contract = pre.deploy_contract(
-        code=bytes.fromhex("00"),
+        code=Op.STOP,
         balance=0xBA1A9CE0BA1A9CE,
         nonce=0,
         address=Address("0x1bf4bd50bbda0f09948556f87d37f86f2e19e84a"),  # noqa: E501
@@ -397,7 +398,7 @@ def test_transaction_costs(
     tx = Transaction(
         sender=sender,
         to=contract,
-        data=bytes.fromhex("00"),
+        data=Op.STOP,
         gas_limit=400000,
         value=100000,
         access_list=tx_access_list,

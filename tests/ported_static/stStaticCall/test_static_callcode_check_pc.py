@@ -48,7 +48,7 @@ def test_static_callcode_check_pc(
     )
 
     pre.deploy_contract(
-        code=bytes.fromhex("00"),
+        code=Op.STOP,
         balance=0x2540BE400,
         nonce=0,
         address=Address("0x0fa032348694ad238cccc23b44fe450999cdc0fe"),  # noqa: E501

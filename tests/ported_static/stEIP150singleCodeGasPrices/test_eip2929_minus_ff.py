@@ -149,7 +149,7 @@ def test_eip2929_minus_ff(
     )
     # Source: raw bytecode
     pre.deploy_contract(
-        code=bytes.fromhex("00"),
+        code=Op.STOP,
         nonce=0,
         address=Address("0x000000000000000000000000000000000000de57"),  # noqa: E501
     )

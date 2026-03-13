@@ -37,7 +37,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP
                 ),
                 Address("0x000000000000000000000000000000000000de57"): Account(
-                    code=bytes.fromhex("00")
+                    code=Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={0: 5126, 1: 105},
@@ -200,7 +200,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP
                 ),
                 Address("0x000000000000000000000000000000000000de57"): Account(
-                    code=bytes.fromhex("00")
+                    code=Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={0: 5126, 1: 105},
@@ -363,7 +363,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP
                 ),
                 Address("0x000000000000000000000000000000000000de57"): Account(
-                    code=bytes.fromhex("00")
+                    code=Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={0: 5126, 1: 105},
@@ -526,7 +526,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP
                 ),
                 Address("0x000000000000000000000000000000000000de57"): Account(
-                    code=bytes.fromhex("00")
+                    code=Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={0: 5126, 1: 105},
@@ -689,7 +689,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP
                 ),
                 Address("0x000000000000000000000000000000000000de57"): Account(
-                    code=bytes.fromhex("00")
+                    code=Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={0: 5126, 1: 105},
@@ -852,7 +852,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP
                 ),
                 Address("0x000000000000000000000000000000000000de57"): Account(
-                    code=bytes.fromhex("00")
+                    code=Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={0: 5126, 1: 105},
@@ -1015,7 +1015,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP
                 ),
                 Address("0x000000000000000000000000000000000000de57"): Account(
-                    code=bytes.fromhex("00")
+                    code=Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={0: 5126, 1: 105},
@@ -1178,7 +1178,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP
                 ),
                 Address("0x000000000000000000000000000000000000de57"): Account(
-                    code=bytes.fromhex("00")
+                    code=Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={0: 7726, 1: 105},
@@ -1341,7 +1341,7 @@ REFERENCE_SPEC_VERSION = "N/A"
                     code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP
                 ),
                 Address("0x000000000000000000000000000000000000de57"): Account(
-                    code=bytes.fromhex("00")
+                    code=Op.STOP
                 ),
                 Address("0xcccccccccccccccccccccccccccccccccccccccc"): Account(
                     storage={0: 5126, 1: 105},
@@ -1545,7 +1545,7 @@ def test_eip2929_ff(
         code=Op.SELFDESTRUCT(address=0xDE57) + Op.STOP,
     )
     # Source: raw bytecode
-    pre[callee_1] = Account(balance=0, nonce=0, code=bytes.fromhex("00"))
+    pre[callee_1] = Account(balance=0, nonce=0, code=Op.STOP)
     pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=0)
     # Source: LLL
     # {

@@ -70,7 +70,7 @@ def test_init_colliding_with_non_empty_account(
     pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw bytecode
     pre.deploy_contract(
-        code=bytes.fromhex("00"),
+        code=Op.STOP,
         nonce=0,
         address=Address("0xd0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0"),  # noqa: E501
     )
