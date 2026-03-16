@@ -1181,7 +1181,7 @@ def _mock_execute_rpc(
         yield
 
 
-@pytest.mark.usefixtures("_mock_execute_rpc")
+@pytest.mark.usefixtures("_mock_execute_rpc", "restore_environment_defaults")
 def test_execute_benchmark_excluded_from_default_collection(
     testdir: pytest.Testdir,
 ) -> None:
@@ -1219,7 +1219,7 @@ def test_execute_benchmark_excluded_from_default_collection(
     result.stdout.no_fnmatch_line("*test_benchmark_one*")
 
 
-@pytest.mark.usefixtures("_mock_execute_rpc")
+@pytest.mark.usefixtures("_mock_execute_rpc", "restore_environment_defaults")
 def test_execute_benchmark_collected_when_targeted_directly(
     testdir: pytest.Testdir,
 ) -> None:
@@ -1258,7 +1258,7 @@ def test_execute_benchmark_collected_when_targeted_directly(
     result.stdout.fnmatch_lines(["*test_module_stateful*test_benchmark_one*"])
 
 
-@pytest.mark.usefixtures("_mock_execute_rpc")
+@pytest.mark.usefixtures("_mock_execute_rpc", "restore_environment_defaults")
 def test_execute_benchmark_default_collects_without_flags(
     testdir: pytest.Testdir,
 ) -> None:
@@ -1314,7 +1314,7 @@ def test_execute_benchmark_default_collects_without_flags(
         pytest.param(False, id="no-repricing"),
     ],
 )
-@pytest.mark.usefixtures("_mock_execute_rpc")
+@pytest.mark.usefixtures("_mock_execute_rpc", "restore_environment_defaults")
 def test_execute_benchmark_conftest_matrix(
     testdir: pytest.Testdir,
     subdir: str,
