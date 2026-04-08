@@ -6,7 +6,6 @@ import logging
 import pickle
 import re
 import sqlite3
-import zlib
 from pathlib import Path
 from typing import Any, Dict, Mapping
 
@@ -338,7 +337,7 @@ class DiskCache:
             return None
 
         try:
-            data = pickle.loads(zlib.decompress(row[0]))  # noqa: S301
+            data = pickle.loads(row[0])  # noqa: S301
             result = deserialize_output(
                 data, context=self.exception_mapper_context
             )
@@ -346,7 +345,6 @@ class DiskCache:
             return result
         except (
             pickle.UnpicklingError,
-            zlib.error,
             KeyError,
             ValueError,
             TypeError,
@@ -372,12 +370,11 @@ class DiskCache:
         """
         try:
             encoded = serialize_output(output)
-            compressed = zlib.compress(encoded, level=1)
             self._conn.execute(
                 "INSERT OR IGNORE INTO cache"
                 " (spec_hash, content_hash, data)"
                 " VALUES (?, ?, ?)",
-                (spec_hash, content_hash, compressed),
+                (spec_hash, content_hash, encoded),
             )
         except sqlite3.Error:
             logger.debug(
