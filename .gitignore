@@ -24,6 +24,10 @@ cached_downloads/
 __pycache__/
 .pytest_cache/
 pytest-cache-files-*/
+.t8n-cache/
+.t8n-cache.db
+.t8n-cache.db-wal
+.t8n-cache.db-shm
 
 # Distribution / packaging
 .Python

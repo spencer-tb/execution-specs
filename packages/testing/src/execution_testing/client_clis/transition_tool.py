@@ -189,6 +189,7 @@ class TransitionTool(EthereumCLI):
     server_url: str | None = None
     process: Optional[subprocess.Popen] = None
     output_cache: OutputCache | None = None
+    disk_cache: Any = None
     debug_dump_dir: Path | None = None
     call_counter: int = 0
     opcode_count: OpcodeCount | None = None
@@ -928,6 +929,23 @@ class TransitionTool(EthereumCLI):
             cached_result = self.output_cache.get(current_call_id)
             if cached_result is not None:
                 return self.process_result(cached_result)
+
+        # Check disk cache (content-addressed, persists across runs)
+        disk_spec_hash = None
+        disk_content_hash = None
+        if self.disk_cache is not None:
+            disk_result, disk_spec_hash, disk_content_hash = (
+                self.disk_cache.lookup(
+                    transition_tool_data.fork,
+                    transition_tool_data.get_request_data(),
+                    transition_tool_data.state_test,
+                )
+            )
+            if disk_result is not None:
+                if self.output_cache is not None:
+                    self.output_cache.set(current_call_id, disk_result)
+                return self.process_result(disk_result)
+
         debug_output_path = self.get_next_transition_tool_output_path(
             current_call_id
         )
@@ -945,4 +963,6 @@ class TransitionTool(EthereumCLI):
             )
         if self.output_cache is not None:
             self.output_cache.set(current_call_id, result)
+        if self.disk_cache is not None and disk_content_hash is not None:
+            self.disk_cache.store(disk_spec_hash, disk_content_hash, result)
         return self.process_result(result)
