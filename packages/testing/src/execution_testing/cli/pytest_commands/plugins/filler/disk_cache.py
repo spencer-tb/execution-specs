@@ -198,6 +198,8 @@ class DiskCache:
     Python versions).
     """
 
+    MAX_ENTRY_SIZE = 5 * 1024 * 1024  # 5MB
+
     def __init__(
         self,
         db_path: Path,
@@ -368,8 +370,17 @@ class DiskCache:
 
         Uses INSERT OR IGNORE for idempotent writes under xdist.
         """
+        # Quick size estimate before expensive serialization
+        alloc = output.alloc
+        if hasattr(alloc, "raw"):
+            raw = alloc.raw
+            est = len(raw) if isinstance(raw, str) else len(raw) * 300
+            if est > self.MAX_ENTRY_SIZE:
+                return
         try:
             encoded = serialize_output(output)
+            if len(encoded) > self.MAX_ENTRY_SIZE:
+                return
             self._conn.execute(
                 "INSERT OR IGNORE INTO cache"
                 " (spec_hash, content_hash, data)"
