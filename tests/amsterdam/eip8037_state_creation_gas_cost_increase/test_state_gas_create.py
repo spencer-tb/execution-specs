@@ -1102,3 +1102,89 @@ def test_failed_create_header_gas_used(
         ],
         post={factory: Account(storage=storage)},
     )
+
+
+@pytest.mark.parametrize(
+    "parent_reverts",
+    [
+        pytest.param(True, id="parent_reverts"),
+        pytest.param(False, id="parent_succeeds"),
+    ],
+)
+@pytest.mark.parametrize(
+    "child_failure",
+    [
+        pytest.param("revert", id="child_revert"),
+        pytest.param("halt", id="child_halt"),
+    ],
+)
+@pytest.mark.with_all_create_opcodes()
+@pytest.mark.valid_from("Amsterdam")
+def test_nested_create_fail_parent_revert_state_gas(
+    blockchain_test: BlockchainTestFiller,
+    pre: Alloc,
+    fork: Fork,
+    parent_reverts: bool,
+    child_failure: str,
+    create_opcode: Op,
+) -> None:
+    """
+    Test nested CREATE state gas when a child CREATE fails and the
+    parent frame succeeds or reverts.
+
+    A caller CALLs a factory that performs CREATE/CREATE2. The child
+    initcode fails via revert or exceptional halt. The factory then
+    either stops normally or reverts itself.
+    """
+    gas_limit_cap = fork.transaction_gas_limit_cap()
+    assert gas_limit_cap is not None
+    gas_costs = fork.gas_costs()
+    create_state_gas = gas_costs.GAS_NEW_ACCOUNT
+
+    if child_failure == "revert":
+        init_code = Op.REVERT(0, 0)
+    else:
+        init_code = Op.INVALID
+
+    create_call = (
+        create_opcode(value=0, offset=0, size=len(init_code), salt=0)
+        if create_opcode == Op.CREATE2
+        else create_opcode(value=0, offset=0, size=len(init_code))
+    )
+
+    factory = pre.deploy_contract(
+        code=(
+            Op.MSTORE(
+                0,
+                int.from_bytes(bytes(init_code), "big")
+                << (256 - 8 * len(init_code)),
+            )
+            + Op.POP(create_call)
+            + (Op.REVERT(0, 0) if parent_reverts else Op.STOP)
+        ),
+    )
+
+    # Nested call required: incorporate_child_on_error only restores
+    # state gas when there is a parent frame to receive it.
+    caller = pre.deploy_contract(
+        code=Op.POP(Op.CALL(gas=500_000, address=factory)),
+    )
+
+    tx = Transaction(
+        to=caller,
+        gas_limit=gas_limit_cap + create_state_gas,
+        sender=pre.fund_eoa(),
+    )
+
+    if parent_reverts:
+        # Factory reverted: state rolled back, nonce unchanged
+        post = {factory: Account(nonce=1)}
+    else:
+        # Factory succeeded: CREATE incremented nonce despite child fail
+        post = {factory: Account(nonce=2)}
+
+    blockchain_test(
+        pre=pre,
+        blocks=[Block(txs=[tx])],
+        post=post,
+    )
