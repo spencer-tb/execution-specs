@@ -987,6 +987,64 @@ def test_create_initcode_halt_no_code_deposit_state_gas(
     )
 
 
+@pytest.mark.parametrize(
+    "failure_mode",
+    [
+        pytest.param("revert", id="revert"),
+        pytest.param("halt", id="halt"),
+    ],
+)
+@pytest.mark.valid_from("Amsterdam")
+def test_failed_create_tx_state_gas_dominates(
+    blockchain_test: BlockchainTestFiller,
+    pre: Alloc,
+    fork: Fork,
+    failure_mode: str,
+) -> None:
+    """
+    Verify 2D block gas_used when failed CREATE tx state gas dominates.
+
+    A CREATE tx with a tight gas limit where initcode fails (REVERT
+    or INVALID). Account-creation state gas is consumed even though
+    the account is not created. With minimal regular gas, tx_state
+    exceeds tx_regular and block header gas_used must equal the state
+    gas dimension, not the total gas consumed.
+    """
+    intrinsic_calc = fork.transaction_intrinsic_cost_calculator()
+    create_state_gas = fork.create_state_gas(code_size=0)
+
+    if failure_mode == "revert":
+        init_code = bytes(Op.REVERT(0, 0))
+    else:
+        init_code = bytes(Op.INVALID)
+
+    intrinsic_total = intrinsic_calc(
+        calldata=init_code, contract_creation=True
+    )
+    intrinsic_regular = intrinsic_total - create_state_gas
+    gas_limit = intrinsic_total + 1000
+
+    assert intrinsic_regular + 1000 < create_state_gas
+
+    tx = Transaction(
+        to=None,
+        data=init_code,
+        gas_limit=gas_limit,
+        sender=pre.fund_eoa(),
+    )
+
+    blockchain_test(
+        pre=pre,
+        blocks=[
+            Block(
+                txs=[tx],
+                header_verify=Header(gas_used=create_state_gas),
+            ),
+        ],
+        post={},
+    )
+
+
 @pytest.mark.valid_from("Amsterdam")
 def test_state_gas_spill_header_gas_used(
     blockchain_test: BlockchainTestFiller,
