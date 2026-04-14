@@ -90,7 +90,6 @@ def test_calldataload(
 
         tx = Transaction(
             data=calldata,
-            gas_limit=100_000,
             protected=fork.supports_protected_txs(),
             sender=pre.fund_eoa(),
             to=to,
@@ -99,7 +98,6 @@ def test_calldataload(
     else:
         tx = Transaction(
             data=calldata,
-            gas_limit=100_000,
             protected=fork.supports_protected_txs(),
             sender=pre.fund_eoa(),
             to=contract_address,

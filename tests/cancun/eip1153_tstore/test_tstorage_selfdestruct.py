@@ -272,7 +272,6 @@ def test_reentrant_selfdestructing_call(
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=caller_address,
-        gas_limit=1_000_000,
         data=data,
     )
 

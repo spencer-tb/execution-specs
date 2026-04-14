@@ -67,7 +67,6 @@ def test_basic_tload_transaction_begin(
         to=address_to,
         gas_price=10,
         data=b"",
-        gas_limit=5000000,
         value=0,
     )
 
@@ -125,7 +124,6 @@ def test_basic_tload_works(
         to=address_to,
         gas_price=10,
         data=b"",
-        gas_limit=5000000,
         value=0,
     )
 
@@ -179,7 +177,6 @@ def test_basic_tload_other_after_tstore(
         to=address_to,
         gas_price=10,
         data=b"",
-        gas_limit=5000000,
         value=0,
     )
 
@@ -275,7 +272,6 @@ def test_basic_tload_gasprice(
         to=address_to,
         gas_price=10,
         data=b"",
-        gas_limit=5000000,
         value=0,
     )
 
@@ -329,7 +325,6 @@ def test_basic_tload_after_store(
         to=address_to,
         gas_price=10,
         data=b"",
-        gas_limit=5000000,
         value=0,
     )
 

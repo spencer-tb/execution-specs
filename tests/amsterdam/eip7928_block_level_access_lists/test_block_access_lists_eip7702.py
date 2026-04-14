@@ -62,7 +62,6 @@ def test_bal_7702_delegation_create(
         sender=sender,
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -161,7 +160,6 @@ def test_bal_7702_delegation_update(
         sender=sender,
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -177,7 +175,6 @@ def test_bal_7702_delegation_update(
         sender=sender,
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -290,7 +287,6 @@ def test_bal_7702_delegation_clear(
         sender=sender,
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -306,7 +302,6 @@ def test_bal_7702_delegation_clear(
         sender=sender,
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -403,7 +398,6 @@ def test_bal_7702_delegated_storage_access(
         sender=bob,
         to=alice,  # Bob calls Alice (delegated account)
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
     )
 
@@ -468,7 +462,6 @@ def test_bal_7702_invalid_nonce_authorization(
         sender=relayer,  # Sponsored transaction
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -529,7 +522,6 @@ def test_bal_7702_invalid_chain_id_authorization(
         sender=relayer,  # Sponsored transaction
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -609,7 +601,6 @@ def test_bal_7702_delegated_via_call_opcode(
     tx = Transaction(
         sender=bob,
         to=caller,  # `bob` calls caller contract
-        gas_limit=10_000_000,
         gas_price=0xA,
     )
 
@@ -655,7 +646,6 @@ def test_bal_7702_null_address_delegation_no_code_change(
         sender=alice,
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         authorization_list=[
             AuthorizationTuple(
                 address=0,
@@ -735,7 +725,6 @@ def test_bal_7702_double_auth_reset(
         sender=alice if self_funded else relayer,
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -824,7 +813,6 @@ def test_bal_7702_double_auth_swap(
         sender=relayer,
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -926,7 +914,6 @@ def test_bal_selfdestruct_to_7702_delegation(
         sender=relayer,
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -945,7 +932,6 @@ def test_bal_selfdestruct_to_7702_delegation(
         nonce=1,
         sender=relayer,
         to=caller,
-        gas_limit=1_000_000,
         gas_price=0xA,
     )
 
@@ -1059,7 +1045,6 @@ def test_bal_withdrawal_to_7702_delegation(
         sender=relayer,
         to=bob,
         value=10,
-        gas_limit=1_000_000,
         gas_price=0xA,
         authorization_list=[
             AuthorizationTuple(
@@ -1191,7 +1176,6 @@ def test_bal_7702_delegated_create(
     tx = Transaction(
         sender=alice,
         to=deployer,
-        gas_limit=1_000_000,
         authorization_list=[
             AuthorizationTuple(
                 address=deployer,

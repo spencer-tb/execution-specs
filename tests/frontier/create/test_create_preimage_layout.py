@@ -51,7 +51,6 @@ def test_create_preimage_layout_address(
         sender=sender,
         to=contract,
         data=nonce.to_bytes(32, "big"),
-        gas_limit=1_000_000,
         protected=fork.supports_protected_txs(),
     )
 
@@ -97,7 +96,6 @@ def test_create_preimage_layout_increment_nonce(
         sender=sender,
         to=contract,
         data=(1).to_bytes(32, "big"),
-        gas_limit=5_000_000,
         protected=fork.supports_protected_txs(),
     )
 
@@ -261,7 +259,6 @@ def test_create_address_nonce_boundary(
 
     tx = Transaction(
         to=DEPLOYER_ADDRESS,
-        gas_limit=15_000_000,
         sender=sender,
     )
 

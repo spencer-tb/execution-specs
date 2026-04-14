@@ -1738,12 +1738,10 @@ def test_create_multiple_contracts_destroy_one_then_destroy_other_next_tx(
         Transaction(
             sender=sender,
             to=entry_code_address,
-            gas_limit=1_000_000,
         ),
         Transaction(
             sender=sender,
             to=tx2_caller,
-            gas_limit=500_000,
         ),
     ]
 
@@ -1869,7 +1867,6 @@ def test_parent_creates_child_selfdestruct_one(
         data=entry_code,
         sender=sender,
         to=None,
-        gas_limit=1_000_000,
     )
 
     post: Dict[Address, Account] = {
@@ -2029,7 +2026,6 @@ def test_recursive_contract_creation_and_selfdestruct(
         data=entry_code,
         sender=sender,
         to=None,
-        gas_limit=2_000_000,
     )
 
     post: Dict[Address, Account] = {

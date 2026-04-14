@@ -102,7 +102,6 @@ def test_create_insufficient_balance(
 
     tx = Transaction(
         to=entry_address,
-        gas_limit=1_000_000,
         sender=pre.fund_eoa(),
     )
 
@@ -180,7 +179,6 @@ def test_create_nonce_overflow(
 
     tx = Transaction(
         to=entry_address,
-        gas_limit=1_000_000,
         sender=pre.fund_eoa(),
     )
 

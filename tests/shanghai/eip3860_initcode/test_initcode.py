@@ -158,7 +158,6 @@ def test_contract_creating_tx(
         nonce=0,
         to=None,
         data=initcode,
-        gas_limit=10000000,
         gas_price=10,
         sender=sender,
     )
@@ -537,7 +536,6 @@ class TestCreateInitcode:
             nonce=0,
             to=caller_contract_address,
             data=initcode,
-            gas_limit=10000000,
             gas_price=10,
             sender=sender,
         )
@@ -741,7 +739,6 @@ def test_create2_oversized_initcode_with_insufficient_balance(
     tx = Transaction(
         sender=sender,
         to=caller_address,
-        gas_limit=10_000_000,
     )
 
     post = {

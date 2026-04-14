@@ -53,7 +53,6 @@ def test_gas_costs(
     tx = Transaction(
         to=account,
         sender=pre.fund_eoa(),
-        gas_limit=1_000_000,
         protected=True,
     )
 
@@ -131,7 +130,6 @@ def test_invalid_gas_consumption(
     tx = Transaction(
         to=account,
         sender=pre.fund_eoa(),
-        gas_limit=1_000_000,
         protected=True,
     )
 

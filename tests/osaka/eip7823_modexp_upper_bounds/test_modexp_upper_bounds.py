@@ -327,7 +327,6 @@ def test_modexp_upper_bounds_fork_transition(
                     to=contract,
                     data=bytes(modexp_input),
                     sender=sender,
-                    gas_limit=6_000_000,
                 )
             ],
         )

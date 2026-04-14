@@ -77,7 +77,6 @@ def test_create2_revert_preserves_balance(
         tx=Transaction(
             sender=sender,
             to=factory,
-            gas_limit=1_000_000,
             data=initcode,
         ),
     )
@@ -177,7 +176,6 @@ def test_create2_succeeds_after_reverted_create2(
         tx=Transaction(
             sender=sender,
             to=outer,
-            gas_limit=2_000_000,
             data=initcode,
         ),
     )

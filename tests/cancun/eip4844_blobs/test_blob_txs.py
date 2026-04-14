@@ -781,7 +781,6 @@ def test_sufficient_balance_blob_tx_pre_fund_tx(
             sender=pre_funding_sender,
             to=sender,
             value=total_account_minimum_balance,
-            gas_limit=21_000,
         )
     ] + txs
     blockchain_test(

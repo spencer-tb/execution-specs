@@ -470,7 +470,6 @@ def test_contract_creation_transaction(
 
     tx = Transaction(
         sender=sender,
-        gas_limit=1_000_000,
         to=None,
         value=0,
         data=contract_bytecode + bytes(modexp_input),

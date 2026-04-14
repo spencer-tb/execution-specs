@@ -64,7 +64,6 @@ def test_bal_withdrawal_contract_cross_index(
         to=WITHDRAWAL_REQUEST_ADDRESS,
         value=1,
         data=withdrawal_calldata,
-        gas_limit=1_000_000,
     )
 
     blockchain_test(
@@ -137,7 +136,6 @@ def test_bal_consolidation_contract_cross_index(
         to=CONSOLIDATION_REQUEST_ADDRESS,
         value=1,
         data=consolidation_calldata,
-        gas_limit=1_000_000,
     )
 
     blockchain_test(
@@ -221,7 +219,6 @@ def test_bal_noop_write_filtering(
     tx = Transaction(
         sender=sender,
         to=test_address,
-        gas_limit=100_000,
     )
 
     # Expected BAL should only show actual changes
@@ -285,7 +282,6 @@ def test_bal_system_contract_noop_filtering(
         sender=sender,
         to=receiver,
         value=100,
-        gas_limit=21_000,
     )
 
     # withdrawal and consolidation contracts should NOT have any storage

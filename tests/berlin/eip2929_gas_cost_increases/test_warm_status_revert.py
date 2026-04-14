@@ -83,7 +83,6 @@ def test_storage_warm_status_reverted_by_subcall(
         tx=Transaction(
             sender=sender,
             to=contract,
-            gas_limit=1_000_000,
             data=b"\x01",
         ),
     )
@@ -134,6 +133,5 @@ def test_account_warm_status_reverted_by_subcall(
         tx=Transaction(
             sender=sender,
             to=outer,
-            gas_limit=1_000_000,
         ),
     )

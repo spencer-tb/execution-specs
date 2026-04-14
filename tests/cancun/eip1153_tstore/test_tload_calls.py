@@ -109,7 +109,6 @@ def test_tload_calls(
         to=address_to,
         gas_price=10,
         data=b"",
-        gas_limit=5000000,
         value=0,
     )
 

@@ -89,7 +89,7 @@ def test_push0_contracts(
 ) -> None:
     """Tests PUSH0 within various deployed contracts."""
     push0_contract = pre.deploy_contract(contract_code)
-    tx = Transaction(to=push0_contract, gas_limit=100_000, sender=sender)
+    tx = Transaction(to=push0_contract, sender=sender)
     post[push0_contract] = expected_storage
     state_test(env=env, pre=pre, post=post, tx=tx)
 

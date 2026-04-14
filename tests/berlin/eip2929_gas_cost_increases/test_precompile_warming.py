@@ -137,7 +137,6 @@ def test_precompile_warming(
                 Transaction(
                     sender=sender,
                     to=before,
-                    gas_limit=1_000_000,
                 )
             ],
         )
@@ -151,7 +150,6 @@ def test_precompile_warming(
                 Transaction(
                     sender=sender,
                     to=after,
-                    gas_limit=1_000_000,
                 )
             ],
         )

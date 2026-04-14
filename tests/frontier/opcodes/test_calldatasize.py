@@ -67,7 +67,6 @@ def test_calldatasize(
         )
 
         tx = Transaction(
-            gas_limit=100_000,
             protected=fork.supports_protected_txs(),
             sender=pre.fund_eoa(),
             to=to,
@@ -76,7 +75,6 @@ def test_calldatasize(
     else:
         tx = Transaction(
             data=calldata,
-            gas_limit=100_000,
             protected=fork.supports_protected_txs(),
             sender=pre.fund_eoa(),
             to=contract_address,

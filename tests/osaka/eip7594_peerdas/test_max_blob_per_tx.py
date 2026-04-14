@@ -67,7 +67,6 @@ def tx(
         sender=sender,
         to=destination,
         value=1,
-        gas_limit=21_000,
         max_fee_per_gas=10,
         max_priority_fee_per_gas=1,
         max_fee_per_blob_gas=blob_gas_price,

@@ -117,7 +117,6 @@ def test_clz_opcode_scenarios(
     tx = Transaction(
         to=contract_address,
         sender=sender,
-        gas_limit=200_000,
     )
     post = {
         contract_address: Account(storage={"0x00": expected_clz}),
@@ -208,7 +207,6 @@ def test_clz_stack_underflow(state_test: StateTestFiller, pre: Alloc) -> None:
     tx = Transaction(
         to=caller_address,
         sender=sender,
-        gas_limit=200_000,
     )
     post = {
         caller_address: Account(
@@ -312,7 +310,6 @@ def test_clz_fork_transition(
                     to=caller_address,
                     sender=sender,
                     nonce=0,
-                    gas_limit=200_000,
                 )
             ],
         ),
@@ -323,7 +320,6 @@ def test_clz_fork_transition(
                     to=caller_address,
                     sender=sender,
                     nonce=1,
-                    gas_limit=200_000,
                 )
             ],
         ),
@@ -334,7 +330,6 @@ def test_clz_fork_transition(
                     to=caller_address,
                     sender=sender,
                     nonce=2,
-                    gas_limit=200_000,
                 )
             ],
         ),
@@ -408,7 +403,6 @@ def test_clz_jump_operation(
     tx = Transaction(
         to=caller_address,
         sender=pre.fund_eoa(),
-        gas_limit=200_000,
     )
 
     expected_clz = 255 - bits
@@ -529,7 +523,6 @@ def test_clz_code_copy_operation(
     tx = Transaction(
         to=clz_contract_address,
         sender=pre.fund_eoa(),
-        gas_limit=200_000,
     )
 
     state_test(pre=pre, post=post, tx=tx)
@@ -592,7 +585,6 @@ def test_clz_with_memory_operation(
     tx = Transaction(
         to=clz_contract_address,
         sender=pre.fund_eoa(),
-        gas_limit=200_000,
     )
 
     state_test(pre=pre, post=post, tx=tx)
@@ -616,7 +608,6 @@ def test_clz_initcode_context(state_test: StateTestFiller, pre: Alloc) -> None:
 
     tx = Transaction(
         to=None,
-        gas_limit=6_000_000,
         data=init_code,
         sender=sender_address,
     )

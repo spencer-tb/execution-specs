@@ -428,7 +428,6 @@ def test_extcodehash_codeless_with_storage(
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=code_address,
-        gas_limit=100_000,
     )
 
     state_test(
@@ -1962,7 +1961,6 @@ def test_codecopy_zero_in_create2(
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=caller,
-        gas_limit=1_400_000,
     )
 
     state_test(

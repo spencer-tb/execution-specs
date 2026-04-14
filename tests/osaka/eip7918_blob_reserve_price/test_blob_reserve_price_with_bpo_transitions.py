@@ -161,7 +161,6 @@ def env(
         # uses no blob gas.
         excess_blob_gas=genesis_excess_blob_gas,
         base_fee_per_gas=genesis_base_fee_per_gas,
-        gas_limit=16_000_000,  # To make it easier to reach the requirement
         # with a single tx
     )
 

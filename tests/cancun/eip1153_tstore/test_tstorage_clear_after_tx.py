@@ -88,13 +88,12 @@ def test_tstore_clear_after_tx(
     sender = pre.fund_eoa()
 
     poke_tstore_tx = Transaction(
-        gas_limit=100000,
         to=account,
         sender=sender,
     )
 
     re_poke_tstore_tx = Transaction(
-        gas_limit=100000, to=account, sender=sender
+        to=account, sender=sender
     )
 
     txs = [poke_tstore_tx, re_poke_tstore_tx]

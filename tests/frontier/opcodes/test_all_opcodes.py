@@ -135,7 +135,6 @@ def test_cover_revert(state_test: StateTestFiller, pre: Alloc) -> None:
     """Cover state revert from original tests for the coverage script."""
     tx = Transaction(
         sender=pre.fund_eoa(),
-        gas_limit=1_000_000,
         data=Op.SSTORE(1, 1) + Op.REVERT(0, 0),
         to=None,
         value=0,
@@ -186,7 +185,6 @@ def test_stack_overflow(
     )
 
     tx = Transaction(
-        gas_limit=100_000,
         to=contract,
         sender=pre.fund_eoa(),
         protected=fork.supports_protected_txs(),

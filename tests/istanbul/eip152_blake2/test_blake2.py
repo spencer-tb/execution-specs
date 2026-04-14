@@ -420,7 +420,6 @@ def test_blake2b(
         ty=0x0,
         to=account,
         data=data,
-        gas_limit=1_000_000,
         protected=True,
         sender=sender,
         value=100000,

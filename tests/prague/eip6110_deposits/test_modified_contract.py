@@ -157,7 +157,6 @@ def test_extra_logs(
     tx = Transaction(
         to=Spec.DEPOSIT_CONTRACT_ADDRESS,
         sender=sender,
-        gas_limit=100_000,
     )
 
     blockchain_test(
@@ -215,7 +214,6 @@ def test_invalid_layout(
     tx = Transaction(
         to=Spec.DEPOSIT_CONTRACT_ADDRESS,
         sender=sender,
-        gas_limit=100_000,
     )
 
     blockchain_test(
@@ -265,7 +263,6 @@ def test_invalid_log_length(
     tx = Transaction(
         to=Spec.DEPOSIT_CONTRACT_ADDRESS,
         sender=sender,
-        gas_limit=100_000,
     )
 
     blockchain_test(

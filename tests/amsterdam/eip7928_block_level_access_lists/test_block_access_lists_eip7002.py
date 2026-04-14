@@ -694,7 +694,6 @@ def test_bal_7002_request_from_contract(
                         validator_pubkey=0x01,
                         amount=0,
                         fee=Spec7002.get_fee(0),
-                        gas_limit=25_000,  # Insufficient gas
                         valid=False,
                     )
                 ]

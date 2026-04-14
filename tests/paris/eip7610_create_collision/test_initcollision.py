@@ -81,7 +81,6 @@ def test_init_collision_create_tx(
         ty=tx_type,
         to=None,
         data=initcode,
-        gas_limit=200_000,
     )
 
     created_contract_address = tx.created_contract
@@ -150,7 +149,6 @@ def test_init_collision_create_opcode(
         sender=pre.fund_eoa(),
         to=contract_creator_address,
         data=initcode,
-        gas_limit=2_000_000,
     )
 
     pre[created_contract_address] = Account(

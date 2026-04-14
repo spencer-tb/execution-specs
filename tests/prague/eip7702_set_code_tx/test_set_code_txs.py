@@ -104,7 +104,6 @@ def test_self_sponsored_set_code(
     )
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=sender,
         value=tx_value,
         authorization_list=[
@@ -183,7 +182,6 @@ def test_set_code_to_sstore(
     )
 
     tx = Transaction(
-        gas_limit=500_000,
         to=auth_signer,
         value=tx_value,
         authorization_list=[
@@ -230,7 +228,6 @@ def test_set_code_to_non_empty_storage_non_zero_nonce(
     )
 
     tx = Transaction(
-        gas_limit=500_000,
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -293,7 +290,6 @@ def test_set_code_to_sstore_then_sload(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
     tx_1 = Transaction(
         gas_limit=gas_limit,
         to=auth_signer,
@@ -389,7 +385,6 @@ def test_set_code_to_tstore_reentry(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
     tx = Transaction(
         gas_limit=gas_limit,
         to=auth_signer,
@@ -466,7 +461,6 @@ def test_set_code_to_tstore_available_at_correct_address(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
     tx = Transaction(
         gas_limit=gas_limit,
         to=target_call_chain_address,
@@ -522,7 +516,6 @@ def test_set_code_to_self_destruct(
     )
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -599,7 +592,6 @@ def test_creating_tx_to_contract_creator(
     )
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=None,
         value=0,
         data=initcode,
@@ -749,7 +741,6 @@ def test_set_code_to_contract_creator(
     creator_code_address = pre.deploy_contract(creator_code)
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer,
         value=0,
         data=initcode,
@@ -823,7 +814,6 @@ def test_set_code_to_self_caller(
     set_code_to_address = pre.deploy_contract(set_code)
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer,
         value=value,
         authorization_list=[
@@ -965,7 +955,6 @@ def test_set_code_call_set_code(
     set_code_to_address_2 = pre.deploy_contract(set_code_2)
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer_1,
         value=value,
         authorization_list=[
@@ -1028,7 +1017,6 @@ def test_address_from_set_code(
     set_code_to_address = pre.deploy_contract(set_code)
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -1067,7 +1055,6 @@ def test_tx_into_self_delegating_set_code(
     auth_signer = pre.fund_eoa(auth_account_start_balance)
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -1105,7 +1092,6 @@ def test_tx_into_chain_delegating_set_code(
     auth_signer_2 = pre.fund_eoa(auth_account_start_balance)
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer_1,
         value=0,
         authorization_list=[
@@ -1163,7 +1149,6 @@ def test_call_into_self_delegating_set_code(
     entry_address = pre.deploy_contract(entry_code)
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=entry_address,
         value=0,
         authorization_list=[
@@ -1218,7 +1203,6 @@ def test_call_into_chain_delegating_set_code(
     entry_address = pre.deploy_contract(entry_code)
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=entry_address,
         value=0,
         authorization_list=[
@@ -1318,7 +1302,6 @@ def test_ext_code_on_set_code(
     callee_storage[slot_ext_balance_result] = balance
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=callee_address,
         authorization_list=[
             AuthorizationTuple(
@@ -1391,7 +1374,6 @@ def test_ext_code_on_self_set_code(
     set_code_storage[slot_ext_balance_result] = balance
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer,
         authorization_list=[
             AuthorizationTuple(
@@ -1477,7 +1459,6 @@ def test_set_code_address_and_authority_warm_state(
     )
 
     tx = Transaction(
-        gas_limit=1_000_000,
         to=callee_address,
         authorization_list=[
             AuthorizationTuple(
@@ -1554,7 +1535,6 @@ def test_set_code_address_and_authority_warm_state_call_types(
     callee_storage[slot_call_success] = 1
 
     tx = Transaction(
-        gas_limit=1_000_000,
         to=callee_address,
         authorization_list=[
             AuthorizationTuple(
@@ -1625,7 +1605,6 @@ def test_ext_code_on_self_delegating_set_code(
     callee_storage[slot_ext_balance_result] = balance
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=callee_address,
         authorization_list=[
             AuthorizationTuple(
@@ -1719,7 +1698,6 @@ def test_ext_code_on_chain_delegating_set_code(
     callee_storage[slot_ext_balance_result_2] = auth_signer_2_balance
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=callee_address,
         authorization_list=[
             AuthorizationTuple(
@@ -1788,7 +1766,6 @@ def test_self_code_on_set_code(
     storage[slot_self_balance_result] = balance
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer,
         authorization_list=[
             AuthorizationTuple(
@@ -1867,7 +1844,6 @@ def test_set_code_to_account_deployed_in_same_tx(
     )
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=contract_creator_address,
         value=0,
         data=initcode,
@@ -1978,7 +1954,6 @@ def test_set_code_to_self_destructing_account_deployed_in_same_tx(
     )
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=contract_creator_address,
         value=0,
         data=initcode,
@@ -2041,7 +2016,6 @@ def test_set_code_multiple_first_valid_authorization_tuples_same_signer(
     ]
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -2093,7 +2067,6 @@ def test_set_code_multiple_valid_authorization_tuples_same_signer_increasing_non
     ]
 
     tx = Transaction(
-        gas_limit=10_000_000,  # TODO: Reduce gas limit of all tests
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -2146,7 +2119,6 @@ def test_set_code_multiple_valid_authorization_tuples_same_signer_increasing_non
     ]
 
     tx = Transaction(
-        gas_limit=10_000_000,  # TODO: Reduce gas limit of all tests
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -2196,7 +2168,6 @@ def test_set_code_multiple_valid_authorization_tuples_first_invalid_same_signer(
     ]
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -2245,7 +2216,6 @@ def test_set_code_all_invalid_authorization_tuples(
     ]
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -2289,7 +2259,6 @@ def test_set_code_using_chain_specific_id(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
     tx = Transaction(
         gas_limit=gas_limit,
         to=auth_signer,
@@ -2372,7 +2341,6 @@ def test_set_code_using_valid_synthetic_signatures(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
     tx = Transaction(
         gas_limit=gas_limit,
         to=auth_signer,
@@ -2465,7 +2433,6 @@ def test_valid_tx_invalid_auth_signature(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
 
     tx = Transaction(
         gas_limit=gas_limit,
@@ -2521,7 +2488,6 @@ def test_signature_s_out_of_range(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
 
     tx = Transaction(
         gas_limit=gas_limit,
@@ -2614,7 +2580,6 @@ def test_valid_tx_invalid_chain_id(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
 
     tx = Transaction(
         gas_limit=gas_limit,
@@ -2708,7 +2673,6 @@ def test_nonce_validity(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
 
     tx = Transaction(
         gas_limit=gas_limit,
@@ -2787,7 +2751,6 @@ def test_nonce_overflow_after_first_authorization(
 
     gas_limit = 200_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
 
     tx = Transaction(
         gas_limit=gas_limit,
@@ -2855,7 +2818,6 @@ def test_set_code_to_log(
     set_to_address = pre.deploy_contract(set_to_code)
 
     tx = Transaction(
-        gas_limit=10_000_000,
         to=sender,
         value=0,
         authorization_list=[
@@ -2917,7 +2879,6 @@ def test_set_code_to_precompile(
 
     tx = Transaction(
         sender=pre.fund_eoa(),
-        gas_limit=500_000,
         to=caller_code_address,
         authorization_list=[
             AuthorizationTuple(
@@ -3159,7 +3120,6 @@ def test_set_code_to_system_contract(
     txs = [
         Transaction(
             sender=sender,
-            gas_limit=500_000,
             to=caller_code_address,
             value=call_value,
             data=caller_payload,
@@ -3235,7 +3195,6 @@ def test_eoa_tx_after_set_code(
 
     first_eoa_tx = Transaction(
         sender=pre.fund_eoa(),
-        gas_limit=500_000,
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -3256,7 +3215,6 @@ def test_eoa_tx_after_set_code(
                     Transaction(
                         ty=tx_type,
                         sender=auth_signer,
-                        gas_limit=500_000,
                         to=auth_signer,
                         value=0,
                         protected=True,
@@ -3264,7 +3222,6 @@ def test_eoa_tx_after_set_code(
                     Transaction(
                         ty=tx_type,
                         sender=auth_signer,
-                        gas_limit=500_000,
                         to=auth_signer,
                         value=0,
                         protected=False,
@@ -3276,7 +3233,6 @@ def test_eoa_tx_after_set_code(
                 Transaction(
                     ty=tx_type,
                     sender=auth_signer,
-                    gas_limit=500_000,
                     to=auth_signer,
                     value=0,
                     access_list=[
@@ -3292,7 +3248,6 @@ def test_eoa_tx_after_set_code(
                 Transaction(
                     ty=tx_type,
                     sender=auth_signer,
-                    gas_limit=500_000,
                     to=auth_signer,
                     value=0,
                     max_fee_per_gas=1_000,
@@ -3304,7 +3259,6 @@ def test_eoa_tx_after_set_code(
                 Transaction(
                     ty=tx_type,
                     sender=auth_signer,
-                    gas_limit=500_000,
                     to=auth_signer,
                     value=0,
                     max_fee_per_gas=1_000,
@@ -3370,7 +3324,6 @@ def test_reset_code(
     txs = [
         Transaction(
             sender=sender,
-            gas_limit=500_000,
             to=auth_signer,
             value=0,
             authorization_list=[
@@ -3391,7 +3344,6 @@ def test_reset_code(
     txs.append(
         Transaction(
             sender=sender,
-            gas_limit=500_000,
             to=auth_signer,
             value=0,
             authorization_list=[
@@ -3434,7 +3386,6 @@ def test_contract_create(
     )
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
     tx = Transaction(
         gas_limit=gas_limit,
         to=None,
@@ -3460,7 +3411,6 @@ def test_empty_authorization_list(
 ) -> None:
     """Test sending an invalid transaction with empty authorization list."""
     tx = Transaction(
-        gas_limit=100_000,
         to=pre.deploy_contract(code=b""),
         value=0,
         authorization_list=[],
@@ -3543,7 +3493,6 @@ def test_delegation_clearing(
 
     gas_limit = 200_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
 
     tx = Transaction(
         gas_limit=gas_limit,
@@ -3619,7 +3568,6 @@ def test_delegation_clearing_tx_to(
     sender = pre.fund_eoa() if not self_sponsored else auth_signer
 
     tx = Transaction(
-        gas_limit=200_000,
         to=auth_signer,
         value=0,
         authorization_list=[
@@ -3684,7 +3632,6 @@ def test_delegation_clearing_and_set(
 
     gas_limit = 200_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
 
     tx = Transaction(
         gas_limit=gas_limit,
@@ -3754,7 +3701,6 @@ def test_delegation_clearing_failing_tx(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
 
     tx = Transaction(
         gas_limit=gas_limit,
@@ -3810,7 +3756,6 @@ def test_deploying_delegation_designation_contract(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
 
     tx = Transaction(
         sender=sender,
@@ -3878,7 +3823,6 @@ def test_creating_delegation_designation_contract(
 
     tx = Transaction(
         to=contract_a,
-        gas_limit=1_000_000,
         data=create_init,
         value=0,
         sender=sender,
@@ -3994,7 +3938,6 @@ def test_invalid_transaction_after_authorization(
     txs = [
         Transaction(
             sender=pre.fund_eoa(),
-            gas_limit=500_000,
             to=recipient,
             value=0,
             authorization_list=[
@@ -4008,7 +3951,6 @@ def test_invalid_transaction_after_authorization(
         Transaction(
             sender=auth_signer,
             nonce=0,
-            gas_limit=21_000,
             to=recipient,
             value=1,
             error=TransactionException.NONCE_MISMATCH_TOO_LOW,
@@ -4044,13 +3986,11 @@ def test_authorization_reusing_nonce(
         Transaction(
             sender=auth_signer,
             nonce=0,
-            gas_limit=21_000,
             to=recipient,
             value=1,
         ),
         Transaction(
             sender=sender,
-            gas_limit=500_000,
             to=recipient,
             value=0,
             authorization_list=[
@@ -4123,7 +4063,6 @@ def test_set_code_from_account_with_non_delegating_code(
 
     gas_limit = 100_000
     if fork.is_eip_enabled(eip_number=8037):
-        gas_limit = 500_000  # TODO: auto gas limit will remove this
 
     tx = Transaction(
         gas_limit=gas_limit,
@@ -4192,7 +4131,6 @@ def test_set_code_transaction_fee_validations(
     auth_signer = pre.fund_eoa(amount=0)
     tx = Transaction(
         sender=pre.fund_eoa(),
-        gas_limit=500_000,
         to=auth_signer,
         value=0,
         max_fee_per_gas=max_fee_per_gas,

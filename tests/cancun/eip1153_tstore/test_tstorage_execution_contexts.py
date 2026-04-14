@@ -350,7 +350,6 @@ def tx(  # noqa: D103
         sender=pre.fund_eoa(),
         to=caller_address,
         data=Hash(callee_address, left_padding=True),
-        gas_limit=1_000_000,
     )
 
 
@@ -424,7 +423,6 @@ def test_tstore_rollback_on_callcode_revert(
     tx = Transaction(
         sender=sender,
         to=caller_address,
-        gas_limit=1_000_000,
     )
 
     post = {

@@ -64,7 +64,6 @@ def test_collision_with_create2_revert_in_initcode(
         sender=sender,
         to=None,
         data=initcode,
-        gas_limit=10_000_000,
     )
 
     # Pre-existing account with storage - this causes collision per EIP-7610.

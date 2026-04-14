@@ -268,7 +268,6 @@ def test_bal_withdrawal_and_state_access_same_account(
     tx = Transaction(
         sender=alice,
         to=oracle,
-        gas_limit=1_000_000,
         gas_price=0xA,
     )
 
@@ -450,7 +449,6 @@ def test_bal_withdrawal_and_selfdestruct(
     tx = Transaction(
         sender=alice,
         to=oracle,
-        gas_limit=1_000_000,
         gas_price=0xA,
     )
 
@@ -523,7 +521,6 @@ def test_bal_withdrawal_and_new_contract(
         to=None,
         data=initcode,
         value=5 * GWEI,
-        gas_limit=1_000_000,
         gas_price=0xA,
     )
 

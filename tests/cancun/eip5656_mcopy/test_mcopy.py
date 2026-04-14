@@ -121,7 +121,6 @@ def tx(  # noqa: D103
         sender=pre.fund_eoa(),
         to=code_address,
         data=Hash(dest) + Hash(src) + Hash(length),
-        gas_limit=1_000_000,
     )
 
 
@@ -294,7 +293,6 @@ def test_mcopy_repeated(
             sender=pre.fund_eoa(),
             to=contract,
             data=Hash(dest) + Hash(src) + Hash(length),
-            gas_limit=1_000_000,
         ),
     )
 

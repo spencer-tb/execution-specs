@@ -109,7 +109,6 @@ def test_selfdestruct_after_create2_collision(
         tx=Transaction(
             sender=sender,
             to=controller,
-            gas_limit=2_000_000,
             data=initcode,
         ),
     )

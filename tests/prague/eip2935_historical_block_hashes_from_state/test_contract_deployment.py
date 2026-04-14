@@ -64,7 +64,6 @@ def test_system_contract_deployment(
 
     tx = Transaction(
         to=deployed_contract,
-        gas_limit=10_000_000,
         sender=pre.fund_eoa(),
     )
 

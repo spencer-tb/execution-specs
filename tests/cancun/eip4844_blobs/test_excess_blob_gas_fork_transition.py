@@ -273,7 +273,6 @@ def post_fork_blocks(
                     ty=Spec.BLOB_TX_TYPE,
                     to=destination_account,
                     value=1,
-                    gas_limit=100_000,
                     max_fee_per_gas=1_000_000,
                     max_priority_fee_per_gas=10,
                     max_fee_per_blob_gas=100,

@@ -59,7 +59,6 @@ def test_eip2930_tx_validity(
     tx = Transaction(
         to=account,
         sender=sender,
-        gas_limit=100_000,
         access_list=[],
         protected=fork.supports_protected_txs(),
         error=TransactionException.TYPE_1_TX_PRE_FORK if not valid else None,

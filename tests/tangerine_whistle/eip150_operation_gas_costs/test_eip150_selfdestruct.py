@@ -129,7 +129,6 @@ def setup_selfdestruct_test(
     tx = Transaction(
         sender=alice,
         to=caller,
-        gas_limit=500_000,
         protected=fork.supports_protected_txs(),
         access_list=access_list,
     )
@@ -1007,7 +1006,6 @@ def test_selfdestruct_to_self(
     tx = Transaction(
         sender=alice,
         to=caller,
-        gas_limit=500_000,
         protected=fork.supports_protected_txs(),
     )
 
@@ -1161,7 +1159,6 @@ def test_initcode_selfdestruct_to_self(
     tx = Transaction(
         sender=alice,
         to=caller,
-        gas_limit=500_000,
         protected=fork.supports_protected_txs(),
     )
 

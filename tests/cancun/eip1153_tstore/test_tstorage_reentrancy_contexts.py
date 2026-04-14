@@ -350,7 +350,6 @@ def test_reentrant_call(
         sender=pre.fund_eoa(),
         to=callee_address,
         data=Hash(1),
-        gas_limit=1_000_000,
     )
 
     post = {callee_address: Account(code=bytecode, storage=expected_storage)}

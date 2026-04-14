@@ -244,7 +244,6 @@ class TestTransientStorageInContractCreation:
             sender=sender,
             to=creator_address,
             data=initcode,
-            gas_limit=1_000_000,
         )
 
         post = {

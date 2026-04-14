@@ -49,7 +49,6 @@ def test_clz_mainnet(
         ty=0x02,
         to=contract_address,
         sender=sender,
-        gas_limit=200_000,
     )
     post = {
         contract_address: Account(storage={"0x00": clz_expected}),

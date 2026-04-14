@@ -186,7 +186,6 @@ def test_bal_code_changes(
     tx = Transaction(
         sender=alice,
         to=factory_contract,
-        gas_limit=500000,
     )
 
     created_contract = compute_create_address(
@@ -281,7 +280,7 @@ def test_bal_account_access_target(
     )
 
     tx = Transaction(
-        sender=alice, to=oracle_contract, gas_limit=5_000_000, gas_price=0xA
+        sender=alice, to=oracle_contract, gas_price=0xA
     )
 
     block = Block(
@@ -329,7 +328,7 @@ def test_bal_callcode_nested_value_transfer(
     oracle_contract = pre.deploy_contract(code=oracle_code, balance=200)
 
     tx = Transaction(
-        sender=alice, to=oracle_contract, gas_limit=1_000_000, gas_price=0xA
+        sender=alice, to=oracle_contract, gas_price=0xA
     )
 
     block = Block(
@@ -401,7 +400,6 @@ def test_bal_delegated_storage_writes(
     tx = Transaction(
         sender=alice,
         to=oracle_contract,
-        gas_limit=1_000_000,
     )
 
     block = Block(
@@ -473,7 +471,6 @@ def test_bal_delegated_storage_reads(
     tx = Transaction(
         sender=alice,
         to=oracle_contract,
-        gas_limit=1_000_000,
     )
 
     block = Block(
@@ -976,7 +973,6 @@ def test_bal_net_zero_balance_transfer(
         sender=alice,
         to=net_zero_bal_contract,
         value=transfer_amount,
-        gas_limit=1_000_000,
         gas_price=0xA,
     )
 
@@ -1134,7 +1130,7 @@ def test_bal_aborted_storage_access(
     )
 
     tx = Transaction(
-        sender=alice, to=storage_contract, gas_limit=5_000_000, gas_price=0xA
+        sender=alice, to=storage_contract, gas_price=0xA
     )
 
     block = Block(
@@ -1218,7 +1214,7 @@ def test_bal_aborted_account_access(
     )
 
     tx = Transaction(
-        sender=alice, to=abort_contract, gas_limit=5_000_000, gas_price=0xA
+        sender=alice, to=abort_contract, gas_price=0xA
     )
 
     block = Block(
@@ -1262,7 +1258,7 @@ def test_bal_fully_unmutated_account(
     )
 
     tx = Transaction(
-        sender=alice, to=oracle, gas_limit=1_000_000, value=0, gas_price=0xA
+        sender=alice, to=oracle, value=0, gas_price=0xA
     )
 
     block = Block(
@@ -1473,7 +1469,6 @@ def test_bal_precompile_funded(
         sender=alice,
         to=precompile,
         value=value,
-        gas_limit=5_000_000,
         data=tx_data,
     )
 
@@ -1539,7 +1534,6 @@ def test_bal_precompile_call(
     tx = Transaction(
         sender=alice,
         to=oracle,
-        gas_limit=200_000,
         gas_price=0xA,
     )
 
@@ -1591,7 +1585,6 @@ def test_bal_nonexistent_value_transfer(
         sender=alice,
         to=bob,
         value=value,
-        gas_limit=100_000,
     )
 
     block = Block(
@@ -1677,7 +1670,6 @@ def test_bal_nonexistent_account_access_read_only(
     tx = Transaction(
         sender=alice,
         to=oracle,
-        gas_limit=1_000_000,
     )
 
     block = Block(
@@ -1744,7 +1736,6 @@ def test_bal_nonexistent_account_access_value_transfer(
     tx = Transaction(
         sender=alice,
         to=oracle,
-        gas_limit=1_000_000,
     )
 
     # Calculate expected balances
@@ -2047,7 +2038,6 @@ def test_bal_nested_delegatecall_storage_writes_net_zero(
     tx = Transaction(
         sender=alice,
         to=root_contract,
-        gas_limit=500_000,
     )
 
     account_expectations = {
@@ -2153,7 +2143,6 @@ def test_bal_cross_tx_storage_revert_to_zero(
         sender=alice,
         to=contract,
         data=Hash(0xABCD),
-        gas_limit=100_000,
     )
 
     # Tx2: Write slot 0 = 0x0 (revert to zero)
@@ -2161,7 +2150,6 @@ def test_bal_cross_tx_storage_revert_to_zero(
         sender=alice,
         to=contract,
         data=Hash(0x0),
-        gas_limit=100_000,
     )
 
     account_expectations = {
@@ -2252,7 +2240,6 @@ def test_bal_cross_block_ripemd160_state_leak(
             Transaction(
                 sender=alice,
                 to=ripemd_caller,
-                gas_limit=100_000,
             )
         ],
         expected_block_access_list=BlockAccessListExpectation(
@@ -2277,7 +2264,6 @@ def test_bal_cross_block_ripemd160_state_leak(
             Transaction(
                 sender=bob,
                 to=exception_contract,
-                gas_limit=100_000,
             )
         ],
         expected_block_access_list=BlockAccessListExpectation(
@@ -2625,7 +2611,6 @@ def test_bal_lexicographic_address_ordering(
     tx = Transaction(
         sender=alice,
         to=contract,
-        gas_limit=1_000_000,
     )
 
     # BAL must be sorted lexicographically by address bytes

@@ -43,7 +43,6 @@ def test_eip_2935(
     check_contract_address = pre.deploy_contract(check_contract_code)
     tx = Transaction(
         to=check_contract_address,
-        gas_limit=50_000,
         sender=pre.fund_eoa(),
     )
     block = Block(txs=[tx])

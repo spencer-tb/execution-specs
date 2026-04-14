@@ -1759,7 +1759,6 @@ def test_bal_storage_write_read_same_frame(
     tx = Transaction(
         sender=alice,
         to=oracle,
-        gas_limit=1_000_000,
     )
 
     block = Block(
@@ -1852,7 +1851,6 @@ def test_bal_storage_write_read_cross_frame(
     tx = Transaction(
         sender=alice,
         to=oracle,
-        gas_limit=1_000_000,
     )
 
     block = Block(
@@ -2004,7 +2002,6 @@ def test_bal_sstore_static_context(
     tx = Transaction(
         sender=alice,
         to=contract_a,
-        gas_limit=2_000_000,
     )
 
     blockchain_test(
@@ -2088,7 +2085,6 @@ def blockchain_test_under_static_call(
     tx = Transaction(
         sender=alice,
         to=static_caller,
-        gas_limit=2_000_000,
         access_list=tx_access_list,
     )
 
@@ -2372,7 +2368,6 @@ def test_bal_create_contract_init_revert(
     tx = Transaction(
         sender=alice,
         to=caller,
-        gas_limit=500_000,
     )
 
     blockchain_test(
@@ -2457,7 +2452,6 @@ def test_bal_call_revert_insufficient_funds(
     tx = Transaction(
         sender=alice,
         to=contract,
-        gas_limit=1_000_000,
     )
 
     block = Block(
@@ -2600,7 +2594,6 @@ def test_bal_create_selfdestruct_to_self_with_call(
     tx = Transaction(
         sender=alice,
         to=factory,
-        gas_limit=1_000_000,
     )
 
     block = Block(
@@ -2728,7 +2721,6 @@ def test_bal_create2_collision(
     tx = Transaction(
         sender=alice,
         to=factory,
-        gas_limit=1_000_000,
     )
 
     block = Block(
@@ -2814,7 +2806,6 @@ def test_bal_transient_storage_not_tracked(
     tx = Transaction(
         sender=alice,
         to=contract,
-        gas_limit=1_000_000,
     )
 
     block = Block(
@@ -3087,7 +3078,6 @@ def test_bal_create_early_failure(
     tx = Transaction(
         sender=alice,
         to=factory,
-        gas_limit=1_000_000,
     )
 
     block = Block(

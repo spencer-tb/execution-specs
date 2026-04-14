@@ -77,6 +77,5 @@ def test_selfdestruct_balance_transfer_reverted(
         tx=Transaction(
             sender=sender,
             to=outer,
-            gas_limit=1_000_000,
         ),
     )

@@ -314,7 +314,6 @@ def test_repeated_address_acl(
     contract = pre.deploy_contract(sload0_measure + sload1_measure)
 
     tx = Transaction(
-        gas_limit=500_000,
         to=contract,
         value=0,
         sender=sender,

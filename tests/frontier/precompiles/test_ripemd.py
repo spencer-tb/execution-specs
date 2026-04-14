@@ -174,7 +174,6 @@ def test_precompiles(
     tx = Transaction(
         to=account,
         sender=pre.fund_eoa(),
-        gas_limit=1_000_0000,
         data=msg,
         protected=fork.supports_protected_txs(),
     )

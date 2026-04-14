@@ -59,7 +59,6 @@ def test_eip1559_tx_validity(
     tx = Transaction(
         to=account,
         sender=sender,
-        gas_limit=100_000,
         max_priority_fee_per_gas=1,
         protected=fork.supports_protected_txs(),
         error=TransactionException.TYPE_2_TX_PRE_FORK if not valid else None,

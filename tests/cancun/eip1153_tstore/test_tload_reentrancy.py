@@ -169,7 +169,6 @@ def test_tload_reentrancy(
         to=address_to,
         gas_price=10,
         data=Hash(do_reenter),
-        gas_limit=5000000,
         value=0,
     )
 

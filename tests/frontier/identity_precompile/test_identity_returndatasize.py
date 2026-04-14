@@ -69,7 +69,6 @@ def test_identity_precompile_returndata(
     tx = Transaction(
         to=account,
         sender=pre.fund_eoa(),
-        gas_limit=200_000,
         protected=True,
     )
 

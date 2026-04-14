@@ -73,7 +73,6 @@ def test_bal_invalid_missing_nonce(
         sender=sender,
         to=receiver,
         value=10**15,
-        gas_limit=21_000,
     )
 
     blockchain_test(
@@ -118,7 +117,6 @@ def test_bal_invalid_nonce_value(
         sender=sender,
         to=receiver,
         value=10**15,
-        gas_limit=21_000,
     )
 
     blockchain_test(
@@ -169,7 +167,6 @@ def test_bal_invalid_storage_value(
     tx = Transaction(
         sender=sender,
         to=contract,
-        gas_limit=100_000,
     )
 
     blockchain_test(
@@ -245,14 +242,12 @@ def test_bal_invalid_tx_order(
         sender=sender1,
         to=receiver,
         value=10**15,
-        gas_limit=21_000,
     )
 
     tx2 = Transaction(
         sender=sender2,
         to=receiver,
         value=2 * 10**15,
-        gas_limit=21_000,
     )
 
     blockchain_test(
@@ -318,7 +313,6 @@ def test_bal_invalid_account(
         sender=sender,
         to=receiver,
         value=10**15,
-        gas_limit=21_000,
     )
 
     blockchain_test(
@@ -376,7 +370,6 @@ def test_bal_invalid_duplicate_account(
         sender=sender,
         to=receiver,
         value=10**15,
-        gas_limit=21_000,
     )
 
     blockchain_test(
@@ -428,7 +421,6 @@ def test_bal_invalid_account_order(
         sender=sender,
         to=receiver,
         value=10**15,
-        gas_limit=21_000,
     )
 
     blockchain_test(
@@ -483,14 +475,12 @@ def test_bal_invalid_complex_corruption(
     tx1 = Transaction(
         sender=sender,
         to=contract,
-        gas_limit=100_000,
     )
 
     tx2 = Transaction(
         sender=sender,
         to=receiver,
         value=10**15,
-        gas_limit=21_000,
     )
 
     blockchain_test(
@@ -575,7 +565,6 @@ def test_bal_invalid_missing_account(
         sender=sender,
         to=receiver,
         value=10**15,
-        gas_limit=21_000,
     )
 
     blockchain_test(
@@ -635,7 +624,6 @@ def test_bal_invalid_missing_withdrawal_account(
         sender=alice,
         to=bob,
         value=5,
-        gas_limit=21_000,
     )
 
     blockchain_test(
@@ -753,7 +741,6 @@ def test_bal_invalid_balance_value(
         sender=sender,
         to=receiver,
         value=10**15,
-        gas_limit=21_000,
     )
 
     blockchain_test(
@@ -927,7 +914,6 @@ def test_bal_invalid_extraneous_entries(
         sender=alice,
         to=oracle,
         value=transfer_value,
-        gas_limit=1_000_000,
     )
 
     blockchain_test(
@@ -1042,7 +1028,6 @@ def test_bal_invalid_duplicate_entries(
         sender=alice,
         to=oracle,
         value=100,
-        gas_limit=2_000_000,
     )
 
     blockchain_test(

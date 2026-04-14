@@ -57,7 +57,6 @@ def test_transient_storage_unset_values(
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=code_address,
-        gas_limit=1_000_000,
     )
 
     post = {code_address: Account(storage=dict.fromkeys(slots_under_test, 0))}
@@ -96,7 +95,6 @@ def test_tload_after_tstore(state_test: StateTestFiller, pre: Alloc) -> None:
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=code_address,
-        gas_limit=1_000_000,
     )
 
     post = {
@@ -140,7 +138,6 @@ def test_tload_after_sstore(state_test: StateTestFiller, pre: Alloc) -> None:
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=code_address,
-        gas_limit=1_000_000,
     )
 
     post = {
@@ -191,7 +188,6 @@ def test_tload_after_tstore_is_zero(
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=code_address,
-        gas_limit=1_000_000,
     )
 
     post = {
@@ -265,7 +261,6 @@ def test_gas_usage(
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=code_address,
-        gas_limit=1_000_000,
     )
     post = {
         code_address: Account(

@@ -74,7 +74,6 @@ def test_coverage(
     if fork >= Cancun:
         tx = Transaction(
             sender=pre.fund_eoa(7_000_000_000_000_000_000),
-            gas_limit=100000,
             to=address_to,
             data=b"",
             value=0,
@@ -86,7 +85,6 @@ def test_coverage(
     else:
         tx = Transaction(
             sender=pre.fund_eoa(7_000_000_000_000_000_000),
-            gas_limit=100000,
             to=address_to,
             data=b"",
             value=0,

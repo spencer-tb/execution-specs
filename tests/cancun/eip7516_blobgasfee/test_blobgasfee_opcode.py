@@ -83,7 +83,6 @@ def tx(pre: Alloc, caller_address: Address) -> Transaction:
     """
     return Transaction(
         sender=pre.fund_eoa(),
-        gas_limit=1_000_000,
         to=caller_address,
         value=1,
     )
@@ -154,7 +153,6 @@ def test_blobbasefee_out_of_gas(
 
     tx = Transaction(
         sender=pre.fund_eoa(),
-        gas_limit=1_000_000,
         to=caller_address,
         value=1,
     )

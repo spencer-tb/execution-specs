@@ -54,7 +54,6 @@ def test_call_large_offset_mstore(
     contract = pre.deploy_contract(call_measure + mstore_measure)
 
     tx = Transaction(
-        gas_limit=500_000,
         to=contract,
         value=0,
         sender=sender,
@@ -129,7 +128,6 @@ def test_call_memory_expands_on_early_revert(
     )
 
     tx = Transaction(
-        gas_limit=500_000,
         to=contract,
         value=0,
         sender=sender,
@@ -199,7 +197,6 @@ def test_call_large_args_offset_size_zero(
     contract = pre.deploy_contract(call_measure)
 
     tx = Transaction(
-        gas_limit=500_000,
         to=contract,
         value=0,
         sender=sender,
