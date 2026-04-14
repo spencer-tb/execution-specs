@@ -60,6 +60,7 @@ from execution_testing.test_types import (
 from .base import BaseTest, FillResult, OpMode
 from .blockchain import Block, BlockchainTest, Header
 from .debugging import print_traces
+from .gas_limit_resolver import resolve_gas_limits
 from .helpers import verify_transactions
 
 logger = get_logger(__name__)
@@ -355,7 +356,12 @@ class StateTest(BaseTest):
         )
 
         env = self.env.set_fork_requirements(fork)
-        tx = self.tx.with_signature_and_sender(keep_secret_key=True)
+        tx_to_sign = resolve_gas_limits(
+            txs=[self.tx],
+            block_gas_limit=int(env.gas_limit),
+            fork=fork,
+        )[0]
+        tx = tx_to_sign.with_signature_and_sender(keep_secret_key=True)
         pre_alloc = Alloc.merge(
             Alloc.model_validate(fork.pre_allocation()),
             self.pre,

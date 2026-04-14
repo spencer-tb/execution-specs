@@ -92,6 +92,7 @@ from execution_testing.test_types.chain_config_types import ChainConfigDefaults
 
 from .base import BaseTest, FillResult, OpMode, verify_result
 from .debugging import print_traces
+from .gas_limit_resolver import resolve_gas_limits
 from .helpers import verify_block, verify_transactions
 
 
@@ -625,7 +626,12 @@ class BlockchainTest(BaseTest):
             block_number=env.number, timestamp=env.timestamp
         )
         env = env.set_fork_requirements(fork)
-        txs = [tx.with_signature_and_sender() for tx in block.txs]
+        block_txs = resolve_gas_limits(
+            txs=list(block.txs),
+            block_gas_limit=int(env.gas_limit),
+            fork=fork,
+        )
+        txs = [tx.with_signature_and_sender() for tx in block_txs]
 
         if failing_tx_count := len([tx for tx in txs if tx.error]) > 0:
             if failing_tx_count > 1:
