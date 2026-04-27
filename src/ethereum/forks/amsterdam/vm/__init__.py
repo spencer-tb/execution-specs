@@ -219,10 +219,13 @@ def incorporate_child_on_error(
     """
     Incorporate the state of an unsuccessful `child_evm` into the parent `evm`.
 
-    On failure (revert or exceptional halt) state changes are rolled
-    back along with the child's `state_delta_bytes` (which dies with
-    the discarded child evm). The remaining reservoir is returned to
-    the parent.
+    State changes are rolled back along with the child's
+    `state_delta_bytes`, which dies with the discarded child evm. All
+    state gas the child consumed — both from its reservoir and any
+    that spilled into ``gas_left`` — is restored to the parent's
+    ``state_gas_left`` per EIP-8037.  The child's ``state_gas_used``
+    is not added to the parent's ``state_gas_used`` because no state
+    was actually grown.
 
     Parameters
     ----------
@@ -233,7 +236,7 @@ def incorporate_child_on_error(
 
     """
     evm.gas_left += child_evm.gas_left
-    evm.state_gas_left += child_evm.state_gas_left
+    evm.state_gas_left += child_evm.state_gas_used + child_evm.state_gas_left
     evm.regular_gas_used += child_evm.regular_gas_used
 
 
