@@ -36,10 +36,12 @@ from ..state_tracker import (
     account_has_code_or_nonce,
     account_has_storage,
     copy_tx_state,
+    destroy_account,
     destroy_storage,
     get_account,
     get_code,
     increment_nonce,
+    is_account_alive,
     mark_account_created,
     move_ether,
     restore_tx_state,
@@ -49,9 +51,8 @@ from ..vm import Message
 from ..vm.eoa_delegation import get_delegated_code_address, set_delegation
 from ..vm.gas import (
     GasCosts,
+    StateCosts,
     charge_gas,
-    charge_state_gas,
-    state_gas_per_byte,
 )
 from ..vm.precompiled_contracts.mapping import PRE_COMPILED_CONTRACTS
 from . import Evm
@@ -80,13 +81,14 @@ class MessageCallOutput:
     Contains the following:
 
           1. `gas_left`: remaining gas after execution.
-          2. `refund_counter`: gas to refund after execution.
-          3. `logs`: list of `Log` generated during execution.
-          4. `accounts_to_delete`: Contracts which have self-destructed.
-          5. `error`: The error from the execution if any.
-          6. `return_data`: The output of the execution.
-          7. `regular_gas_used`: Regular gas used during execution.
-          8. `state_gas_used`: State gas used during execution.
+          2. `state_gas_left`: remaining state gas reservoir after execution.
+          3. `refund_counter`: gas to refund after execution.
+          4. `logs`: list of `Log` generated during execution.
+          5. `accounts_to_delete`: Contracts which have self-destructed.
+          6. `error`: The error from the execution if any.
+          7. `return_data`: The output of the execution.
+          8. `regular_gas_used`: Regular gas used during execution.
+          9. `state_gas_used`: State gas used during execution.
     """
 
     gas_left: Uint
@@ -230,23 +232,16 @@ def process_create_message(message: Message) -> Evm:
                 // Uint(32)
             )
             charge_gas(evm, code_hash_gas)
-            cost_per_state_byte = state_gas_per_byte(
-                message.block_env.block_gas_limit
-            )
-            code_deposit_state_gas = (
-                Uint(len(contract_code)) * cost_per_state_byte
-            )
-            charge_state_gas(evm, code_deposit_state_gas)
         except ExceptionalHalt as error:
             restore_tx_state(tx_state, snapshot)
             evm.regular_gas_used += evm.gas_left
             evm.gas_left = Uint(0)
-            # State gas is preserved on exceptional halt so it can be
-            # returned to the parent frame via incorporate_child_on_error.
             evm.output = b""
             evm.error = error
         else:
             set_code(tx_state, message.current_target, contract_code)
+            evm.state_bytes_used += int(StateCosts.NEW_ACCOUNT)
+            evm.state_bytes_used += len(contract_code)
     else:
         restore_tx_state(tx_state, snapshot)
     return evm
@@ -298,12 +293,17 @@ def process_message(message: Message) -> Evm:
     snapshot = copy_tx_state(tx_state)
 
     if message.should_transfer_value and message.value != 0:
+        creates_target_account = not is_account_alive(
+            tx_state, message.current_target
+        )
         move_ether(
             tx_state,
             message.caller,
             message.current_target,
             message.value,
         )
+        if creates_target_account:
+            evm.state_bytes_used += int(StateCosts.NEW_ACCOUNT)
 
     try:
         if evm.message.code_address in PRE_COMPILED_CONTRACTS:
@@ -328,13 +328,55 @@ def process_message(message: Message) -> Evm:
         evm_trace(evm, OpException(error))
         evm.regular_gas_used += evm.gas_left
         evm.gas_left = Uint(0)
-        # State gas is preserved on exceptional halt so it can be
-        # returned to the parent frame via incorporate_child_on_error.
         evm.output = b""
         evm.error = error
     except Revert as error:
         evm_trace(evm, OpException(error))
         evm.error = error
+
+    # Refund the destroyed accounts bytes for same tx selfdestruct.
+    if message.depth == Uint(0) and not evm.error:
+        for address in evm.accounts_to_delete:
+            if address in tx_state.created_accounts:
+                account = get_account(tx_state, address)
+                code = get_code(tx_state, account.code_hash)
+                evm.state_bytes_used -= int(StateCosts.NEW_ACCOUNT)
+                evm.state_bytes_used -= len(code)
+                for slot_value in tx_state.storage_writes.get(
+                    address, {}
+                ).values():
+                    if slot_value != U256(0):
+                        evm.state_bytes_used -= int(
+                            StateCosts.STORAGE_SET
+                        )
+                destroy_account(tx_state, address)
+
+    # Charge state gas owed by this frame.
+    if not evm.error:
+        growth_cost = evm.state_bytes_used * int(StateCosts.PER_BYTE)
+        already_paid = int(message.state_gas_reservoir) - int(
+            evm.state_gas_left
+        )
+        this_call_cost = growth_cost - already_paid
+
+        if this_call_cost > 0:
+            cost = Uint(this_call_cost)
+            if evm.state_gas_left >= cost:
+                evm.state_gas_left -= cost
+            elif evm.state_gas_left + evm.gas_left >= cost:
+                remainder = cost - evm.state_gas_left
+                evm.state_gas_left = Uint(0)
+                evm.gas_left -= remainder
+            else:
+                restore_tx_state(tx_state, snapshot)
+                evm.error = OutOfGasError()
+                evm.output = b""
+            if not evm.error:
+                evm.state_gas_used += cost
+        elif this_call_cost < 0:
+            evm.state_gas_left += Uint(
+                min(-this_call_cost, max(0, already_paid))
+            )
 
     if evm.error:
         restore_tx_state(tx_state, snapshot)

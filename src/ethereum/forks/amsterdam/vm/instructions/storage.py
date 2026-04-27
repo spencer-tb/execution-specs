@@ -20,15 +20,13 @@ from ...state_tracker import (
     set_storage,
     set_transient_storage,
 )
-from .. import Evm, credit_state_gas_refund
+from .. import Evm
 from ..exceptions import WriteInStaticContext
 from ..gas import (
-    STATE_BYTES_PER_STORAGE_SET,
     GasCosts,
+    StateCosts,
     charge_gas,
-    charge_state_gas,
     check_gas,
-    state_gas_per_byte,
 )
 from ..stack import pop, push
 
@@ -90,22 +88,13 @@ def sstore(evm: Evm) -> None:
     )
     current_value = get_storage(tx_state, evm.message.current_target, key)
 
-    cost_per_state_byte = state_gas_per_byte(
-        evm.message.block_env.block_gas_limit
-    )
-    state_gas_storage_set = STATE_BYTES_PER_STORAGE_SET * cost_per_state_byte
     gas_cost = Uint(0)
 
     if (evm.message.current_target, key) not in evm.accessed_storage_keys:
         evm.accessed_storage_keys.add((evm.message.current_target, key))
         gas_cost += GasCosts.COLD_STORAGE_ACCESS
 
-    needs_state_gas = False
     if original_value == current_value and current_value != new_value:
-        if original_value == 0:
-            needs_state_gas = True
-        # charge regular cost for the operation, even when we
-        # already charge state gas for state creation
         gas_cost += GasCosts.COLD_STORAGE_WRITE - GasCosts.COLD_STORAGE_ACCESS
     else:
         gas_cost += GasCosts.WARM_ACCESS
@@ -122,22 +111,19 @@ def sstore(evm: Evm) -> None:
 
         if original_value == new_value:
             # Storage slot being restored to its original value
-            if original_value == 0:
-                # Slot set then cleared: refund the state gas charge.
-                credit_state_gas_refund(evm, state_gas_storage_set)
             evm.refund_counter += int(
                 GasCosts.COLD_STORAGE_WRITE
                 - GasCosts.COLD_STORAGE_ACCESS
                 - GasCosts.WARM_ACCESS
             )
 
-    # Charge regular gas before state gas so that a regular-gas OOG
-    # does not consume state gas that would inflate the parent's
-    # reservoir on frame failure.
     charge_gas(evm, gas_cost)
-    if needs_state_gas:
-        charge_state_gas(evm, state_gas_storage_set)
     set_storage(tx_state, evm.message.current_target, key, new_value)
+
+    if original_value == 0 and current_value == 0 and new_value != 0:
+        evm.state_bytes_used += int(StateCosts.STORAGE_SET)
+    elif original_value == 0 and current_value != 0 and new_value == 0:
+        evm.state_bytes_used -= int(StateCosts.STORAGE_SET)
 
     # PROGRAM COUNTER
     evm.pc += Uint(1)
