@@ -98,9 +98,6 @@ from .utils.message import prepare_message
 from .vm import Message
 from .vm.eoa_delegation import is_valid_delegation
 from .vm.gas import (
-    COST_PER_STATE_BYTE,
-    STATE_BYTES_PER_NEW_ACCOUNT,
-    STATE_BYTES_PER_STORAGE_SET,
     GasCosts,
     calculate_blob_gas_price,
     calculate_data_fee,
@@ -1072,39 +1069,22 @@ def process_transaction(
     tx_output = process_message_call(message)
 
     if tx_output.error is not None:
+        # Top-level failure: state was rolled back, so any state gas
+        # charged by sub-frames is returned to the reservoir.
         tx_output.state_gas_left += tx_output.state_gas_used
         tx_output.state_gas_used = Uint(0)
-    else:
-        # Refund state gas for accounts created and destroyed in the
-        # same tx (EIP-6780). Covers account, storage, and code.
-        for address in tx_output.accounts_to_delete:
-            if address in tx_state.created_accounts:
-                selfdestruct_refund = (
-                    STATE_BYTES_PER_NEW_ACCOUNT * COST_PER_STATE_BYTE
-                )
-                storage = tx_state.storage_writes.get(address, {})
-                created_slots = sum(1 for v in storage.values() if v != 0)
-                selfdestruct_refund += (
-                    Uint(created_slots)
-                    * STATE_BYTES_PER_STORAGE_SET
-                    * COST_PER_STATE_BYTE
-                )
-                # EIP-6780 defers account/storage/code removal to
-                # tx-end, so `account.code_hash` still points at the
-                # deployed code here and `get_code` returns it
-                # pre-deletion.
-                account = get_account(tx_state, address)
-                code = get_code(tx_state, account.code_hash)
-                selfdestruct_refund += Uint(len(code)) * COST_PER_STATE_BYTE
-                selfdestruct_refund = min(
-                    selfdestruct_refund, tx_output.state_gas_used
-                )
-                tx_output.state_gas_left += selfdestruct_refund
-                tx_output.state_gas_used -= selfdestruct_refund
+    # SELFDESTRUCT same-tx refund (account + storage + code) is handled
+    # by the depth-0 destroy loop inside process_message, which debits
+    # the state-byte counter before charging.
 
-    tx_gas_used_before_refund = (
-        tx.gas - tx_output.gas_left - tx_output.state_gas_left
-    )
+    # With diff-at-return, state_gas_left can exceed its initial value
+    # (from negative diffs crediting the reservoir). Use saturating
+    # subtraction to prevent underflow.
+    total_remaining = tx_output.gas_left + tx_output.state_gas_left
+    if total_remaining > tx.gas:
+        tx_gas_used_before_refund = Uint(0)
+    else:
+        tx_gas_used_before_refund = tx.gas - total_remaining
     tx_gas_refund = min(
         tx_gas_used_before_refund // Uint(5), Uint(tx_output.refund_counter)
     )

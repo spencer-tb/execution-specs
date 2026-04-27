@@ -36,10 +36,12 @@ from ..state_tracker import (
     account_has_code_or_nonce,
     account_has_storage,
     copy_tx_state,
+    destroy_account,
     destroy_storage,
     get_account,
     get_code,
     increment_nonce,
+    is_account_alive,
     mark_account_created,
     move_ether,
     restore_tx_state,
@@ -49,9 +51,10 @@ from ..vm import Message
 from ..vm.eoa_delegation import get_delegated_code_address, set_delegation
 from ..vm.gas import (
     COST_PER_STATE_BYTE,
+    STATE_BYTES_PER_NEW_ACCOUNT,
+    STATE_BYTES_PER_STORAGE_SET,
     GasCosts,
     charge_gas,
-    charge_state_gas,
 )
 from ..vm.precompiled_contracts.mapping import PRE_COMPILED_CONTRACTS
 from . import Evm, emit_transfer_log
@@ -230,10 +233,6 @@ def process_create_message(message: Message) -> Evm:
                 // Uint(32)
             )
             charge_gas(evm, code_hash_gas)
-            code_deposit_state_gas = (
-                Uint(len(contract_code)) * COST_PER_STATE_BYTE
-            )
-            charge_state_gas(evm, code_deposit_state_gas)
         except ExceptionalHalt as error:
             restore_tx_state(tx_state, snapshot)
             evm.regular_gas_used += evm.gas_left
@@ -244,6 +243,12 @@ def process_create_message(message: Message) -> Evm:
             evm.error = error
         else:
             set_code(tx_state, message.current_target, contract_code)
+            # EIP-8037: count the new account and the deployed code on
+            # this CREATE frame's counter. Only fires on the successful
+            # deployment path; init-code OOG and invalid-code paths
+            # restore_tx_state above and discard the bump implicitly.
+            evm.state_delta_bytes += int(STATE_BYTES_PER_NEW_ACCOUNT)
+            evm.state_delta_bytes += len(contract_code)
     else:
         restore_tx_state(tx_state, snapshot)
     return evm
@@ -295,12 +300,19 @@ def process_message(message: Message) -> Evm:
     snapshot = copy_tx_state(tx_state)
 
     if message.should_transfer_value and message.value != 0:
+        # EIP-8037: a value transfer to an empty/non-existent target
+        # creates a new account; charge the new-account state bytes.
+        creates_target_account = not is_account_alive(
+            tx_state, message.current_target
+        )
         move_ether(
             tx_state,
             message.caller,
             message.current_target,
             message.value,
         )
+        if creates_target_account:
+            evm.state_delta_bytes += int(STATE_BYTES_PER_NEW_ACCOUNT)
         # EIP-7708: Only emit transfer log to a different account
         if message.caller != message.current_target:
             emit_transfer_log(
@@ -338,6 +350,55 @@ def process_message(message: Message) -> Evm:
     except Revert as error:
         evm_trace(evm, OpException(error))
         evm.error = error
+
+    # EIP-8037: at depth 0, finalize SELFDESTRUCT same-tx destructions
+    # before the counter charge. Debit the counter for each destroyed
+    # account's bytes (account, code, non-zero storage slots) before
+    # actually destroying.
+    if message.depth == Uint(0) and not evm.error:
+        for address in evm.accounts_to_delete:
+            if address in tx_state.created_accounts:
+                account = get_account(tx_state, address)
+                code = get_code(tx_state, account.code_hash)
+                evm.state_delta_bytes -= int(STATE_BYTES_PER_NEW_ACCOUNT)
+                evm.state_delta_bytes -= len(code)
+                for slot_value in tx_state.storage_writes.get(
+                    address, {}
+                ).values():
+                    if slot_value != U256(0):
+                        evm.state_delta_bytes -= int(
+                            STATE_BYTES_PER_STORAGE_SET
+                        )
+                destroy_account(tx_state, address)
+
+    # EIP-8037: charge state gas from the per-frame state-byte counter.
+    if not evm.error:
+        growth_cost = evm.state_delta_bytes * int(COST_PER_STATE_BYTE)
+        # Inner calls already deducted from reservoir
+        already_paid = int(message.state_gas_reservoir) - int(
+            evm.state_gas_left
+        )
+        this_call_cost = growth_cost - already_paid
+
+        if this_call_cost > 0:
+            cost = Uint(this_call_cost)
+            if evm.state_gas_left >= cost:
+                evm.state_gas_left -= cost
+            elif evm.state_gas_left + evm.gas_left >= cost:
+                # Spillover: reservoir exhausted, take from gas_left
+                remainder = cost - evm.state_gas_left
+                evm.state_gas_left = Uint(0)
+                evm.gas_left -= remainder
+            else:
+                # Can't afford state gas — revert
+                restore_tx_state(tx_state, snapshot)
+                evm.error = OutOfGasError()
+                evm.output = b""
+            if not evm.error:
+                evm.state_gas_used += cost
+        elif this_call_cost < 0:
+            # Negative cost — state was removed, credit reservoir
+            evm.state_gas_left += Uint(-this_call_cost)
 
     if evm.error:
         restore_tx_state(tx_state, snapshot)

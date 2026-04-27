@@ -17,7 +17,7 @@ from typing import List, Tuple
 from ethereum_types.numeric import U64, U256, Uint
 
 from ethereum.forks.bpo5.blocks import Header as PreviousHeader
-from ethereum.trace import GasAndRefund, StateGasAndRefund, evm_trace
+from ethereum.trace import GasAndRefund, evm_trace
 from ethereum.utils.numeric import ceil32, taylor_exponential
 
 from ..blocks import Header
@@ -277,33 +277,6 @@ def charge_gas(evm: Evm, amount: Uint) -> None:
     evm.gas_left -= amount
 
     evm.regular_gas_used += amount
-
-
-def charge_state_gas(evm: Evm, amount: Uint) -> None:
-    """
-    Subtracts `amount` from the state gas reservoir, then from
-    `evm.gas_left` when the reservoir is empty. Records state gas usage.
-
-    Parameters
-    ----------
-    evm :
-        The current EVM.
-    amount :
-        The amount of state gas the current operation requires.
-
-    """
-    evm_trace(evm, StateGasAndRefund(int(amount)))
-
-    if evm.state_gas_left >= amount:
-        evm.state_gas_left -= amount
-    elif evm.state_gas_left + evm.gas_left >= amount:
-        remainder = amount - evm.state_gas_left
-        evm.state_gas_left = Uint(0)
-        evm.gas_left -= remainder
-    else:
-        raise OutOfGasError
-
-    evm.state_gas_used += amount
 
 
 def calculate_memory_gas_cost(size_in_bytes: Uint) -> Uint:

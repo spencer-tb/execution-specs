@@ -39,7 +39,6 @@ from .. import (
     CALL_SUCCESS,
     Evm,
     Message,
-    credit_state_gas_refund,
     emit_burn_log,
     emit_transfer_log,
     incorporate_child_on_error,
@@ -47,14 +46,12 @@ from .. import (
 )
 from ..exceptions import OutOfGasError, Revert, WriteInStaticContext
 from ..gas import (
-    COST_PER_STATE_BYTE,
     REGULAR_GAS_CREATE,
     STATE_BYTES_PER_NEW_ACCOUNT,
     GasCosts,
     calculate_gas_extend_memory,
     calculate_message_call_gas,
     charge_gas,
-    charge_state_gas,
     check_gas,
     init_code_cost,
     max_message_call_gas,
@@ -85,12 +82,9 @@ def generic_create(
     if memory_size > U256(MAX_INIT_CODE_SIZE):
         raise OutOfGasError
 
-    # Charge state gas for account creation (pay-before-execute).
-    # Refunded to the reservoir on any failure path below.
-    create_account_state_gas = (
-        STATE_BYTES_PER_NEW_ACCOUNT * COST_PER_STATE_BYTE
-    )
-    charge_state_gas(evm, create_account_state_gas)
+    # EIP-8037: account creation state-byte cost is counted on the
+    # CREATE frame's counter inside process_create_message on success,
+    # not pre-charged here.
 
     tx_state = evm.message.tx_env.state
 
@@ -117,8 +111,6 @@ def generic_create(
     ):
         evm.gas_left += create_message_gas
         evm.state_gas_left += create_message_state_gas_reservoir
-        # No account created — refund state gas to reservoir.
-        credit_state_gas_refund(evm, create_account_state_gas)
         push(evm.stack, U256(0))
         return
 
@@ -130,8 +122,6 @@ def generic_create(
         increment_nonce(tx_state, evm.message.current_target)
         evm.regular_gas_used += create_message_gas
         evm.state_gas_left += create_message_state_gas_reservoir
-        # Address collision — no account created, refund state gas.
-        credit_state_gas_refund(evm, create_account_state_gas)
         push(evm.stack, U256(0))
         return
 
@@ -161,8 +151,6 @@ def generic_create(
 
     if child_evm.error:
         incorporate_child_on_error(evm, child_evm)
-        # No account created, refund parent's CREATE state gas.
-        credit_state_gas_refund(evm, create_account_state_gas)
         evm.return_data = child_evm.output
         push(evm.stack, U256(0))
     else:
@@ -458,14 +446,10 @@ def call(evm: Evm) -> None:
     code_hash = get_account(tx_state, code_address).code_hash
     code = get_code(tx_state, code_hash)
 
-    # TODO: Consider consolidating charge_gas + charge_state_gas into
-    # a single gas charge to avoid duplicate EVM trace entries.
-    # Applies here and in create, create2, selfdestruct. See #2526.
     charge_gas(evm, extra_gas + extend_memory.cost)
-    if value != 0 and not is_account_alive(tx_state, to):
-        charge_state_gas(
-            evm, STATE_BYTES_PER_NEW_ACCOUNT * COST_PER_STATE_BYTE
-        )
+    # EIP-8037: a value transfer to a non-existent account creates the
+    # account; the +112 state byte is counted in process_message after
+    # move_ether on the child frame's evm.
 
     message_call_gas = calculate_message_call_gas(
         value,
@@ -657,25 +641,23 @@ def selfdestruct(evm: Evm) -> None:
     if is_cold_access:
         evm.accessed_addresses.add(beneficiary)
 
-    needs_state_gas = (
+    creates_beneficiary = (
         not is_account_alive(tx_state, beneficiary)
         and get_account(tx_state, evm.message.current_target).balance != 0
     )
 
-    # Charge regular gas before state gas so that a regular-gas OOG
-    # does not consume state gas that would inflate the parent's
-    # reservoir on frame failure.
     charge_gas(evm, gas_cost)
-    if needs_state_gas:
-        charge_state_gas(
-            evm, STATE_BYTES_PER_NEW_ACCOUNT * COST_PER_STATE_BYTE
-        )
 
     originator = evm.message.current_target
     originator_balance = get_account(tx_state, originator).balance
 
     # Transfer balance
     move_ether(tx_state, originator, beneficiary, originator_balance)
+
+    # EIP-8037: count the beneficiary's account creation when
+    # SELFDESTRUCT's value transfer creates it.
+    if creates_beneficiary:
+        evm.state_delta_bytes += int(STATE_BYTES_PER_NEW_ACCOUNT)
 
     # EIP-7708: Emit appropriate log based on whether ETH is burned
     # or transferred to a different account
