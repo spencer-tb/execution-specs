@@ -45,7 +45,6 @@ from execution_testing.test_types import Alloc, Environment, Transaction
 
 from .cli_types import (
     LazyAlloc,
-    LazyAllocFile,
     OpcodeCount,
     Traces,
     TransactionReceipt,
@@ -162,15 +161,6 @@ class OutputCache:
 
     def set(self, subkey: int, value: TransitionToolOutput) -> None:
         """Set a value in the cache for the current key."""
-        alloc = getattr(value, "alloc", None)
-        if isinstance(alloc, LazyAllocFile):
-            # Materialize the streamed alloc before caching so the producing
-            # `TemporaryDirectory` (pinned via `_keepalive`) can be released.
-            # Without this, every cached subcall would retain its own
-            # `output/alloc.json` on disk for the test's lifetime - O(N) for
-            # an N-block chained test.
-            alloc.get()
-            alloc._keepalive = None
         self._cache[subkey] = value
 
     def clear(self) -> None:
@@ -530,12 +520,7 @@ class TransitionTool(EthereumCLI):
                 output.result.receipts, temp_dir, debug_output_path
             )
 
-        # Pin temp_dir to the output alloc so the on-disk alloc.json
-        # survives until the next chained-block t8n call (or this
-        # LazyAllocFile is dropped) — lets the next call read the alloc
-        # via copyfile rather than re-serializing through Python.
-        if isinstance(output.alloc, LazyAllocFile):
-            output.alloc._keepalive = temp_dir
+        temp_dir.cleanup()
 
         return output
 
@@ -683,41 +668,15 @@ class TransitionTool(EthereumCLI):
         profiler: Profiler,
     ) -> TransitionToolOutput:
         """
-        Execute a transition tool using stdin for inputs and files for
+        Execute a transition tool using stdin and stdout for its inputs and
         outputs.
-
-        The t8n writes `alloc.json`/`result.json`/`txs.rlp` into an
-        `output/` subdirectory of a temp dir; Python then parses `result.json`
-        eagerly and references `alloc.json` via `LazyAllocFile`, which
-        streams the file on demand. Avoids holding the full alloc JSON
-        (multi-GB for large benchmarks) in the stdout buffer alongside the
-        validated `Alloc` object graph.
         """
         temp_dir = tempfile.TemporaryDirectory()
-        output_dir = Path(temp_dir.name) / "output"
-        output_dir.mkdir()
-
-        # Chained-block handoff: when the input alloc is a `LazyAllocFile`
-        # whose backing file is still on disk (pinned via the producing
-        # call's keepalive), point the t8n at it directly via
-        # `--input.alloc=<path>` and omit alloc from the stdin bundle, so
-        # Python never builds a multi-GB JSON string for the next call.
-        alloc_path: Path | None = None
-        if (
-            isinstance(t8n_data.alloc, LazyAllocFile)
-            and Path(t8n_data.alloc.raw).exists()
-        ):
-            alloc_path = Path(t8n_data.alloc.raw)
-
-        args = self.construct_args_stream(
-            t8n_data, temp_dir, alloc_path=alloc_path
-        )
+        args = self.construct_args_stream(t8n_data, temp_dir)
 
         stdin = t8n_data.to_input()
 
-        process_input = stdin.model_dump_json(
-            exclude_alloc=alloc_path is not None, **model_dump_config
-        )
+        process_input = stdin.model_dump_json(**model_dump_config)
         encoded_process_input = process_input.encode()
 
         result = subprocess.run(
@@ -737,20 +696,22 @@ class TransitionTool(EthereumCLI):
             raise Exception("failed to evaluate: " + result.stderr.decode())
 
         output: TransitionToolOutput = (
-            TransitionToolOutput.model_validate_files(
-                output_dir,
+            TransitionToolOutput.model_validate_json(
+                result.stdout,
                 context={"exception_mapper": self.exception_mapper},
             )
         )
 
         if debug_output_path:
             with profiler.pause():
-                debug_output_dir = Path(debug_output_path) / "output"
-                debug_output_dir.mkdir(parents=True, exist_ok=True)
-                for name in ("alloc.json", "result.json", "txs.rlp"):
-                    src = output_dir / name
-                    if src.exists():
-                        shutil.copyfile(src, debug_output_dir / name)
+                dump_files_to_directory(
+                    debug_output_path,
+                    {
+                        "output/alloc.json": output.alloc.raw,
+                        "output/result.json": output.result,
+                        "output/txs.rlp": str(output.body),
+                    },
+                )
 
         if self.supports_opcode_count:
             opcode_count_file_path = Path(temp_dir.name) / "opcodes.json"
@@ -774,14 +735,7 @@ class TransitionTool(EthereumCLI):
                 output.result.receipts, temp_dir, debug_output_path
             )
 
-        # Pin temp_dir to the output alloc so the on-disk alloc.json
-        # survives until the next chained-block t8n call (or this
-        # LazyAllocFile is dropped) — lets the next call read the alloc
-        # via copyfile / `--input.alloc=<path>` rather than re-serializing
-        # through Python.
-        if isinstance(output.alloc, LazyAllocFile):
-            output.alloc._keepalive = temp_dir
-
+        temp_dir.cleanup()
         return output
 
     def safe_t8n_args(
@@ -789,16 +743,9 @@ class TransitionTool(EthereumCLI):
         fork_name: str,
         chain_id: int,
         reward: int,
-        temp_dir: tempfile.TemporaryDirectory,
-        *,
-        alloc_path: Optional[Path] = None,
+        temp_dir: tempfile.TemporaryDirectory | None = None,
     ) -> List[str]:
-        """
-        Safely construct t8n arguments with validated inputs.
-
-        When ``alloc_path`` is provided (chained-block handoff), the alloc is
-        read from that file rather than from the stdin bundle.
-        """
+        """Safely construct t8n arguments with validated inputs."""
         # Validate fork name against actual transition tool names from all
         # available forks
         valid_forks = get_valid_transition_tool_names()
@@ -813,25 +760,13 @@ class TransitionTool(EthereumCLI):
         if not isinstance(reward, int) or reward < 0:
             raise ValueError(f"Invalid reward: {reward}")
 
-        if temp_dir is None:
-            raise ValueError(
-                "safe_t8n_args requires a temp_dir for file-based outputs"
-            )
-
-        # env/txs still come through stdin; alloc is either bundled on stdin
-        # (initial block) or streamed from a path (chained-block handoff).
-        # Outputs always go to files in the existing temp dir so Python can
-        # stream-read the post-state alloc rather than buffering stdout.
-        input_alloc = (
-            f"--input.alloc={alloc_path}"
-            if alloc_path is not None
-            else "--input.alloc=stdin"
-        )
+        # Use literal strings for command flags
+        input_alloc: LiteralString = "--input.alloc=stdin"
         input_txs: LiteralString = "--input.txs=stdin"
         input_env: LiteralString = "--input.env=stdin"
-        output_result: LiteralString = "--output.result=output/result.json"
-        output_alloc: LiteralString = "--output.alloc=output/alloc.json"
-        output_body: LiteralString = "--output.body=output/txs.rlp"
+        output_result: LiteralString = "--output.result=stdout"
+        output_alloc: LiteralString = "--output.alloc=stdout"
+        output_body: LiteralString = "--output.body=stdout"
         trace_flag: LiteralString = "--trace"
 
         args = [
@@ -844,12 +779,13 @@ class TransitionTool(EthereumCLI):
             f"--state.fork={fork_name}",
             f"--state.chainid={chain_id}",
             f"--state.reward={reward}",
-            f"--output.basedir={temp_dir.name}",
         ]
 
+        if temp_dir and (self.trace or self.supports_opcode_count):
+            args.append(f"--output.basedir={temp_dir.name}")
         if self.trace:
             args.append(trace_flag)
-        if self.supports_opcode_count:
+        if self.supports_opcode_count and temp_dir:
             args.extend(["--opcode.count", "opcodes.json"])
 
         return args
@@ -858,8 +794,6 @@ class TransitionTool(EthereumCLI):
         self,
         t8n_data: TransitionToolData,
         temp_dir: tempfile.TemporaryDirectory,
-        *,
-        alloc_path: Optional[Path] = None,
     ) -> List[str]:
         """Construct arguments for t8n interaction via streams."""
         command: list[str] = [str(self.binary)]
@@ -867,11 +801,7 @@ class TransitionTool(EthereumCLI):
             command.append(self.subcommand)
 
         safe_args = self.safe_t8n_args(
-            t8n_data.fork_name,
-            t8n_data.chain_id,
-            t8n_data.reward,
-            temp_dir,
-            alloc_path=alloc_path,
+            t8n_data.fork_name, t8n_data.chain_id, t8n_data.reward, temp_dir
         )
         return command + safe_args
 
@@ -888,14 +818,16 @@ class TransitionTool(EthereumCLI):
         """
         t8n_call = " ".join(args)
         t8n_output_base_dir = os.path.join(debug_output_path, "t8n.sh.out")
-        t8n_call = t8n_call.replace(temp_dir.name, t8n_output_base_dir)
+        if self.trace:
+            t8n_call = t8n_call.replace(temp_dir.name, t8n_output_base_dir)
         t8n_script = textwrap.dedent(
             f"""\
             #!/bin/bash
             # hard-coded to avoid surprises
             rm -rf {debug_output_path}/t8n.sh.out
 
-            mkdir -p {debug_output_path}/t8n.sh.out/output
+            # unused if tracing is not enabled
+            mkdir {debug_output_path}/t8n.sh.out
             {t8n_call} < {debug_output_path}/stdin.txt
             """
         )
