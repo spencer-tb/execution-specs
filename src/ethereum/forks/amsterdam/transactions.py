@@ -23,10 +23,10 @@ from ethereum.state import Address
 
 from .exceptions import (
     InitCodeTooLargeError,
-    TransactionGasLimitExceededError,
     TransactionTypeError,
 )
 from .fork_types import Authorization, VersionedHash
+
 
 TX_MAX_GAS_LIMIT = Uint(16_777_216)
 
@@ -513,7 +513,7 @@ def decode_transaction(tx: LegacyTransaction | Bytes) -> Transaction:
         return tx
 
 
-def validate_transaction(tx: Transaction) -> Tuple[Uint, Uint]:
+def validate_transaction(tx: Transaction) -> Tuple[Uint, Uint, Uint]:
     """
     Verifies a transaction.
 
@@ -531,33 +531,50 @@ def validate_transaction(tx: Transaction) -> Tuple[Uint, Uint]:
     Also, the code size of a contract creation transaction must be within
     limits of the protocol.
 
-    This function takes a transaction as a parameter and returns the intrinsic
-    gas cost and the minimum calldata gas cost for the transaction after
-    validation. It throws an `InsufficientTransactionGasError` exception if
-    the transaction does not provide enough gas to cover the intrinsic cost,
-    and a `NonceOverflowError` exception if the nonce is greater than
-    `2**64 - 2`. It also raises an `InitCodeTooLargeError` if the code size of
-    a contract creation transaction exceeds the maximum allowed size.
+    This function takes a transaction as a parameter and returns the
+    intrinsic regular gas cost, the intrinsic state gas cost, and the
+    minimum calldata gas cost for the transaction after validation. It
+    throws an `InsufficientTransactionGasError` exception if the
+    transaction does not provide enough gas to cover the intrinsic cost,
+    or if the intrinsic regular gas or the data floor gas cost exceeds
+    `TX_MAX_GAS_LIMIT`. It throws a `NonceOverflowError` exception if the
+    nonce is greater than `2**64 - 2`. It also raises an
+    `InitCodeTooLargeError` if the code size of a contract creation
+    transaction exceeds the maximum allowed size.
 
     [EIP-2681]: https://eips.ethereum.org/EIPS/eip-2681
     [EIP-7623]: https://eips.ethereum.org/EIPS/eip-7623
     """
     from .vm.interpreter import MAX_INIT_CODE_SIZE
 
-    intrinsic_gas, data_floor_gas_cost = calculate_intrinsic_cost(tx)
+    (
+        intrinsic_regular_gas,
+        intrinsic_state_gas,
+        data_floor_gas_cost,
+    ) = calculate_intrinsic_cost(tx)
+    # The user's `tx.gas` has to cover the *combined* intrinsic
+    # (or the EIP-7623 data floor, whichever is larger).
+    intrinsic_gas = intrinsic_regular_gas + intrinsic_state_gas
     if max(intrinsic_gas, data_floor_gas_cost) > tx.gas:
         raise InsufficientTransactionGasError("Insufficient gas")
+    # EIP-7825 cap applies only to the regular dimension. State gas
+    # has no per-tx hard cap (just bounded by `tx.gas`), so a
+    # contract-creation tx with large state-byte costs can have
+    # `tx.gas > TX_MAX_GAS_LIMIT` as long as the regular portion
+    # (and the calldata floor) stays under the cap.
+    if max(intrinsic_regular_gas, data_floor_gas_cost) > TX_MAX_GAS_LIMIT:
+        raise InsufficientTransactionGasError(
+            "Intrinsic regular gas or data floor exceeds TX_MAX_GAS_LIMIT"
+        )
     if U256(tx.nonce) >= U256(U64.MAX_VALUE):
         raise NonceOverflowError("Nonce too high")
     if tx.to == Bytes0(b"") and len(tx.data) > MAX_INIT_CODE_SIZE:
         raise InitCodeTooLargeError("Code size too large")
-    if tx.gas > TX_MAX_GAS_LIMIT:
-        raise TransactionGasLimitExceededError("Gas limit too high")
 
-    return intrinsic_gas, data_floor_gas_cost
+    return intrinsic_regular_gas, intrinsic_state_gas, data_floor_gas_cost
 
 
-def calculate_intrinsic_cost(tx: Transaction) -> Tuple[Uint, Uint]:
+def calculate_intrinsic_cost(tx: Transaction) -> Tuple[Uint, Uint, Uint]:
     """
     Calculates the gas that is charged before execution is started.
 
@@ -578,20 +595,31 @@ def calculate_intrinsic_cost(tx: Transaction) -> Tuple[Uint, Uint]:
     5. Cost for authorizations (if applicable)
 
 
-    This function takes a transaction as a parameter and returns the intrinsic
-    gas cost of the transaction and the minimum gas cost used by the
-    transaction based on the calldata size.
+    This function takes a transaction as a parameter and returns the
+    intrinsic regular gas cost, intrinsic state gas cost, and the minimum
+    gas cost used by the transaction based on the calldata size.
     """
-    from .vm.gas import GasCosts, init_code_cost
+    from .vm.gas import (
+        GasCosts,
+        StateCosts,
+        init_code_cost,
+    )
 
     tokens_in_calldata = count_tokens_in_data(tx.data)
 
     data_cost = tokens_in_calldata * GasCosts.TX_DATA_TOKEN_STANDARD
 
+    # Contract creation costs split across two dimensions:
+    #   - regular: TX_CREATE (9000) + init-code parse cost
+    #   - state:   NEW_ACCOUNT × PER_BYTE for the new account record
+    # Pre-EIP-8037 this was a single 32000 charge in `TX_CREATE`.
+    #
+    # TODO(EIP-8037): top-level CREATE txs double-charge `NEW_ACCOUNT × PER_BYTE` state gas (here in intrinsic and again via top-level `apply_frame_state_gas`); fix is to drop `create_state_gas` from intrinsic.
+    create_regular_gas = Uint(0)
+    create_state_gas = Uint(0)
     if tx.to == Bytes0(b""):
-        create_cost = GasCosts.TX_CREATE + init_code_cost(ulen(tx.data))
-    else:
-        create_cost = Uint(0)
+        create_state_gas = StateCosts.NEW_ACCOUNT * StateCosts.PER_BYTE
+        create_regular_gas = GasCosts.TX_CREATE + init_code_cost(ulen(tx.data))
 
     access_list_cost = Uint(0)
     tokens_in_access_list = Uint(0)
@@ -605,10 +633,18 @@ def calculate_intrinsic_cost(tx: Transaction) -> Tuple[Uint, Uint]:
     # Data token floor cost for access list bytes.
     access_list_cost += tokens_in_access_list * GasCosts.TX_DATA_TOKEN_FLOOR
 
-    auth_cost = Uint(0)
+    # 7702 auth costs also split. Worst case: every authority is a
+    # new EOA needing account creation + delegation code. Existing
+    # authorities get the NEW_ACCOUNT × PER_BYTE portion refunded
+    # by `set_delegation` to the runtime reservoir.
+    auth_regular_gas = Uint(0)
+    auth_state_gas = Uint(0)
     if isinstance(tx, SetCodeTransaction):
-        auth_cost += Uint(
-            GasCosts.AUTH_PER_EMPTY_ACCOUNT * len(tx.authorizations)
+        auth_regular_gas = GasCosts.PER_AUTH_BASE_COST * ulen(tx.authorizations)
+        auth_state_gas = (
+            (StateCosts.NEW_ACCOUNT + StateCosts.AUTH_BASE)
+            * StateCosts.PER_BYTE
+            * ulen(tx.authorizations)
         )
 
     # Floor tokens from calldata.
@@ -622,16 +658,17 @@ def calculate_intrinsic_cost(tx: Transaction) -> Tuple[Uint, Uint]:
         total_floor_tokens * GasCosts.TX_DATA_TOKEN_FLOOR + GasCosts.TX_BASE
     )
 
-    return (
-        Uint(
-            GasCosts.TX_BASE
-            + data_cost
-            + create_cost
-            + access_list_cost
-            + auth_cost
-        ),
-        data_floor_gas_cost,
+    intrinsic_regular_gas = (
+        GasCosts.TX_BASE
+        + data_cost
+        + create_regular_gas
+        + access_list_cost
+        + auth_regular_gas
     )
+
+    intrinsic_state_gas = create_state_gas + auth_state_gas
+
+    return intrinsic_regular_gas, intrinsic_state_gas, data_floor_gas_cost
 
 
 def count_tokens_in_data(data: bytes) -> Uint:

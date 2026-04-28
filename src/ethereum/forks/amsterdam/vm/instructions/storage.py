@@ -94,12 +94,7 @@ def sstore(evm: Evm) -> None:
         gas_cost += GasCosts.COLD_STORAGE_ACCESS
 
     if original_value == current_value and current_value != new_value:
-        if original_value == 0:
-            gas_cost += GasCosts.STORAGE_SET
-        else:
-            gas_cost += (
-                GasCosts.COLD_STORAGE_WRITE - GasCosts.COLD_STORAGE_ACCESS
-            )
+        gas_cost += GasCosts.COLD_STORAGE_WRITE - GasCosts.COLD_STORAGE_ACCESS
     else:
         gas_cost += GasCosts.WARM_ACCESS
 
@@ -115,18 +110,11 @@ def sstore(evm: Evm) -> None:
 
         if original_value == new_value:
             # Storage slot being restored to its original value
-            if original_value == 0:
-                # Slot was originally empty and was SET earlier
-                evm.refund_counter += int(
-                    GasCosts.STORAGE_SET - GasCosts.WARM_ACCESS
-                )
-            else:
-                # Slot was originally non-empty and was UPDATED earlier
-                evm.refund_counter += int(
-                    GasCosts.COLD_STORAGE_WRITE
-                    - GasCosts.COLD_STORAGE_ACCESS
-                    - GasCosts.WARM_ACCESS
-                )
+            evm.refund_counter += int(
+                GasCosts.COLD_STORAGE_WRITE
+                - GasCosts.COLD_STORAGE_ACCESS
+                - GasCosts.WARM_ACCESS
+            )
 
     charge_gas(evm, gas_cost)
     set_storage(tx_state, evm.message.current_target, key, new_value)

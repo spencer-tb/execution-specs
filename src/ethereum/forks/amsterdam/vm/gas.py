@@ -25,6 +25,24 @@ from ..transactions import BlobTransaction, Transaction
 from . import Evm
 from .exceptions import OutOfGasError
 
+class StateCosts:
+    """
+    State byte costs and per byte gas charge.
+
+    Kept separate from `GasCosts` so the two dimensions don't share
+    units. `NEW_ACCOUNT`, `STORAGE_SET`, `AUTH_BASE` are *byte counts*
+    (not gas) — `compute_state_byte_diff` returns a signed sum of
+    these, multiplied by `PER_BYTE` at frame-end to convert into gas.
+    """
+
+    # State-byte counts of common state-mutating operations.
+    NEW_ACCOUNT = Uint(112)  # account record
+    STORAGE_SET = Uint(32)   # storage slot key/value pair
+    AUTH_BASE = Uint(23)     # 7702 delegation marker (0xef0100 + 20)
+    # Fixed cost-per-state-byte. Calibrated for 100 GiB/year state
+    # growth at a 96M gas-limit reference utilization.
+    PER_BYTE = Uint(1174)
+
 
 # These values may be patched at runtime by a future gas repricing utility
 class GasCosts:
@@ -57,8 +75,15 @@ class GasCosts:
     CODE_DEPOSIT_PER_BYTE = Uint(200)
     CODE_INIT_PER_WORD = Uint(2)
 
-    # Authorization
-    AUTH_PER_EMPTY_ACCOUNT = 25000
+    # Authorization (7702). Replaces the legacy
+    # `AUTH_PER_EMPTY_ACCOUNT = 25000`. The 25k pessimistic charge
+    # split into two parts:
+    #   - 7500 regular gas (this constant): signature recovery and
+    #     code-set bookkeeping the client always pays.
+    #   - state-byte cost in `intrinsic_state_gas`: NEW_ACCOUNT +
+    #     AUTH_BASE per auth, refunded by `set_delegation` to the
+    #     reservoir for authorities that already exist.
+    PER_AUTH_BASE_COST = Uint(7500)
 
     # Utility
     ZERO = Uint(0)
@@ -104,7 +129,10 @@ class GasCosts:
 
     # Transactions
     TX_BASE = Uint(21000)
-    TX_CREATE = Uint(32000)
+    # Reduced from 32000. The remaining ~23000 (account-creation
+    # cost) moves to the state-gas dimension as
+    # `NEW_ACCOUNT × PER_BYTE` in `intrinsic_state_gas`.
+    TX_CREATE = Uint(9000)
     TX_DATA_TOKEN_STANDARD = Uint(4)
     TX_DATA_TOKEN_FLOOR = Uint(10)
     TX_ACCESS_LIST_ADDRESS = Uint(2400)
@@ -181,7 +209,9 @@ class GasCosts:
     OPCODE_MSTORE_BASE = VERY_LOW
     OPCODE_MSTORE8_BASE = VERY_LOW
     OPCODE_COPY_PER_WORD = Uint(3)
-    OPCODE_CREATE_BASE = Uint(32000)
+    # Reduced from 32000 (mirror of `TX_CREATE`). Account-creation
+    # state-byte cost moves to the per-frame counter.
+    OPCODE_CREATE_BASE = Uint(9000)
     OPCODE_EXP_BASE = Uint(10)
     OPCODE_EXP_PER_BYTE = Uint(50)
     OPCODE_KECCAK256_BASE = Uint(30)
@@ -261,6 +291,14 @@ def charge_gas(evm: Evm, amount: Uint) -> None:
         raise OutOfGasError
     else:
         evm.gas_left -= amount
+        # Track the regular dimension separately for the block-end
+        # `max(block_gas_used, block_state_gas_used)` 2D check.
+        # CALL-family opcodes that escrow gas to a child frame
+        # later subtract the escrowed portion (see `call`,
+        # `callcode`, `delegatecall`, `staticcall`) so it isn't
+        # double-counted when the child reports back via
+        # `incorporate_child_*`.
+        evm.regular_gas_used += amount
 
 
 def calculate_memory_gas_cost(size_in_bytes: Uint) -> Uint:

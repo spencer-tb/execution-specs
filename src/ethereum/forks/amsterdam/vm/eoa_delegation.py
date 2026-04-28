@@ -14,21 +14,20 @@ from ethereum.state import Address
 
 from ..fork_types import Authorization
 from ..state_tracker import (
-    account_exists,
     get_account,
     get_code,
     increment_nonce,
+    is_account_alive,
     set_code,
 )
 from ..utils.hexadecimal import hex_to_address
-from ..vm.gas import GasCosts
+from ..vm.gas import GasCosts, StateCosts
 from . import Evm, Message
 
 SET_CODE_TX_MAGIC = b"\x05"
 EOA_DELEGATION_MARKER = b"\xef\x01\x00"
 EOA_DELEGATION_MARKER_LENGTH = len(EOA_DELEGATION_MARKER)
 EOA_DELEGATED_CODE_LENGTH = 23
-REFUND_AUTH_PER_EXISTING_ACCOUNT = 12500
 NULL_ADDRESS = hex_to_address("0x0000000000000000000000000000000000000000")
 
 
@@ -155,7 +154,7 @@ def calculate_delegation_cost(
     return True, delegated_address, delegation_gas_cost
 
 
-def set_delegation(message: Message) -> U256:
+def set_delegation(message: Message) -> None:
     """
     Set the delegation code for the authorities in the message.
 
@@ -164,14 +163,8 @@ def set_delegation(message: Message) -> U256:
     message :
         Transaction specific items.
 
-    Returns
-    -------
-    refund_counter: `U256`
-        Refund from authority which already exists in state.
-
     """
     tx_state = message.tx_env.state
-    refund_counter = U256(0)
     for auth in message.tx_env.authorizations:
         if auth.chain_id not in (message.block_env.chain_id, U256(0)):
             continue
@@ -196,11 +189,30 @@ def set_delegation(message: Message) -> U256:
         if authority_nonce != auth.nonce:
             continue
 
-        if account_exists(tx_state, authority):
-            refund_counter += U256(
-                GasCosts.AUTH_PER_EMPTY_ACCOUNT
-                - REFUND_AUTH_PER_EXISTING_ACCOUNT
-            )
+        # `intrinsic_state_gas` pessimistically pre-charged
+        # `(NEW_ACCOUNT + AUTH_BASE) × PER_BYTE` for every auth at
+        # validation time, assuming each authority would be a fresh
+        # account. When the authority is already non-empty per
+        # EIP-161 (any of: non-zero nonce, non-zero balance, code
+        # set), no account record is created — only the 23-byte
+        # delegation code is written. Refund the over-charged
+        # `NEW_ACCOUNT × PER_BYTE` portion directly into this
+        # frame's `state_gas_reservoir` (not via the EVM
+        # `refund_counter`, which is regular-gas only and capped
+        # by EIP-3529).
+        #
+        # An *empty* existing account (nonce=0, balance=0, no code)
+        # does NOT qualify for the refund: per EIP-161 it is
+        # treated as effectively non-existent, and setting the
+        # delegation code on it materializes a fresh state record.
+        #
+        # `intrinsic_state_gas` itself is immutable post-validation;
+        # block accounting reports the pessimistic figure, the
+        # refund only affects the runtime budget the user has to
+        # spend.
+        if is_account_alive(tx_state, authority):
+            refund = StateCosts.NEW_ACCOUNT * StateCosts.PER_BYTE
+            message.state_gas_reservoir += refund
 
         if auth.address == NULL_ADDRESS:
             code_to_set = b""
@@ -217,5 +229,3 @@ def set_delegation(message: Message) -> U256:
         tx_state,
         get_account(tx_state, message.code_address).code_hash,
     )
-
-    return refund_counter
