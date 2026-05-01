@@ -103,6 +103,7 @@ from .vm.gas import (
     COST_PER_STATE_BYTE,
     STATE_BYTES_PER_NEW_ACCOUNT,
     STATE_BYTES_PER_STORAGE_SET,
+    SYSTEM_MAX_SSTORES_PER_CALL,
     GasCosts,
     calculate_blob_gas_price,
     calculate_data_fee,
@@ -119,6 +120,11 @@ BEACON_ROOTS_ADDRESS = hex_to_address(
     "0x000F3df6D732807Ef1319fB7B8bB8522d0Beac02"
 )
 SYSTEM_TRANSACTION_GAS = Uint(30000000)
+SYSTEM_TRANSACTION_STATE_GAS = (
+    SYSTEM_MAX_SSTORES_PER_CALL
+    * STATE_BYTES_PER_STORAGE_SET
+    * COST_PER_STATE_BYTE
+)
 MAX_BLOB_GAS_PER_BLOCK = GasCosts.BLOB_SCHEDULE_MAX * GasCosts.PER_BLOB
 VERSIONED_HASH_VERSION_KZG = b"\x01"
 GWEI_TO_WEI = U256(10**9)
@@ -555,10 +561,7 @@ def check_transaction(
         is empty.
 
     """
-    # Per-tx 2D gas inclusion check: for each dimension the worst-case
-    # contribution must fit in the remaining budget.  Block-end
-    # validation still enforces
-    # max(block_regular_gas_used, block_state_gas_used) <= gas_limit.
+    # Per-tx 2D inclusion check: each dimension's worst-case fits.
     regular_gas_available = (
         block_env.block_gas_limit - block_output.block_gas_used
     )
@@ -567,16 +570,10 @@ def check_transaction(
     )
     blob_gas_available = MAX_BLOB_GAS_PER_BLOCK - block_output.blob_gas_used
 
-    # Worst-case regular contribution: tx.gas minus the portion that
-    # must go to intrinsic state gas, capped at TX_MAX_GAS_LIMIT.
-    if min(TX_MAX_GAS_LIMIT, tx.gas - intrinsic.state) > (
-        regular_gas_available
-    ):
+    if min(TX_MAX_GAS_LIMIT, tx.gas) > regular_gas_available:
         raise GasUsedExceedsLimitError("gas used exceeds limit")
 
-    # Worst-case state contribution: tx.gas minus the portion that
-    # must go to intrinsic regular gas.
-    if tx.gas - intrinsic.regular > state_gas_available:
+    if tx.gas > state_gas_available:
         raise GasUsedExceedsLimitError("gas used exceeds limit")
 
     tx_blob_gas_used = calculate_total_blob_gas(tx)
@@ -796,7 +793,7 @@ def process_unchecked_system_transaction(
         origin=SYSTEM_ADDRESS,
         gas_price=block_env.base_fee_per_gas,
         gas=SYSTEM_TRANSACTION_GAS,
-        state_gas_reservoir=Uint(0),
+        state_gas_reservoir=SYSTEM_TRANSACTION_STATE_GAS,
         access_list_addresses=set(),
         access_list_storage_keys=set(),
         state=system_tx_state,
@@ -814,7 +811,7 @@ def process_unchecked_system_transaction(
         caller=SYSTEM_ADDRESS,
         target=target_address,
         gas=SYSTEM_TRANSACTION_GAS,
-        state_gas_reservoir=Uint(0),
+        state_gas_reservoir=SYSTEM_TRANSACTION_STATE_GAS,
         value=U256(0),
         data=data,
         code=system_contract_code,
