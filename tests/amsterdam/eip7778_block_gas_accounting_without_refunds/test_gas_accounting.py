@@ -64,7 +64,13 @@ def build_refund_tx(
     auth_state_gas = 0
     auth_state_refund = 0
 
-    for refund_type in refund_types:
+    # `refund_types` arrives as a set; `RefundTypes` is a plain Enum
+    # whose members hash by identity, so iterating the set directly
+    # yields a process-dependent order. That order decides where the
+    # `Op.PUSH0` below lands in `code`, producing equivalent-but-
+    # byte-different contracts (and thus non-reproducible fixtures)
+    # across fill runs. Sort by name to pin the order.
+    for refund_type in sorted(refund_types, key=lambda r: r.name):
         match refund_type:
             case RefundTypes.STORAGE_CLEAR:
                 for slot in storage_slots:
