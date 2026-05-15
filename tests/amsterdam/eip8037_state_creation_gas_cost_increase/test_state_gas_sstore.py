@@ -155,6 +155,78 @@ def test_sstore_zero_to_zero(
     state_test(pre=pre, post=post, tx=tx)
 
 
+@pytest.mark.valid_from("EIP8037")
+def test_sstore_restoration_refund_clamped_to_subframe_state_gas(
+    state_test: StateTestFiller,
+    pre: Alloc,
+    fork: Fork,
+) -> None:
+    """
+    Verify a restoration refund is clamped to the clearing frame's state gas.
+
+    On a 0 to x to 0 restoration, EIP-8037 caps the SSTORE state-gas
+    refund at the current frame's `state_gas_used` and defers the
+    unapplied remainder via `state_gas_refund_pending` for an ancestor
+    to claim.  A frame that only clears slots, with no zero-to-nonzero
+    set of its own, has zero `state_gas_used`, so none of the refund
+    may be credited to its local reservoir.
+
+    The clamp is observable at an out-of-gas boundary.  The parent
+    charges state gas for two SSTORE 0 to 1 sets, then DELEGATECALLs a
+    child that clears both slots and CREATEs an empty account.  With
+    the refund correctly deferred, the child has no reservoir to
+    absorb the CREATE's new-account state gas, must spill it to
+    `gas_left`, and runs out of gas inside the child frame; its clears
+    revert and the parent keeps both slots set.  An implementation
+    that instead credits the full refund to the child's reservoir lets
+    the CREATE succeed and clears the slots, yielding a different
+    state root.
+
+    Regression for a divergence found by terminus-31 fuzz-8037 on
+    bal-devnet-7 (revm credited the refund without clamping).
+    """
+    state_gas = fork.sstore_state_gas()
+    create_state_gas = fork.create_state_gas()  # new-account state gas
+
+    child = pre.deploy_contract(
+        code=(
+            Op.SSTORE(0, 0)
+            + Op.SSTORE(1, 0)
+            + Op.POP(Op.CREATE(0, 0, 0))
+            + Op.STOP
+        )
+    )
+    parent = pre.deploy_contract(
+        code=(
+            Op.SSTORE(0, 1)
+            + Op.SSTORE(1, 1)
+            + Op.POP(Op.DELEGATECALL(gas=Op.GAS, address=child))
+            + Op.STOP
+        )
+    )
+
+    # Gas window: enough to reach the child's CREATE, but short of the
+    # extra `create_state_gas` the child only has if its two
+    # restoration refunds (2 * state_gas) wrongly inflate a local
+    # reservoir.  Inside this window the spec OOGs the child while a
+    # blind-credit implementation completes it.  Guard the witnessed
+    # limit against fork-constant drift moving it out of the window.
+    assert state_gas == 97_920 and create_state_gas == 183_600
+    tx = Transaction(
+        to=parent,
+        gas_limit=400_000,
+        sender=pre.fund_eoa(),
+    )
+
+    # Spec path OOGs in the child, reverting its clears; the parent
+    # keeps both slots set to 1.
+    state_test(
+        pre=pre,
+        post={parent: Account(storage={0: 1, 1: 1})},
+        tx=tx,
+    )
+
+
 @EIPChecklist.GasRefundsChanges.Test.RefundCalculation()
 @pytest.mark.valid_from("EIP8037")
 def test_sstore_restoration_refund(
