@@ -1,6 +1,6 @@
 ---
 name: Devnet Tracker
-about: Track test release readiness for a devnet (tests-<feat>-devnet@vX.Y.Z)
+about: Track EL test release readiness for a devnet (tests-<feat>-devnet@vX.Y.Z)
 title: 'tests-<feat>-devnet@vX.Y.Z Tracker'
 labels: C-tracker, P-high
 assignees: ''
@@ -8,6 +8,10 @@ assignees: ''
 ---
 
 ## tests-`<feat>`-devnet@v`X.Y.Z`
+
+> [!NOTE]
+> This is an **execution layer (EL) only** tracker — it does not cover
+> consensus layer (CL) readiness.
 
 ### Overview
 
