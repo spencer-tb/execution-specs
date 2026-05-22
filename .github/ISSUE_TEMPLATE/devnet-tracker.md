@@ -21,8 +21,8 @@ assignees: ''
     against regressions, and is run in Hive CI under the standard naming scheme.
 -->
 
-- **Release tag**: <!-- e.g. tests-glamsterdam-devnet@v5.0.0 -->
-- **Specs**: <!-- link to the `feat-devnet-N` branch being used for this devnet -->
+- **Target release tag**: <!-- e.g. tests-glamsterdam-devnet@v5.0.0 -->
+- **EELS branch**: <!-- link to the `feat-devnet-N` branch being used for this devnet -->
 - **Test release date**: <!-- YYYY-MM-DD or "TBD" — aim for 5 days before the devnet -->
 - **Devnet launch date**: <!-- YYYY-MM-DD or "TBD" -->
 
