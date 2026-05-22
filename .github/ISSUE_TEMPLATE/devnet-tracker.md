@@ -2,16 +2,12 @@
 name: Devnet Tracker
 about: Track specification, testing, and launch readiness for a devnet
 title: '<devnet-name> Tracker'
-labels: A-spec-specs, A-spec-tests, C-eip, C-test
+labels: C-tracker, P-high
 assignees: ''
 
 ---
 
 ## <devnet-name>
-
-### Target Fork
-
-**<fork>**
 
 ### Overview
 
