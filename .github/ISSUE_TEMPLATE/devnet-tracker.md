@@ -124,16 +124,17 @@ release here.
 ### Client Readiness
 
 <!--
-    Track which client implementations are ready for the devnet.
+    Track which client implementations are ready for the devnet. Link each
+    client's devnet branch / PR in the parentheses.
 -->
 
-- [ ] geth
-- [ ] erigon
-- [ ] besu
-- [ ] nethermind
-- [ ] reth
-- [ ] ethrex
-- [ ] nimbus-el
+- [ ] [geth]()
+- [ ] [erigon]()
+- [ ] [besu]()
+- [ ] [nethermind]()
+- [ ] [reth]()
+- [ ] [ethrex]()
+- [ ] [nimbus-el]()
 
 ### Process Status
 
