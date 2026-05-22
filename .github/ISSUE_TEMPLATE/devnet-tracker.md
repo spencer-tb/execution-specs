@@ -29,7 +29,9 @@ assignees: ''
 > [!NOTE]
 > **Versioning** (`vX.Y.Z`): `X` is the devnet number (e.g. `5` for
 > `glamsterdam-devnet-5`), making the targeted devnet explicit. `Y`/`Z` follow
-> the same semantics as the consensus test releases.
+> the same semantics as the consensus test releases: `Y` (minor) is bumped for
+> new or changed tests that add/modify fixtures, and `Z` (patch) is bumped for
+> backward-compatible fixes that do not change existing fixtures.
 
 > [!NOTE]
 > Aim to cut the test (fixture) release **at least 5 days before** the devnet
