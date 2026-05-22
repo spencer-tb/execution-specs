@@ -37,12 +37,14 @@ assignees: ''
 > Aim to cut the test (fixture) release **at least 5 days before** the devnet
 > launch, to give client teams time to integrate and run them.
 
-### Follows On From
+### Follows On From _(optional)_
 
 <!--
-    If this is a follow-up release (most updates are test additions and the
-    scope is semantically unchanged), link the previous tracker and keep this
-    issue small — list only what is new below. Otherwise write "N/A".
+    Optional. If there is a previous devnet release tracker, link it here for
+    context — even if the scope has changed. If this is a test-only follow-up
+    (most updates are test additions and the scope is semantically unchanged),
+    keep this issue small and list only what is new below. If there is no
+    predecessor (a brand new `<feat>` / first devnet), remove this section.
 -->
 
 This is a follow-up to the `tests-<feat>-devnet@vX.Y.Z` tracker (#`<issue>`),
