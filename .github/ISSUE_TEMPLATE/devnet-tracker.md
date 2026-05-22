@@ -129,6 +129,7 @@ release here.
 - [ ] nethermind
 - [ ] reth
 - [ ] ethrex
+- [ ] nimbus-el
 
 ### Process Status
 
