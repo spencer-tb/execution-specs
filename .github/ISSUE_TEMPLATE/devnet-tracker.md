@@ -1,41 +1,65 @@
 ---
 name: Devnet Tracker
-about: Track specification, testing, and launch readiness for a devnet
-title: '<devnet-name> Tracker'
+about: Track test release readiness for a devnet (tests-<feat>-devnet@vX.Y.Z)
+title: 'tests-<feat>-devnet@vX.Y.Z Tracker'
 labels: C-tracker, P-high
 assignees: ''
 
 ---
 
-## <devnet-name>
+## tests-`<feat>`-devnet@v`X.Y.Z`
 
 ### Overview
 
 <!--
-    Briefly describe the purpose of this devnet, its scope, and any relevant
-    links (devnet specs repo, ACD notes, configuration / genesis).
+    Briefly describe the purpose of this devnet test release, its scope, and any
+    relevant links (devnet specs repo, ACD notes, configuration / genesis).
+
+    The `<feat>` keyword is typically the fork name or headliner feature
+    (e.g. `bal`, `glamsterdam`). The release fills all forks until the
+    development fork (e.g. `fill --until Amsterdam`) so clients can guard
+    against regressions, and is run in Hive CI under the standard naming scheme.
 -->
 
-- **Specs**: <!-- link to the devnet specs / config repo -->
-- **Target release**: <!-- e.g. v7.3.0 or "TBD" -->
+- **Release tag**: <!-- e.g. tests-glamsterdam-devnet@v5.0.0 -->
+- **Specs**: <!-- link to the `feat-devnet-N` branch being used for this devnet -->
 - **Test release date**: <!-- YYYY-MM-DD or "TBD" — aim for 5 days before the devnet -->
 - **Devnet launch date**: <!-- YYYY-MM-DD or "TBD" -->
+
+> [!NOTE]
+> **Versioning** (`vX.Y.Z`): `X` is the devnet number (e.g. `5` for
+> `glamsterdam-devnet-5`), making the targeted devnet explicit. `Y`/`Z` follow
+> the same semantics as the consensus test releases.
 
 > [!NOTE]
 > Aim to cut the test (fixture) release **at least 5 days before** the devnet
 > launch, to give client teams time to integrate and run them.
 
+### Follows On From
+
+<!--
+    If this is a follow-up release (most updates are test additions and the
+    scope is semantically unchanged), link the previous tracker and keep this
+    issue small — list only what is new below. Otherwise write "N/A".
+-->
+
+This is a follow-up to the `tests-<feat>-devnet@vX.Y.Z` tracker (#`<issue>`),
+with test additions only.
+
+> [!TIP]
+> For a test-only follow-up, the sections below can be trimmed to just what
+> changed since the previous tracker.
+
 ### Aim
 
 <!--
-    A short statement of what we're aiming for in this devnet release.
+    A short statement of what we're aiming for in this devnet test release.
     Be explicit that the scope is tentative and will change.
 -->
 
-We aim to include the following EIPs in the first `<devnet-name>` EELS release
-(`v7.3.0`, following the previous `v7.2.0` release). This scope is tentative —
-EIPs may be added, dropped, or deferred as decisions land in ACD and during
-implementation.
+We aim to include the following EIPs in the first `<feat>-devnet-N` EELS test
+release (`tests-<feat>-devnet@vX.Y.Z`). This scope is tentative — EIPs may be
+added, dropped, or deferred as decisions land in ACD and during implementation.
 
 ### Instructions
 
@@ -85,11 +109,13 @@ release here.
 ### Specification + Testing Status
 
 - [ ] All included EIP specifications merged to the corresponding `feat-devnet-N` branch.
-- [ ] Devnet branch (`feat-devnet-N`) created and rebased on the target fork.
+- [ ] Devnet branch (`feat-devnet-N`) created and rebased on the target `forks/<fork>` branch.
 - [ ] Required testing framework modifications implemented.
 - [ ] Test suites for all included EIPs implemented.
 - [ ] No regressions or failures in tests from prior forks (including static tests).
 - [ ] Fixtures generated and released for the devnet.
+- [ ] [`hive-tests`](https://github.com/ethpandaops/hive-tests/tree/master/.github/workflows) repo checked/updated to run the latest set of fixtures.
+- [ ] [`hive-ui`](https://github.com/ethpandaops/hive-ui/blob/master/public/discovery.json) discovery checked/updated to the latest devnet workflow file within the `hive-tests` repo.
 
 ### Client Readiness
 
@@ -110,3 +136,16 @@ release here.
 - [ ] Interop / cross-client testing completed.
 - [ ] Devnet launched.
 - [ ] Post-launch issues triaged and tracked.
+
+### Closure
+
+<!--
+    Before closing this issue, link the test fixture release tag that shipped
+    for this devnet.
+-->
+
+- [ ] Linked the test fixture release tag used for this devnet: <!-- e.g. https://github.com/ethereum/execution-spec-tests/releases/tag/<tag> -->
+
+> [!IMPORTANT]
+> After tagging, any future changes must be added to a newly created devnet
+> tracker rather than reopening or amending this one.
