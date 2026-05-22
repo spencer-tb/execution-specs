@@ -32,9 +32,10 @@ assignees: ''
     Be explicit that the scope is tentative and will change.
 -->
 
-We aim to include the following EIPs in the first `<devnet-name>` EELS release.
-This scope is tentative — EIPs may be added, dropped, or deferred as decisions
-land in ACD and during implementation.
+We aim to include the following EIPs in the first `<devnet-name>` EELS release
+(`v7.3.0`, following the previous `v7.2.0` release). This scope is tentative —
+EIPs may be added, dropped, or deferred as decisions land in ACD and during
+implementation.
 
 ### Instructions
 
@@ -81,27 +82,14 @@ The most difficult changes are expected to be `<...>`. Highlight any cross-EIP
 alignment, ordering dependencies, or testing-framework work that could block the
 release here.
 
-#### Guidance for Marking Items Complete
-
-An item should only be checked off once it is considered *stable*. In this
-context, stable means:
-
-- No major issues or ambiguities are still being uncovered in the specification or tests.
-- There are no open discussion points awaiting resolution.
-- Client implementations have been consistently passing the tests for at least a week.
-
-It is ultimately up to the owners' discretion to decide when an item should be
-marked as complete, using this guidance as the basis for that decision.
-
 ### Specification + Testing Status
 
-- [ ] All included EIP specifications merged to the corresponding `forks/<fork>` branch.
-- [ ] Devnet branch (e.g. `devnets/<devnet-name>`) created and rebased on the target fork.
+- [ ] All included EIP specifications merged to the corresponding `feat-devnet-N` branch.
+- [ ] Devnet branch (`feat-devnet-N`) created and rebased on the target fork.
 - [ ] Required testing framework modifications implemented.
 - [ ] Test suites for all included EIPs implemented.
 - [ ] No regressions or failures in tests from prior forks (including static tests).
 - [ ] Fixtures generated and released for the devnet.
-- [ ] Ran tests using `execute` to ensure compatibility with live networks.
 
 ### Client Readiness
 
