@@ -1,7 +1,7 @@
 # Unless filling for special features, all features should fill for previous forks (starting from Frontier) too
 consensus:
   evm-type: consensus
-  fill-params: --until=BPO4
+  fill-params: --until=BPO4 ./tests/cancun/eip1153_tstore/test_basic_tload.py
 
 benchmark:
   evm-type: benchmark
@@ -9,4 +9,4 @@ benchmark:
 
 devnet:
   evm-type: eels
-  fill-params: --until=Amsterdam
+  fill-params: --until=Amsterdam ./tests/cancun/eip1153_tstore/test_basic_tload.py
