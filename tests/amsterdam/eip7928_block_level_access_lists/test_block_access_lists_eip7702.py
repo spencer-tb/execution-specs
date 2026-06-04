@@ -1447,10 +1447,6 @@ def test_bal_withdrawal_to_7702_delegation(
     )
 
 
-# TODO[EIP-8037]: Balance calculation needs update for two-dimensional gas
-# (state gas reservoir credits from authorization refunds change the effective
-# gas cost).
-@pytest.mark.skip(reason="EIP-8037 state gas reservoir changes gas accounting")
 @pytest.mark.with_all_create_opcodes
 def test_bal_7702_delegated_create(
     fork: Fork,
@@ -1525,9 +1521,16 @@ def test_bal_7702_delegated_create(
         + init_code.gas_cost(fork)
     )
 
-    refund_counter = gsc.REFUND_AUTH_PER_EXISTING_ACCOUNT
-
-    effective_refund = min(refund_counter, gas_used // max_refund_quotient)
+    if fork.is_eip_enabled(8037):
+        # EIP-8037: the existing-authority refund is state gas credited to
+        # the reservoir, not subject to the EIP-3529 1/5 cap. Alice is an
+        # existing, non-delegated authority, so only NEW_ACCOUNT is refunded.
+        effective_refund = gsc.REFUND_AUTH_PER_EXISTING_ACCOUNT
+    else:
+        refund_counter = gsc.REFUND_AUTH_PER_EXISTING_ACCOUNT
+        effective_refund = min(
+            refund_counter, gas_used // max_refund_quotient
+        )
     gas_used_post_refund = gas_used - effective_refund
 
     assert tx.max_fee_per_gas is not None

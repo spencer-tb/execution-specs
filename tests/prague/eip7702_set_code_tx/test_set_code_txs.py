@@ -3190,8 +3190,8 @@ def test_set_code_to_precompile_not_enough_gas_for_precompile_execution(
     making the discount calculation (PER_EMPTY_ACCOUNT_COST -
     PER_AUTH_BASE_COST) and receipt gas expectation invalid.
 
-    TODO: Add EIP-8037-specific variant in tests/amsterdam/ that
-    verifies receipt gas and auth refund under EIP-8037's 2D model.
+    Covered on Amsterdam by eip8037_state_creation_gas_cost_increase/
+    test_state_gas_set_code.py::test_auth_refund_block_gas_accounting.
     """
     auth_signer = pre.fund_eoa(amount=1)
     auth = AuthorizationTuple(

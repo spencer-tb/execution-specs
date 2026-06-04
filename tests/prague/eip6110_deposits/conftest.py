@@ -37,20 +37,24 @@ def txs(
     txs = []
     for r in prepared_requests:
         txs += r.transactions()
-    # EIP-7976 (enabled with EIP-8037 on Amsterdam) raises calldata
-    # floor cost, pushing the intrinsic above the hardcoded
-    # tx_gas_limit of the large-calldata OOG fixtures. Lift each
-    # tx's gas_limit to the new intrinsic only when it falls below;
-    # the tx still OOGs on its first execution opcode, preserving
-    # the fixture's no-deposits-applied outcome.
-    if not (fork.is_eip_enabled(7976) and fork.is_eip_enabled(8037)):
+    if not fork.is_eip_enabled(8037):
         return txs
+    cap = fork.transaction_gas_limit_cap()
     current_calc = fork.transaction_intrinsic_cost_calculator()
     bumped: List[Transaction] = []
     for tx in txs:
-        current_intrinsic = current_calc(calldata=tx.data)
-        if tx.gas_limit < current_intrinsic:
-            bumped.append(tx.copy(gas_limit=current_intrinsic))
+        new_gas_limit = tx.gas_limit
+        # EIP-7976 raises the calldata floor above the OOG fixtures' hardcoded
+        # gas_limit. Lift to the new intrinsic so the tx still OOGs on its
+        # first execution opcode (no deposits applied).
+        if fork.is_eip_enabled(7976):
+            new_gas_limit = max(new_gas_limit, current_calc(calldata=tx.data))
+        # EIP-8037 draws state gas from the reservoir above the 7825 cap.
+        # Fixtures pinned at the cap need headroom for the deposit state gas.
+        if cap is not None and tx.gas_limit >= cap:
+            new_gas_limit = max(new_gas_limit, 2 * cap)
+        if new_gas_limit != tx.gas_limit:
+            bumped.append(tx.copy(gas_limit=new_gas_limit))
         else:
             bumped.append(tx)
     return bumped

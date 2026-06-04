@@ -312,16 +312,18 @@ def test_multi_transaction_gas_accounting(
 
     This tests that clients correctly use pre-refund gas for block accounting.
     """
-    # TODO[EIP-8037]: this test's exceed_block_gas_limit branch builds
-    # `environment_gas_limit = total - 1` from a single combined
-    # `total_block_gas_used`, but post-fix the auth refund splits the
-    # regular vs state dimensions further. Reworking the per-dimension
-    # budget math is out of scope for the auth-refund spec fix; until
-    # then, skip the AUTHORIZATION_EXISTING_AUTHORITY case here.
-    if refund_type == RefundTypes.AUTHORIZATION_EXISTING_AUTHORITY:
+    # TODO[EIP-8037]: only the exceed_block_gas_limit overflow scenario for the
+    # AUTHORIZATION refund still needs a redesign — the auth tx's worst-case
+    # state reservation (tx.gas - intrinsic.regular) dominates, so the block
+    # overflows at the auth tx itself rather than the trailing extra tx, and
+    # the error placement differs. The non-overflow cases are handled below.
+    if (
+        refund_type == RefundTypes.AUTHORIZATION_EXISTING_AUTHORITY
+        and exceed_block_gas_limit
+    ):
         pytest.skip(
-            "AUTHORIZATION_EXISTING_AUTHORITY not yet adapted to the "
-            "two-dimensional block budget post EIP-8037 auth-refund fix"
+            "AUTHORIZATION overflow case needs a two-dimensional block "
+            "admission redesign post EIP-8037"
         )
 
     intrinsic_cost_calc = fork.transaction_intrinsic_cost_calculator()
@@ -378,7 +380,16 @@ def test_multi_transaction_gas_accounting(
     if exceed_block_gas_limit:
         environment_gas_limit = total_block_gas_used - 1
     else:
-        environment_gas_limit = total_block_gas_used
+        # Block admission reserves each tx's worst-case per-dimension gas
+        # (`tx.gas - intrinsic` in the other dimension). For EIP-8037 auth
+        # txs the intrinsic state gas is charged up front then refunded, so a
+        # tx's gas limit (hence its worst-case state reservation) far exceeds
+        # the gas it actually uses. The block must be large enough to admit
+        # both txs, while still reporting the actual `gas_used`.
+        environment_gas_limit = max(
+            total_block_gas_used,
+            refund_tx.gas_limit + extra_tx_intrinsic_gas_cost,
+        )
 
     txs = [refund_tx, extra_tx]
 

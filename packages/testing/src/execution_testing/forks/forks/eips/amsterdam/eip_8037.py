@@ -159,29 +159,6 @@ class EIP8037(BaseFork):
         return fn
 
     @classmethod
-    def opcode_refund_calculator(cls) -> OpcodeGasCalculator:
-        """
-        Return callable that calculates the gas refund of a single opcode.
-        """
-        opcode_refund_map = cls.opcode_refund_map()
-        opcode_state_refund_calculator = cls.opcode_state_refund_calculator()
-
-        def fn(opcode: OpcodeBase) -> int:
-            state_refund = opcode_state_refund_calculator(opcode)
-            if opcode not in opcode_refund_map:
-                return state_refund
-            refund_or_calculator = opcode_refund_map[opcode]
-
-            if callable(refund_or_calculator):
-                regular_refund = refund_or_calculator(opcode)
-            else:
-                regular_refund = refund_or_calculator
-
-            return regular_refund + state_refund
-
-        return fn
-
-    @classmethod
     def opcode_state_refund_map(
         cls,
     ) -> Dict[OpcodeBase, int | Callable[[OpcodeBase], int]]:
@@ -192,11 +169,6 @@ class EIP8037(BaseFork):
         return {
             Opcodes.SSTORE: lambda op: cls._calculate_sstore_state_refund(
                 op, gas_costs
-            ),
-            Opcodes.SELFDESTRUCT: (
-                lambda op: cls._calculate_selfdestruct_state_refund(
-                    op, gas_costs
-                )
             ),
         }
 
@@ -357,38 +329,6 @@ class EIP8037(BaseFork):
                 if original_value == 0:
                     return STATE_BYTES_PER_STORAGE_SET * cpsb
         return 0
-
-    @classmethod
-    def _calculate_selfdestruct_state_refund(
-        cls, opcode: OpcodeBase, gas_costs: GasCosts
-    ) -> int:
-        """
-        Calculate the SELFDESTRUCT state gas refund. Refund
-        `STATE_BYTES_PER_NEW_ACCOUNT * cpsb` for the destroyed account,
-        `STATE_BYTES_PER_STORAGE_SET * cpsb` for each populated storage
-        slot, and `cpsb` per byte of deposited code.
-        """
-        del gas_costs
-        metadata = opcode.metadata
-        cpsb = cls.cost_per_state_byte()
-
-        self_destructed_account = metadata["self_destructed_account"]
-        self_destructed_account_storage_slot_count = metadata[
-            "self_destructed_account_storage_slot_count"
-        ]
-        self_destructed_account_code_deposit = metadata[
-            "self_destructed_account_code_deposit"
-        ]
-        state_refund = 0
-        if self_destructed_account:
-            state_refund = STATE_BYTES_PER_NEW_ACCOUNT * cpsb
-            state_refund += (
-                STATE_BYTES_PER_STORAGE_SET
-                * cpsb
-                * self_destructed_account_storage_slot_count
-            )
-            state_refund += cpsb * self_destructed_account_code_deposit
-        return state_refund
 
     @classmethod
     def _calculate_return_gas(

@@ -792,24 +792,11 @@ def test_selfdestruct_finalization_after_priority_fee(
     coinbase = created_address  # coinbase == self-destructed contract
 
     # inner contract: simple SELFDESTRUCT to self
-    runtime_code = (
-        Op.SELFDESTRUCT(
-            Op.ADDRESS,
-            # Gas accounting
-            address_warm=True,
-            account_new=False,
-            self_destructed_account=True,
-            self_destructed_account_code_deposit=len(
-                Op.SELFDESTRUCT(address=Op.ADDRESS)
-            ),
-        )
-        if fork.is_eip_enabled(8037)
-        else Op.SELFDESTRUCT(
-            Op.ADDRESS,
-            # Gas accounting
-            address_warm=True,
-            account_new=False,
-        )
+    runtime_code = Op.SELFDESTRUCT(
+        Op.ADDRESS,
+        # Gas accounting
+        address_warm=True,
+        account_new=False,
     )
     initcode = Initcode(deploy_code=runtime_code)
     initcode_len = len(initcode)
@@ -902,7 +889,11 @@ def test_selfdestruct_finalization_after_priority_fee(
 
     # finalization burn log
     if fork.is_eip_enabled(8037):
-        # TODO: Fix calculation of the exact expected gas usage
+        # TODO: Fix the exact expected gas usage under EIP-8037's
+        # two-dimensional (regular + state/reservoir) gas accounting.
+        # SELFDESTRUCT issues no state-gas refund per spec; the remaining
+        # gap is the regular/state split in `gas_used` above (e.g. code
+        # deposit moves from 200/byte regular to per-byte state gas).
         finalization_balance = None
     expected_logs.append(burn_log(created_address, finalization_balance))
     gas_limit = 500_000
