@@ -1103,8 +1103,10 @@ class IteratingBytecode(Bytecode):
 
         If the fork's transaction gas limit cap is not `None`, the returned
         list will contain one item per transaction that represents the
-        iteration count for that transaction, and no transaction will exceed
-        the gas limit cap.
+        iteration count for that transaction. The cap constrains each
+        transaction's compute gas; on forks with state gas (EIP-8037) the
+        transaction's combined gas limit may exceed the cap by the
+        state-gas portion.
         """
         gas_limit_cap = fork.transaction_gas_limit_cap()
         remaining_gas = gas_limit
@@ -1166,6 +1168,9 @@ class IteratingBytecode(Bytecode):
 
         while remaining_iterations > 0:
             if best_iterations is None or not constant_intrinsic_gas_cost:
+                # No block budget in this context, so the cap also bounds
+                # the combined gas to keep the search finite; under state
+                # gas (EIP-8037) this slightly under-fills transactions.
                 best_iterations, _ = self._binary_search_iterations(
                     fork=fork,
                     gas_limit=gas_limit_cap,

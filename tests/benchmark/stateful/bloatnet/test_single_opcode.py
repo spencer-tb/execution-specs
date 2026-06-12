@@ -612,6 +612,11 @@ def test_sstore_bloated(
 ) -> None:
     """
     Benchmark SSTORE opcodes targeting an EOA with storage bloated.
+
+    The bloated storage is assumed to be filled linearly from slot 1
+    upwards, with each slot holding its own key as value. The SSTORE gas
+    metadata for `existing_slots=True` relies on this layout; if the stub
+    account deviates, the test will not exercise the claimed gas case.
     """
     sstore_metadata: dict[str, Any] = {}
     # If CACHE_TX, there would be one cold SLOAD before SSTORE
