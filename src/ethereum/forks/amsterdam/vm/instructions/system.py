@@ -325,6 +325,7 @@ class GenericCall:
     memory_output_size: U256
     code: Bytes
     disable_precompiles: bool
+    new_account_charged: bool = False
 
 
 def generic_call(evm: Evm, params: GenericCall) -> None:
@@ -338,6 +339,8 @@ def generic_call(evm: Evm, params: GenericCall) -> None:
     if evm.message.depth + Uint(1) > STACK_DEPTH_LIMIT:
         evm.gas_left += params.gas
         evm.state_gas_left += params.state_gas_reservoir
+        if params.new_account_charged:
+            credit_state_gas_refund(evm, StateGasCosts.NEW_ACCOUNT)
         push(evm.stack, U256(0))
         return
 
@@ -457,7 +460,9 @@ def call(evm: Evm) -> None:
     code = get_code(tx_state, code_hash)
 
     charge_gas(evm, extra_gas + extend_memory.cost)
-    if value != 0 and not is_account_alive(tx_state, to):
+    has_value = value != 0
+    new_account_charged = has_value and not is_account_alive(tx_state, to)
+    if new_account_charged:
         charge_state_gas(evm, StateGasCosts.NEW_ACCOUNT)
 
     message_call_gas = calculate_message_call_gas(
@@ -483,6 +488,8 @@ def call(evm: Evm) -> None:
         evm.return_data = b""
         evm.gas_left += message_call_gas.sub_call
         evm.state_gas_left += call_state_gas_reservoir
+        if new_account_charged:
+            credit_state_gas_refund(evm, StateGasCosts.NEW_ACCOUNT)
     else:
         generic_call(
             evm,
@@ -501,6 +508,7 @@ def call(evm: Evm) -> None:
                 memory_output_size=memory_output_size,
                 code=code,
                 disable_precompiles=is_delegated,
+                new_account_charged=new_account_charged,
             ),
         )
 
