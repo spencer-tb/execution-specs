@@ -38,17 +38,19 @@ Input validation runs in
 - a `<feat>-devnet-<n>` feature name — the devnet index belongs in the `version` major, not
   the feature name (so `feature=bal-devnet-7` is rejected in favour of
   `feature=bal-devnet version=v7.0.0`);
-- a `*-devnet` release missing a `branch`, or whose `version` major does not equal the devnet
-  number in the branch (so `feature=bal-devnet branch=bal-devnet-7` must use `version=v7.*.*`).
+- a `*-devnet` release missing a `branch`, a `branch` outside the `devnets/<feat>/<n>` shape
+  (e.g. `devnets/bal/7`), or a `version` major that does not equal the devnet number `<n>` in
+  the branch (so `feature=bal-devnet branch=devnets/bal/7` must use `version=v7.*.*`).
 
 ## Devnet releases
 
 Devnet releases must use a `<feat>-devnet` feature name (e.g. `feature=bal-devnet`) and must
-specify the branch to release from. The `version` major must match the devnet number in the
+specify the branch to release from. Devnet branches follow the `devnets/<feat>/<n>` scheme
+(e.g. `devnets/bal/7`), and the `version` major must match the devnet number `<n>` in the
 branch:
 
 ```bash
-gh workflow run release_fixtures.yaml -f feature=bal-devnet -f version=v7.0.0 -f branch=bal-devnet-7
+gh workflow run release_fixtures.yaml -f feature=bal-devnet -f version=v7.0.0 -f branch=devnets/bal/7
 ```
 
 ## What the workflow produces
@@ -67,7 +69,7 @@ On success the workflow:
 | Example dispatch | Git tag | Release title | Artifact |
 | ---------------- | ------- | ------------- | -------- |
 | `feature=tests version=v24.0.0` | `tests@v24.0.0` | `tests@v24.0.0` | `fixtures.tar.gz` |
-| `feature=bal-devnet version=v7.0.0 branch=bal-devnet-7` | `tests-bal-devnet@v7.0.0` | `tests-bal-devnet@v7.0.0` | `fixtures_bal-devnet.tar.gz` |
+| `feature=bal-devnet version=v7.0.0 branch=devnets/bal/7` | `tests-bal-devnet@v7.0.0` | `tests-bal-devnet@v7.0.0` | `fixtures_bal-devnet.tar.gz` |
 
 The release is created as a draft; review and publish it from the GitHub releases page.
 
@@ -84,7 +86,7 @@ The release is created as a draft; review and publish it from the GitHub release
    ```bash
    gh workflow run release_fixtures.yaml -f feature=tests -f version=v24.1.1
    # devnet releases additionally require the branch (major must match its number):
-   gh workflow run release_fixtures.yaml -f feature=bal-devnet -f version=v7.0.0 -f branch=bal-devnet-7
+   gh workflow run release_fixtures.yaml -f feature=bal-devnet -f version=v7.0.0 -f branch=devnets/bal/7
    ```
 
 3. **Wait for the build to succeed.** On success the workflow creates the
