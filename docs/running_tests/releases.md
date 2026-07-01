@@ -29,13 +29,13 @@ and cadence.
 | Devnet    | `<feat>-devnet@vX.Y.Z` | `fixtures_<feat>-devnet.tar.gz` | All forks, all tests, for an upcoming-fork feature under active devnet testing   | the devnet branch       |
 | Benchmark | `benchmark@vX.Y.Z`     | `fixtures_benchmark.tar.gz`     | EVM benchmarking tests                                                          | latest `forks/*` branch |
 
-- Tests releases track clients' production branches and are tagged frequently (roughly
+- "Tests" releases track clients' production branches and are tagged frequently (roughly
   once or twice a week). They are the "must pass" release for mainnet CI, and supersede the
   old `fixtures_stable` / `fixtures_develop` artifacts.
-- Devnet releases target a specific feature under active development (e.g. `bal-devnet`).
+- "Devnet" releases target a specific feature under active development (e.g. `bal-devnet`).
   They are advisory/non-blocking and may not yet cover every EIP; see the corresponding
   release notes for the coverage provided.
-- Benchmark (and, in future, zkEVM) releases are produced separately for their
+- "Benchmark" (and, in future, zkEVM) releases are produced separately for their
   specialized consumers.
 
 ## Versioning Scheme
