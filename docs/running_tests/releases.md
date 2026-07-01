@@ -14,14 +14,16 @@ and how to consume them. To cut a new release, see
     `vX.Y.Z` (e.g. [`v2.20.0`](https://github.com/ethereum/execution-specs/releases/tag/v2.20.0)).
     Those contain no test fixtures, only the executable specification package.
     Fixture releases are the feature-scoped tags described on this page, and are never
-    attached to the `vX.Y.Z` package tags.
+    attached to the `vX.Y.Z` package tags. Every fixture tag starts with `tests`
+    (`tests@vX.Y.Z`, or `tests-<feature>@vX.Y.Z` for the other features), which is the
+    quickest way to tell the two apart on the releases page.
 
 ## Test Release Types
 
 Fixtures are released as independent types. Each type has its own tag namespace, artifact,
 and cadence.
 
-| Type      | Tag                    | Artifact                        | Scope                                                                          | Built from              |
+| Type      | Release name           | Artifact                        | Scope                                                                          | Built from              |
 | --------- | ---------------------- | ------------------------------- | ------------------------------------------------------------------------------ | ----------------------- |
 | Tests     | `tests@vX.Y.Z`         | `fixtures.tar.gz`               | All forks, all tests (eventually including `ethereum/tests` state tests)        | latest `forks/*` branch |
 | Devnet    | `<feat>-devnet@vX.Y.Z` | `fixtures_<feat>-devnet.tar.gz` | All forks, all tests, for an upcoming-fork feature under active devnet testing   | the devnet branch       |
@@ -38,12 +40,12 @@ and cadence.
 
 ## Versioning Scheme
 
-Release tags use the form `<feature>@v<X>.<Y>.<Z>`. The underlying git tag is prefixed with
-`tests-` to namespace it apart from the spec-package `vX.Y.Z` tags (e.g.
-`tests-bal-devnet@v7.0.0`), except the default `tests` feature, which tags as
-`tests@v<X>.<Y>.<Z>` directly (no doubled prefix). The GitHub release title matches the git
-tag (e.g. `tests-bal-devnet@v7.0.0`); `consume cache` still accepts the friendly
-`<feature>@vX.Y.Z` form (`bal-devnet@v7.0.0`).
+Each release has a name of the form `<feature>@v<X>.<Y>.<Z>` (e.g. `bal-devnet@v7.0.0`),
+which is the identifier `consume cache` accepts. The git tag, and the matching GitHub release
+title, add a `tests-` prefix to keep fixture releases separate from the spec-package `vX.Y.Z`
+tags, so the release `bal-devnet@v7.0.0` is tagged `tests-bal-devnet@v7.0.0`. The default
+`tests` feature is the exception, tagging as `tests@v<X>.<Y>.<Z>` directly with no doubled
+prefix.
 
 `X` identifies the fork or devnet a release targets; `Y` and `Z` order changes within that
 target:
