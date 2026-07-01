@@ -57,8 +57,8 @@ gh workflow run release_fixtures.yaml -f feature=bal-devnet -f version=v7.0.0 -f
 
 On success the workflow:
 
-1. Builds `fixtures_<feature>.tar.gz` for the resolved feature (per its `evm-type` and
-   `fill-params` in `feature.yaml`).
+1. Builds `fixtures_<feature>.tar.gz` (the `tests` feature builds `fixtures.tar.gz`) for the
+   resolved feature (per its `evm-type` and `fill-params` in `feature.yaml`).
 2. Creates the git tag `tests-<feature>@vX.Y.Z` (the `tests` feature tags as `tests@vX.Y.Z`,
    no doubled prefix) on the released commit (the SHA resolved once from the `branch` HEAD when
    given, otherwise the dispatch commit).
