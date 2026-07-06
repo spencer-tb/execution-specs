@@ -316,9 +316,7 @@ docs-spec $DOCC_SKIP_DIFFS=env_var_or_default("DOCC_SKIP_DIFFS", ""):
 [group('docs')]
 docs-spec-fast: (docs-spec "1")
 
-# Validate spec docs quickly on PRs by building consecutive-fork shards
-# in parallel. Each shard overlaps its predecessor by one fork so a
-# fork's previous-fork references resolve. Per-shard output, not merged.
+# Build spec docs in parallel shards for fast PR validation
 [group('docs')]
 docs-spec-parallel shards="4":
     uv run python -m ethereum_spec_tools.docc_shards \
