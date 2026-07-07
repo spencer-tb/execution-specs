@@ -84,7 +84,6 @@ def test_contract_calling_many_addresses(
         setup=setup,
         iterating=iterating,
         cleanup=Op.STOP,
-        iterating_state_gas=iterating.state_cost(fork),
     )
 
     contract_address = pre.deploy_contract(
@@ -284,9 +283,6 @@ def test_create(
         iterating=loop,
         iterating_subcall=initcode_body,
         cleanup=Op.STOP,
-        iterating_state_gas=(
-            loop.state_cost(fork) + initcode_body.state_cost(fork)
-        ),
     )
 
     contract_address = pre.deploy_contract(
@@ -590,17 +586,6 @@ def test_selfdestruct_existing(
     )
     num_contracts = sum(iteration_counts)
 
-    start = 0
-    total_gas_cost = 0
-    for iters in iteration_counts:
-        total_gas_cost += attack_code.tx_gas_cost_by_iteration_count(
-            fork=fork,
-            iteration_count=iters,
-            start_iteration=start,
-            calldata=calldata,
-        )
-        start += iters
-
     def factory_calldata(iteration_count: int, start_iteration: int) -> bytes:
         index_end = iteration_count + start_iteration - 1
         return Hash(start_iteration) + Hash(index_end)
@@ -628,6 +613,8 @@ def test_selfdestruct_existing(
                 calldata=calldata,
             )
         )
+
+    total_gas_cost = sum(tx.gas_cost for tx in exec_txs)
 
     post = {}
     for i in range(num_contracts):
@@ -726,15 +713,6 @@ def test_selfdestruct_created(
     )
     num_iterations = sum(iteration_counts)
 
-    total_gas_cost = sum(
-        attack_code.tx_gas_cost_by_iteration_count(
-            fork=fork,
-            iteration_count=iters,
-            calldata=calldata,
-        )
-        for iters in iteration_counts
-    )
-
     attack_code_address = pre.deploy_contract(
         code=attack_code,
         balance=num_iterations if value_bearing else 0,
@@ -751,6 +729,8 @@ def test_selfdestruct_created(
                 calldata=calldata,
             )
         )
+
+    total_gas_cost = sum(tx.gas_cost for tx in exec_txs)
 
     post = {
         attack_code_address: Account(
@@ -824,15 +804,6 @@ def test_selfdestruct_initcode(
     )
     num_iterations = sum(iteration_counts)
 
-    total_gas_cost = sum(
-        attack_code.tx_gas_cost_by_iteration_count(
-            fork=fork,
-            iteration_count=iters,
-            calldata=calldata,
-        )
-        for iters in iteration_counts
-    )
-
     attack_code_address = pre.deploy_contract(
         code=attack_code,
         balance=num_iterations if value_bearing else 0,
@@ -849,6 +820,8 @@ def test_selfdestruct_initcode(
                 calldata=calldata,
             )
         )
+
+    total_gas_cost = sum(tx.gas_cost for tx in exec_txs)
 
     post = {
         attack_code_address: Account(
