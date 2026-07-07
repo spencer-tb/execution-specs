@@ -502,9 +502,9 @@ def test_create2_address_collision(
     """
     Test CREATE2 returns zero on address collision.
 
-    When CREATE2 targets an address that already has code or storage,
-    the collision is detected early and returns zero without charging
-    state gas. The existing account is left unchanged.
+    When CREATE2 targets an already-alive address, the collision
+    returns zero without charging state gas. The existing account is
+    left unchanged.
     """
     gas_limit_cap = fork.transaction_gas_limit_cap()
     assert gas_limit_cap is not None
@@ -1824,14 +1824,15 @@ def test_create_collision_refunds_state_gas(
     create_opcode: Op,
 ) -> None:
     """
-    Verify CREATE/CREATE2 address collision refunds account state gas.
+    Verify CREATE/CREATE2 address collision preserves the reservoir.
 
-    The collision path increments the factory nonce and burns the
-    forwarded regular gas (consumed by the never-spawned child), but
-    still refunds `GAS_NEW_ACCOUNT` to the reservoir. Tight gas
+    The collision target is alive, so no account-creation charge is
+    applied at the access; the collision path increments the factory
+    nonce and burns the forwarded regular gas (consumed by the
+    never-spawned child), leaving the reservoir untouched. Tight gas
     tuning limits the factory's post-collision `gas_left` so the
-    probe SSTORE can only succeed via the refunded reservoir, not
-    by spilling state gas from `gas_left`.
+    probe SSTORE can only succeed via the intact reservoir, not by
+    spilling state gas from `gas_left`.
     """
     gas_costs = fork.gas_costs()
     sstore_state_gas = Op.SSTORE(new_value=1).state_cost(fork)
