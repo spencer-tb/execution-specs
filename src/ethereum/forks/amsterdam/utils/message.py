@@ -63,7 +63,7 @@ def prepare_message(
     elif isinstance(tx.to, Address):
         current_target = tx.to
         msg_data = tx.data
-        code = Bytes(b"")
+        code = None
         code_address = tx.to
     else:
         raise AssertionError("Target must be address or empty bytes")
