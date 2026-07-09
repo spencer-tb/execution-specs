@@ -1360,9 +1360,13 @@ def test_create_tx_header_gas_used(
         intrinsic_cost = fork.transaction_intrinsic_cost_calculator()
         # Regular-only creation intrinsic; STOP initcode deploys empty
         # code (zero deposit) and the pre-existing target adds no state
-        # gas, so the regular intrinsic dominates.
+        # gas, so the regular intrinsic dominates. The calldata floor
+        # exceeds this intrinsic but only pins the amount billed; the
+        # header counts the gas consumed as work, floor top-up excluded.
         expected_gas_used = intrinsic_cost(
-            calldata=bytes(initcode), contract_creation=True
+            calldata=bytes(initcode),
+            contract_creation=True,
+            return_cost_deducted_prior_execution=True,
         )
     else:
         # For a minimal CREATE tx deploying Op.STOP (1 byte),
@@ -2159,7 +2163,10 @@ def test_failed_create_tx_refills_top_frame_new_account(
 
     * REVERT preserves ``gas_left`` and ``refill_frame_state_gas`` returns
       the spilled ``NEW_ACCOUNT`` to it, so the state block nets to zero
-      and the sender pays only ``intrinsic_regular + revert_regular``.
+      and only the regular consumption counts as work. The tiny init code
+      leaves the decomposed calldata floor above that consumption, so the
+      amount billed (receipt) is pinned to the floor while the header
+      excludes the floor top-up.
     * HALT (INVALID) refills the spilled ``NEW_ACCOUNT`` to ``gas_left``
       and then burns all of it, so the sender pays the full ``gas_limit``.
     """
@@ -2167,7 +2174,9 @@ def test_failed_create_tx_refills_top_frame_new_account(
     intrinsic_calc = fork.transaction_intrinsic_cost_calculator()
 
     intrinsic_regular = intrinsic_calc(
-        calldata=bytes(init_code), contract_creation=True
+        calldata=bytes(init_code),
+        contract_creation=True,
+        return_cost_deducted_prior_execution=True,
     )
     # gas_limit must cover the top-frame NEW_ACCOUNT so the initcode runs.
     gas_limit = intrinsic_regular + gas_costs.NEW_ACCOUNT + 1000
@@ -2176,16 +2185,19 @@ def test_failed_create_tx_refills_top_frame_new_account(
         # Exceptional halt burns all gas_left (the refilled NEW_ACCOUNT
         # included).
         expected_gas_used = gas_limit
+        expected_header_gas = gas_limit
     else:
         # REVERT refills the spilled NEW_ACCOUNT, netting the state block
-        # to zero, so only the regular consumption is billed.
-        expected_gas_used = intrinsic_regular + init_code.regular_cost(fork)
-        # A tiny init code can leave the decomposed calldata floor above
-        # the regular gas consumed, pinning gas_used to the floor.
+        # to zero, so only the regular consumption counts as work.
+        regular_consumed = intrinsic_regular + init_code.regular_cost(fork)
+        # The tiny init code leaves the decomposed calldata floor above
+        # the regular gas consumed: the receipt bills at the floor, while
+        # the header's regular-gas accounting excludes the floor top-up.
         floor = fork.transaction_data_floor_cost_calculator()(
             data=bytes(init_code), contract_creation=True
         )
-        expected_gas_used = max(expected_gas_used, floor)
+        expected_gas_used = max(regular_consumed, floor)
+        expected_header_gas = regular_consumed
 
     sender = pre.fund_eoa()
     created = compute_create_address(address=sender, nonce=0)
@@ -2204,7 +2216,7 @@ def test_failed_create_tx_refills_top_frame_new_account(
         pre=pre,
         post={created: Account.NONEXISTENT},
         tx=tx,
-        blockchain_test_header_verify=Header(gas_used=expected_gas_used),
+        blockchain_test_header_verify=Header(gas_used=expected_header_gas),
     )
 
 
