@@ -241,8 +241,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [setup, build, combine]
     # Scheduled runs stop after `combine`: no tag, no draft release.
-    # Cached releases skip the fill, so a skipped `build` is expected.
-    if: always() && github.event_name == 'workflow_dispatch' && (needs.build.result == 'success' || ((inputs.cached || inputs.commit != '') && needs.build.result == 'skipped')) && (needs.combine.result == 'success' || needs.combine.result == 'skipped')
+    # Cached releases skip the fill, so a skipped `build` is expected;
+    # `setup` must have succeeded explicitly, because a failed `setup`
+    # also leaves `build` skipped and would otherwise start this job
+    # with empty outputs.
+    if: always() && github.event_name == 'workflow_dispatch' && needs.setup.result == 'success' && (needs.build.result == 'success' || ((inputs.cached || inputs.commit != '') && needs.build.result == 'skipped')) && (needs.combine.result == 'success' || needs.combine.result == 'skipped')
     permissions:
       contents: write
       # Cached releases download the artifact from the resolved
