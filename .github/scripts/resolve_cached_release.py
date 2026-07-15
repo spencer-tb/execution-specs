@@ -13,9 +13,10 @@ Dispatching `release_fixtures.yaml` with the `cached` flag drafts a
 `tests@` release from the newest nightly artifact instead of
 refilling: the scheduled nightly runs already build the mainnet
 `tests` feature into a release-shaped `fixtures_<commit>` artifact.
-This script validates the request, picks the nightly run whose
-artifact the release job downloads, and pins the exact commit that
-run built so the release tag lands on it.
+The `commit` input picks the nightly built at that commit instead of
+the newest one. This script validates the request, picks the nightly
+run whose artifact the release job downloads, and pins the exact
+commit that run built so the release tag lands on it.
 
 Checks performed, failing fast on the first violation:
 
@@ -24,16 +25,22 @@ Checks performed, failing fast on the first violation:
 - `INPUT_VERSION` matches `vX.Y.Z` and is greater than the newest
   existing `tests@` tag (releases always move forward; anything
   unusual belongs in a fresh fill).
-- The resolved run is the newest successful *scheduled* run of
+- The resolved run is a successful *scheduled* run of
   `release_fixtures.yaml` with a live (unexpired) tarball artifact
-  named for the run's own commit. Skip-runs upload no artifacts and
-  expired fills cannot be downloaded, so both are passed over.
+  named for the run's own commit: the newest one, or with
+  `INPUT_COMMIT` (7+ hex characters) the one built at that commit.
+  Skip-runs upload no artifacts and expired fills cannot be
+  downloaded, so both are passed over.
+- The resolved commit contains the newest existing `tests@` release,
+  so a cached release never regresses content (re-releasing the same
+  commit stays allowed).
 - The resolved commit is an ancestor of the current branch head.
   Commits after it are listed in the step summary so the releaser can
   see what the release will NOT contain.
 
 Read `GITHUB_REPOSITORY`, `GITHUB_SHA`, `INPUT_FEATURE`,
-`INPUT_BRANCH` and `INPUT_VERSION` from the environment and query the
+`INPUT_BRANCH`, `INPUT_VERSION` and `INPUT_COMMIT` from the
+environment and query the
 GitHub API via the `gh` CLI (authenticated by `GH_TOKEN`). Print
 `run_id`, `target_sha` and `artifact_name` as `key=value` lines for
 `$GITHUB_OUTPUT`.
@@ -54,6 +61,7 @@ WORKFLOW_FILE = "release_fixtures.yaml"
 ARTIFACT_PREFIX = "fixtures"
 
 VERSION_RE = re.compile(r"^v([0-9]+)\.([0-9]+)\.([0-9]+)$")
+COMMIT_RE = re.compile(r"^[0-9a-f]{7,40}$")
 
 
 def artifact_name(head_sha: str) -> str:
@@ -137,13 +145,14 @@ def has_live_tests_artifact(
     return any(a["name"] == name and not a["expired"] for a in artifacts)
 
 
-def cached_run(repository: str) -> tuple[str, str]:
+def cached_run(repository: str, commit: str) -> tuple[str, str]:
     """
     Return the (run id, head SHA) of the nightly run to reuse.
 
-    Take the newest successful scheduled run with a live artifact
-    (skip-runs upload no artifacts and expired fills cannot be
-    downloaded, so both are passed over).
+    Take the newest successful scheduled run with a live artifact, or
+    with *commit* the run built at that commit (skip-runs upload no
+    artifacts and expired fills cannot be downloaded, so both are
+    passed over). On a commit miss, list the reusable nightlies.
     """
     runs = json.loads(
         gh_api(
@@ -151,15 +160,45 @@ def cached_run(repository: str) -> tuple[str, str]:
             "/runs?status=success&event=schedule&per_page=10"
         )
     )["workflow_runs"]
+    live: list[str] = []
     for run in runs:
         run_id, head_sha = str(run["id"]), str(run["head_sha"])
-        if has_live_tests_artifact(repository, run_id, head_sha):
+        if not has_live_tests_artifact(repository, run_id, head_sha):
+            continue
+        if not commit or head_sha.startswith(commit):
             return run_id, head_sha
+        live.append(head_sha[:7])
+    if commit:
+        available = ", ".join(live) if live else "none"
+        fail(
+            f"no nightly with a live artifact was built at {commit} "
+            f"(reusable nightlies: {available}); dispatch a fresh fill "
+            "instead"
+        )
     fail(
         f"no scheduled run of {WORKFLOW_FILE} with a live "
         f"`{ARTIFACT_PREFIX}_<commit>` artifact found; dispatch a fresh "
         "fill instead"
     )
+
+
+def ensure_not_behind(repository: str, prev_tag: str, target_sha: str) -> None:
+    """
+    Fail when *target_sha* does not contain the *prev_tag* release.
+
+    A cached release must never regress content: the resolved nightly
+    has to be at or after the newest `tests@` tag. Re-releasing the
+    identical commit stays allowed.
+    """
+    compare = json.loads(
+        gh_api(f"repos/{repository}/compare/{prev_tag}...{target_sha}")
+    )
+    if compare["status"] not in ("identical", "ahead"):
+        fail(
+            f"the resolved nightly ({target_sha}) does not contain the "
+            f"newest tests release ({prev_tag}); a cached release must "
+            "not regress content"
+        )
 
 
 def commits_after(
@@ -199,6 +238,10 @@ def main() -> None:
             "`branch` input or dispatch a fresh fill"
         )
 
+    commit = os.environ.get("INPUT_COMMIT", "")
+    if commit and not COMMIT_RE.match(commit):
+        fail(f"commit '{commit}' must be 7 to 40 lowercase hex characters")
+
     requested = parse_version(version)
     prev_tag = newest_tests_tag(repository)
     if prev_tag and requested <= parse_version(
@@ -209,7 +252,9 @@ def main() -> None:
             f"tests release ({prev_tag})"
         )
 
-    run_id, target_sha = cached_run(repository)
+    run_id, target_sha = cached_run(repository, commit)
+    if prev_tag:
+        ensure_not_behind(repository, prev_tag, target_sha)
     missing = commits_after(repository, target_sha, head_sha)
 
     print(f"run_id={run_id}")

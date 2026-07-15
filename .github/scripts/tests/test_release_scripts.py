@@ -205,6 +205,7 @@ case "$2" in
     response="${!var:-$FAKE_GH_ARTIFACTS}"
     ;;
   *matching-refs*) response="$FAKE_GH_TAGS" ;;
+  *compare/tests@*) response="$FAKE_GH_COMPARE_TAG" ;;
   *compare*) response="$FAKE_GH_COMPARE" ;;
   *) response="" ;;
 esac
@@ -433,11 +434,13 @@ class TestResolveCachedRelease:
         version: str,
         feature: str = "tests",
         branch: str = "",
+        commit: str = "",
         runs: str = "",
         artifacts: str = "",
         per_run_artifacts: dict[int, str] | None = None,
         tags: str = "",
         compare: str = "",
+        tag_compare: str = UP_TO_DATE,
     ) -> tuple[subprocess.CompletedProcess, Path]:
         """Run the script with a fake `gh` on PATH; return it + summary."""
         bin_dir = tmp_path / "bin"
@@ -455,10 +458,12 @@ class TestResolveCachedRelease:
         env["INPUT_VERSION"] = version
         env["INPUT_FEATURE"] = feature
         env["INPUT_BRANCH"] = branch
+        env["INPUT_COMMIT"] = commit
         env["FAKE_GH_RUNS"] = runs
         env["FAKE_GH_ARTIFACTS"] = artifacts
         env["FAKE_GH_TAGS"] = tags
         env["FAKE_GH_COMPARE"] = compare
+        env["FAKE_GH_COMPARE_TAG"] = tag_compare
         for run_id, response in (per_run_artifacts or {}).items():
             env[f"FAKE_GH_ARTIFACTS_{run_id}"] = response
 
@@ -596,6 +601,66 @@ class TestResolveCachedRelease:
         )
         assert result.returncode == 1
         assert "dispatch a fresh fill instead" in result.stderr
+
+    def test_commit_input_selects_that_nightly(self, tmp_path):
+        """Verify `commit` picks an older nightly over the newest."""
+        result, _ = self.run_resolve(
+            tmp_path,
+            "v4.0.1",
+            commit="d" * 7,
+            runs=self.runs_json(
+                {"id": 3, "head_sha": "c" * 40},
+                {"id": 2, "head_sha": "a" * 40},
+                {"id": 1, "head_sha": "d" * 40},
+            ),
+            per_run_artifacts={
+                3: NO_ARTIFACTS,
+                2: artifact_listing("a" * 40),
+                1: artifact_listing("d" * 40),
+            },
+            tags=TESTS_TAGS,
+            compare=UP_TO_DATE,
+        )
+        assert result.returncode == 0
+        out = self.parse_outputs(result.stdout)
+        assert out["run_id"] == "1"
+        assert out["target_sha"] == "d" * 40
+        assert out["artifact_name"] == "fixtures_ddddddd"
+
+    def test_commit_input_without_match_fails(self, tmp_path):
+        """Verify a commit with no live nightly lists the candidates."""
+        result, _ = self.run_resolve(
+            tmp_path,
+            "v4.0.1",
+            commit="beef111",
+            runs=self.runs_json({"id": 2, "head_sha": "a" * 40}),
+            artifacts=artifact_listing("a" * 40),
+            tags=TESTS_TAGS,
+        )
+        assert result.returncode == 1
+        assert "was built at beef111" in result.stderr
+        assert "aaaaaaa" in result.stderr
+
+    def test_bad_commit_format_fails(self, tmp_path):
+        """Verify a malformed commit is rejected before any lookup."""
+        result, _ = self.run_resolve(
+            tmp_path, "v4.0.1", commit="xyz", tags=TESTS_TAGS
+        )
+        assert result.returncode == 1
+        assert "hex characters" in result.stderr
+
+    def test_release_behind_previous_fails(self, tmp_path):
+        """Verify a nightly older than the newest release is rejected."""
+        result, _ = self.run_resolve(
+            tmp_path,
+            "v4.0.1",
+            runs=self.runs_json({"id": 2, "head_sha": "a" * 40}),
+            artifacts=artifact_listing("a" * 40),
+            tags=TESTS_TAGS,
+            tag_compare=json.dumps({"status": "behind", "commits": []}),
+        )
+        assert result.returncode == 1
+        assert "must not regress content" in result.stderr
 
     def test_diverged_nightly_fails(self, tmp_path):
         """Verify a nightly off the branch history is not reused."""

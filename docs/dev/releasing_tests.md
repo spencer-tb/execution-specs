@@ -19,6 +19,7 @@ gh workflow run release_fixtures.yaml -f feature=<feature> -f version=vX.Y.Z [-f
 | `evm_repo` | no                | Override the t8n tool repo (e.g. `ethereum/go-ethereum`).                                              |
 | `evm_ref`  | no                | Override the t8n tool branch / tag / commit.                                                          |
 | `cached`   | no                | Draft from the newest nightly artifact instead of refilling (`tests` only): `build` and `combine` are skipped and the tag targets the nightly's commit. See [Cached releases](#cached-releases). |
+| `commit`   | no                | Release the nightly built at this commit (7+ hex chars) instead of the newest one; implies `cached`. |
 
 `<feature>` must be a key in [`.github/configs/feature.yaml`](https://github.com/ethereum/execution-specs/blob/master/.github/configs/feature.yaml) (e.g. `tests`, `benchmark`), or a `<feat>-devnet` name that resolves to the shared `devnet` feature.
 
@@ -85,15 +86,18 @@ A `tests@` release can reuse the newest nightly artifact instead of refilling: t
 
 ```bash
 gh workflow run release_fixtures.yaml -f feature=tests -f version=vX.Y.Z -f cached=true
+# or release the nightly built at a specific commit (implies cached):
+gh workflow run release_fixtures.yaml -f feature=tests -f version=vX.Y.Z -f commit=<hash>
 ```
 
-The `build` and `combine` jobs are skipped; the `release` job downloads the `fixtures_<commit>` artifact from the newest nightly run that actually filled and drafts the same release a fresh fill would produce, targeted at the exact commit the nightly built — so publishing it creates the `tests@vX.Y.Z` tag on that commit. The whole run takes minutes on a hosted runner. Review and publish the draft exactly as in [Cutting a release](#cutting-a-release).
+The `build` and `combine` jobs are skipped; the `release` job downloads the `fixtures_<commit>` artifact from the newest nightly run that actually filled — or, with the `commit` input, from the nightly built at that commit — and drafts the same release a fresh fill would produce, targeted at the exact commit the nightly built, so publishing it creates the `tests@vX.Y.Z` tag on that commit. The whole run takes minutes on a hosted runner. Review and publish the draft exactly as in [Cutting a release](#cutting-a-release).
 
 The cached path's validation (unit-tested in [`resolve_cached_release.py`](https://github.com/ethereum/execution-specs/blob/master/.github/scripts/resolve_cached_release.py)) fails fast when:
 
 - the `feature` is not `tests`, or a `branch` is given (the nightly fills the default branch);
 - the `version` is not `vX.Y.Z` or does not exceed the newest existing `tests@` tag;
-- no nightly run with a live `fixtures_<commit>` artifact exists (nightly artifacts are retained for five days: past that, dispatch a fresh fill);
+- no nightly run with a live `fixtures_<commit>` artifact exists — or none matching the `commit` input; the error lists the reusable nightlies (artifacts are retained for five days: past that, dispatch a fresh fill);
+- the resolved nightly does not contain the newest existing `tests@` release (a cached release must never regress content; re-releasing the identical commit is allowed);
 - the nightly's commit is not an ancestor of the current default branch head.
 
-A cached release contains exactly what the nightly filled: commits that landed after the nightly are **not** included, and the run's step summary lists them so the releaser can decide between the cached artifact and a fresh fill.
+A cached release contains exactly what the resolved nightly filled: commits that landed after it are **not** included, and the run's step summary lists them so the releaser can decide between the cached artifact and a fresh fill.

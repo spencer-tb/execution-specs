@@ -1,6 +1,6 @@
 name: Create Fixture Release
 
-run-name: ${{ github.event_name == 'schedule' && 'Nightly Fill' || format('Create Fixture Release {0}@{1}{2}', inputs.feature, inputs.version, inputs.cached && ' (cached)' || '') }}
+run-name: ${{ github.event_name == 'schedule' && 'Nightly Fill' || format('Create Fixture Release {0}@{1}{2}', inputs.feature, inputs.version, (inputs.cached || inputs.commit != '') && ' (cached)' || '') }}
 
 # Scheduled runs fill the mainnet `tests` feature (all tests, all fixture
 # formats, up to the latest mainnet fork -- no dev forks) through the exact
@@ -47,13 +47,17 @@ on:
         required: false
         type: boolean
         default: false
+      commit:
+        description: "Release the nightly built at this commit (7+ hex chars); implies cached. Empty = newest."
+        required: false
+        type: string
 
 concurrency:
   # Scheduled runs queue behind an in-flight nightly (never cancel a
   # fill). Cached releases serialize too: drafts do not reserve their
   # tag name, so parallel dispatches of the same version would silently
   # coexist. Fresh releases are unconstrained (unique group per run).
-  group: ${{ github.event_name == 'schedule' && 'nightly-fill' || inputs.cached && 'cached-release' || github.run_id }}
+  group: ${{ github.event_name == 'schedule' && 'nightly-fill' || (inputs.cached || inputs.commit != '') && 'cached-release' || github.run_id }}
   cancel-in-progress: false
 
 jobs:
@@ -63,7 +67,7 @@ jobs:
       # A cached release skips the fill: `build` (and with it `combine`)
       # keys off `run`, and the release job downloads the resolved
       # nightly's artifact and tags the commit it was built from.
-      run: ${{ inputs.cached && 'false' || steps.check.outputs.run }}
+      run: ${{ (inputs.cached || inputs.commit != '') && 'false' || steps.check.outputs.run }}
       build_matrix: ${{ steps.matrix.outputs.build_matrix }}
       feature_name: ${{ steps.matrix.outputs.feature_name }}
       combine_labels: ${{ steps.matrix.outputs.combine_labels }}
@@ -98,12 +102,13 @@ jobs:
 
       - name: Resolve the nightly artifact to reuse (cached releases)
         id: cached
-        if: inputs.cached
+        if: inputs.cached || inputs.commit != ''
         env:
           GH_TOKEN: ${{ github.token }}
           INPUT_FEATURE: ${{ inputs.feature }}
           INPUT_VERSION: ${{ inputs.version }}
           INPUT_BRANCH: ${{ inputs.branch }}
+          INPUT_COMMIT: ${{ inputs.commit }}
         run: |
           # The feature/branch/version guards, run resolution and
           # ancestry check live in (and are unit-tested via)
@@ -237,7 +242,7 @@ jobs:
     needs: [setup, build, combine]
     # Scheduled runs stop after `combine`: no tag, no draft release.
     # Cached releases skip the fill, so a skipped `build` is expected.
-    if: always() && github.event_name == 'workflow_dispatch' && (needs.build.result == 'success' || (inputs.cached && needs.build.result == 'skipped')) && (needs.combine.result == 'success' || needs.combine.result == 'skipped')
+    if: always() && github.event_name == 'workflow_dispatch' && (needs.build.result == 'success' || ((inputs.cached || inputs.commit != '') && needs.build.result == 'skipped')) && (needs.combine.result == 'success' || needs.combine.result == 'skipped')
     permissions:
       contents: write
       # Cached releases download the artifact from the resolved
