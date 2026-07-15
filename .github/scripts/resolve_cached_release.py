@@ -12,10 +12,10 @@ environment).
 Dispatching `release_fixtures.yaml` with the `cached` flag drafts a
 `tests@` release from the newest nightly artifact instead of
 refilling: the scheduled nightly runs already build the mainnet
-`tests` feature into a release-shaped `fixtures_tests` artifact. This
-script validates the request, picks the nightly run whose artifact the
-release job downloads, and pins the exact commit that run built so the
-release tag lands on it.
+`tests` feature into a release-shaped `fixtures_<commit>` artifact.
+This script validates the request, picks the nightly run whose
+artifact the release job downloads, and pins the exact commit that
+run built so the release tag lands on it.
 
 Checks performed, failing fast on the first violation:
 
@@ -25,9 +25,9 @@ Checks performed, failing fast on the first violation:
   existing `tests@` tag (releases always move forward; anything
   unusual belongs in a fresh fill).
 - The resolved run is the newest successful *scheduled* run of
-  `release_fixtures.yaml` with a live (unexpired) `fixtures_tests`
-  artifact. Skip-runs upload no artifacts and expired fills cannot be
-  downloaded, so both are passed over.
+  `release_fixtures.yaml` with a live (unexpired) tarball artifact
+  named for the run's own commit. Skip-runs upload no artifacts and
+  expired fills cannot be downloaded, so both are passed over.
 - The resolved commit is an ancestor of the current branch head.
   Commits after it are listed in the step summary so the releaser can
   see what the release will NOT contain.
@@ -35,7 +35,8 @@ Checks performed, failing fast on the first violation:
 Read `GITHUB_REPOSITORY`, `GITHUB_SHA`, `INPUT_FEATURE`,
 `INPUT_BRANCH` and `INPUT_VERSION` from the environment and query the
 GitHub API via the `gh` CLI (authenticated by `GH_TOKEN`). Print
-`run_id` and `target_sha` as `key=value` lines for `$GITHUB_OUTPUT`.
+`run_id`, `target_sha` and `artifact_name` as `key=value` lines for
+`$GITHUB_OUTPUT`.
 """
 
 import json
@@ -47,11 +48,17 @@ from typing import NoReturn
 
 WORKFLOW_FILE = "release_fixtures.yaml"
 
-# The combined-tarball artifact a nightly `tests` fill uploads; only
-# this artifact is ever reused by a cached release.
-ARTIFACT_NAME = "fixtures_tests"
+# The combined-tarball artifact a nightly `tests` fill uploads is
+# named for the short hash of the built commit; only that artifact is
+# ever reused by a cached release.
+ARTIFACT_PREFIX = "fixtures"
 
 VERSION_RE = re.compile(r"^v([0-9]+)\.([0-9]+)\.([0-9]+)$")
+
+
+def artifact_name(head_sha: str) -> str:
+    """Return the tarball artifact name of a nightly built at *head_sha*."""
+    return f"{ARTIFACT_PREFIX}_{head_sha[:7]}"
 
 
 def fail(message: str) -> NoReturn:
@@ -113,14 +120,21 @@ def newest_tests_tag(repository: str) -> str:
     return max(versioned)[1]
 
 
-def has_live_tests_artifact(repository: str, run_id: str) -> bool:
-    """Return whether *run_id* has a live `fixtures_tests` artifact."""
+def has_live_tests_artifact(
+    repository: str, run_id: str, head_sha: str
+) -> bool:
+    """
+    Return whether *run_id* has a live tarball artifact.
+
+    The artifact name is derived from the run's own head SHA, so a
+    name that does not match the commit it claims to be built from is
+    passed over.
+    """
     artifacts = json.loads(
         gh_api(f"repos/{repository}/actions/runs/{run_id}/artifacts")
     )["artifacts"]
-    return any(
-        a["name"] == ARTIFACT_NAME and not a["expired"] for a in artifacts
-    )
+    name = artifact_name(head_sha)
+    return any(a["name"] == name and not a["expired"] for a in artifacts)
 
 
 def cached_run(repository: str) -> tuple[str, str]:
@@ -138,11 +152,13 @@ def cached_run(repository: str) -> tuple[str, str]:
         )
     )["workflow_runs"]
     for run in runs:
-        if has_live_tests_artifact(repository, str(run["id"])):
-            return str(run["id"]), str(run["head_sha"])
+        run_id, head_sha = str(run["id"]), str(run["head_sha"])
+        if has_live_tests_artifact(repository, run_id, head_sha):
+            return run_id, head_sha
     fail(
         f"no scheduled run of {WORKFLOW_FILE} with a live "
-        f"`{ARTIFACT_NAME}` artifact found; dispatch a fresh fill instead"
+        f"`{ARTIFACT_PREFIX}_<commit>` artifact found; dispatch a fresh "
+        "fill instead"
     )
 
 
@@ -198,6 +214,7 @@ def main() -> None:
 
     print(f"run_id={run_id}")
     print(f"target_sha={target_sha}")
+    print(f"artifact_name={artifact_name(target_sha)}")
 
     run_url = f"https://github.com/{repository}/actions/runs/{run_id}"
     append_summary(

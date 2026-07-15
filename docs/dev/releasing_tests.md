@@ -77,7 +77,7 @@ The release is created as a draft; review and publish it from the GitHub release
 
 ## Nightly fill
 
-The same workflow also runs on a nightly schedule (02:00 UTC) as a release rehearsal: it fills the mainnet `tests` feature (all tests, slow included, all fixture formats, up to the latest mainnet fork — dev forks are not included) through the exact release pipeline, but stops after `combine`, so no tag or release is created. Each run uploads the `fixtures_tests` workflow artifact (containing `fixtures.tar.gz`) with a 5-day retention: a rotating, always-available build of the mainnet fixtures, effectively a `tests@` release candidate on demand. A scheduled run skips itself when there are no new commits since the last nightly that actually filled — a skipped or failed nightly never advances that baseline, so no commit slips through unfilled. A quiet stretch without commits still re-fills once the last fill is four days old, or its artifact is gone, so a live artifact always exists within the five-day retention.
+The same workflow also runs on a nightly schedule (02:00 UTC) as a release rehearsal: it fills the mainnet `tests` feature (all tests, slow included, all fixture formats, up to the latest mainnet fork — dev forks are not included) through the exact release pipeline, but stops after `combine`, so no tag or release is created. Each run uploads a `fixtures_<commit>` workflow artifact (short hash of the built commit, containing `fixtures.tar.gz`) with a 5-day retention: a rotating, always-available build of the mainnet fixtures, effectively a `tests@` release candidate on demand. A scheduled run skips itself when there are no new commits since the last nightly that actually filled — a skipped or failed nightly never advances that baseline, so no commit slips through unfilled. A quiet stretch without commits still re-fills once the last fill is four days old, or its artifact is gone, so a live artifact always exists within the five-day retention.
 
 ## Cached releases
 
@@ -87,13 +87,13 @@ A `tests@` release can reuse the newest nightly artifact instead of refilling: t
 gh workflow run release_fixtures.yaml -f feature=tests -f version=vX.Y.Z -f cached=true
 ```
 
-The `build` and `combine` jobs are skipped; the `release` job downloads the `fixtures_tests` artifact from the newest nightly run that actually filled and drafts the same release a fresh fill would produce, targeted at the exact commit the nightly built — so publishing it creates the `tests@vX.Y.Z` tag on that commit. The whole run takes minutes on a hosted runner. Review and publish the draft exactly as in [Cutting a release](#cutting-a-release).
+The `build` and `combine` jobs are skipped; the `release` job downloads the `fixtures_<commit>` artifact from the newest nightly run that actually filled and drafts the same release a fresh fill would produce, targeted at the exact commit the nightly built — so publishing it creates the `tests@vX.Y.Z` tag on that commit. The whole run takes minutes on a hosted runner. Review and publish the draft exactly as in [Cutting a release](#cutting-a-release).
 
 The cached path's validation (unit-tested in [`resolve_cached_release.py`](https://github.com/ethereum/execution-specs/blob/master/.github/scripts/resolve_cached_release.py)) fails fast when:
 
 - the `feature` is not `tests`, or a `branch` is given (the nightly fills the default branch);
 - the `version` is not `vX.Y.Z` or does not exceed the newest existing `tests@` tag;
-- no nightly run with a live `fixtures_tests` artifact exists (nightly artifacts are retained for five days: past that, dispatch a fresh fill);
+- no nightly run with a live `fixtures_<commit>` artifact exists (nightly artifacts are retained for five days: past that, dispatch a fresh fill);
 - the nightly's commit is not an ancestor of the current default branch head.
 
 A cached release contains exactly what the nightly filled: commits that landed after the nightly are **not** included, and the run's step summary lists them so the releaser can decide between the cached artifact and a fresh fill.

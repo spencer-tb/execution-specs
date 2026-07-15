@@ -400,19 +400,28 @@ class TestCheckNewCommits:
 
 
 # Canned responses for the cached-release script. Unlike the commit
-# check, it matches artifacts by name, so these carry the
-# `fixtures_tests` name.
-LIVE_TESTS_ARTIFACT = json.dumps(
-    {"artifacts": [{"name": "fixtures_tests", "expired": False}]}
-)
-EXPIRED_TESTS_ARTIFACT = json.dumps(
-    {"artifacts": [{"name": "fixtures_tests", "expired": True}]}
-)
+# check, it matches artifacts by the commit-derived
+# `fixtures_<short sha>` name, so the canned listings are built
+# per head SHA.
 TESTS_TAGS = json.dumps(
     [{"ref": "refs/tags/tests@v3.1.2"}, {"ref": "refs/tags/tests@v4.0.0"}]
 )
 NO_TAGS = "[]"
 UP_TO_DATE = json.dumps({"status": "identical", "commits": []})
+
+
+def artifact_listing(head_sha: str, expired: bool = False) -> str:
+    """Return an artifact listing with a tarball named for *head_sha*."""
+    return json.dumps(
+        {
+            "artifacts": [
+                {
+                    "name": f"fixtures_{head_sha[:7]}",
+                    "expired": expired,
+                }
+            ]
+        }
+    )
 
 
 class TestResolveCachedRelease:
@@ -489,8 +498,8 @@ class TestResolveCachedRelease:
             ),
             per_run_artifacts={
                 3: NO_ARTIFACTS,
-                2: LIVE_TESTS_ARTIFACT,
-                1: EXPIRED_TESTS_ARTIFACT,
+                2: artifact_listing("a" * 40),
+                1: artifact_listing("d" * 40, expired=True),
             },
             tags=TESTS_TAGS,
             compare=json.dumps({"status": "ahead", "commits": [commit]}),
@@ -499,6 +508,7 @@ class TestResolveCachedRelease:
         out = self.parse_outputs(result.stdout)
         assert out["run_id"] == "2"
         assert out["target_sha"] == "a" * 40
+        assert out["artifact_name"] == "fixtures_aaaaaaa"
         text = summary.read_text()
         assert "### Commits NOT included in this release" in text
         # Short SHA plus the commit subject, without the body.
@@ -511,7 +521,7 @@ class TestResolveCachedRelease:
             tmp_path,
             "v4.0.1",
             runs=self.runs_json({"id": 2, "head_sha": "b" * 40}),
-            artifacts=LIVE_TESTS_ARTIFACT,
+            artifacts=artifact_listing("b" * 40),
             tags=TESTS_TAGS,
             compare=UP_TO_DATE,
         )
@@ -526,7 +536,7 @@ class TestResolveCachedRelease:
             tmp_path,
             "v1.0.0",
             runs=self.runs_json({"id": 2, "head_sha": "b" * 40}),
-            artifacts=LIVE_TESTS_ARTIFACT,
+            artifacts=artifact_listing("b" * 40),
             tags=NO_TAGS,
             compare=UP_TO_DATE,
         )
@@ -568,7 +578,20 @@ class TestResolveCachedRelease:
             tmp_path,
             "v4.0.1",
             runs=self.runs_json({"id": 2, "head_sha": "a" * 40}),
-            artifacts=EXPIRED_TESTS_ARTIFACT,
+            artifacts=artifact_listing("a" * 40, expired=True),
+            tags=TESTS_TAGS,
+        )
+        assert result.returncode == 1
+        assert "dispatch a fresh fill instead" in result.stderr
+
+    def test_mismatched_artifact_name_is_skipped(self, tmp_path):
+        """Verify an artifact named for another commit is not reused."""
+        result, _ = self.run_resolve(
+            tmp_path,
+            "v4.0.1",
+            runs=self.runs_json({"id": 2, "head_sha": "a" * 40}),
+            # Live, but named for a different commit than the run built.
+            artifacts=artifact_listing("f" * 40),
             tags=TESTS_TAGS,
         )
         assert result.returncode == 1
@@ -580,7 +603,7 @@ class TestResolveCachedRelease:
             tmp_path,
             "v4.0.1",
             runs=self.runs_json({"id": 2, "head_sha": "a" * 40}),
-            artifacts=LIVE_TESTS_ARTIFACT,
+            artifacts=artifact_listing("a" * 40),
             tags=TESTS_TAGS,
             compare=json.dumps({"status": "diverged", "commits": []}),
         )

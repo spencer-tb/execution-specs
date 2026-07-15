@@ -68,7 +68,9 @@ jobs:
       feature_name: ${{ steps.matrix.outputs.feature_name }}
       combine_labels: ${{ steps.matrix.outputs.combine_labels }}
       target_sha: ${{ steps.cached.outputs.target_sha || steps.target_sha.outputs.sha }}
+      short_sha: ${{ steps.target_sha.outputs.short_sha }}
       artifact_run_id: ${{ steps.cached.outputs.run_id }}
+      artifact_name: ${{ steps.cached.outputs.artifact_name }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -77,7 +79,14 @@ jobs:
       - name: Resolve target SHA
         id: target_sha
         shell: bash
-        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+        # The short form is a fixed 7-character slice (not `git
+        # rev-parse --short`, whose length can drift): the cached-release
+        # resolver derives artifact names from the API's full SHA and the
+        # two must always agree.
+        run: |
+          sha="$(git rev-parse HEAD)"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "short_sha=${sha:0:7}" >> "$GITHUB_OUTPUT"
       - uses: ./.github/actions/setup-uv
 
       - name: Check for new commits (scheduled runs)
@@ -211,7 +220,11 @@ jobs:
       - name: Upload combined fixture tarball
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: fixtures_${{ needs.setup.outputs.feature_name }}
+          # Name the artifact for the built commit so the rolling
+          # nightly artifacts are tellable apart at a glance; the
+          # cached-release resolver derives this exact name from each
+          # run's head SHA. The tarball inside carries the feature name.
+          name: fixtures_${{ needs.setup.outputs.short_sha }}
           path: ${{ steps.tarball.outputs.path }}
           # Keep nightly tarballs for five days; a quiet nightly re-runs
           # after four (see check_new_commits.py), so a live artifact
@@ -244,8 +257,8 @@ jobs:
             # Cached release: download the resolved nightly's tarball by
             # exact name -- a young nightly's live split directories
             # would also match the fixtures_* pattern.
-            gh run download "$ARTIFACT_RUN_ID" -n fixtures_tests \
-              --dir ./artifacts/fixtures_tests
+            gh run download "$ARTIFACT_RUN_ID" -n "$ARTIFACT_NAME" \
+              --dir "./artifacts/$ARTIFACT_NAME"
           else
             gh run download ${{ github.run_id }} -p "fixtures_*" --dir ./artifacts
             rm -rf ./artifacts/fixtures__*/
@@ -254,6 +267,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           ARTIFACT_RUN_ID: ${{ needs.setup.outputs.artifact_run_id }}
+          ARTIFACT_NAME: ${{ needs.setup.outputs.artifact_name }}
 
       - name: Draft release
         shell: bash
