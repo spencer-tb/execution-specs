@@ -1,6 +1,6 @@
 name: Create Fixture Release
 
-run-name: ${{ github.event_name == 'schedule' && 'Nightly Fill' || format('Create Fixture Release {0}@{1}', inputs.feature, inputs.version) }}
+run-name: ${{ github.event_name == 'schedule' && 'Nightly Fill' || inputs.dry_run && format('Dry Run {0}@{1}', inputs.feature, inputs.version) || format('Create Fixture Release {0}@{1}', inputs.feature, inputs.version) }}
 
 # Scheduled runs fill the mainnet `tests` feature (all tests, all fixture
 # formats, up to the latest mainnet fork -- no dev forks) through the exact
@@ -8,6 +8,12 @@ run-name: ${{ github.event_name == 'schedule' && 'Nightly Fill' || format('Creat
 # is created: a rotating, always-available artifact of the mainnet
 # fixtures. The cron fires at 02:00 UTC: the self-hosted runners are past
 # the EU/US daytime peaks and results are ready before the EU morning.
+#
+# A manual dispatch with `dry_run` follows the same no-release path for
+# any feature: the full pipeline runs, the `release` job is skipped and
+# nightly artifact retention applies. Dry runs are dispatch events, so
+# the nightly baseline in check_new_commits.py (which filters on
+# `event=schedule`) never counts them.
 on:
   schedule:
     - cron: "0 2 * * *"
@@ -37,11 +43,17 @@ on:
         description: "Override the t8n tool branch / tag / commit"
         required: false
         type: string
+      dry_run:
+        description: "Rehearse without releasing: skip the release job (no tag, no draft), use nightly retention."
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
-  # Scheduled runs queue behind an in-flight nightly (never cancel a fill);
-  # manual releases are unconstrained (each run gets a unique group).
-  group: ${{ github.event_name == 'schedule' && 'nightly-fill' || github.run_id }}
+  # Scheduled and dry runs queue behind an in-flight nightly-style run
+  # (never cancel a fill); manual releases are unconstrained (each run
+  # gets a unique group).
+  group: ${{ (github.event_name == 'schedule' || inputs.dry_run) && 'nightly-fill' || github.run_id }}
   cancel-in-progress: false
 
 jobs:
@@ -98,8 +110,8 @@ jobs:
     timeout-minutes: 1440
     strategy:
       # A release must be complete, so abort on the first failed range; a
-      # nightly wants every range's result for debugging.
-      fail-fast: ${{ github.event_name != 'schedule' }}
+      # nightly or dry run wants every range's result for debugging.
+      fail-fast: ${{ github.event_name != 'schedule' && !inputs.dry_run }}
       matrix:
         include: ${{ fromJson(needs.setup.outputs.build_matrix) }}
     steps:
@@ -114,9 +126,10 @@ jobs:
           from_fork: ${{ matrix.from_fork }}
           until_fork: ${{ matrix.until_fork }}
           split_label: ${{ matrix.label }}
-          # Nightly splits are intermediates consumed by `combine` right
-          # away; don't retain them for the repo-default period.
-          split_retention_days: ${{ github.event_name == 'schedule' && '1' || '' }}
+          # Nightly and dry-run splits are intermediates consumed by
+          # `combine` right away; don't retain them for the repo-default
+          # period.
+          split_retention_days: ${{ (github.event_name == 'schedule' || inputs.dry_run) && '1' || '' }}
           evm: ${{ inputs.evm }}
           evm_repo: ${{ inputs.evm_repo }}
           evm_ref: ${{ inputs.evm_ref }}
@@ -183,17 +196,18 @@ jobs:
         with:
           name: fixtures_${{ needs.setup.outputs.feature_name }}
           path: ${{ steps.tarball.outputs.path }}
-          # Keep nightly tarballs for five days; a quiet nightly re-runs
-          # after four (see check_new_commits.py), so a live artifact
-          # always exists. Release tarballs keep the repo default since
-          # the release job attaches them to a draft release anyway.
-          retention-days: ${{ github.event_name == 'schedule' && '5' || '' }}
+          # Keep nightly (and dry-run) tarballs for five days; a quiet
+          # nightly re-runs after four (see check_new_commits.py), so a
+          # live artifact always exists. Release tarballs keep the repo
+          # default since the release job attaches them to a draft
+          # release anyway.
+          retention-days: ${{ (github.event_name == 'schedule' || inputs.dry_run) && '5' || '' }}
 
   release:
     runs-on: ubuntu-latest
     needs: [setup, build, combine]
-    # Scheduled runs stop after `combine`: no tag, no draft release.
-    if: always() && github.event_name == 'workflow_dispatch' && needs.build.result == 'success' && (needs.combine.result == 'success' || needs.combine.result == 'skipped')
+    # Scheduled and dry runs stop after `combine`: no tag, no draft release.
+    if: always() && github.event_name == 'workflow_dispatch' && !inputs.dry_run && needs.build.result == 'success' && (needs.combine.result == 'success' || needs.combine.result == 'skipped')
     permissions:
       contents: write
     steps:

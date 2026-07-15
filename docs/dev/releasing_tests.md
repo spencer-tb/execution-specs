@@ -23,6 +23,7 @@ gh workflow run release_fixtures.yaml -f feature=<feature> -f version=vX.Y.Z [-f
 | `evm`      | no                | Override the evm impl (e.g. `geth`, `evmone`). Defaults to the feature's `evm-type` in `feature.yaml`. |
 | `evm_repo` | no                | Override the t8n tool repo (e.g. `ethereum/go-ethereum`).                                              |
 | `evm_ref`  | no                | Override the t8n tool branch / tag / commit.                                                          |
+| `dry_run`  | no                | Run the full pipeline but skip the `release` job (no tag, no draft release) and apply the nightly artifact retention: a manual rehearsal of the nightly/release path for any feature. |
 
 `<feature>` must be a key in
 [`.github/configs/feature.yaml`](https://github.com/ethereum/execution-specs/blob/master/.github/configs/feature.yaml)
