@@ -113,3 +113,23 @@ The release is created as a draft; review and publish it from the GitHub release
 ## Nightly fill
 
 The same workflow also runs on a nightly schedule (02:00 UTC) as a release rehearsal: it fills the mainnet `tests` feature (all tests, slow included, all fixture formats, up to the latest mainnet fork — dev forks are not included) through the exact release pipeline, but stops after `combine`, so no tag or release is created. Each run uploads the `fixtures_tests` workflow artifact (containing `fixtures.tar.gz`) with a 5-day retention: a rotating, always-available build of the mainnet fixtures, effectively a `tests@` release candidate on demand. A scheduled run skips itself when there are no new commits since the last nightly that actually filled — a skipped or failed nightly never advances that baseline, so no commit slips through unfilled. A quiet stretch without commits still re-fills once the last fill is four days old, or its artifact is gone, so a live artifact always exists within the five-day retention.
+
+## Promoting a nightly fill to a release
+
+A nightly artifact can be turned into a draft `tests@` release without refilling by dispatching the [`promote_nightly.yaml`](https://github.com/ethereum/execution-specs/blob/master/.github/workflows/promote_nightly.yaml) workflow:
+
+```bash
+gh workflow run promote_nightly.yaml -f version=vX.Y.Z
+# or promote a specific nightly run instead of the newest one:
+gh workflow run promote_nightly.yaml -f version=vX.Y.Z -f run_id=<run-id>
+```
+
+Promotion downloads the `fixtures_tests` artifact from the newest nightly run that actually filled (or the given `run_id`) and drafts the same release a manual `tests` dispatch would produce: the draft targets the exact commit the nightly built, so publishing it creates the `tests@vX.Y.Z` tag on that commit. The whole job runs in minutes on a hosted runner. Review and publish the draft exactly as in [Cutting a release](#cutting-a-release).
+
+The promote workflow's validation (unit-tested in [`promote_nightly.py`](https://github.com/ethereum/execution-specs/blob/master/.github/scripts/promote_nightly.py)) fails fast when:
+
+- the `version` is not `vX.Y.Z` or does not exceed the newest existing `tests@` tag;
+- no nightly run with a live `fixtures_tests` artifact exists (nightly artifacts are retained for five days: past that, dispatch a full release instead);
+- the promoted commit is not an ancestor of the current default branch head.
+
+The promoted release contains exactly what the nightly filled: commits that landed after the nightly are **not** included, and the run's step summary lists them so the releaser can decide between promoting and dispatching a fresh full release.
