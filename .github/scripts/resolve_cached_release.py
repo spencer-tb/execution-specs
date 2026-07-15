@@ -4,36 +4,38 @@
 # requires-python = ">=3.12"
 # ///
 """
-Resolve the nightly fill run to promote to a draft `tests@` release.
+Resolve the nightly fill whose artifact a cached release reuses.
 
-Usage: `promote_nightly.py` (all inputs come from the environment).
+Usage: `resolve_cached_release.py` (all inputs come from the
+environment).
 
-The scheduled nightly runs of `release_fixtures.yaml` fill the mainnet
-`tests` feature and upload a release-shaped `fixtures_tests` artifact,
-but never tag or draft a release. Promotion turns the newest such
-artifact into a draft `tests@<version>` release without refilling:
-this script validates the requested version, finds the nightly run to
-promote, and pins the exact commit that run built so the workflow can
-download its artifact and target the release tag at the right SHA.
+Dispatching `release_fixtures.yaml` with the `cached` flag drafts a
+`tests@` release from the newest nightly artifact instead of
+refilling: the scheduled nightly runs already build the mainnet
+`tests` feature into a release-shaped `fixtures_tests` artifact. This
+script validates the request, picks the nightly run whose artifact the
+release job downloads, and pins the exact commit that run built so the
+release tag lands on it.
 
 Checks performed, failing fast on the first violation:
 
+- The release is for the `tests` feature on the default branch (no
+  `branch` input): that is what the nightly fills.
 - `INPUT_VERSION` matches `vX.Y.Z` and is greater than the newest
-  existing `tests@` tag (promotion always moves forward; anything
-  unusual belongs in a full `release_fixtures.yaml` dispatch).
-- The promoted run is a successful *scheduled* run of
+  existing `tests@` tag (releases always move forward; anything
+  unusual belongs in a fresh fill).
+- The resolved run is the newest successful *scheduled* run of
   `release_fixtures.yaml` with a live (unexpired) `fixtures_tests`
-  artifact. By default the newest such run wins; `INPUT_RUN_ID`
-  promotes a specific run instead.
-- The promoted commit is an ancestor of the current branch head.
+  artifact. Skip-runs upload no artifacts and expired fills cannot be
+  downloaded, so both are passed over.
+- The resolved commit is an ancestor of the current branch head.
   Commits after it are listed in the step summary so the releaser can
   see what the release will NOT contain.
 
-Read `GITHUB_REPOSITORY`, `GITHUB_SHA`, `INPUT_VERSION` and the
-optional `INPUT_RUN_ID` from the environment and query the GitHub API
-via the `gh` CLI (authenticated by `GH_TOKEN`). Print `run_id`,
-`target_sha` and `prev_tag` (empty when no `tests@` tag exists yet) as
-`key=value` lines for `$GITHUB_OUTPUT`.
+Read `GITHUB_REPOSITORY`, `GITHUB_SHA`, `INPUT_FEATURE`,
+`INPUT_BRANCH` and `INPUT_VERSION` from the environment and query the
+GitHub API via the `gh` CLI (authenticated by `GH_TOKEN`). Print
+`run_id` and `target_sha` as `key=value` lines for `$GITHUB_OUTPUT`.
 """
 
 import json
@@ -46,7 +48,7 @@ from typing import NoReturn
 WORKFLOW_FILE = "release_fixtures.yaml"
 
 # The combined-tarball artifact a nightly `tests` fill uploads; only
-# this artifact is ever promoted to a mainnet release.
+# this artifact is ever reused by a cached release.
 ARTIFACT_NAME = "fixtures_tests"
 
 VERSION_RE = re.compile(r"^v([0-9]+)\.([0-9]+)\.([0-9]+)$")
@@ -121,31 +123,14 @@ def has_live_tests_artifact(repository: str, run_id: str) -> bool:
     )
 
 
-def promotable_run(repository: str, run_id: str) -> tuple[str, str]:
+def cached_run(repository: str) -> tuple[str, str]:
     """
-    Return the (run id, head SHA) of the nightly run to promote.
+    Return the (run id, head SHA) of the nightly run to reuse.
 
-    With an explicit *run_id*, verify it is a successful scheduled run
-    of the release workflow with a live artifact. Otherwise take the
-    newest such run (skip-runs upload no artifacts and expired fills
-    cannot be downloaded, so both are passed over).
+    Take the newest successful scheduled run with a live artifact
+    (skip-runs upload no artifacts and expired fills cannot be
+    downloaded, so both are passed over).
     """
-    if run_id:
-        run = json.loads(gh_api(f"repos/{repository}/actions/runs/{run_id}"))
-        if (
-            run.get("event") != "schedule"
-            or run.get("conclusion") != "success"
-            or not str(run.get("path", "")).endswith(WORKFLOW_FILE)
-        ):
-            fail(
-                f"run {run_id} is not a successful scheduled run of "
-                f"{WORKFLOW_FILE}"
-            )
-        if not has_live_tests_artifact(repository, run_id):
-            fail(f"run {run_id} has no live `{ARTIFACT_NAME}` artifact")
-        # Echo back the id from the API response, not the raw input.
-        return str(run["id"]), str(run["head_sha"])
-
     runs = json.loads(
         gh_api(
             f"repos/{repository}/actions/workflows/{WORKFLOW_FILE}"
@@ -157,7 +142,7 @@ def promotable_run(repository: str, run_id: str) -> tuple[str, str]:
             return str(run["id"]), str(run["head_sha"])
     fail(
         f"no scheduled run of {WORKFLOW_FILE} with a live "
-        f"`{ARTIFACT_NAME}` artifact found; dispatch a full release instead"
+        f"`{ARTIFACT_NAME}` artifact found; dispatch a fresh fill instead"
     )
 
 
@@ -168,7 +153,7 @@ def commits_after(
     Return `- <sha> <subject>` lines for commits after *target_sha*.
 
     Fail when *target_sha* is not an ancestor of *head_sha*: a nightly
-    built from a rewritten or foreign branch must not be promoted.
+    built from a rewritten or foreign branch must not be released.
     """
     compare = json.loads(
         gh_api(f"repos/{repository}/compare/{target_sha}...{head_sha}")
@@ -190,36 +175,40 @@ def main() -> None:
     head_sha = os.environ["GITHUB_SHA"]
     version = os.environ["INPUT_VERSION"]
 
+    if os.environ.get("INPUT_FEATURE") != "tests":
+        fail("cached releases are only available for feature=tests")
+    if os.environ.get("INPUT_BRANCH"):
+        fail(
+            "cached releases reuse a default-branch nightly; drop the "
+            "`branch` input or dispatch a fresh fill"
+        )
+
     requested = parse_version(version)
     prev_tag = newest_tests_tag(repository)
-    prev_version = (
-        parse_version(prev_tag.removeprefix("tests@")) if prev_tag else None
-    )
-    if prev_version and requested <= prev_version:
+    if prev_tag and requested <= parse_version(
+        prev_tag.removeprefix("tests@")
+    ):
         fail(
             f"version '{version}' must be greater than the newest "
             f"tests release ({prev_tag})"
         )
 
-    run_id, target_sha = promotable_run(
-        repository, os.environ.get("INPUT_RUN_ID", "")
-    )
+    run_id, target_sha = cached_run(repository)
     missing = commits_after(repository, target_sha, head_sha)
 
     print(f"run_id={run_id}")
     print(f"target_sha={target_sha}")
-    print(f"prev_tag={prev_tag}")
 
     run_url = f"https://github.com/{repository}/actions/runs/{run_id}"
     append_summary(
-        f"Promoting nightly run [{run_id}]({run_url}) "
-        f"(built at `{target_sha}`) to a draft `tests@{version}` release."
+        f"Reusing nightly fill run [{run_id}]({run_url}) "
+        f"(built at `{target_sha}`) for the `tests@{version}` draft."
     )
     if missing:
         append_summary(
             "### Commits NOT included in this release\n"
             + "\n".join(missing)
-            + "\n\nDispatch a full release to include them."
+            + "\n\nDispatch a fresh fill to include them."
         )
     else:
         append_summary(

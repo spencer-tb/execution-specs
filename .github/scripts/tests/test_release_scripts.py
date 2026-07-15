@@ -19,7 +19,7 @@ BUILD_MATRIX_SCRIPT = SCRIPTS_DIR / "generate_build_matrix.py"
 TARBALL_SCRIPT = SCRIPTS_DIR / "create_release_tarball.py"
 MERGE_INDEX_SCRIPT = SCRIPTS_DIR / "merge_index_files.py"
 CHECK_COMMITS_SCRIPT = SCRIPTS_DIR / "check_new_commits.py"
-PROMOTE_SCRIPT = SCRIPTS_DIR / "promote_nightly.py"
+RESOLVE_CACHED_SCRIPT = SCRIPTS_DIR / "resolve_cached_release.py"
 
 
 def run_script(script: Path, *args: str) -> subprocess.CompletedProcess:
@@ -191,11 +191,10 @@ class TestValidateInputs:
 
 
 # Fake `gh` served from PATH: answers the API calls the commit-check
-# and promote scripts make with canned JSON from env vars, and fails
-# loudly on any other (or unconfigured) call. Per-run artifact
+# and cached-release scripts make with canned JSON from env vars, and
+# fails loudly on any other (or unconfigured) call. Per-run artifact
 # responses come from `FAKE_GH_ARTIFACTS_<run_id>`, falling back to
-# `FAKE_GH_ARTIFACTS`. The `*/artifacts` case must precede the
-# single-run `*actions/runs/*` case, which would otherwise shadow it.
+# `FAKE_GH_ARTIFACTS`.
 FAKE_GH = """#!/usr/bin/env bash
 case "$2" in
   *actions/workflows*) response="$FAKE_GH_RUNS" ;;
@@ -205,7 +204,6 @@ case "$2" in
     var="FAKE_GH_ARTIFACTS_${run_id}"
     response="${!var:-$FAKE_GH_ARTIFACTS}"
     ;;
-  *actions/runs/*) response="$FAKE_GH_RUN" ;;
   *matching-refs*) response="$FAKE_GH_TAGS" ;;
   *compare*) response="$FAKE_GH_COMPARE" ;;
   *) response="" ;;
@@ -401,8 +399,9 @@ class TestCheckNewCommits:
         assert "gh api" in result.stderr
 
 
-# Canned responses for the promote script. Unlike the commit check, it
-# matches artifacts by name, so these carry the `fixtures_tests` name.
+# Canned responses for the cached-release script. Unlike the commit
+# check, it matches artifacts by name, so these carry the
+# `fixtures_tests` name.
 LIVE_TESTS_ARTIFACT = json.dumps(
     {"artifacts": [{"name": "fixtures_tests", "expired": False}]}
 )
@@ -416,16 +415,16 @@ NO_TAGS = "[]"
 UP_TO_DATE = json.dumps({"status": "identical", "commits": []})
 
 
-class TestPromoteNightly:
-    """Test promote_nightly.py."""
+class TestResolveCachedRelease:
+    """Test resolve_cached_release.py."""
 
-    def run_promote(
+    def run_resolve(
         self,
         tmp_path: Path,
         version: str,
-        run_id_input: str = "",
+        feature: str = "tests",
+        branch: str = "",
         runs: str = "",
-        run: str = "",
         artifacts: str = "",
         per_run_artifacts: dict[int, str] | None = None,
         tags: str = "",
@@ -445,9 +444,9 @@ class TestPromoteNightly:
         env["GITHUB_SHA"] = "b" * 40
         env["GITHUB_STEP_SUMMARY"] = str(summary)
         env["INPUT_VERSION"] = version
-        env["INPUT_RUN_ID"] = run_id_input
+        env["INPUT_FEATURE"] = feature
+        env["INPUT_BRANCH"] = branch
         env["FAKE_GH_RUNS"] = runs
-        env["FAKE_GH_RUN"] = run
         env["FAKE_GH_ARTIFACTS"] = artifacts
         env["FAKE_GH_TAGS"] = tags
         env["FAKE_GH_COMPARE"] = compare
@@ -455,7 +454,7 @@ class TestPromoteNightly:
             env[f"FAKE_GH_ARTIFACTS_{run_id}"] = response
 
         result = subprocess.run(
-            ["uv", "run", "-q", str(PROMOTE_SCRIPT)],
+            ["uv", "run", "-q", str(RESOLVE_CACHED_SCRIPT)],
             capture_output=True,
             text=True,
             cwd=REPO_ROOT,
@@ -473,13 +472,13 @@ class TestPromoteNightly:
         """Return a workflow-runs listing response."""
         return json.dumps({"workflow_runs": list(runs)})
 
-    def test_promotes_newest_run_with_live_artifact(self, tmp_path):
+    def test_reuses_newest_run_with_live_artifact(self, tmp_path):
         """Verify skip-runs and expired fills are passed over."""
         commit = {
             "sha": "abcdef1" + "0" * 33,
             "commit": {"message": "feat(x): subject\n\nbody"},
         }
-        result, summary = self.run_promote(
+        result, summary = self.run_resolve(
             tmp_path,
             "v4.0.1",
             runs=self.runs_json(
@@ -500,16 +499,15 @@ class TestPromoteNightly:
         out = self.parse_outputs(result.stdout)
         assert out["run_id"] == "2"
         assert out["target_sha"] == "a" * 40
-        assert out["prev_tag"] == "tests@v4.0.0"
         text = summary.read_text()
         assert "### Commits NOT included in this release" in text
         # Short SHA plus the commit subject, without the body.
         assert "- abcdef1 feat(x): subject" in text
         assert "body" not in text
 
-    def test_up_to_date_nightly_promotes_cleanly(self, tmp_path):
+    def test_up_to_date_nightly_resolves_cleanly(self, tmp_path):
         """Verify no missing-commit section when nothing landed since."""
-        result, summary = self.run_promote(
+        result, summary = self.run_resolve(
             tmp_path,
             "v4.0.1",
             runs=self.runs_json({"id": 2, "head_sha": "b" * 40}),
@@ -522,9 +520,9 @@ class TestPromoteNightly:
         assert "up to date" in text
         assert "NOT included" not in text
 
-    def test_first_release_has_no_prev_tag(self, tmp_path):
-        """Verify promotion works before any tests@ tag exists."""
-        result, _ = self.run_promote(
+    def test_first_release_without_tags_resolves(self, tmp_path):
+        """Verify a cached release works before any tests@ tag exists."""
+        result, _ = self.run_resolve(
             tmp_path,
             "v1.0.0",
             runs=self.runs_json({"id": 2, "head_sha": "b" * 40}),
@@ -533,24 +531,40 @@ class TestPromoteNightly:
             compare=UP_TO_DATE,
         )
         assert result.returncode == 0
-        assert self.parse_outputs(result.stdout)["prev_tag"] == ""
+        assert self.parse_outputs(result.stdout)["run_id"] == "2"
+
+    def test_non_tests_feature_fails(self, tmp_path):
+        """Verify only the tests feature can release cached."""
+        # The fake `gh` fails every call (no canned responses), so a
+        # clean feature error proves the guard fires before the API.
+        result, _ = self.run_resolve(tmp_path, "v4.0.1", feature="bal-devnet")
+        assert result.returncode == 1
+        assert "only available for feature=tests" in result.stderr
+
+    def test_branch_input_fails(self, tmp_path):
+        """Verify a cached release rejects a branch input."""
+        result, _ = self.run_resolve(
+            tmp_path, "v4.0.1", branch="devnets/bal/7"
+        )
+        assert result.returncode == 1
+        assert "drop the `branch` input" in result.stderr
 
     def test_bad_version_format_fails(self, tmp_path):
         """Verify a non vX.Y.Z version is rejected before any API call."""
-        result, _ = self.run_promote(tmp_path, "4.0.1")
+        result, _ = self.run_resolve(tmp_path, "4.0.1")
         assert result.returncode == 1
         assert "must match vX.Y.Z" in result.stderr
 
     def test_version_not_greater_than_newest_tag_fails(self, tmp_path):
         """Verify the version must move past the newest tests@ tag."""
-        result, _ = self.run_promote(tmp_path, "v4.0.0", tags=TESTS_TAGS)
+        result, _ = self.run_resolve(tmp_path, "v4.0.0", tags=TESTS_TAGS)
         assert result.returncode == 1
         assert "must be greater" in result.stderr
         assert "tests@v4.0.0" in result.stderr
 
-    def test_no_promotable_run_fails(self, tmp_path):
+    def test_no_reusable_run_fails(self, tmp_path):
         """Verify a helpful error when every artifact has expired."""
-        result, _ = self.run_promote(
+        result, _ = self.run_resolve(
             tmp_path,
             "v4.0.1",
             runs=self.runs_json({"id": 2, "head_sha": "a" * 40}),
@@ -558,53 +572,11 @@ class TestPromoteNightly:
             tags=TESTS_TAGS,
         )
         assert result.returncode == 1
-        assert "dispatch a full release instead" in result.stderr
-
-    def test_explicit_run_id_promotes_that_run(self, tmp_path):
-        """Verify `INPUT_RUN_ID` selects a specific nightly run."""
-        result, _ = self.run_promote(
-            tmp_path,
-            "v4.0.1",
-            run_id_input="7",
-            run=json.dumps(
-                {
-                    "id": 7,
-                    "head_sha": "a" * 40,
-                    "event": "schedule",
-                    "conclusion": "success",
-                    "path": ".github/workflows/release_fixtures.yaml",
-                }
-            ),
-            artifacts=LIVE_TESTS_ARTIFACT,
-            tags=TESTS_TAGS,
-            compare=UP_TO_DATE,
-        )
-        assert result.returncode == 0
-        assert self.parse_outputs(result.stdout)["run_id"] == "7"
-
-    def test_explicit_run_id_must_be_a_scheduled_run(self, tmp_path):
-        """Verify a manual release run cannot be promoted."""
-        result, _ = self.run_promote(
-            tmp_path,
-            "v4.0.1",
-            run_id_input="7",
-            run=json.dumps(
-                {
-                    "id": 7,
-                    "head_sha": "a" * 40,
-                    "event": "workflow_dispatch",
-                    "conclusion": "success",
-                    "path": ".github/workflows/release_fixtures.yaml",
-                }
-            ),
-            tags=TESTS_TAGS,
-        )
-        assert result.returncode == 1
-        assert "not a successful scheduled run" in result.stderr
+        assert "dispatch a fresh fill instead" in result.stderr
 
     def test_diverged_nightly_fails(self, tmp_path):
-        """Verify a nightly off the branch history is not promoted."""
-        result, _ = self.run_promote(
+        """Verify a nightly off the branch history is not reused."""
+        result, _ = self.run_resolve(
             tmp_path,
             "v4.0.1",
             runs=self.runs_json({"id": 2, "head_sha": "a" * 40}),
@@ -615,9 +587,9 @@ class TestPromoteNightly:
         assert result.returncode == 1
         assert "not an ancestor" in result.stderr
 
-    def test_gh_failure_fails_the_promotion(self, tmp_path):
+    def test_gh_failure_fails_the_resolution(self, tmp_path):
         """Verify a failing `gh` call fails the script."""
-        result, _ = self.run_promote(tmp_path, "v4.0.1")
+        result, _ = self.run_resolve(tmp_path, "v4.0.1")
         assert result.returncode == 1
         assert "gh api" in result.stderr
 
