@@ -105,6 +105,7 @@ def test_sstore_gas_left(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=caller,
     )

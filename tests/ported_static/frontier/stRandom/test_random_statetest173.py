@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stRandom/randomStatetest173Filler.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_random_statetest173(
     state_test: StateTestFiller,
@@ -77,6 +77,7 @@ def test_random_statetest173(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(

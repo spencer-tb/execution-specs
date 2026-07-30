@@ -13,6 +13,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -25,11 +26,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stSolidityTest/TestStructuresAndVariablessFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_test_structures_and_variabless(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_test_structures_and_variabless."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -227,6 +229,7 @@ def test_test_structures_and_variabless(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes("c0406226"),

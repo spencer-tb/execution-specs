@@ -120,6 +120,7 @@ def test_create_name_registrator_pre_store1_not_enough_gas(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=creator,
         gas_limit=gas_limit,

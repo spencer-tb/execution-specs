@@ -68,6 +68,7 @@ def test_create_empty_contract(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=contract,
         state_gas_reservoir=0,

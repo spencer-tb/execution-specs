@@ -12,6 +12,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -31,6 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 def test_suicides_and_send_money_to_itself_ether_destroyed(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_suicides_and_send_money_to_itself_ether_destroyed."""
     coinbase = Address(0xEB201D2887816E041F6E807E804F64F3A7A226FE)
@@ -59,6 +61,7 @@ def test_suicides_and_send_money_to_itself_ether_destroyed(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

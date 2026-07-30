@@ -30,7 +30,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stPreCompiledContracts2/modexp_0_0_0_35000Filler.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("TangerineWhistle")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -276,6 +276,7 @@ def test_modexp_0_0_0_35000(
         tx_gas = [200000, 200000, 200000, 200000]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=tx_data[d],

@@ -35,7 +35,7 @@ TX_VALUE = 1
         "state_tests/stCreateTest/CreateOOGafterInitCodeReturndataSizeFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_from("Byzantium")
 def test_create_oo_gafter_init_code_returndata_size(
     state_test: StateTestFiller,
     pre: Alloc,

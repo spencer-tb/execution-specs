@@ -86,6 +86,7 @@ def test_call_zero_v_call_suicide(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

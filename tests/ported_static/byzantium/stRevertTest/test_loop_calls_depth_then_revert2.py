@@ -12,6 +12,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -25,12 +26,13 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stRevertTest/LoopCallsDepthThenRevert2Filler.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.pre_alloc_mutable
 def test_loop_calls_depth_then_revert2(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_loop_calls_depth_then_revert2."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -73,6 +75,7 @@ def test_loop_calls_depth_then_revert2(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(""),

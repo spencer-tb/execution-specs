@@ -13,6 +13,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -26,11 +27,12 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stNonZeroCallsTest/NonZeroValue_TransactionCALL_ToOneStorageKey_ParisFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_non_zero_value_transaction_call_to_one_storage_key_paris(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_non_zero_value_transaction_call_to_one_storage_key_paris."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -52,6 +54,7 @@ def test_non_zero_value_transaction_call_to_one_storage_key_paris(
     pre[addr] = Account(balance=10, storage={0: 1})
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=addr,
         data=Bytes(""),

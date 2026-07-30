@@ -31,7 +31,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stSolidityTest/TestContractSuicideFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_test_contract_suicide(
     state_test: StateTestFiller,
@@ -192,6 +192,7 @@ def test_test_contract_suicide(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes("c0406226"),

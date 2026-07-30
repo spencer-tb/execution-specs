@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stMemoryTest/mem32kb+1Filler.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_mem32kb_plus_1(
     state_test: StateTestFiller,
@@ -57,6 +57,7 @@ def test_mem32kb_plus_1(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

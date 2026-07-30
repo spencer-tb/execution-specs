@@ -14,6 +14,7 @@ from execution_testing import (
     Address,
     Alloc,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -26,11 +27,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stRevertTest/RevertInCreateInInit_ParisFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_revert_in_create_in_init_paris(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_revert_in_create_in_init_paris."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -51,6 +53,7 @@ def test_revert_in_create_in_init_paris(
     pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.POP(Op.ADDRESS)

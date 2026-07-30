@@ -28,7 +28,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stBugs/returndatacopyPythonBug_Tue_03_48_41-1432Filler.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -205,6 +205,7 @@ def test_returndatacopy_python_bug_tue_03_48_41_minus_1432(
     tx_value = [2759170368, 0]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=tx_data[d],

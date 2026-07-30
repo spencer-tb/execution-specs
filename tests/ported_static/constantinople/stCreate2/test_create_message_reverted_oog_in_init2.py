@@ -37,7 +37,7 @@ CHILD_STORED = {0x0: 0xC, 0x1: 0xD}
 @pytest.mark.ported_from(
     ["state_tests/stCreate2/CreateMessageRevertedOOGInInit2Filler.json"],
 )
-@pytest.mark.valid_from("Constantinople")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.parametrize(
     "child_covered",
     [

@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stInitCodeTest/TransactionCreateRandomInitCodeFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_transaction_create_random_init_code(
     state_test: StateTestFiller,
@@ -48,6 +48,7 @@ def test_transaction_create_random_init_code(
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.PUSH1[0xA]

@@ -38,7 +38,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stZeroCallsTest/ZeroValue_CALLCODE_ToNonZeroBalanceFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_zero_value_callcode_to_non_zero_balance(
     state_test: StateTestFiller,
@@ -88,6 +88,7 @@ def test_zero_value_callcode_to_non_zero_balance(
     gas_limit = 600_000 + (intrinsic - 21_000)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

@@ -12,6 +12,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     Hash,
     StateTestFiller,
     Transaction,
@@ -25,11 +26,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stSpecialTest/failed_tx_xcf416c53_ParisFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_failed_tx_xcf416c53_paris(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_failed_tx_xcf416c53_paris."""
     coinbase = Address(0x68795C4AA09D6F4ED3E5DEDDF8C2AD3049A601DA)
@@ -87,6 +89,7 @@ def test_failed_tx_xcf416c53_paris(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes("97dd3054") + Hash(0x0) + Hash(0x2BC),

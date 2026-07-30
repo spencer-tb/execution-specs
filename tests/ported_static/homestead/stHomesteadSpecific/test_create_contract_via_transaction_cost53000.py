@@ -32,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stHomesteadSpecific/createContractViaTransactionCost53000Filler.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 def test_create_contract_via_transaction_cost53000(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -60,6 +60,7 @@ def test_create_contract_via_transaction_cost53000(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Bytes(""),

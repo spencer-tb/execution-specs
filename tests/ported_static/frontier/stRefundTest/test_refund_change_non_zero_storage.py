@@ -35,7 +35,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stRefundTest/refund_changeNonZeroStorageFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("London")
 @pytest.mark.pre_alloc_mutable
 def test_refund_change_non_zero_storage(
     state_test: StateTestFiller,
@@ -66,6 +66,7 @@ def test_refund_change_non_zero_storage(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

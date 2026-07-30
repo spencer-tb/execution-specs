@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stStaticCall/static_CREATE_ContractSuicideDuringInitFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.slow
 @pytest.mark.parametrize(
     "d, g, v",
@@ -186,6 +186,7 @@ def test_static_create_contract_suicide_during_init(
         ).state_cost(fork)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=tx_data[d],

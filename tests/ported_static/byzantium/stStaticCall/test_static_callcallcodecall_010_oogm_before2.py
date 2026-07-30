@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stStaticCall/static_callcallcodecall_010_OOGMBefore2Filler.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Byzantium")
 @pytest.mark.slow
 @pytest.mark.parametrize(
     "d, g, v",
@@ -159,6 +159,7 @@ def test_static_callcallcodecall_010_oogm_before2(
     tx_gas = [1720000]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=tx_data[d],

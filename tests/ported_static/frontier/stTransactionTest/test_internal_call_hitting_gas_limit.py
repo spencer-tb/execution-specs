@@ -12,6 +12,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -24,11 +25,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stTransactionTest/InternalCallHittingGasLimitFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_internal_call_hitting_gas_limit(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_internal_call_hitting_gas_limit."""
     coinbase = Address(0x2ADF5374FCE5EDBC8E2A8697C15331677E6EBF0B)
@@ -67,6 +69,7 @@ def test_internal_call_hitting_gas_limit(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

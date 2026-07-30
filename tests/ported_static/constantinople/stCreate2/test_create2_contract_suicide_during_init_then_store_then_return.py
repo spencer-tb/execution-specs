@@ -34,7 +34,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCreate2/CREATE2_ContractSuicideDuringInit_ThenStoreThenReturnFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.pre_alloc_mutable
 def test_create2_contract_suicide_during_init_then_store_then_return(
     state_test: StateTestFiller,
@@ -103,6 +103,7 @@ def test_create2_contract_suicide_during_init_then_store_then_return(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(""),

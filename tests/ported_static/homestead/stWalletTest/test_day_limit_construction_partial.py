@@ -13,6 +13,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -25,11 +26,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stWalletTest/dayLimitConstructionPartialFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.pre_alloc_mutable
 def test_day_limit_construction_partial(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_day_limit_construction_partial."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -49,6 +51,7 @@ def test_day_limit_construction_partial(
     pre[sender] = Account(balance=0xDE0B6B3A75EF08F, nonce=1)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Bytes(

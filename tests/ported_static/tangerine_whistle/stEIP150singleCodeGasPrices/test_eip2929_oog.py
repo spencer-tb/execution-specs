@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stEIP150singleCodeGasPrices/eip2929OOGFiller.yml"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Berlin")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -320,6 +320,7 @@ def test_eip2929_oog(
     tx_value = [1]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_11,
         data=tx_data[d],

@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stTransitionTest/createNameRegistratorPerTxsAtFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 def test_create_name_registrator_per_txs_at(
     state_test: StateTestFiller,
     fork: Fork,
@@ -45,6 +45,7 @@ def test_create_name_registrator_per_txs_at(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.SSTORE(key=0x1, value=0x1)

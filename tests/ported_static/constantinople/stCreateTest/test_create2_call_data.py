@@ -28,7 +28,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCreateTest/CREATE2_CallDataFiller.yml"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.pre_alloc_mutable
 def test_create2_call_data(
     state_test: StateTestFiller,
@@ -87,6 +87,7 @@ def test_create2_call_data(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(""),

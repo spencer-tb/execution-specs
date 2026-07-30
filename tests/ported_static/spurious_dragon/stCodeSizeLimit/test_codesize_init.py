@@ -11,6 +11,7 @@ from execution_testing import (
     Address,
     Alloc,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -24,10 +25,11 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCodeSizeLimit/codesizeInitFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 def test_codesize_init(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_codesize_init."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -43,6 +45,7 @@ def test_codesize_init(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.SSTORE(key=0x1, value=Op.CODESIZE)

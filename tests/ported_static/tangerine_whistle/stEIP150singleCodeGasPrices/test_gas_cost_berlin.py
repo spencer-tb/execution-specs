@@ -50,7 +50,7 @@ def _storage_with_any(base: dict, any_keys: list) -> Storage:
 @pytest.mark.ported_from(
     ["state_tests/stEIP150singleCodeGasPrices/gasCostBerlinFiller.yml"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Berlin")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -1008,6 +1008,7 @@ def test_gas_cost_berlin(
     tx_value = [1]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=addr,
         data=tx_data[d],

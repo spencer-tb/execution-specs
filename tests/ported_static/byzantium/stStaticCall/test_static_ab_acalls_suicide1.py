@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stStaticCall/static_ABAcallsSuicide1Filler.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.slow
 @pytest.mark.parametrize(
     "d, g, v",
@@ -118,6 +118,7 @@ def test_static_ab_acalls_suicide1(
     tx_value = [100000]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=tx_data[d],

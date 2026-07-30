@@ -13,6 +13,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -25,11 +26,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stWalletTest/multiOwnedConstructionCorrectFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.pre_alloc_mutable
 def test_multi_owned_construction_correct(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_multi_owned_construction_correct."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -49,6 +51,7 @@ def test_multi_owned_construction_correct(
     pre[sender] = Account(balance=0xDE0B6B3A7640000)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Bytes(

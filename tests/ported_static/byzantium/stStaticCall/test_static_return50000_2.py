@@ -25,7 +25,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stStaticCall/static_Return50000_2Filler.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Berlin")
 @pytest.mark.slow
 @pytest.mark.pre_alloc_mutable
 def test_static_return50000_2(
@@ -106,6 +106,7 @@ def test_static_return50000_2(
     if fork.is_eip_enabled(8037):
         gas_limit += 4 * Op.SSTORE(new_value=1).state_cost(fork)
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

@@ -12,6 +12,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -25,10 +26,11 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stZeroCallsTest/ZeroValue_TransactionCALL_ToEmpty_ParisFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 def test_zero_value_transaction_call_to_empty_paris(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_zero_value_transaction_call_to_empty_paris."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -46,6 +48,7 @@ def test_zero_value_transaction_call_to_empty_paris(
     addr = pre.fund_eoa(amount=10)  # noqa: F841
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=addr,
         data=Bytes(""),

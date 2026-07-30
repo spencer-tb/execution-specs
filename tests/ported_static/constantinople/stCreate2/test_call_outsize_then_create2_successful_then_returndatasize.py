@@ -28,7 +28,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCreate2/call_outsize_then_create2_successful_then_returndatasizeFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.pre_alloc_mutable
 def test_call_outsize_then_create2_successful_then_returndatasize(
     state_test: StateTestFiller,
@@ -90,6 +90,7 @@ def test_call_outsize_then_create2_successful_then_returndatasize(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_1,
         data=Bytes(""),

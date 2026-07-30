@@ -93,6 +93,7 @@ def test_exp_empty(
     gas_limit = fork.transaction_intrinsic_cost_calculator()() + budget + 5_000
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=target,
         gas_limit=gas_limit,

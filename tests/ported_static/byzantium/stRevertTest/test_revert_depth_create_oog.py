@@ -41,7 +41,7 @@ STARVE_MARGIN = 1_000
 @pytest.mark.ported_from(
     ["state_tests/stRevertTest/RevertDepthCreateOOGFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.parametrize(
     "full_grant",
     [False, True],
@@ -150,6 +150,7 @@ def test_revert_depth_create_oog(
 
     sender = pre.fund_eoa()
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=caller,
         data=data,

@@ -23,6 +23,7 @@ from execution_testing import (
     Account,
     Alloc,
     Bytecode,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -64,6 +65,7 @@ def memory_stores(data: bytes) -> Bytecode:
 def test_delegatecall_in_initcode_to_existing_contract(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """A DELEGATECALL in init code runs in the created account."""
     existing = pre.deploy_contract(
@@ -93,6 +95,7 @@ def test_delegatecall_in_initcode_to_existing_contract(
     created = compute_create_address(address=runner, nonce=1)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=runner,
     )

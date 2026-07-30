@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stEIP1559/gasPriceDiffPlacesOsakaFiller.yml"],
 )
-@pytest.mark.valid_from("Osaka")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -1237,6 +1237,7 @@ def test_gas_price_diff_places(
     tx_gas = [1000000]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_3,
         data=tx_data[d],

@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCallCodes/callcallcallcode_ABCB_RECURSIVEFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("TangerineWhistle")
 @pytest.mark.pre_alloc_mutable
 def test_callcallcallcode_abcb_recursive(
     state_test: StateTestFiller,
@@ -107,6 +107,7 @@ def test_callcallcallcode_abcb_recursive(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

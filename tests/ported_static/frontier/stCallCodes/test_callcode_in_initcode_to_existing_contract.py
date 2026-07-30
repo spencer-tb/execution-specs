@@ -22,6 +22,7 @@ from execution_testing import (
     Account,
     Alloc,
     Bytecode,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -59,11 +60,12 @@ def memory_stores(data: bytes) -> Bytecode:
         "state_tests/stCallCodes/callcodeInInitcodeToExistingContractFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Constantinople")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.parametrize("opcode", [Op.CREATE, Op.CREATE2])
 def test_callcode_in_initcode_to_existing_contract(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
     opcode: Opcode,
 ) -> None:
     """A CALLCODE in init code runs in the created account's context."""
@@ -108,6 +110,7 @@ def test_callcode_in_initcode_to_existing_contract(
         created = compute_create_address(address=runner, nonce=1)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=runner,
     )

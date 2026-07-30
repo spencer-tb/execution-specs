@@ -31,7 +31,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stQuadraticComplexityTest/QuadraticComplexitySolidity_CallDataCopyFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("TangerineWhistle")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.slow
 @pytest.mark.parametrize(
@@ -148,6 +148,7 @@ def test_quadratic_complexity_solidity_call_data_copy(
     tx_value = [1]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=tx_data[d],

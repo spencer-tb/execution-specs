@@ -43,7 +43,7 @@ OVERSIZED_GAS_ASK = 2**61
         "state_tests/stCallCreateCallCodeTest/contractCreationMakeCallThatAskMoreGasThenTransactionProvidedFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.parametrize(
     "call_covered",
     [
@@ -114,6 +114,7 @@ def test_contract_creation_make_call_that_ask_more_gas_then_transaction_provided
 
     sender = pre.fund_eoa()
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=initcode,

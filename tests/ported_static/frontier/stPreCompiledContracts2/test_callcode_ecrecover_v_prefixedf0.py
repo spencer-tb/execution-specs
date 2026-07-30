@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stPreCompiledContracts2/CALLCODEEcrecoverV_prefixedf0Filler.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -112,6 +112,7 @@ def test_callcode_ecrecover_v_prefixedf0(
     tx_value = [100000]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=tx_data[d],

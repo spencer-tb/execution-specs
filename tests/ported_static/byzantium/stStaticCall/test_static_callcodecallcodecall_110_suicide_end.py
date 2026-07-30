@@ -140,6 +140,7 @@ def test_static_callcodecallcodecall_110_suicide_end(
     tx_value = [0, 1]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=tx_data[d],

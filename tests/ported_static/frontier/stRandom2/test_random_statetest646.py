@@ -13,6 +13,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     Hash,
     StateTestFiller,
     Transaction,
@@ -27,12 +28,13 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stRandom2/randomStatetest646Filler.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Shanghai")
 @pytest.mark.valid_before("EIP7954")
 @pytest.mark.pre_alloc_mutable
 def test_random_statetest646(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Geth Failed this test on all networks."""
     coinbase = Address(0xD94F5374FCE5EDBC8E2A8697C15331677E6EBF0B)
@@ -69,6 +71,7 @@ def test_random_statetest646(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_1,
         data=Bytes("785196fd")

@@ -35,7 +35,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stRefundTest/refund_CallA_notEnoughGasInCallFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("London")
 @pytest.mark.pre_alloc_mutable
 def test_refund_call_a_not_enough_gas_in_call(
     state_test: StateTestFiller,
@@ -86,6 +86,7 @@ def test_refund_call_a_not_enough_gas_in_call(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

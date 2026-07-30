@@ -12,6 +12,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -26,11 +27,12 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stReturnDataTest/returndatasize_after_oog_after_deeperFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Byzantium")
 @pytest.mark.pre_alloc_mutable
 def test_returndatasize_after_oog_after_deeper(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Transaction calls A (CALL B(CALL C(RETURN) OOG) 'check buffers')."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -100,6 +102,7 @@ def test_returndatasize_after_oog_after_deeper(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

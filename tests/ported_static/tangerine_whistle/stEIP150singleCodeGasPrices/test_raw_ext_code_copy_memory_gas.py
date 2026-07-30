@@ -38,7 +38,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stEIP150singleCodeGasPrices/RawExtCodeCopyMemoryGasFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Berlin")
 @pytest.mark.pre_alloc_mutable
 def test_raw_ext_code_copy_memory_gas(
     state_test: StateTestFiller,
@@ -87,6 +87,7 @@ def test_raw_ext_code_copy_memory_gas(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

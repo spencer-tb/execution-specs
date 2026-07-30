@@ -41,7 +41,7 @@ STARVE_MARGIN = 1_000
 @pytest.mark.ported_from(
     ["state_tests/stRevertTest/RevertDepthCreateAddressCollisionFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "oversized_ask",
     [False, True],
@@ -161,6 +161,7 @@ def test_revert_depth_create_address_collision(
 
     sender = pre.fund_eoa()
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=caller,
         data=data,

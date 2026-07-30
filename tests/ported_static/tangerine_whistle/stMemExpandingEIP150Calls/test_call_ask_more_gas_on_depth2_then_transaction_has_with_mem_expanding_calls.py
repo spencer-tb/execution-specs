@@ -105,6 +105,7 @@ def test_call_ask_more_gas_on_depth2_then_transaction_has_with_mem_expanding_cal
     gas_limit = intrinsic + entry_code.gas_cost(fork) + CALLER_GAS
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=entry,
         gas_limit=gas_limit,

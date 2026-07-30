@@ -37,7 +37,7 @@ CALLEE_STORED = 0xC
         "state_tests/stCreateTest/CREATE_EContractCreateNEContractInInitOOG_TrFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.parametrize("oog", [False, True], ids=["enough-gas", "oog"])
 def test_create_e_contract_create_ne_contract_in_init_oog_tr(
     state_test: StateTestFiller,
@@ -121,6 +121,7 @@ def test_create_e_contract_create_ne_contract_in_init_oog_tr(
         gas_limit = needed + needed // 63
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=initcode,

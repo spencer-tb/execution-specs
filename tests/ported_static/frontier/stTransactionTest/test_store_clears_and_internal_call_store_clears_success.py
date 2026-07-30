@@ -40,7 +40,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stTransactionTest/StoreClearsAndInternalCallStoreClearsSuccessFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_store_clears_and_internal_call_store_clears_success(
     state_test: StateTestFiller,
@@ -121,6 +121,7 @@ def test_store_clears_and_internal_call_store_clears_success(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

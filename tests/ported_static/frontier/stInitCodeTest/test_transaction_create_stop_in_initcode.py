@@ -28,7 +28,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stInitCodeTest/TransactionCreateStopInInitcodeFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 def test_transaction_create_stop_in_initcode(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -55,6 +55,7 @@ def test_transaction_create_stop_in_initcode(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.PUSH1[0xA]

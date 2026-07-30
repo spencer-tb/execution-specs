@@ -11,6 +11,7 @@ from execution_testing import (
     Address,
     Alloc,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -24,10 +25,11 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stStackTests/stacksanitySWAPFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 def test_stacksanity_swap(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Checks stack usage for SWAP."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -44,6 +46,7 @@ def test_stacksanity_swap(
     contract_0 = pre.fund_eoa(amount=0xE8D4A5100000000000)  # noqa: F841
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.PUSH1[0x0] * 1024 + Op.SWAP1,

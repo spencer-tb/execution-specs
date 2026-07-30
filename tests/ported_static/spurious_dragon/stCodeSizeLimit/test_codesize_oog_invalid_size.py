@@ -25,7 +25,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCodeSizeLimit/codesizeOOGInvalidSizeFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.valid_before("EIP7954")
 @pytest.mark.parametrize(
     "d, g, v",
@@ -83,6 +83,7 @@ def test_codesize_oog_invalid_size(
     tx_value = [1]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=tx_data[d],

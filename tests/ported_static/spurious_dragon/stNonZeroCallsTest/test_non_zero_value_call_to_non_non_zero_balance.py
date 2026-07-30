@@ -36,7 +36,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stNonZeroCallsTest/NonZeroValue_CALL_ToNonNonZeroBalanceFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Berlin")
 @pytest.mark.pre_alloc_mutable
 def test_non_zero_value_call_to_non_non_zero_balance(
     state_test: StateTestFiller,
@@ -94,6 +94,7 @@ def test_non_zero_value_call_to_non_non_zero_balance(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

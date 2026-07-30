@@ -34,7 +34,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stAttackTest/CrashingTransactionFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 # Required: the sender is funded at the attack's historical nonce 3270.
 @pytest.mark.pre_alloc_mutable
 def test_crashing_transaction(
@@ -56,6 +56,7 @@ def test_crashing_transaction(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.MSTORE(offset=0x40, value=0x60)

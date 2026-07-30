@@ -86,6 +86,7 @@ def test_suicide_to_existing_contract(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

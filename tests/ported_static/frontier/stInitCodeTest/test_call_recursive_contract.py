@@ -42,7 +42,7 @@ def recursive_create_calculator(
 @pytest.mark.ported_from(
     ["state_tests/stInitCodeTest/CallRecursiveContractFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 def test_call_recursive_contract(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -70,6 +70,7 @@ def test_call_recursive_contract(
         pre_fund_deploy_addresses = True
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=entry_contract,
         gas_limit=gas_limit,

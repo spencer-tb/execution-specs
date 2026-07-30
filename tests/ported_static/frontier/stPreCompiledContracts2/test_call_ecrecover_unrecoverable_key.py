@@ -13,6 +13,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -27,11 +28,12 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stPreCompiledContracts2/CallEcrecoverUnrecoverableKeyFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_call_ecrecover_unrecoverable_key(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """CALL to ECREC precompile with input that has a valid signature..."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -88,6 +90,7 @@ def test_call_ecrecover_unrecoverable_key(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

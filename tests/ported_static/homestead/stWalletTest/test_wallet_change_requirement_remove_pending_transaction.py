@@ -13,6 +13,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     Hash,
     StateTestFiller,
     Transaction,
@@ -27,11 +28,12 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stWalletTest/walletChangeRequirementRemovePendingTransactionFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_wallet_change_requirement_remove_pending_transaction(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_wallet_change_requirement_remove_pending_transaction."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -86,6 +88,7 @@ def test_wallet_change_requirement_remove_pending_transaction(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_1,
         data=Bytes("ba51a6df") + Hash(0x2),

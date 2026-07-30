@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stEIP1559/gasPriceDiffPlacesFiller.yml"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.valid_until("Prague")
 @pytest.mark.parametrize(
     "d, g, v",
@@ -1246,6 +1246,7 @@ def test_gas_price_diff_places(
     tx_gas = [4503599627370496]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_3,
         data=tx_data[d],

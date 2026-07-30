@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stEIP150Specific/Transaction64Rule_integerBoundariesFiller.yml"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Byzantium")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -226,6 +226,7 @@ def test_transaction64_rule_integer_boundaries(
     tx_gas = [800000]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_1,
         data=tx_data[d],

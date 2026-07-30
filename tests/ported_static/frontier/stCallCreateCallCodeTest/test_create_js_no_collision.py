@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCallCreateCallCodeTest/createJS_NoCollisionFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 def test_create_js_no_collision(
     state_test: StateTestFiller,
     fork: Fork,
@@ -46,6 +46,7 @@ def test_create_js_no_collision(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Bytes(

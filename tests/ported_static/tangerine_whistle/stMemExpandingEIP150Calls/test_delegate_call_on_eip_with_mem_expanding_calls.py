@@ -37,7 +37,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stMemExpandingEIP150Calls/DelegateCallOnEIPWithMemExpandingCallsFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("TangerineWhistle")
 @pytest.mark.pre_alloc_mutable
 def test_delegate_call_on_eip_with_mem_expanding_calls(
     state_test: StateTestFiller,
@@ -90,6 +90,7 @@ def test_delegate_call_on_eip_with_mem_expanding_calls(
     gas_limit = 600_000 + (intrinsic - 21_000)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

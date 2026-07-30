@@ -13,6 +13,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -28,11 +29,12 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stDelegatecallTestHomestead/delegatecodeDynamicCode2SelfCallFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Homestead")
 @pytest.mark.pre_alloc_mutable
 def test_delegatecode_dynamic_code2_self_call(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_delegatecode_dynamic_code2_self_call."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -70,6 +72,7 @@ def test_delegatecode_dynamic_code2_self_call(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(""),

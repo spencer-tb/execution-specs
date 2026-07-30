@@ -17,6 +17,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -31,11 +32,12 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stStaticFlagEnabled/DelegatecallToPrecompileFromContractInitializationFiller.yml"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.pre_alloc_mutable
 def test_delegatecall_to_precompile_from_contract_initialization(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Contract B staticcalls contract A."""
     coinbase = Address(0xCAFE000000000000000000000000000000000001)
@@ -380,6 +382,7 @@ def test_delegatecall_to_precompile_from_contract_initialization(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(

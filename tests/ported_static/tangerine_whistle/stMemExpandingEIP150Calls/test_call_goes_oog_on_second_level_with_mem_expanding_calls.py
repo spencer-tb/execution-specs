@@ -40,7 +40,7 @@ MEM_SIZE = 0xFF
         "state_tests/stMemExpandingEIP150Calls/CallGoesOOGOnSecondLevelWithMemExpandingCallsFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_from("Frontier")
 def test_call_goes_oog_on_second_level_with_mem_expanding_calls(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -146,6 +146,7 @@ def test_call_goes_oog_on_second_level_with_mem_expanding_calls(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=target,
         gas_limit=gas_limit,

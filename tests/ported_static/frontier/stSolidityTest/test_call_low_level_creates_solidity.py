@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stSolidityTest/CallLowLevelCreatesSolidityFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_call_low_level_creates_solidity(
     state_test: StateTestFiller,
@@ -158,6 +158,7 @@ def test_call_low_level_creates_solidity(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes("c0406226"),

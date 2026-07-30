@@ -13,6 +13,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -32,6 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 def test_suicides_and_internal_call_suicides_bonus_gas_at_call(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_suicides_and_internal_call_suicides_bonus_gas_at_call."""
     coinbase = Address(0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B)
@@ -80,6 +82,7 @@ def test_suicides_and_internal_call_suicides_bonus_gas_at_call(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_1,
         data=Bytes(""),

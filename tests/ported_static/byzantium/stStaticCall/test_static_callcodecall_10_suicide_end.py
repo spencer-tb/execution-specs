@@ -130,6 +130,7 @@ def test_static_callcodecall_10_suicide_end(
     tx_gas = [3000000]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=tx_data[d],

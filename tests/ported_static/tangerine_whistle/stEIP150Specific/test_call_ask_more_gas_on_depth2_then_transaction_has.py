@@ -82,6 +82,7 @@ def test_call_ask_more_gas_on_depth2_then_transaction_has(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=entry,
         state_gas_reservoir=0,

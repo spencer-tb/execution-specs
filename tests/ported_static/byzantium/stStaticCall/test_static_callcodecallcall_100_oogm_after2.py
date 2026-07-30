@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stStaticCall/static_callcodecallcall_100_OOGMAfter2Filler.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.slow
 @pytest.mark.parametrize(
     "d, g, v",
@@ -144,6 +144,7 @@ def test_static_callcodecallcall_100_oogm_after2(
     tx_value = [0, 1]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=tx_data[d],

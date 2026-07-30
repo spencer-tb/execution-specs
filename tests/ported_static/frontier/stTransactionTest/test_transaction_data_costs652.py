@@ -24,7 +24,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stTransactionTest/TransactionDataCosts652Filler.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -81,6 +81,7 @@ def test_transaction_data_costs652(
 
     floor_cost = fork.transaction_data_floor_cost_calculator()(data=tx_data[d])
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=Address(0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B),
         data=tx_data[d],
