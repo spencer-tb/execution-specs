@@ -76,7 +76,6 @@ def test_iszero(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=100000000,
     )
 
     # Source: lll
@@ -162,14 +161,12 @@ def test_iszero(
         Bytes("693c6139") + Hash(0x1),
         Bytes("693c6139") + Hash(0x2),
     ]
-    tx_gas = [16777216]
     tx_value = [1]
 
     tx = Transaction(
         sender=sender,
         to=contract_3,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

@@ -110,7 +110,6 @@ def test_create2_init_codes(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=1000000,
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000)
@@ -263,14 +262,12 @@ def test_create2_init_codes(
         )
         + Op.STOP,
     ]
-    tx_gas = [800000]
     tx_value = [1]
 
     tx = Transaction(
         sender=sender,
         to=None,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

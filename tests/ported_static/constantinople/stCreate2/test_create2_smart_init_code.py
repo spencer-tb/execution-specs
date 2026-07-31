@@ -82,7 +82,6 @@ def test_create2_smart_init_code(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=47244640256,
     )
 
     pre[sender] = Account(balance=0x6400000000)
@@ -180,21 +179,11 @@ def test_create2_smart_init_code(
         Hash(contract_0, left_padding=True),
         Hash(contract_1, left_padding=True),
     ]
-    # The d0 chain spills three `create_state_gas()` charges (two
-    # CREATE2 dispatches and the SELFDESTRUCT to a non-alive
-    # beneficiary) and two fresh SSTORE-set state costs into regular
-    # gas when the reservoir is empty. Lift the original budget by
-    # exactly that spilled state gas; 0 pre-EIP-8037.
-    outer_tx_gas = 400_000 + fork.oog_budget_lift(
-        creates_before_oog=3, sstores_before_oog=2
-    )
-    tx_gas = [outer_tx_gas]
 
     tx = Transaction(
         sender=sender,
         to=contract_2,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         error=_exc,
     )
 

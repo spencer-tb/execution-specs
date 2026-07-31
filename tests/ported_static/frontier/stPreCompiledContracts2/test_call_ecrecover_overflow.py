@@ -281,22 +281,12 @@ def test_call_ecrecover_overflow(
             0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD036413F
         ),
     ]
-    # On Amsterdam the two outer SSTOREs that wrap the inner ecrecover
-    # CALL each accumulate EIP-8037 per-storage state-gas (37 568) that
-    # spills back into regular gas once the empty reservoir is drained,
-    # pushing the tx over the original 100 000 budget. Bump on EIP-8037
-    # only; pre-EIP-8037 forks keep the original.
-    outer_tx_gas = 100000
-    if fork.is_eip_enabled(8037):
-        outer_tx_gas = 500000
-    tx_gas = [outer_tx_gas]
     tx_value = [100000]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

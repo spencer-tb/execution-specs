@@ -75,7 +75,6 @@ def test_create2collision_code2(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=1000000,
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000)
@@ -126,19 +125,12 @@ def test_create2collision_code2(
         + Op.CREATE2(value=0x1, offset=0x14, size=0xC, salt=0x0)
         + Op.STOP,
     ]
-    # EIP-8037 NEW_ACCOUNT state-gas spill on Amsterdam exceeds
-    # the original 400 000 budget. Pre-EIP-8037 keeps the original.
-    outer_tx_gas = 400000
-    if fork.is_eip_enabled(8037):
-        outer_tx_gas = 1_000_000
-    tx_gas = [outer_tx_gas]
     tx_value = [1]
 
     tx = Transaction(
         sender=sender,
         to=None,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

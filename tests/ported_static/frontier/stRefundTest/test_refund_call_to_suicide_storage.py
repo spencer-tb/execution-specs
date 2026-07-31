@@ -65,7 +65,6 @@ def test_refund_call_to_suicide_storage(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=100000000,
     )
 
     # Source: lll
@@ -133,14 +132,12 @@ def test_refund_call_to_suicide_storage(
         Hash(0x1F4),
         Hash(0x10000),
     ]
-    tx_gas = [10000000]
     tx_value = [10]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

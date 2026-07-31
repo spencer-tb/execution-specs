@@ -639,7 +639,6 @@ def test_revert_precompiled_touch_exact_oog_paris(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=4012015,
     )
 
     pre[addr_5] = Account(balance=1)

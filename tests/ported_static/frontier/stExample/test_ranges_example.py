@@ -258,14 +258,12 @@ def test_ranges_example(
         Bytes("01"),
         Bytes("04"),
     ]
-    tx_gas = [400000, 1400000, 2400000]
     tx_value = [100000, 200000]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

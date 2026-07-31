@@ -66,7 +66,6 @@ def test_static_ab_acalls_suicide0(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=100000000,
     )
 
     # Source: lll
@@ -199,14 +198,12 @@ def test_static_ab_acalls_suicide0(
         Hash(addr, left_padding=True),
         Hash(addr_3, left_padding=True),
     ]
-    tx_gas = [10000000]
     tx_value = [100000]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

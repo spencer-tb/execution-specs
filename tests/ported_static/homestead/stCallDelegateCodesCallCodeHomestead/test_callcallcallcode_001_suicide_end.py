@@ -61,7 +61,6 @@ def test_callcallcallcode_001_suicide_end(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=30000000,
     )
 
     # Source: lll
@@ -141,7 +140,6 @@ def test_callcallcallcode_001_suicide_end(
         sender=sender,
         to=target,
         data=Bytes(""),
-        gas_limit=3000000,
     )
 
     post = {

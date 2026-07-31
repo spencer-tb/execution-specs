@@ -121,11 +121,8 @@ def test_create2_suicide(
     v: int,
 ) -> None:
     """CREATE2 suicide with/without value, CREATE2 suicide to itself   + ..."""
-    # EIP-8037 gas bumps: original values for pre-EIP-8037 forks.
-    outer_tx_gas = 600000
     inner_call_gas = 150000
     if fork.is_eip_enabled(8037):
-        outer_tx_gas = 3000000
         inner_call_gas = 1000000
 
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -139,7 +136,6 @@ def test_create2_suicide(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=10000000,
     )
 
     pre[sender] = Account(balance=0xE8D4A51000)
@@ -358,14 +354,12 @@ def test_create2_suicide(
         )
         + Op.STOP,
     ]
-    tx_gas = [outer_tx_gas]
     tx_value = [10]
 
     tx = Transaction(
         sender=sender,
         to=None,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

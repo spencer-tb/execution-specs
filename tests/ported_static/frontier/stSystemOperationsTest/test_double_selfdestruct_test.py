@@ -277,14 +277,12 @@ def test_double_selfdestruct_test(
         Bytes("f41001c0de"),
         Bytes("fa1001c0de"),
     ]
-    tx_gas = [16777216]
     tx_value = [1]
 
     tx = Transaction(
         sender=sender,
         to=contract_0,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         nonce=1,
         error=_exc,

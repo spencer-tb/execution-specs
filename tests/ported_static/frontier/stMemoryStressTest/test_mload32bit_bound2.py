@@ -65,7 +65,6 @@ def test_mload32bit_bound2(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=37791080412587,
     )
 
     # Source: lll
@@ -108,14 +107,12 @@ def test_mload32bit_bound2(
     tx_data = [
         Bytes(""),
     ]
-    tx_gas = [150000, 16777216]
     tx_value = [10]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

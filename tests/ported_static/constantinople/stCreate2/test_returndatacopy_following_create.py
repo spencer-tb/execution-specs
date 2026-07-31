@@ -71,7 +71,6 @@ def test_returndatacopy_following_create(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=47244640256,
     )
 
     pre[sender] = Account(balance=0x6400000000)
@@ -150,13 +149,11 @@ def test_returndatacopy_following_create(
         Hash(contract_1, left_padding=True),
         Hash(contract_2, left_padding=True),
     ]
-    tx_gas = [100000]
 
     tx = Transaction(
         sender=sender,
         to=contract_0,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         error=_exc,
     )
 

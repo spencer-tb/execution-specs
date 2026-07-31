@@ -48,7 +48,6 @@ def test_suicide_caller_addres_too_big_left(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=10000000,
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000)
@@ -68,7 +67,6 @@ def test_suicide_caller_addres_too_big_left(
         sender=sender,
         to=contract_0,
         data=Bytes(""),
-        gas_limit=1000000,
         value=0x186A0,
     )
 

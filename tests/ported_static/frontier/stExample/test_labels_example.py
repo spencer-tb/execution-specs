@@ -138,14 +138,12 @@ def test_labels_example(
         Bytes("03"),
         Bytes("03"),
     ]
-    tx_gas = [400000]
     tx_value = [100000]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

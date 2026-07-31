@@ -337,13 +337,11 @@ def test_multi_selfdestruct(
         Bytes("04"),
         Bytes("05"),
     ]
-    tx_gas = [10000000]
 
     tx = Transaction(
         sender=sender,
         to=contract_1,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         nonce=1,
         gas_price=1000,
         error=_exc,

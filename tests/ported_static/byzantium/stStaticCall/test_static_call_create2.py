@@ -77,7 +77,6 @@ def test_static_call_create2(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=10000000,
     )
 
     # Source: lll
@@ -212,14 +211,12 @@ def test_static_call_create2(
         Hash(contract_2, left_padding=True),
         Hash(contract_3, left_padding=True),
     ]
-    tx_gas = [1000000]
     tx_value = [100000]
 
     tx = Transaction(
         sender=sender,
         to=contract_0,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

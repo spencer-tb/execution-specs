@@ -137,14 +137,12 @@ def test_transaction_colliding_with_non_empty_account_init_paris(
         )
         + Op.STOP,
     ]
-    tx_gas = [400000]
     tx_value = [100000]
 
     tx = Transaction(
         sender=sender,
         to=None,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=TransactionException.SENDER_NOT_EOA,
     )

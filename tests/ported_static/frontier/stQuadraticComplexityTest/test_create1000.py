@@ -69,7 +69,6 @@ def test_create1000(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=8600000000,
     )
 
     # Source: lll
@@ -161,14 +160,12 @@ def test_create1000(
     tx_data = [
         Bytes(""),
     ]
-    tx_gas = [150000, 250000000]
     tx_value = [10]
 
     tx = Transaction(
         sender=sender,
         to=contract_0,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

@@ -67,7 +67,6 @@ def test_static_call50000bytes_contract50_2(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=892500000000,
     )
 
     # Source: lll
@@ -198,14 +197,12 @@ def test_static_call50000bytes_contract50_2(
         Hash(addr_2, left_padding=True),
         Hash(addr_4, left_padding=True),
     ]
-    tx_gas = [882500000000]
     tx_value = [10]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

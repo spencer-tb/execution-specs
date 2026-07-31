@@ -817,7 +817,6 @@ def test_modexp_tests(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=100000000,
     )
 
     # Source: yul
@@ -1219,13 +1218,11 @@ def test_modexp_tests(
         Bytes("048071d3") + Hash(0x9C00) + Hash(0x1) + Hash(0xD7A1),
         Bytes("048071d3") + Hash(0xD796) + Hash(0xD796) + Hash(0xA7D5),
     ]
-    tx_gas = [16777216]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         nonce=1,
         error=_exc,
     )

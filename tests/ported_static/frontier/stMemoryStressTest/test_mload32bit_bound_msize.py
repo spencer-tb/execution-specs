@@ -65,7 +65,6 @@ def test_mload32bit_bound_msize(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=175923205248920000,
     )
 
     # Source: lll
@@ -110,13 +109,11 @@ def test_mload32bit_bound_msize(
     tx_data = [
         Bytes(""),
     ]
-    tx_gas = [150000, 16777216]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         error=_exc,
     )
 

@@ -167,7 +167,6 @@ def test_mulmod(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=100000000,
     )
 
     # Source: lll
@@ -520,14 +519,12 @@ def test_mulmod(
         Bytes("693c6139") + Hash(0xE),
         Bytes("693c6139") + Hash(0xD),
     ]
-    tx_gas = [16777216]
     tx_value = [1]
 
     tx = Transaction(
         sender=sender,
         to=contract_16,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

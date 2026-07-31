@@ -70,7 +70,6 @@ def test_static_call_contract_to_create_contract_oog(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=100000000,
     )
 
     # Source: lll

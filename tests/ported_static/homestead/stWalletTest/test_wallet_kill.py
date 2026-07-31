@@ -46,7 +46,6 @@ def test_wallet_kill(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=100000000,
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A75EF08F, nonce=1)
@@ -73,7 +72,6 @@ def test_wallet_kill(
         sender=sender,
         to=contract_0,
         data=Bytes("cbf0b0c0") + Hash(sender, left_padding=True),
-        gas_limit=10000000,
         value=1,
         nonce=1,
     )

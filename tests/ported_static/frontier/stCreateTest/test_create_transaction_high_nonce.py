@@ -72,7 +72,6 @@ def test_create_transaction_high_nonce(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=1000000,
     )
 
     expect_entries_: list[dict] = [
@@ -91,22 +90,12 @@ def test_create_transaction_high_nonce(
     tx_data = [
         Op.RETURN(offset=0x0, size=0x1),
     ]
-    # Original budget (90 000) is below the EIP-8037 intrinsic-gas
-    # floor for a create tx on Amsterdam, so the tx is rejected for
-    # `INTRINSIC_GAS_TOO_LOW` before the NONCE_IS_MAX check this test
-    # asserts ever runs. Bump on Amsterdam to clear the floor; pre-
-    # EIP-8037 forks keep the original.
-    nonce_check_tx_gas = 90000
-    if fork.is_eip_enabled(8037):
-        nonce_check_tx_gas = 500000
-    tx_gas = [nonce_check_tx_gas]
     tx_value = [0, 1]
 
     tx = Transaction(
         sender=sender,
         to=None,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         nonce=18446744073709551615,
         error=TransactionException.NONCE_IS_MAX,

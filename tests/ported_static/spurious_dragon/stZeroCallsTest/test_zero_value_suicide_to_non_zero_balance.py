@@ -48,7 +48,6 @@ def test_zero_value_suicide_to_non_zero_balance(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=10000000,
     )
 
     pre[sender] = Account(balance=0xE8D4A51000)
@@ -69,7 +68,6 @@ def test_zero_value_suicide_to_non_zero_balance(
         sender=sender,
         to=target,
         data=Bytes(""),
-        gas_limit=600000,
     )
 
     post = {
