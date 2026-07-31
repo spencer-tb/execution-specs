@@ -6,8 +6,9 @@ state_tests/stCreate2/create2collisionNonceFiller.json
 
 @manually-enhanced: Do not overwrite. `tx_gas` raised on Amsterdam to
 cover EIP-8037 NEW_ACCOUNT state-gas spill into regular gas. Pre-
-EIP-8037 keeps the original 400 000 budget; post-state expectations
-unchanged on all forks.
+EIP-8037 keeps the original 400 000 budget. Per-era post: on Byzantium
+the CREATE2 byte is undefined, so the init frame fails and the
+creation-transaction account never comes into existence.
 
 """
 
@@ -22,7 +23,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Fork
+from execution_testing.forks import Constantinople, Fork
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -32,7 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCreate2/create2collisionNonceFiller.json"],
 )
-@pytest.mark.valid_from("ConstantinopleFix")
+@pytest.mark.valid_from("Byzantium")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -132,13 +133,19 @@ def test_create2collision_nonce(
         value=tx_value[v],
     )
 
+    if fork >= Constantinople:
+        # The init frame runs its CREATE2 (which collides), deposits
+        # no code, and keeps the 1-wei endowment at nonce 2.
+        created_account: Account | None = Account(balance=1, nonce=2)
+    else:
+        # Pre-Constantinople the CREATE2 byte is undefined: the init
+        # frame fails, forfeits its gas, and no account is created.
+        created_account = Account.NONEXISTENT
     post = {
         contract_0: Account(storage={}, code=b"", balance=0, nonce=1),
         contract_1: Account(storage={}, code=b"", balance=0, nonce=1),
         contract_2: Account(storage={}, code=b"", balance=0, nonce=1),
-        compute_create_address(address=sender, nonce=0): Account(
-            balance=1, nonce=2
-        ),
+        compute_create_address(address=sender, nonce=0): created_account,
         sender: Account(nonce=1),
     }
 

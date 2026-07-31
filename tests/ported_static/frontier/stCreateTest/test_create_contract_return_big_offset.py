@@ -3,6 +3,12 @@ Test_create_contract_return_big_offset.
 
 Ported from:
 state_tests/stCreateTest/CREATE_ContractRETURNBigOffsetFiller.yml
+
+@manually-enhanced: Do not overwrite. Per-era post: below EIP-170's
+code-size cap the 64-KiB all-zero return (d0) is a legal, affordable
+code deposit, so the creation succeeds and the contract exists with
+nonce 0 (pre-EIP-161); the larger returns stay unaffordable to
+deposit on every era.
 """
 
 import pytest
@@ -15,7 +21,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Fork
+from execution_testing.forks import Fork, SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -25,7 +31,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCreateTest/CREATE_ContractRETURNBigOffsetFiller.yml"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -92,9 +98,16 @@ def test_create_contract_return_big_offset(
         gas_limit=tx_gas[g],
     )
 
+    created_account: Account | None = Account.NONEXISTENT
+    if d == 0 and fork < SpuriousDragon:
+        # Below EIP-170's 24576-byte cap the 64-KiB all-zero return
+        # is a legal, affordable code deposit (200 gas per byte), so
+        # the creation succeeds; created contracts start at nonce 0
+        # before EIP-161.
+        created_account = Account(code=b"\x00" * 0x10000, nonce=0)
     post = {
         sender: Account(nonce=1),
-        compute_create_address(address=sender, nonce=0): Account.NONEXISTENT,
+        compute_create_address(address=sender, nonce=0): created_account,
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

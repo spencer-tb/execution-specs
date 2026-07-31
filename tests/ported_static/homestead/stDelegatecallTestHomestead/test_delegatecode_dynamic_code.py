@@ -3,6 +3,14 @@ Test_delegatecode_dynamic_code.
 
 Ported from:
 state_tests/stDelegatecallTestHomestead/delegatecodeDynamicCodeFiller.json
+
+@manually-enhanced: Do not overwrite. Per-era post: EIP-161 starts
+created contracts at nonce 1, steering the init code's inner CREATE.
+Pre-SpuriousDragon it lands exactly on the DELEGATECALL target, whose
+freshly deposited code then runs in the creating frame's context; from
+SpuriousDragon on the target stays code-less and the call is a no-op.
+The mirror address is pinned nonexistent and the dynamically created
+contract's code/balance are asserted on every era.
 """
 
 import pytest
@@ -18,6 +26,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -29,7 +38,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stDelegatecallTestHomestead/delegatecodeDynamicCodeFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Homestead")
 @pytest.mark.pre_alloc_mutable
 def test_delegatecode_dynamic_code(
     state_test: StateTestFiller,
@@ -82,19 +91,30 @@ def test_delegatecode_dynamic_code(
         data=Bytes(""),
     )
 
+    child = compute_create_address(address=contract_0, nonce=0)
+    # EIP-161 starts created contracts at nonce 1, steering the inner
+    # CREATE's address: pre-SpuriousDragon it lands exactly on the
+    # init code's hardcoded DELEGATECALL target.
+    grandchild_nonce = 1 if fork >= SpuriousDragon else 0
+    grandchild = compute_create_address(address=child, nonce=grandchild_nonce)
+    mirror = compute_create_address(address=child, nonce=1 - grandchild_nonce)
+
+    if fork >= SpuriousDragon:
+        # The delegate target holds no code: the call succeeds as a
+        # no-op and the delegate-written slots stay zero.
+        child_storage = {0: 0, 10: grandchild, 11: 1, 20: 0}
+    else:
+        # The freshly deposited code at the delegate target runs in
+        # the child's context with the child's caller preserved.
+        child_storage = {0: 1, 10: grandchild, 11: 1, 20: contract_0}
+
     post = {
-        compute_create_address(
-            address=compute_create_address(address=contract_0, nonce=0),
-            nonce=0,
-        ): Account.NONEXISTENT,
-        compute_create_address(address=contract_0, nonce=0): Account(
-            storage={
-                0: 0,
-                10: 0x568A95F77B047BECE6AA68843D2019332C46A585,
-                11: 1,
-                20: 0,
-            },
-            balance=0,
+        mirror: Account.NONEXISTENT,
+        child: Account(storage=child_storage, balance=0),
+        grandchild: Account(
+            balance=1,
+            nonce=grandchild_nonce,
+            code=bytes.fromhex("600160005533601455"),
         ),
     }
 

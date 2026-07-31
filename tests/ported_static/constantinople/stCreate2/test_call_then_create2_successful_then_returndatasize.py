@@ -3,6 +3,10 @@ Test_call_then_create2_successful_then_returndatasize.
 
 Ported from:
 state_tests/stCreate2/call_then_create2_successful_then_returndatasizeFiller.json
+
+@manually-enhanced: Do not overwrite. Per-era post: on Byzantium the
+CREATE2 byte is undefined, so the frame fails, forfeits its gas, and
+no account is created (storage keeps its pre value).
 """
 
 import pytest
@@ -17,7 +21,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.forks import Amsterdam, Constantinople
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -29,7 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCreate2/call_then_create2_successful_then_returndatasizeFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("ConstantinopleFix")
+@pytest.mark.valid_from("Byzantium")
 @pytest.mark.pre_alloc_mutable
 def test_call_then_create2_successful_then_returndatasize(
     state_test: StateTestFiller,
@@ -103,13 +107,23 @@ def test_call_then_create2_successful_then_returndatasize(
         gas_limit=2100000 if fork >= Amsterdam else 100000,
     )
 
-    post = {
-        Address(0xC0C06666FAD9E52251740536E21FC0F3DB0E0FA0): Account(
+    created = Address(0xC0C06666FAD9E52251740536E21FC0F3DB0E0FA0)
+    if fork >= Constantinople:
+        # CREATE2 succeeds and its empty return data zeroes slot 0.
+        created_account: Account | None = Account(
             code=bytes.fromhex(
                 "0000000000000000000000000000000000000000000000000000000000112233"  # noqa: E501
             ),
-        ),
-        contract_1: Account(storage={0: 0}),
+        )
+        storage_after = {0: 0}
+    else:
+        # Pre-Constantinople the CREATE2 byte is undefined: the frame
+        # fails, forfeits its gas, and all its state unwinds.
+        created_account = Account.NONEXISTENT
+        storage_after = {0: 1}
+    post = {
+        created: created_account,
+        contract_1: Account(storage=storage_after),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

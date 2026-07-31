@@ -4,8 +4,11 @@ Test_call_recursive_contract.
 Ported from:
 state_tests/stInitCodeTest/CallRecursiveContractFiller.json
 
-@manually-enhanced: Do not overwrite. This test has been manually reviewed and
-enhanced.
+@manually-enhanced: Do not overwrite. This test has been manually
+reviewed and enhanced. Per-era post: created contracts start at nonce
+0 before EIP-161, shifting every address in the creation chain, and
+without EIP-150's 63/64 attenuation the recursion affords one more
+level, so the reached depth and chain nonces are pinned per era.
 """
 
 from typing import Generator
@@ -20,6 +23,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon, TangerineWhistle
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -27,22 +31,24 @@ REFERENCE_SPEC_VERSION = "N/A"
 
 
 def recursive_create_calculator(
-    contract: Address, depth: int
+    contract: Address, first_nonce: int, child_nonce: int, depth: int
 ) -> Generator[Address, None, None]:
     """
     Calculate the resulting address of a contract creating contracts
     recursively.
     """
+    nonce = first_nonce
     while depth > 0:
-        contract = compute_create_address(address=contract, nonce=1)
+        contract = compute_create_address(address=contract, nonce=nonce)
         yield contract
+        nonce = child_nonce
         depth -= 1
 
 
 @pytest.mark.ported_from(
     ["state_tests/stInitCodeTest/CallRecursiveContractFiller.json"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 def test_call_recursive_contract(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -76,9 +82,20 @@ def test_call_recursive_contract(
         gas_limit=gas_limit,
     )
 
-    expected_depth = 5
+    # EIP-161 starts created contracts at nonce 1 (0 before), moving
+    # every address in the chain after the first hop; the entry
+    # contract itself is deployed at nonce 1 on every fork.
+    child_start_nonce = 1 if fork >= SpuriousDragon else 0
+    # Without EIP-150's 63/64 attenuation the recursion affords one
+    # more level before an init frame cannot pay for its store.
+    expected_depth = 5 if fork >= TangerineWhistle else 6
     for i, contract in enumerate(
-        recursive_create_calculator(entry_contract, depth=expected_depth + 1)
+        recursive_create_calculator(
+            entry_contract,
+            first_nonce=1,
+            child_nonce=child_start_nonce,
+            depth=expected_depth + 1,
+        )
     ):
         if pre_fund_deploy_addresses:
             pre.fund_address(contract, 1)
@@ -98,7 +115,7 @@ def test_call_recursive_contract(
         last_expected_contract: Account(
             storage={2: last_expected_contract},
             balance=1 if pre_fund_deploy_addresses else 0,
-            nonce=2,
+            nonce=child_start_nonce + 1,
         ),
         first_unexpected_contract: first_unexpected_contract_account,
     }

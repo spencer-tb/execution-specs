@@ -15,7 +15,10 @@ state_tests/stDelegatecallTestHomestead/delegatecallInInitcodeToExistingContract
 contract is deleted, the raw-word init code is composed, the delegate
 call forwards all gas (EIP-8037-proof), the transaction budget is
 maxed, and the post also pins the created account's code/nonce/balance
-and that the delegate's own storage stays untouched.
+and that the delegate's own storage stays untouched. Per-era post:
+pre-SpuriousDragon the created contract starts at nonce 0 (EIP-161).
+Homestead stays waived: the all-gas DELEGATECALL ask overdraws the
+frame pre-EIP-150.
 """
 
 import pytest
@@ -28,6 +31,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -61,7 +65,7 @@ def memory_stores(data: bytes) -> Bytecode:
         "state_tests/stDelegatecallTestHomestead/delegatecallInInitcodeToExistingContractFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("TangerineWhistle")
 def test_delegatecall_in_initcode_to_existing_contract(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -103,8 +107,9 @@ def test_delegatecall_in_initcode_to_existing_contract(
     post = {
         created: Account(
             # The init code deploys no code but writes its own storage.
+            # EIP-161 starts created contracts at nonce 1.
             code=b"",
-            nonce=1,
+            nonce=1 if fork >= SpuriousDragon else 0,
             balance=CREATE_ENDOWMENT,
             storage={
                 DELEGATE_RESULT_SLOT: 1,

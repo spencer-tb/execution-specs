@@ -3,6 +3,12 @@ Test_delegatecall_in_initcode_to_existing_contract_oog.
 
 Ported from:
 state_tests/stDelegatecallTestHomestead/delegatecallInInitcodeToExistingContractOOGFiller.json
+
+@manually-enhanced: Do not overwrite. Per-era post: the init code asks
+for a fixed 100000 gas in its DELEGATECALL. From EIP-150 on the ask is
+capped to the available gas and the creation completes; on Homestead
+the over-ask is an exception, the init frame dies, and the creation
+fails with the endowment staying at the creator.
 """
 
 import pytest
@@ -18,7 +24,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.forks import Amsterdam, TangerineWhistle
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -30,7 +36,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stDelegatecallTestHomestead/delegatecallInInitcodeToExistingContractOOGFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("TangerineWhistle")
+@pytest.mark.valid_from("Homestead")
 @pytest.mark.pre_alloc_mutable
 def test_delegatecall_in_initcode_to_existing_contract_oog(
     state_test: StateTestFiller,
@@ -88,10 +94,21 @@ def test_delegatecall_in_initcode_to_existing_contract_oog(
         gas_limit=2153096 if fork >= Amsterdam else 153096,
     )
 
+    created = compute_create_address(address=contract_0, nonce=0)
+    if fork >= TangerineWhistle:
+        # EIP-150 caps the 100000-gas ask to the available gas, so
+        # the creation completes and keeps the 5-wei endowment.
+        created_account: Account | None = Account(balance=5)
+        creator_balance = 10000 - 5
+    else:
+        # Pre-EIP-150 asking for more gas than the frame holds is an
+        # exception: the init frame dies, the creation fails, and the
+        # endowment stays with the creator.
+        created_account = Account.NONEXISTENT
+        creator_balance = 10000
     post = {
-        compute_create_address(address=contract_0, nonce=0): Account(
-            balance=5
-        ),
+        created: created_account,
+        contract_0: Account(balance=creator_balance, nonce=1),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

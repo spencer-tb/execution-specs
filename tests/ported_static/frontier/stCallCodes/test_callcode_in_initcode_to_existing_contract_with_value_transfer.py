@@ -15,7 +15,9 @@ state_tests/stCallCodes/callcodeInInitcodeToExistingContractWithValueTransferFil
 composed, sub-calls forward all gas (EIP-8037-proof), the transaction
 budget is maxed, and the post also pins the created account's
 code/nonce/balance and that the existing contract's own storage stays
-untouched.
+untouched. Per-era post: pre-SpuriousDragon the created contract
+starts at nonce 0 (EIP-161). Frontier/Homestead stay waived: the
+all-gas CALLCODE ask overdraws the frame pre-EIP-150.
 """
 
 import pytest
@@ -28,6 +30,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -60,7 +63,7 @@ def memory_stores(data: bytes) -> Bytecode:
         "state_tests/stCallCodes/callcodeInInitcodeToExistingContractWithValueTransferFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("TangerineWhistle")
 def test_callcode_in_initcode_to_existing_contract_with_value_transfer(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -99,8 +102,9 @@ def test_callcode_in_initcode_to_existing_contract_with_value_transfer(
     post = {
         created: Account(
             # The init code deploys no code but writes its own storage.
+            # EIP-161 starts created contracts at nonce 1.
             code=b"",
-            nonce=1,
+            nonce=1 if fork >= SpuriousDragon else 0,
             balance=CREATE_ENDOWMENT,
             storage={SUCCESS_FLAG_SLOT: 1, DELEGATE_SLOT: 1},
         ),

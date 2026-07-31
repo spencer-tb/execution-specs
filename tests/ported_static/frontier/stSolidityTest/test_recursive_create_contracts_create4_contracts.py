@@ -3,6 +3,11 @@ Test_recursive_create_contracts_create4_contracts.
 
 Ported from:
 state_tests/stSolidityTest/RecursiveCreateContractsCreate4ContractsFiller.json
+
+@manually-enhanced: Do not overwrite. Per-era post: created contracts
+start at nonce 0 before EIP-161, shifting the grandchild's address
+(derived from its creator's starting nonce) and every created
+contract's final nonce by one.
 """
 
 import pytest
@@ -18,7 +23,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.forks import Amsterdam, SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -30,7 +35,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stSolidityTest/RecursiveCreateContractsCreate4ContractsFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_recursive_create_contracts_create4_contracts(
     state_test: StateTestFiller,
@@ -260,22 +265,22 @@ def test_recursive_create_contracts_create4_contracts(
         value=1,
     )
 
+    # EIP-161 starts created contracts at nonce 1 (0 before): the
+    # grandchild's address derives from its creator's starting nonce
+    # and every created contract's final nonce shifts by one.
+    created_nonce = 1 if fork >= SpuriousDragon else 0
+    child_a = compute_create_address(address=contract_0, nonce=0)
+    child_b = compute_create_address(address=contract_0, nonce=1)
+    child_c = compute_create_address(address=contract_0, nonce=2)
+    grandchild = compute_create_address(address=child_b, nonce=created_nonce)
+
     post = {
         contract_0: Account(storage={0: contract_0, 1: 4}, nonce=3),
-        compute_create_address(
-            address=compute_create_address(address=contract_0, nonce=1),
-            nonce=1,
-        ): Account(storage={0: 1}, nonce=1),
-        compute_create_address(address=contract_0, nonce=2): Account(
-            balance=2, nonce=1
-        ),
+        child_a: Account(storage={0: 3}, nonce=created_nonce),
+        child_b: Account(storage={0: 2}, balance=2, nonce=created_nonce + 1),
+        child_c: Account(balance=2, nonce=created_nonce),
+        grandchild: Account(storage={0: 1}, nonce=created_nonce),
         sender: Account(nonce=1),
-        compute_create_address(address=contract_0, nonce=1): Account(
-            storage={0: 2}, balance=2, nonce=2
-        ),
-        compute_create_address(address=contract_0, nonce=0): Account(
-            storage={0: 3}, nonce=1
-        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

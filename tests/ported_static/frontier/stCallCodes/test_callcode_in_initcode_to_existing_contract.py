@@ -14,12 +14,17 @@ contract is collapsed into a direct transaction to the create-runner,
 the init code is composed and shared with the CREATE2 address
 computation, sub-calls forward all gas (EIP-8037-proof), and the post
 also pins the created account's code/nonce/balance and that the
-existing contract's own storage stays untouched.
+existing contract's own storage stays untouched. Per-era post:
+pre-SpuriousDragon the created contract starts at nonce 0 (EIP-161),
+and pre-Constantinople the CREATE2 byte is undefined so that variant's
+frame fails and nothing changes. Frontier/Homestead stay waived: the
+all-gas CALLCODE ask overdraws the frame pre-EIP-150.
 """
 
 import pytest
 from execution_testing import (
     Account,
+    Address,
     Alloc,
     Bytecode,
     Fork,
@@ -27,6 +32,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import Constantinople, SpuriousDragon
 from execution_testing.vm import Op, Opcode
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -60,7 +66,7 @@ def memory_stores(data: bytes) -> Bytecode:
         "state_tests/stCallCodes/callcodeInInitcodeToExistingContractFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("ConstantinopleFix")
+@pytest.mark.valid_from("TangerineWhistle")
 @pytest.mark.parametrize("opcode", [Op.CREATE, Op.CREATE2])
 def test_callcode_in_initcode_to_existing_contract(
     state_test: StateTestFiller,
@@ -115,21 +121,32 @@ def test_callcode_in_initcode_to_existing_contract(
         to=runner,
     )
 
-    post = {
-        created: Account(
-            # The init code deploys no code but writes its own storage.
-            code=b"",
-            nonce=1,
-            balance=CREATE_ENDOWMENT,
-            storage={SUCCESS_FLAG_SLOT: 1, DELEGATE_SLOT: 1},
-        ),
-        runner: Account(
-            nonce=2,
-            balance=RUNNER_BALANCE - CREATE_ENDOWMENT,
-            storage={},
-        ),
-        # The existing contract's own storage must stay untouched.
-        existing: Account(storage={}),
-    }
+    post: dict[Address, Account | None]
+    if opcode == Op.CREATE2 and fork < Constantinople:
+        # Pre-Constantinople the CREATE2 byte is undefined: the
+        # runner's frame fails, forfeits its gas, and nothing changes.
+        post = {
+            created: Account.NONEXISTENT,
+            runner: Account(nonce=1, balance=RUNNER_BALANCE, storage={}),
+            existing: Account(storage={}),
+        }
+    else:
+        post = {
+            created: Account(
+                # The init code deploys no code but writes its own
+                # storage. EIP-161 starts created contracts at nonce 1.
+                code=b"",
+                nonce=1 if fork >= SpuriousDragon else 0,
+                balance=CREATE_ENDOWMENT,
+                storage={SUCCESS_FLAG_SLOT: 1, DELEGATE_SLOT: 1},
+            ),
+            runner: Account(
+                nonce=2,
+                balance=RUNNER_BALANCE - CREATE_ENDOWMENT,
+                storage={},
+            ),
+            # The existing contract's own storage must stay untouched.
+            existing: Account(storage={}),
+        }
 
     state_test(pre=pre, post=post, tx=tx)
