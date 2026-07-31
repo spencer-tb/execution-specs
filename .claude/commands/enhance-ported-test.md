@@ -626,7 +626,25 @@ post* per fork era. Recover the range by branching the post on `fork`:
 - **Hard floors stay floors.** Berlin-composite pricing (the framework prices
   opcode composites with the EIP-2929 schedule), `Op.GAS`-forwarding on
   pre-EIP-150, and metadata-introduction bounds (step 11) are real limits —
-  don't branch around them; note the waiver.
+  don't branch around them; note the waiver. Further validated hard floors:
+  - The fork `Constantinople` (pre-Petersburg, EIP-1283) is **not fillable**
+    — the EELS t8n excludes it ("Unsupported forks excluded from
+    ExecutionSpecsTransitionTool"). Never leave `valid_from` at an
+    unfillable fork: it claims untested validity and gains zero coverage.
+  - A **fixed over-ask** call operand (an ask the frame cannot afford) is an
+    exception pre-EIP-150 (no 63/64 cap) — same TangerineWhistle floor as
+    `Op.GAS` forwarding, even though the operand is explicit.
+  - A marker **cannot skip eras**: if Homestead is hard-floored, a Frontier
+    recovery below it is unreachable — waive both.
+  - The framework's CALL composite **below SpuriousDragon** drops the base +
+    value-transfer cost, so gas-replay tests can be unfillable there even
+    when the chain behavior matches the next era exactly.
+  - If the original snapshot filled with a **different tx gas budget** than
+    the test's load-bearing `gas_limit` (e.g. 30M vs a pinned 600k), the
+    historical pre-150 outcome is irreproducible — waive rather than pin an
+    artifact of the reduced budget.
+- **mypy:** a post branch mixing `Account.NONEXISTENT` and `Account(...)`
+  needs an annotated variable (`x: Account | None = Account.NONEXISTENT`).
 - **Gate:** full-range fill `--until=Amsterdam` afterward, every format.
 
 ## Re-pinning expected values
