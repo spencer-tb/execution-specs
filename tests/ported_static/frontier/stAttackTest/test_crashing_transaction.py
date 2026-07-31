@@ -6,12 +6,13 @@ transaction whose init code CREATEs children in a loop while more than
 Ported from:
 state_tests/stAttackTest/CrashingTransactionFiller.json
 
-@manually-enhanced: Do not overwrite. On pre-EIP-8037 forks the loop
-drains to the ported child count (created nonce 124); under EIP-8037 an
-iteration costs more than the loop's 50000-gas guard (new-account plus
-code-deposit state gas spill from the frame), so the loop enters an
-iteration it cannot afford and the whole creation deterministically
-reverts — the split post pins both behaviors.
+@manually-enhanced: Do not overwrite. The child count the loop drains
+to is a pure function of the gas schedule, so the created contract's
+nonce is pinned per fork era (EIP-161 additionally starts created
+contracts at nonce 1); under EIP-8037 an iteration costs more than the
+loop's 50000-gas guard (new-account plus code-deposit state gas spill
+from the frame), so the loop enters an iteration it cannot afford and
+the whole creation deterministically reverts.
 """
 
 import pytest
@@ -25,6 +26,11 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import (
+    Homestead,
+    SpuriousDragon,
+    TangerineWhistle,
+)
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -34,7 +40,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stAttackTest/CrashingTransactionFiller.json"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 # Required: the sender is funded at the attack's historical nonce 3270.
 @pytest.mark.pre_alloc_mutable
 def test_crashing_transaction(
@@ -114,10 +120,18 @@ def test_crashing_transaction(
         # so the init frame dies mid-CREATE and no account survives.
         created_account: Account | None = Account.NONEXISTENT
     else:
+        # Children the loop affords per gas schedule; EIP-161 starts
+        # created contracts at nonce 1 on top of the count.
+        if fork >= TangerineWhistle:
+            children = 123
+        elif fork >= Homestead:
+            children = 142
+        else:
+            children = 143
         created_account = Account(
             code=bytes.fromhex("60606040526008565b00"),
             balance=1,
-            nonce=124,
+            nonce=children + (1 if fork >= SpuriousDragon else 0),
         )
     post = {
         sender: Account(nonce=3271),

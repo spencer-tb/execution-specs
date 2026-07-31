@@ -595,6 +595,40 @@ lowering, never a true removal.
   Homestead for `DELEGATECALL`) instead of masking it at SpuriousDragon.
   Validated on `test_delegatecall_emptycontract`.
 
+### 11b. Recover pre-floor forks with fork-conditional posts
+When the original snapshot's post table covered forks *below* our empirical
+floor (a parity regression in `scripts/snapshot_parity.csv`), the floor is
+usually not a hard limit — the old filler simply had a *different expected
+post* per fork era. Recover the range by branching the post on `fork`:
+- **Probe first.** Lower `valid_from` to the original's minimum, fill each
+  missing fork with `--tb=short`, and read the mismatch (`want … got …`) per
+  fork. The `got` values are EELS — the executable spec — so they are
+  authoritative *if* the divergence has a clean fork-rule explanation.
+- **Explain every divergence before encoding it.** The recurring causes:
+  EIP-161 (SpuriousDragon) starts created-contract nonces at 1 and sweeps
+  empty touched accounts (pre-SD an empty account persists in post);
+  EIP-150 (TangerineWhistle) repriced calls and added 63/64, shifting any
+  count/depth that is a function of the gas schedule; Homestead's EIP-2 made
+  deposit-fee failure consume the frame (Frontier deposited nothing and
+  succeeded). A value you cannot tie to a fork rule means the test changed
+  subject — stop, don't paste.
+- **Encode as comparisons, not tables.** Import fork classes
+  (`from execution_testing.forks import SpuriousDragon, ...`) and branch
+  `if fork >= TangerineWhistle: ... elif fork >= Homestead: ...`; where the
+  divergence is a shared quantity plus a rule shift, express the relationship
+  (`nonce=children + (1 if fork >= SpuriousDragon else 0)`), so each branch
+  documents its rule. Validated on `test_crashing_transaction` (four eras:
+  143/142/123 children + the EIP-161 +1).
+- **Cross-check the snapshot.** The original's post section should show
+  distinct entries/hashes for exactly the eras you branch on; if the snapshot
+  had a *single* entry across the range, a divergence is our regression, not
+  a historical difference — investigate instead of branching.
+- **Hard floors stay floors.** Berlin-composite pricing (the framework prices
+  opcode composites with the EIP-2929 schedule), `Op.GAS`-forwarding on
+  pre-EIP-150, and metadata-introduction bounds (step 11) are real limits —
+  don't branch around them; note the waiver.
+- **Gate:** full-range fill `--until=Amsterdam` afterward, every format.
+
 ## Re-pinning expected values
 
 When a measurement rewrite (step 10) or bytecode change shifts a stored value,
