@@ -14,6 +14,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -26,11 +27,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCallCodes/callcodecall_10_SuicideEndFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("TangerineWhistle")
 @pytest.mark.pre_alloc_mutable
 def test_callcodecall_10_suicide_end(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """CALLCODE -> (CALL -> code) (suicide)."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -93,7 +95,12 @@ def test_callcodecall_10_suicide_end(
         address=Address(0xF741CFEE7B7FB1025DCCEF3DB5A3CBC8FFB776F8),  # noqa: E501
     )
 
-    tx = Transaction(sender=sender, to=target, data=Bytes(""))
+    tx = Transaction(
+        sender=sender,
+        to=target,
+        data=Bytes(""),
+        protected=fork.supports_protected_txs(),
+    )
 
     post = {
         addr: Account(storage={0: 0, 1: 0}, balance=0x2540BE400),

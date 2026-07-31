@@ -131,6 +131,7 @@ def test_refund_single_suicide(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes("c0406226"),

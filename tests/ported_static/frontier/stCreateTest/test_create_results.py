@@ -99,7 +99,7 @@ FRAGMENTS: dict[int, tuple[int, int]] = {
 @pytest.mark.ported_from(
     ["state_tests/stCreateTest/CreateResultsFiller.yml"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.parametrize("d", range(len(CASES)), ids=lambda d: f"d{d}")
 @pytest.mark.pre_alloc_mutable
 def test_create_results(
@@ -536,6 +536,7 @@ def test_create_results(
             post[created] = Account.NONEXISTENT
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes("048071d3")

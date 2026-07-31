@@ -33,7 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stTransactionTest/HighGasLimitFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_high_gas_limit(
     state_test: StateTestFiller,
@@ -66,6 +66,7 @@ def test_high_gas_limit(
         sends_value=True,
     )
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=Address(0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B),
         data=Bytes("3240349548983454"),

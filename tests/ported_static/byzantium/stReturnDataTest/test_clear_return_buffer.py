@@ -35,7 +35,7 @@ def _storage_with_any(base: dict, any_keys: list) -> Storage:
 @pytest.mark.ported_from(
     ["state_tests/stReturnDataTest/clearReturnBufferFiller.yml"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -1628,6 +1628,7 @@ def test_clear_return_buffer(
     tx_value = [1]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=tx_data[d],

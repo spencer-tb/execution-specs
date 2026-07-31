@@ -12,6 +12,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
     TransactionException,
@@ -24,11 +25,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stTransactionTest/HighGasPriceParisFiller.yml"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.exception_test
 def test_high_gas_price_paris(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_high_gas_price_paris."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -46,6 +48,7 @@ def test_high_gas_price_paris(
     addr = pre.fund_eoa(amount=10)  # noqa: F841
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=addr,
         data=Bytes(""),

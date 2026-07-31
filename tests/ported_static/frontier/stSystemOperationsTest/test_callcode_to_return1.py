@@ -14,6 +14,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -26,11 +27,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stSystemOperationsTest/callcodeToReturn1Filler.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("TangerineWhistle")
 @pytest.mark.pre_alloc_mutable
 def test_callcode_to_return1(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_callcode_to_return1."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -81,7 +83,13 @@ def test_callcode_to_return1(
         nonce=0,
     )
 
-    tx = Transaction(sender=sender, to=target, data=Bytes(""), value=0x186A0)
+    tx = Transaction(
+        sender=sender,
+        to=target,
+        data=Bytes(""),
+        value=0x186A0,
+        protected=fork.supports_protected_txs(),
+    )
 
     post = {target: Account(storage={0: 1, 1: 1}, nonce=0)}
 

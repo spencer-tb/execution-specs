@@ -148,6 +148,7 @@ def test_raw_call_gas(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=caller,
         state_gas_reservoir=0,

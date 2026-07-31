@@ -30,7 +30,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stSolidityTest/RecursiveCreateContractsCreate4ContractsFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.pre_alloc_mutable
 def test_recursive_create_contracts_create4_contracts(
     state_test: StateTestFiller,
@@ -252,6 +252,7 @@ def test_recursive_create_contracts_create4_contracts(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes("a444f5e9") + Hash(0x4),

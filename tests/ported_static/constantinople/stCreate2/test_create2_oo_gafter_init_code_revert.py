@@ -28,7 +28,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCreate2/Create2OOGafterInitCodeRevertFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.pre_alloc_mutable
 def test_create2_oo_gafter_init_code_revert(
     state_test: StateTestFiller,
@@ -85,6 +85,7 @@ def test_create2_oo_gafter_init_code_revert(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(""),

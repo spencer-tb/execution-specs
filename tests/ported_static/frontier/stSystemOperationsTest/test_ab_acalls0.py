@@ -179,7 +179,7 @@ def predict_final_state(
 @pytest.mark.ported_from(
     ["state_tests/stSystemOperationsTest/ABAcalls0Filler.json"],
 )
-@pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_from("SpuriousDragon")
 def test_ab_acalls0(
     state_test: StateTestFiller,
     pre: Alloc,

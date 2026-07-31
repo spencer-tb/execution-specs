@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stSpecialTest/FailedCreateRevertsDeletionParisFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_failed_create_reverts_deletion_paris(
     state_test: StateTestFiller,
@@ -52,6 +52,7 @@ def test_failed_create_reverts_deletion_paris(
     pre[sender] = Account(balance=0x6400000000)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.POP(Op.ADDRESS)

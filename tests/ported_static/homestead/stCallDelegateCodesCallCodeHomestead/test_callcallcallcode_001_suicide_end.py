@@ -137,6 +137,7 @@ def test_callcallcallcode_001_suicide_end(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

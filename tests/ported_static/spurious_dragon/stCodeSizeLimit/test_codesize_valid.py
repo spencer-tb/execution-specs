@@ -13,6 +13,7 @@ from execution_testing import (
     Address,
     Alloc,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -26,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCodeSizeLimit/codesizeValidFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "d, g, v",
     [
@@ -47,6 +48,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 def test_codesize_valid(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
     d: int,
     g: int,
     v: int,
@@ -73,7 +75,11 @@ def test_codesize_valid(
     tx_value = [1]
 
     tx = Transaction(
-        sender=sender, to=None, data=tx_data[d], value=tx_value[v]
+        protected=fork.supports_protected_txs(),
+        sender=sender,
+        to=None,
+        data=tx_data[d],
+        value=tx_value[v],
     )
 
     post = {

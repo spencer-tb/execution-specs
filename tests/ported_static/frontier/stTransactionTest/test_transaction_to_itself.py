@@ -35,7 +35,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stTransactionTest/TransactionToItselfFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 def test_transaction_to_itself(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -55,6 +55,7 @@ def test_transaction_to_itself(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=sender,
         data=Bytes(""),

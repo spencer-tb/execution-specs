@@ -18,6 +18,7 @@ from execution_testing import (
     Account,
     Alloc,
     Bytecode,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -31,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCreateTest/CreateTransactionCallDataFiller.yml"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.parametrize(
     "opcode",
     ["calldataload", "calldatacopy", "codecopy"],
@@ -40,6 +41,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 def test_create_transaction_call_data(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
     opcode: str,
 ) -> None:
     """Tests if CALLDATALOAD, CALLDATACOPY, CODECOPY and CODESIZE work..."""
@@ -94,6 +96,7 @@ def test_create_transaction_call_data(
         post = {created_contract: Account(storage={}, code=initcode, nonce=1)}
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=initcode,

@@ -43,7 +43,7 @@ MEMORY_SIZE = 0x1F40  # 8000-byte init-code window for the memory variants
         "state_tests/stEIP150singleCodeGasPrices/RawCreateFailGasValueTransfer2Filler.json",  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "create_value, size, fails",
     [
@@ -90,6 +90,7 @@ def test_raw_create_gas(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=contract,
         state_gas_reservoir=0,

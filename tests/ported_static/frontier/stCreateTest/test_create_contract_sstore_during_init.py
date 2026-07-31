@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCreateTest/CREATE_ContractSSTOREDuringInitFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 def test_create_contract_sstore_during_init(
     state_test: StateTestFiller,
     fork: Fork,
@@ -46,6 +46,7 @@ def test_create_contract_sstore_during_init(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.SSTORE(key=0x0, value=0xFF),

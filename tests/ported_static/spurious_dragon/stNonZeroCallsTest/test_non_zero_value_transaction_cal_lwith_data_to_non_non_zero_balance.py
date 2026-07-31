@@ -11,6 +11,7 @@ from execution_testing import (
     Address,
     Alloc,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -24,10 +25,11 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stNonZeroCallsTest/NonZeroValue_TransactionCALLwithData_ToNonNonZeroBalanceFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 def test_non_zero_value_transaction_cal_lwith_data_to_non_non_zero_balance(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_non_zero_value_transaction_cal_lwith_data_to_non_non_zero_balance."""  # noqa: E501
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -45,6 +47,7 @@ def test_non_zero_value_transaction_cal_lwith_data_to_non_non_zero_balance(
     addr = pre.fund_eoa(amount=100)  # noqa: F841
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=addr,
         data=Address(0x1122334455667788991011121314151617181920),

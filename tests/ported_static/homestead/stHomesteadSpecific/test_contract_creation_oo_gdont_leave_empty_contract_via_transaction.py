@@ -33,7 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stHomesteadSpecific/contractCreationOOGdontLeaveEmptyContractViaTransactionFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.parametrize(
     "enough_gas",
     [
@@ -82,6 +82,7 @@ def test_contract_creation_oo_gdont_leave_empty_contract_via_transaction(
 
     sender = pre.fund_eoa()
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=initcode,

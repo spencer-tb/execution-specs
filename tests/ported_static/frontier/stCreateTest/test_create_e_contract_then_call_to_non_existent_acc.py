@@ -97,6 +97,7 @@ def test_create_e_contract_then_call_to_non_existent_acc(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=contract,
         state_gas_reservoir=0,

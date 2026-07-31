@@ -51,6 +51,7 @@ def test_push0_gas2(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=measured,
     )

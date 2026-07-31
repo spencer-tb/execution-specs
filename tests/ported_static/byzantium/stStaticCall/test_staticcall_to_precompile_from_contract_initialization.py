@@ -31,7 +31,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stStaticCall/StaticcallToPrecompileFromContractInitializationFiller.yml"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.slow
 @pytest.mark.pre_alloc_mutable
 def test_staticcall_to_precompile_from_contract_initialization(
@@ -78,6 +78,7 @@ def test_staticcall_to_precompile_from_contract_initialization(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(

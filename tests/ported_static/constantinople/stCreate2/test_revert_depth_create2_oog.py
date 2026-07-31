@@ -50,7 +50,7 @@ STARVED_AVAILABLE = 20_000
         "state_tests/stCreate2/RevertDepthCreate2OOGBerlinFiller.json",
     ],
 )
-@pytest.mark.valid_from("Constantinople")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.parametrize(
     "creator_covered",
     [

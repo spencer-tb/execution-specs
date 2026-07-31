@@ -159,6 +159,7 @@ def test_create_empty_contract_with_storage(
     contract = pre.deploy_contract(code=code, balance=call_value)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=contract,
         state_gas_reservoir=0,

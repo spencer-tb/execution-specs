@@ -116,6 +116,7 @@ def test_static_execute_call_that_ask_fore_gas_then_trabsaction_has(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=entry,
         state_gas_reservoir=0,

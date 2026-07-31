@@ -29,7 +29,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCreate2/returndatacopy_following_revert_in_createFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.pre_alloc_mutable
 def test_returndatacopy_following_revert_in_create(
     state_test: StateTestFiller,
@@ -76,6 +76,7 @@ def test_returndatacopy_following_revert_in_create(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(""),

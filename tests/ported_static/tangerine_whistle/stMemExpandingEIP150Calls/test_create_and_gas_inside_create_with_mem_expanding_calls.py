@@ -106,6 +106,7 @@ def test_create_and_gas_inside_create_with_mem_expanding_calls(
         + 5_000
     )
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=creator,
         gas_limit=tx_gas,

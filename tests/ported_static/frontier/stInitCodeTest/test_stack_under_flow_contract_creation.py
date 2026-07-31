@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stInitCodeTest/StackUnderFlowContractCreationFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_stack_under_flow_contract_creation(
     state_test: StateTestFiller,
@@ -48,6 +48,7 @@ def test_stack_under_flow_contract_creation(
     pre[coinbase] = Account(balance=0, nonce=1)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.PUSH1[0x0] + Op.CALL,

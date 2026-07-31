@@ -31,7 +31,7 @@ CHILD_GAS_SLOT = 0xFD
 @pytest.mark.ported_from(
     ["state_tests/stTransactionTest/StoreGasOnCreateFiller.json"],
 )
-@pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_from("SpuriousDragon")
 def test_store_gas_on_create(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -76,6 +76,7 @@ def test_store_gas_on_create(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=creator,
         gas_limit=gas_limit,

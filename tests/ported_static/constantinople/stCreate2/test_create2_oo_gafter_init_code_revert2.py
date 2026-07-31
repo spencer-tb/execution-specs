@@ -39,7 +39,7 @@ DEPOSIT_SIZE = 0x40
 @pytest.mark.ported_from(
     ["state_tests/stCreate2/Create2OOGafterInitCodeRevert2Filler.json"],
 )
-@pytest.mark.valid_from("Constantinople")
+@pytest.mark.valid_from("ConstantinopleFix")
 def test_create2_oo_gafter_init_code_revert2(
     state_test: StateTestFiller,
     pre: Alloc,

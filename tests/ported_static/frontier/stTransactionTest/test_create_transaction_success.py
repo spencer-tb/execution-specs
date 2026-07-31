@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stTransactionTest/CreateTransactionSuccessFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 def test_create_transaction_success(
     state_test: StateTestFiller,
     fork: Fork,
@@ -45,6 +45,7 @@ def test_create_transaction_success(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.PUSH1[0x22]

@@ -31,7 +31,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCreateTest/CREATE_empty000CreateinInitCode_TransactionFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.pre_alloc_mutable
 def test_create_empty000_createin_init_code_transaction(
     state_test: StateTestFiller,
@@ -68,6 +68,7 @@ def test_create_empty000_createin_init_code_transaction(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.POP(

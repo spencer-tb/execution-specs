@@ -100,6 +100,7 @@ def test_create_name_registrator_per_txs_not_enough_gas(
 
     sender = pre.fund_eoa()
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=initcode,

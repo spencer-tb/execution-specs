@@ -65,7 +65,7 @@ def stack_underflow_initcode() -> Bytecode:
 @pytest.mark.ported_from(
     ["state_tests/stInitCodeTest/OutOfGasContractCreationFiller.json"],
 )
-@pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_from("Istanbul")
 @pytest.mark.parametrize(
     "invalid_initcode",
     [
@@ -109,6 +109,7 @@ def test_out_of_gas_contract_creation(
 
     sender = pre.fund_eoa()
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=initcode,

@@ -29,7 +29,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCreate2/returndatacopy_0_0_following_successful_createFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.pre_alloc_mutable
 def test_returndatacopy_0_0_following_successful_create(
     state_test: StateTestFiller,
@@ -72,6 +72,7 @@ def test_returndatacopy_0_0_following_successful_create(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(""),

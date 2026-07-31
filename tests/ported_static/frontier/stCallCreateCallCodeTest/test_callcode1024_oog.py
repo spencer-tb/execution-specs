@@ -238,6 +238,7 @@ def test_callcode1024_oog(
     target = pre.deploy_contract(code=RECURSION_CODE)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=target,
         gas_limit=tx_gas_limit,

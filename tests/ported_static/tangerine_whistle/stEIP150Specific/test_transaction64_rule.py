@@ -93,6 +93,7 @@ def test_transaction64_rule(
     gas_limit = intrinsic + call_code.gas_cost(fork) + base
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=caller,
         gas_limit=gas_limit,

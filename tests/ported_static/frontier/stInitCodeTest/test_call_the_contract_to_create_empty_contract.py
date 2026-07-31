@@ -32,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stInitCodeTest/CallTheContractToCreateEmptyContractFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.pre_alloc_mutable
 def test_call_the_contract_to_create_empty_contract(
     state_test: StateTestFiller,
@@ -66,6 +66,7 @@ def test_call_the_contract_to_create_empty_contract(
     if fork.is_eip_enabled(8037):
         tx_gas_limit = 500_000
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes("00"),

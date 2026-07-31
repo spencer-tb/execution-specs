@@ -36,7 +36,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stZeroCallsTest/ZeroValue_DELEGATECALLFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Homestead")
 @pytest.mark.pre_alloc_mutable
 def test_zero_value_delegatecall(
     state_test: StateTestFiller,
@@ -89,6 +89,7 @@ def test_zero_value_delegatecall(
     gas_limit = 600_000 + (intrinsic - 21_000)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(""),

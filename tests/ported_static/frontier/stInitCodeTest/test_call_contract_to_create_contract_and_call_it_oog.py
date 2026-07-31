@@ -29,7 +29,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stInitCodeTest/CallContractToCreateContractAndCallItOOGFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.pre_alloc_mutable
 def test_call_contract_to_create_contract_and_call_it_oog(
     state_test: StateTestFiller,
@@ -73,6 +73,7 @@ def test_call_contract_to_create_contract_and_call_it_oog(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes("00"),

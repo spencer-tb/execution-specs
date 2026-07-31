@@ -88,6 +88,7 @@ def test_refund600(
 
     sender = pre.fund_eoa(amount=INITIAL_BALANCE)
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         gas_limit=gas_limit,

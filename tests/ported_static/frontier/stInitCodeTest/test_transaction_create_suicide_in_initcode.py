@@ -28,7 +28,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stInitCodeTest/TransactionCreateSuicideInInitcodeFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_transaction_create_suicide_in_initcode(
     state_test: StateTestFiller,
@@ -52,6 +52,7 @@ def test_transaction_create_suicide_in_initcode(
 
     tx_value = 1
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=Op.SELFDESTRUCT(address=Op.ADDRESS) + Op.STOP,

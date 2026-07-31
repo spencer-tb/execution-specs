@@ -83,6 +83,7 @@ def test_delegate_call_on_eip(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=entry,
         state_gas_reservoir=0,

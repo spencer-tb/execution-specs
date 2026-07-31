@@ -155,6 +155,7 @@ def test_non_zero_value(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=contract,
         state_gas_reservoir=0,

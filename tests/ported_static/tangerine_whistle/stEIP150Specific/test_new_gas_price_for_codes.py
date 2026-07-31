@@ -193,6 +193,7 @@ def test_new_gas_price_for_codes(
     gas_limit = intrinsic + measured + delta_store.gas_cost(fork) + 5_000
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         gas_limit=gas_limit,

@@ -32,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCreateTest/TransactionCollisionToEmptyButNonceFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "full_budget", [True, False], ids=["full-budget", "intrinsic-only"]
 )
@@ -76,6 +76,7 @@ def test_transaction_collision_to_empty_but_nonce(
     pre[created] = Account(nonce=1)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=initcode,

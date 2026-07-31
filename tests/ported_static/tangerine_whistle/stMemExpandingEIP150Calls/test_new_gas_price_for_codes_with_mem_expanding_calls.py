@@ -212,6 +212,7 @@ def test_new_gas_price_for_codes_with_mem_expanding_calls(
     gas_limit = intrinsic + consumed + final_store.gas_cost(fork) + 5_000
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         gas_limit=gas_limit,

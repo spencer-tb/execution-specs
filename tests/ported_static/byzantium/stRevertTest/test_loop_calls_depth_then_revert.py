@@ -47,7 +47,7 @@ def loop_code(partner: Address) -> Bytecode:
 @pytest.mark.ported_from(
     ["state_tests/stRevertTest/LoopCallsDepthThenRevertFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Berlin")
 @pytest.mark.pre_alloc_mutable
 def test_loop_calls_depth_then_revert(
     state_test: StateTestFiller,
@@ -60,6 +60,7 @@ def test_loop_calls_depth_then_revert(
 
     sender = pre.fund_eoa()
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=ping,
         gas_limit=GAS_BUDGET,

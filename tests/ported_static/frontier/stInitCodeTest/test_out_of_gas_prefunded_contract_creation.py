@@ -39,7 +39,7 @@ CHILD_STORED = 0x112233
         "state_tests/stInitCodeTest/OutOfGasPrefundedContractCreationFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.parametrize(
     "outcome",
     [
@@ -130,6 +130,7 @@ def test_out_of_gas_prefunded_contract_creation(
     pre.fund_address(created, PREFUND)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=None,
         data=initcode,

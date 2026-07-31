@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stAttackTest/ContractCreationSpamFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Berlin")
 @pytest.mark.slow
 @pytest.mark.pre_alloc_mutable
 def test_contract_creation_spam(
@@ -635,6 +635,7 @@ def test_contract_creation_spam(
     if fork.is_eip_enabled(8037):
         gas_limit += 100 * fork.gas_costs().NEW_ACCOUNT
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(""),

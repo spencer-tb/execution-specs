@@ -34,7 +34,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stTransactionTest/TransactionSendingToZeroFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_transaction_sending_to_zero(
     state_test: StateTestFiller,
@@ -67,6 +67,7 @@ def test_transaction_sending_to_zero(
         sends_value=True,
     )
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=Address(0x0000000000000000000000000000000000000000),
         data=Bytes(""),

@@ -12,6 +12,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -26,12 +27,13 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stStaticCall/static_log0_nonEmptyMem_logMemSize1Filler.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.slow
 @pytest.mark.pre_alloc_mutable
 def test_static_log0_non_empty_mem_log_mem_size1(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Test_static_log0_non_empty_mem_log_mem_size1."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -78,6 +80,7 @@ def test_static_log0_non_empty_mem_log_mem_size1(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),

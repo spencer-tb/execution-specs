@@ -86,6 +86,7 @@ def test_suicide_non_const(
     tx_value = [0, 1]
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=tx_data[d],

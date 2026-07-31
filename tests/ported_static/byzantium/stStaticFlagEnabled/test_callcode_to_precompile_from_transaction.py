@@ -32,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stStaticFlagEnabled/CallcodeToPrecompileFromTransactionFiller.yml"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Byzantium")
 @pytest.mark.pre_alloc_mutable
 def test_callcode_to_precompile_from_transaction(
     state_test: StateTestFiller,
@@ -577,6 +577,7 @@ def test_callcode_to_precompile_from_transaction(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=contract_0,
         data=Bytes(""),

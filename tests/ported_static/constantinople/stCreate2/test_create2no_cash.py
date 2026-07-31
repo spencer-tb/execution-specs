@@ -17,6 +17,7 @@ import pytest
 from execution_testing import (
     Account,
     Alloc,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create2_address,
@@ -33,7 +34,7 @@ CREATE2_ENDOWMENT = 0x65
 @pytest.mark.ported_from(
     ["state_tests/stCreate2/create2noCashFiller.json"],
 )
-@pytest.mark.valid_from("Constantinople")
+@pytest.mark.valid_from("ConstantinopleFix")
 @pytest.mark.parametrize(
     "opcode, top_up",
     [
@@ -45,6 +46,7 @@ CREATE2_ENDOWMENT = 0x65
 def test_create2no_cash(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
     opcode: Op,
     top_up: int,
 ) -> None:
@@ -72,6 +74,7 @@ def test_create2no_cash(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=entry,
         value=top_up,

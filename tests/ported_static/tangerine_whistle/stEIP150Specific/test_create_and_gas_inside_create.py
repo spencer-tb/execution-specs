@@ -94,6 +94,7 @@ def test_create_and_gas_inside_create(
     )
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=entry,
         state_gas_reservoir=0,

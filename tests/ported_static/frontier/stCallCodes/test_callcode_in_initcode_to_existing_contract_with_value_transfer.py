@@ -23,6 +23,7 @@ from execution_testing import (
     Account,
     Alloc,
     Bytecode,
+    Fork,
     StateTestFiller,
     Transaction,
     compute_create_address,
@@ -63,6 +64,7 @@ def memory_stores(data: bytes) -> Bytecode:
 def test_callcode_in_initcode_to_existing_contract_with_value_transfer(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """A value-bearing CALLCODE in init code keeps the endowment."""
     existing = pre.deploy_contract(
@@ -89,6 +91,7 @@ def test_callcode_in_initcode_to_existing_contract_with_value_transfer(
     created = compute_create_address(address=runner, nonce=1)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=pre.fund_eoa(),
         to=runner,
     )

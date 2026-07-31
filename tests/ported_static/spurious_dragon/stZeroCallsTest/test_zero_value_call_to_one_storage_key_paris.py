@@ -37,7 +37,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stZeroCallsTest/ZeroValue_CALL_ToOneStorageKey_ParisFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_zero_value_call_to_one_storage_key_paris(
     state_test: StateTestFiller,
@@ -92,6 +92,7 @@ def test_zero_value_call_to_one_storage_key_paris(
     gas_limit = 600_000 + (intrinsic - 21_000)
 
     tx = Transaction(
+        protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
         data=Bytes(""),
