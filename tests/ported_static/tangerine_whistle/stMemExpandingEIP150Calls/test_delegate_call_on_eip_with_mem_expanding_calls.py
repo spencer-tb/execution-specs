@@ -13,6 +13,9 @@ derived from the fork as `600_000 + (intrinsic - 21_000)`, subtracting
 the pre-EIP-2780 baseline 21_000 so the budget is invariant across the
 intrinsic decomposition and EIP-8038 access repricing. Do not hardcode
 the literal gas_limit.
+Per-era post: pre-EIP-150 (Homestead) there is no 63/64 cap, so the
+oversized gas ask exceptionally halts the frame and all storage
+unwinds.
 """
 
 import pytest
@@ -26,6 +29,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.forks import TangerineWhistle
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -37,7 +41,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stMemExpandingEIP150Calls/DelegateCallOnEIPWithMemExpandingCallsFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("TangerineWhistle")
+@pytest.mark.valid_from("Homestead")
 @pytest.mark.pre_alloc_mutable
 def test_delegate_call_on_eip_with_mem_expanding_calls(
     state_test: StateTestFiller,
@@ -97,10 +101,22 @@ def test_delegate_call_on_eip_with_mem_expanding_calls(
         gas_limit=gas_limit,
     )
 
-    post = {
-        sender: Account(nonce=1),
-        target: Account(storage={0: 18, 8: 0x8D5B6, 9: 1}),
-        addr: Account(storage={}),
-    }
+    if fork >= TangerineWhistle:
+        # EIP-150: the oversized 0x927C0 gas ask is capped to 63/64 of
+        # the remaining gas, so the delegatecall proceeds and succeeds.
+        post = {
+            sender: Account(nonce=1),
+            target: Account(storage={0: 18, 8: 0x8D5B6, 9: 1}),
+            addr: Account(storage={}),
+        }
+    else:
+        # Pre-EIP-150 there is no 63/64 cap: a call asking for more
+        # gas than remains exceptionally halts the frame, unwinding
+        # all storage writes.
+        post = {
+            sender: Account(nonce=1),
+            target: Account(storage={}),
+            addr: Account(storage={}),
+        }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

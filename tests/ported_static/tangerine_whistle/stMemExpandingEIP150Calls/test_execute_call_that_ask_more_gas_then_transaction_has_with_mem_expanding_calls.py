@@ -3,6 +3,10 @@ Test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expand...
 
 Ported from:
 state_tests/stMemExpandingEIP150Calls/ExecuteCallThatAskMoreGasThenTransactionHasWithMemExpandingCallsFiller.json
+
+@manually-enhanced: Do not overwrite. Per-era post: pre-EIP-150
+(Frontier/Homestead) there is no 63/64 cap, so the oversized gas ask
+exceptionally halts the frame and all storage unwinds.
 """
 
 import pytest
@@ -16,7 +20,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.forks import Amsterdam, TangerineWhistle
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -28,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stMemExpandingEIP150Calls/ExecuteCallThatAskMoreGasThenTransactionHasWithMemExpandingCallsFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("TangerineWhistle")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_calls(  # noqa: E501
     state_test: StateTestFiller,
@@ -81,10 +85,22 @@ def test_execute_call_that_ask_more_gas_then_transaction_has_with_mem_expanding_
         gas_limit=2100000 if fork >= Amsterdam else 100000,
     )
 
-    post = {
-        sender: Account(nonce=1),
-        target: Account(storage={1: 1}),
-        addr: Account(storage={1: 12}, balance=0x186A0),
-    }
+    if fork >= TangerineWhistle:
+        # EIP-150: the oversized 0x927C0 gas ask is capped to 63/64 of
+        # the remaining gas, so the call proceeds and succeeds.
+        post = {
+            sender: Account(nonce=1),
+            target: Account(storage={1: 1}),
+            addr: Account(storage={1: 12}, balance=0x186A0),
+        }
+    else:
+        # Pre-EIP-150 there is no 63/64 cap: a call asking for more
+        # gas than remains exceptionally halts the frame, unwinding
+        # all storage writes.
+        post = {
+            sender: Account(nonce=1),
+            target: Account(storage={}),
+            addr: Account(storage={}, balance=0x186A0),
+        }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

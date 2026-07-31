@@ -11,6 +11,9 @@ from the fork as `600_000 + (intrinsic - 21_000)`: it shifts the budget
 by the intrinsic delta from the pre-EIP-2780 Cancun `TX_BASE` baseline
 of 21_000, keeping the budget constant across the EIP-2780 intrinsic
 decomposition and EIP-8038 access repricing. Do not hardcode 600_000.
+Per-era post: pre-EIP-150 (Frontier/Homestead) there is no 63/64 cap,
+so the oversized gas ask exceptionally halts the frame and all storage
+unwinds.
 """
 
 import pytest
@@ -24,6 +27,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.forks import TangerineWhistle
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -35,7 +39,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stMemExpandingEIP150Calls/CallAndCallcodeConsumeMoreGasThenTransactionHasWithMemExpandingCallsFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("TangerineWhistle")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_call_and_callcode_consume_more_gas_then_transaction_has_with_mem_expanding_calls(  # noqa: E501
     state_test: StateTestFiller,
@@ -108,10 +112,22 @@ def test_call_and_callcode_consume_more_gas_then_transaction_has_with_mem_expand
         gas_limit=gas_limit,
     )
 
-    post = {
-        sender: Account(nonce=1),
-        target: Account(storage={0: 18, 8: 0x8D5B6, 9: 1, 10: 1}),
-        addr: Account(storage={0: 18}),
-    }
+    if fork >= TangerineWhistle:
+        # EIP-150: the oversized 0x927C0 gas ask is capped to 63/64 of
+        # the remaining gas, so both calls proceed and succeed.
+        post = {
+            sender: Account(nonce=1),
+            target: Account(storage={0: 18, 8: 0x8D5B6, 9: 1, 10: 1}),
+            addr: Account(storage={0: 18}),
+        }
+    else:
+        # Pre-EIP-150 there is no 63/64 cap: a call asking for more
+        # gas than remains exceptionally halts the frame, unwinding
+        # all storage writes.
+        post = {
+            sender: Account(nonce=1),
+            target: Account(storage={}),
+            addr: Account(storage={}),
+        }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
