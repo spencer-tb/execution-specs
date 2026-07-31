@@ -22,6 +22,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -33,7 +34,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stHomesteadSpecific/contractCreationOOGdontLeaveEmptyContractViaTransactionFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Homestead")
 @pytest.mark.parametrize(
     "enough_gas",
     [
@@ -91,7 +92,9 @@ def test_contract_creation_oo_gdont_leave_empty_contract_via_transaction(
 
     created = compute_create_address(address=sender, nonce=0)
     if enough_gas:
-        created_account: Account | None = Account(nonce=1, code=b"", balance=0)
+        created_account: Account | None = Account(
+            nonce=1 if fork >= SpuriousDragon else 0, code=b"", balance=0
+        )
         writer_storage = {1: 1}
     else:
         created_account = Account.NONEXISTENT

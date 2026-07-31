@@ -17,6 +17,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -26,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stRecursiveCreate/recursiveCreateFiller.json"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Homestead")
 @pytest.mark.pre_alloc_mutable
 def test_recursive_create(
     state_test: StateTestFiller,
@@ -67,7 +68,9 @@ def test_recursive_create(
     )
 
     post = {
-        compute_create_address(address=contract_0, nonce=0): Account(nonce=2),
+        compute_create_address(address=contract_0, nonce=0): Account(
+            nonce=2 if fork >= SpuriousDragon else 1
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

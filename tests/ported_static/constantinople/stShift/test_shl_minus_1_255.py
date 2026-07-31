@@ -17,6 +17,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.forks import Constantinople
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -26,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stShift/shl_-1_255Filler.json"],
 )
-@pytest.mark.valid_from("ConstantinopleFix")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_shl_minus_1_255(
     state_test: StateTestFiller,
@@ -74,17 +75,26 @@ def test_shl_minus_1_255(
         value=0x186A0,
     )
 
-    post = {
-        target: Account(
-            storage={
-                0: 0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
-            },
-            code=bytes.fromhex(
-                "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60ff1b600055"  # noqa: E501
+    if fork >= Constantinople:
+        post = {
+            target: Account(
+                storage={
+                    0: 0x8000000000000000000000000000000000000000000000000000000000000000,  # noqa: E501
+                },
+                code=bytes.fromhex(
+                    "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60ff1b600055"  # noqa: E501
+                ),
+                balance=0xDE0B6B3A76586A0,
             ),
-            balance=0xDE0B6B3A76586A0,
-        ),
-        sender: Account(storage={}, code=b"", nonce=1),
-    }
+            sender: Account(storage={}, code=b"", nonce=1),
+        }
+    else:
+        # The subject opcode is undefined before Constantinople: the
+        # frame fails, the value transfer unwinds, and the
+        # pre-state storage persists.
+        post = {
+            target: Account(storage={0: 3}, balance=0xDE0B6B3A7640000),
+            sender: Account(storage={}, code=b"", nonce=1),
+        }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -17,6 +17,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.forks import SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -26,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stRevertTest/RevertPrefoundFiller.json"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_revert_prefound(
     state_test: StateTestFiller,
@@ -73,6 +74,13 @@ def test_revert_prefound(
         gas_limit=1040000,
     )
 
-    post = {contract_0: Account(storage={}, code=b"", balance=1, nonce=1)}
+    post = {
+        contract_0: Account(
+            storage={},
+            code=b"",
+            balance=1,
+            nonce=1 if fork >= SpuriousDragon else 0,
+        )
+    }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

@@ -16,7 +16,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.forks import Amsterdam, SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -26,7 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stTransactionTest/CreateTransactionSuccessFiller.json"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 def test_create_transaction_success(
     state_test: StateTestFiller,
     fork: Fork,
@@ -74,7 +74,7 @@ def test_create_transaction_success(
                 "60e060020a600035048063f8a8fd6d14601457005b601a6020565b60006000f35b56"  # noqa: E501
             ),
             balance=100,
-            nonce=1,
+            nonce=1 if fork >= SpuriousDragon else 0,
         ),
     }
 

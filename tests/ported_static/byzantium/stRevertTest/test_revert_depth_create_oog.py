@@ -23,6 +23,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -41,7 +42,7 @@ STARVE_MARGIN = 1_000
 @pytest.mark.ported_from(
     ["state_tests/stRevertTest/RevertDepthCreateOOGFiller.json"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "full_grant",
     [False, True],
@@ -161,7 +162,7 @@ def test_revert_depth_create_oog(
     post: dict
     if inner_succeeds:
         post = {
-            created: Account(nonce=1),
+            created: Account(nonce=1 if fork >= SpuriousDragon else 0),
             caller: Account(storage={0: 1, 1: 1, 4: 0xC}, balance=tx_value),
             creator: Account(storage={2: 8, 3: 0xC}),
         }

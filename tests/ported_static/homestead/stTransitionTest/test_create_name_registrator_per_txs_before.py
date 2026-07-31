@@ -16,7 +16,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.forks import Amsterdam, SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -28,7 +28,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stTransitionTest/createNameRegistratorPerTxsBeforeFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 def test_create_name_registrator_per_txs_before(
     state_test: StateTestFiller,
     fork: Fork,
@@ -74,7 +74,7 @@ def test_create_name_registrator_per_txs_before(
             storage={1: 1},
             code=bytes.fromhex("396000f3006000355415600957005b60"),
             balance=0x186A0,
-            nonce=1,
+            nonce=1 if fork >= SpuriousDragon else 0,
         ),
     }
 

@@ -19,6 +19,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -33,7 +34,7 @@ GAS_SLOT = 0x64
         "state_tests/stCreateTest/CREATE_EmptyContractWithBalanceFiller.json",
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "create_value",
     [
@@ -79,7 +80,9 @@ def test_create_empty_contract(
         contract: Account(
             storage={GAS_SLOT: create_code.gas_cost(fork)}, balance=0
         ),
-        created: Account(nonce=1, balance=create_value),
+        created: Account(
+            nonce=1 if fork >= SpuriousDragon else 0, balance=create_value
+        ),
     }
 
     state_test(pre=pre, post=post, tx=tx)

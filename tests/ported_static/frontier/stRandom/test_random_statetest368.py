@@ -17,7 +17,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.forks import Amsterdam, SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -27,7 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stRandom/randomStatetest368Filler.json"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Homestead")
 @pytest.mark.pre_alloc_mutable
 def test_random_statetest368(
     state_test: StateTestFiller,
@@ -88,7 +88,10 @@ def test_random_statetest368(
         coinbase: Account(storage={}, nonce=0),
         sender: Account(storage={}, code=b"", nonce=1),
         compute_create_address(address=contract_0, nonce=0): Account(
-            storage={}, code=b"", balance=1000, nonce=1
+            storage={},
+            code=b"",
+            balance=1000,
+            nonce=1 if fork >= SpuriousDragon else 0,
         ),
     }
 

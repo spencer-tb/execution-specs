@@ -20,7 +20,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Fork
+from execution_testing.forks import Fork, SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -32,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stInitCodeTest/CallTheContractToCreateEmptyContractFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_call_the_contract_to_create_empty_contract(
     state_test: StateTestFiller,
@@ -78,7 +78,10 @@ def test_call_the_contract_to_create_empty_contract(
         contract_0: Account(balance=1, nonce=1),
         sender: Account(nonce=1),
         compute_create_address(address=contract_0, nonce=0): Account(
-            storage={}, code=b"", balance=0, nonce=1
+            storage={},
+            code=b"",
+            balance=0,
+            nonce=1 if fork >= SpuriousDragon else 0,
         ),
     }
 

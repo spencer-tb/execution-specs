@@ -17,7 +17,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.forks import Amsterdam, SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -29,7 +29,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stInitCodeTest/CallContractToCreateContractOOGBonusGasFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_call_contract_to_create_contract_oog_bonus_gas(
     state_test: StateTestFiller,
@@ -88,7 +88,9 @@ def test_call_contract_to_create_contract_oog_bonus_gas(
         ),
         sender: Account(nonce=1),
         compute_create_address(address=contract_0, nonce=0): Account(
-            storage={0: 12}, balance=1, nonce=1
+            storage={0: 12},
+            balance=1,
+            nonce=1 if fork >= SpuriousDragon else 0,
         ),
     }
 

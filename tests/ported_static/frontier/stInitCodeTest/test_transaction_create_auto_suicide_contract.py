@@ -5,7 +5,9 @@ Ported from:
 state_tests/stInitCodeTest/TransactionCreateAutoSuicideContractFiller.json
 @manually-enhanced: Do not overwrite. tx `gas_limit` and sender balance
 bumped on Amsterdam to cover EIP-8037 TX_CREATE intrinsic (new-account
-state-gas folded in); pre-EIP-8037 unchanged.
+state-gas folded in); pre-EIP-8037 unchanged. Pre-EIP-150 the creation
+affords the init-code SELFDESTRUCT, so the zero-address beneficiary
+holds the endowment (per-era post).
 
 """
 
@@ -19,7 +21,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.forks import Fork
+from execution_testing.forks import Fork, TangerineWhistle
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -31,7 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stInitCodeTest/TransactionCreateAutoSuicideContractFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("TangerineWhistle")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_transaction_create_auto_suicide_contract(
     state_test: StateTestFiller,
@@ -79,10 +81,15 @@ def test_transaction_create_auto_suicide_contract(
         value=15,
     )
 
-    post = {
-        Address(
-            0x0000000000000000000000000000000000000000
-        ): Account.NONEXISTENT,
-    }
+    zero_address = Address(0x0000000000000000000000000000000000000000)
+    if fork >= TangerineWhistle:
+        # EIP-150 repricing makes the creation run out of gas before
+        # the init-code SELFDESTRUCT, so the beneficiary is untouched.
+        beneficiary: Account | None = Account.NONEXISTENT
+    else:
+        # The init code self-destructs, paying the created contract's
+        # endowment to the zero address.
+        beneficiary = Account(balance=15)
+    post = {zero_address: beneficiary}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

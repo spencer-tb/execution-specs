@@ -19,7 +19,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Fork
+from execution_testing.forks import Fork, SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -31,7 +31,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCreateTest/CREATE_empty000CreateinInitCode_TransactionFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_create_empty000_createin_init_code_transaction(
     state_test: StateTestFiller,
@@ -88,7 +88,9 @@ def test_create_empty000_createin_init_code_transaction(
 
     post = {
         contract_0: Account(storage={1: 12}),
-        compute_create_address(address=sender, nonce=0): Account(nonce=2),
+        compute_create_address(address=sender, nonce=0): Account(
+            nonce=2 if fork >= SpuriousDragon else 1
+        ),
         compute_create_address(
             address=compute_create_address(address=sender, nonce=0), nonce=0
         ): Account.NONEXISTENT,
