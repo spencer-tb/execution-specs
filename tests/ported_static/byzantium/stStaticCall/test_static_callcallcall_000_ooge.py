@@ -66,7 +66,6 @@ def test_static_callcallcall_000_ooge(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=30000000,
     )
 
     # Source: lll
@@ -253,13 +252,11 @@ def test_static_callcallcall_000_ooge(
         Hash(addr, left_padding=True),
         Hash(addr_5, left_padding=True),
     ]
-    tx_gas = [1720000]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         error=_exc,
     )
 

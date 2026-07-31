@@ -111,7 +111,6 @@ def test_static_call_ecrecover0_0input(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=10000000,
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000)
@@ -188,14 +187,12 @@ def test_static_call_ecrecover0_0input(
         Hash(0x7),
         Hash(0x8),
     ]
-    tx_gas = [3652240]
     tx_value = [100000]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

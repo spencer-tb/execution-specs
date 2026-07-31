@@ -90,7 +90,6 @@ def test_oo_gin_return(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=4294967296,
     )
 
     # Source: lll
@@ -198,13 +197,11 @@ def test_oo_gin_return(
         Bytes("1a8451e6") + Hash(return_, left_padding=True) + Hash(0x10),
         Bytes("1a8451e6") + Hash(revert, left_padding=True) + Hash(0x10),
     ]
-    tx_gas = [9437184]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         error=_exc,
     )
 

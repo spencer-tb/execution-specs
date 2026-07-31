@@ -45,7 +45,6 @@ def test_static_callcodecallcodecall_110_suicide_middle(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=30000000,
     )
 
     # Source: lll
@@ -116,7 +115,6 @@ def test_static_callcodecallcodecall_110_suicide_middle(
         sender=sender,
         to=target,
         data=Bytes(""),
-        gas_limit=3000000,
     )
 
     post = {target: Account(balance=0xDE0B6B3A7640000)}

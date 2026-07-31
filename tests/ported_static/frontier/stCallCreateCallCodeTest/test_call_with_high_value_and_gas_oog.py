@@ -70,7 +70,6 @@ def test_call_with_high_value_and_gas_oog(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=30000000,
     )
 
     pre[sender] = Account(balance=0x3635C9ADC5DEA00000)
@@ -146,14 +145,12 @@ def test_call_with_high_value_and_gas_oog(
     tx_data = [
         Bytes(""),
     ]
-    tx_gas = [6000000]
     tx_value = [100000, 100000000000000000000]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

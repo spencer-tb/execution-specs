@@ -75,7 +75,6 @@ def test_callcode_in_initcode_to_exis_contract_with_v_transfer_ne_money(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=1000000,
     )
 
     pre[sender] = Account(balance=0x2386F26FC10000)
@@ -183,13 +182,11 @@ def test_callcode_in_initcode_to_exis_contract_with_v_transfer_ne_money(
         Hash(contract_1, left_padding=True),
         Hash(contract_2, left_padding=True),
     ]
-    tx_gas = [1000000]
 
     tx = Transaction(
         sender=sender,
         to=contract_0,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         error=_exc,
     )
 

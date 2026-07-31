@@ -64,11 +64,6 @@ def test_create_fail_balance_too_low(
     v: int,
 ) -> None:
     """Create fails because we try to send more wei to it that we have."""
-    # EIP-8037 gas bumps: original values for pre-EIP-8037 forks.
-    outer_tx_gas = 253021
-    if fork.is_eip_enabled(8037):
-        outer_tx_gas = 1265105
-
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
     contract_0 = Address(0x095E7BAEA6A6C7C4C2DFEB977EFAC326AF552D87)
     sender = EOA(
@@ -81,7 +76,6 @@ def test_create_fail_balance_too_low(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=100000000,
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000)
@@ -130,14 +124,12 @@ def test_create_fail_balance_too_low(
     tx_data = [
         Bytes(""),
     ]
-    tx_gas = [outer_tx_gas]
     tx_value = [23, 24]
 
     tx = Transaction(
         sender=sender,
         to=contract_0,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

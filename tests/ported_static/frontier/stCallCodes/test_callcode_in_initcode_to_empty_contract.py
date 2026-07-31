@@ -62,11 +62,8 @@ def test_callcode_in_initcode_to_empty_contract(
     v: int,
 ) -> None:
     """Callcode inside create contract init to non-existent contract."""
-    # EIP-8037 gas bumps: original values for pre-EIP-8037 forks.
-    outer_tx_gas = 1453081
     inner_call_gas = 300000
     if fork.is_eip_enabled(8037):
-        outer_tx_gas = 7265405
         inner_call_gas = 1500000
 
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -83,7 +80,6 @@ def test_callcode_in_initcode_to_empty_contract(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=10000000,
     )
 
     pre[sender] = Account(balance=0x2386F26FC10000)
@@ -186,13 +182,11 @@ def test_callcode_in_initcode_to_empty_contract(
         Hash(contract_1, left_padding=True),
         Hash(contract_2, left_padding=True),
     ]
-    tx_gas = [outer_tx_gas]
 
     tx = Transaction(
         sender=sender,
         to=contract_0,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         error=_exc,
     )
 

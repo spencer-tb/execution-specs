@@ -77,7 +77,6 @@ def test_revert_opcode(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=10000000,
     )
 
     # Source: raw
@@ -113,14 +112,12 @@ def test_revert_opcode(
     tx_data = [
         Bytes(""),
     ]
-    tx_gas = [800000, 30000]
     tx_value = [0, 10]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

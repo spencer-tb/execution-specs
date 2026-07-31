@@ -71,7 +71,6 @@ def test_call50000_sha256(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=3925000000,
     )
 
     pre[sender] = Account(balance=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
@@ -146,14 +145,12 @@ def test_call50000_sha256(
     tx_data = [
         Bytes(""),
     ]
-    tx_gas = [150000, 250000000]
     tx_value = [10]
 
     tx = Transaction(
         sender=sender,
         to=contract_0,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

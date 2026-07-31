@@ -91,7 +91,6 @@ def test_suicide(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=100000000,
     )
 
     pre[sender] = Account(balance=0x5AF3107A4000)
@@ -189,13 +188,11 @@ def test_suicide(
         Bytes("693c6139") + Hash(contract_1, left_padding=True),
         Bytes("693c6139") + Hash(contract_2, left_padding=True),
     ]
-    tx_gas = [16777216]
 
     tx = Transaction(
         sender=sender,
         to=contract_3,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         error=_exc,
     )
 

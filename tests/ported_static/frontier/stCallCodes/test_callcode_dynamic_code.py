@@ -105,7 +105,6 @@ def test_callcode_dynamic_code(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=10000000,
     )
 
     pre[sender] = Account(balance=0x2386F26FC10000)
@@ -375,19 +374,10 @@ def test_callcode_dynamic_code(
         Hash(contract_3, left_padding=True),
         Hash(contract_4, left_padding=True),
     ]
-    # d2/d3 parametrizations do double-nested CREATE chains; EIP-8037
-    # NEW_ACCOUNT state-gas spill on Amsterdam exceeds the original
-    # 1 000 000 budget.
-    outer_tx_gas = 1_000_000
-    if fork.is_eip_enabled(8037):
-        outer_tx_gas = 6_000_000
-    tx_gas = [outer_tx_gas]
-
     tx = Transaction(
         sender=sender,
         to=contract_0,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         error=_exc,
     )
 

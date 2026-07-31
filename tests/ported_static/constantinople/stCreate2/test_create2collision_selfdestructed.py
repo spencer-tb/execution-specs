@@ -84,7 +84,6 @@ def test_create2collision_selfdestructed(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=1000000,
     )
 
     pre[sender] = Account(balance=0xDE0B6B3A7640000)
@@ -164,10 +163,8 @@ def test_create2collision_selfdestructed(
     # inner CALL over their original budgets on Amsterdam. Pre-EIP-8037
     # forks keep the original tuned values.
     inner_call_gas = 0xC350
-    outer_tx_gas = 400_000
     if fork.is_eip_enabled(8037):
         inner_call_gas = 0x40000
-        outer_tx_gas = 1_000_000
 
     tx_data = [
         Op.POP(
@@ -212,14 +209,12 @@ def test_create2collision_selfdestructed(
         + Op.CREATE2(value=0x0, offset=0x12, size=0xE, salt=0x0)
         + Op.STOP,
     ]
-    tx_gas = [outer_tx_gas]
     tx_value = [1]
 
     tx = Transaction(
         sender=sender,
         to=None,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

@@ -464,13 +464,11 @@ def test_too_long_return_data_copy(
         + Hash(0x10)
         + Hash(addr_2, left_padding=True),
     ]
-    tx_gas = [16777216]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         nonce=1,
         gas_price=100,
         error=_exc,

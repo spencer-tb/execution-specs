@@ -77,7 +77,6 @@ def test_calldatacopy_non_const(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=1000000,
     )
 
     # Source: lll
@@ -118,14 +117,12 @@ def test_calldatacopy_non_const(
         Bytes(""),
         Bytes("11223344"),
     ]
-    tx_gas = [400000]
     tx_value = [0, 1]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         error=_exc,
     )

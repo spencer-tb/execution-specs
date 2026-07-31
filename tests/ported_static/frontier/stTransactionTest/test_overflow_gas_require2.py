@@ -46,7 +46,6 @@ def test_overflow_gas_require2(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=9223372036854775807,
     )
 
     expect_entries_: list[dict] = [
@@ -76,7 +75,6 @@ def test_overflow_gas_require2(
         sender=sender,
         to=Address(0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B),
         data=Bytes("3240349548983454"),
-        gas_limit=1152921504606846976,
         gas_price=80,
         error=_exc,
     )

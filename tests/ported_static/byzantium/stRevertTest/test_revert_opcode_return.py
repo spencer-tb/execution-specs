@@ -132,7 +132,6 @@ def test_revert_opcode_return(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=10000000,
     )
 
     pre[sender] = Account(balance=0xE8D4A51000)
@@ -250,15 +249,10 @@ def test_revert_opcode_return(
         Hash(addr_5, left_padding=True),
         Hash(addr_6, left_padding=True),
     ]
-    tx_gas = [800000, 80000]
-    if fork.is_eip_enabled(8037):
-        tx_gas = [800000, 250_000]
-
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         error=_exc,
     )
 

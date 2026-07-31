@@ -67,7 +67,6 @@ def test_low_gas_price_old_types(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=1000,
-        gas_limit=71794957647893862,
     )
 
     # Source: yul
@@ -97,7 +96,6 @@ def test_low_gas_price_old_types(
         Bytes("00"),
         Bytes("01"),
     ]
-    tx_gas = [400000]
     tx_value = [100000]
     tx_access_lists: dict[int, list] = {
         1: [],
@@ -107,7 +105,6 @@ def test_low_gas_price_old_types(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         value=tx_value[v],
         nonce=1,
         gas_price=999,

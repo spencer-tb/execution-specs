@@ -273,7 +273,6 @@ def test_ecrecover_weird_v(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=71794957647893862,
     )
 
     pre[coinbase] = Account(balance=0, nonce=1)
@@ -704,13 +703,11 @@ def test_ecrecover_weird_v(
             0x1827E364C15CFA61DAB02339904B1E542F3939C6E8D6367D352026E71FFD6AF5
         ),
     ]
-    tx_gas = [16777216]
 
     tx = Transaction(
         sender=sender,
         to=target,
         data=tx_data[d],
-        gas_limit=tx_gas[g],
         nonce=1,
         error=_exc,
     )
