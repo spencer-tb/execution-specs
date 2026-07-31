@@ -26,6 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stStackTests/stackOverflowPUSHFiller.json"],
 )
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "opcode",
     [

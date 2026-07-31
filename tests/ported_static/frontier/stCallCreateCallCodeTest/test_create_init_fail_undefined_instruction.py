@@ -14,6 +14,7 @@ from execution_testing import (
     Alloc,
     Bytes,
     Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -28,11 +29,12 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCallCreateCallCodeTest/createInitFailUndefinedInstructionFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("TangerineWhistle")
 @pytest.mark.pre_alloc_mutable
 def test_create_init_fail_undefined_instruction(
     state_test: StateTestFiller,
     pre: Alloc,
+    fork: Fork,
 ) -> None:
     """Create fails because init code has undefined opcode, trying to..."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
@@ -99,7 +101,13 @@ def test_create_init_fail_undefined_instruction(
         nonce=0,
     )
 
-    tx = Transaction(sender=sender, to=target, data=Bytes(""), value=0x186A0)
+    tx = Transaction(
+        sender=sender,
+        to=target,
+        data=Bytes(""),
+        value=0x186A0,
+        protected=fork.supports_protected_txs(),
+    )
 
     post = {target: Account(storage={2: 1})}
 
