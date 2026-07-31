@@ -1,7 +1,8 @@
 """
 Verify the gas a CREATE's init code observes when the creating contract is
 entered directly by the transaction: the child receives all but one 64th
-of what remains in the creating frame.
+of what remains in the creating frame (the whole remainder before
+EIP-150).
 
 Ported from:
 state_tests/stTransactionTest/StoreGasOnCreateFiller.json
@@ -9,6 +10,8 @@ state_tests/stTransactionTest/StoreGasOnCreateFiller.json
 @manually-enhanced: Do not overwrite. The ported bytecode is kept, but the
 transaction budget and the child's stored GAS observation are derived from
 the fork (the ported absolute pin moved with every schedule change).
+Per-era post: no 63/64 withhold before TangerineWhistle (EIP-150) and
+the child's nonce is 0 before SpuriousDragon (EIP-161).
 """
 
 import pytest
@@ -20,6 +23,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon, TangerineWhistle
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -31,7 +35,7 @@ CHILD_GAS_SLOT = 0xFD
 @pytest.mark.ported_from(
     ["state_tests/stTransactionTest/StoreGasOnCreateFiller.json"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 def test_store_gas_on_create(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -83,7 +87,8 @@ def test_store_gas_on_create(
     )
 
     # The child receives all but one 64th of what remains after the
-    # setup and the CREATE's own charges; its GAS read costs 2.
+    # setup and the CREATE's own charges (EIP-150; before it, CREATE
+    # forwards the whole remainder); its GAS read costs 2.
     base = (
         gas_limit
         - intrinsic
@@ -91,11 +96,14 @@ def test_store_gas_on_create(
         - create_code.gas_cost(fork)
     )
     assert base > 0, "the budget must cover the CREATE's charges"
-    child_observed = (base - base // 64) - Op.GAS.gas_cost(fork)
+    forwarded = base - base // 64 if fork >= TangerineWhistle else base
+    child_observed = forwarded - Op.GAS.gas_cost(fork)
 
     post = {
         compute_create_address(address=creator, nonce=1): Account(
-            nonce=1,
+            # EIP-161: created-contract nonces start at 1 from
+            # SpuriousDragon; earlier forks create with nonce 0.
+            nonce=1 if fork >= SpuriousDragon else 0,
             code=b"",
             storage={CHILD_GAS_SLOT: child_observed},
         ),

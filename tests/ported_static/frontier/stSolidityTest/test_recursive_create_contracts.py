@@ -8,7 +8,9 @@ state_tests/stSolidityTest/RecursiveCreateContractsFiller.json
 @manually-enhanced: Do not overwrite. The EIP-8037 state gas of the
 in-test creations is added to the ported budget as a fork-derived
 surcharge (exactly 0 before EIP-8037), preserving the ported
-behavior on every fork.
+behavior on every fork. Per-era post: the child's nonce is 0 before
+SpuriousDragon (EIP-161); before TangerineWhistle CREATE forwards all
+gas, so the deepest frame's OOG cascades and nothing commits.
 """
 
 import pytest
@@ -23,7 +25,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Fork
+from execution_testing.forks import Fork, SpuriousDragon, TangerineWhistle
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -33,7 +35,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stSolidityTest/RecursiveCreateContractsFiller.json"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_recursive_create_contracts(
     state_test: StateTestFiller,
@@ -268,16 +270,38 @@ def test_recursive_create_contracts(
         value=1,
     )
 
-    post = {
-        contract_0: Account(
+    child = compute_create_address(address=contract_0, nonce=0)
+    child_post: Account | None
+    if fork >= TangerineWhistle:
+        # EIP-150's 63/64 withhold keeps the upper creation frames
+        # funded: the recursion runs dry quietly, leaving one child.
+        contract_0_post = Account(
             storage={0: contract_0, 1: 772},
             balance=0x314DC6448D9338C15B0A00000001,
             nonce=1,
-        ),
+        )
+        child_post = Account(
+            storage={0: 771},
+            # EIP-161: created-contract nonces start at 1 from
+            # SpuriousDragon; earlier forks create with nonce 0.
+            nonce=1 if fork >= SpuriousDragon else 0,
+        )
+    else:
+        # Pre-EIP-150 every CREATE forwards the whole remainder, so
+        # the frame that finally runs dry has consumed everything its
+        # ancestors had: the cascade out-of-gasses the top frame and
+        # the transaction commits nothing.
+        contract_0_post = Account(
+            storage={},
+            balance=0x314DC6448D9338C15B0A00000000,
+            nonce=0,
+        )
+        child_post = Account.NONEXISTENT
+
+    post = {
+        contract_0: contract_0_post,
         sender: Account(nonce=1),
-        compute_create_address(address=contract_0, nonce=0): Account(
-            storage={0: 771}, nonce=1
-        ),
+        child: child_post,
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)
