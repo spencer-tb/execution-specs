@@ -1,29 +1,36 @@
 """
-Test_static_callcodecallcodecall_110_suicide_end2.
+Measure the gas consumed by a CALLCODE-CALLCODE-STATICCALL chain that
+ends in a SELFDESTRUCT of the shared context account: under EIP-6780
+the pre-existing account survives, its balance moves to the
+beneficiary, and the chain's cost is exactly the sum of each frame's
+charges (minus the returned stipends when value is sent).
 
 Ported from:
 state_tests/stStaticCall/static_callcodecallcodecall_110_SuicideEnd2Filler.json
+
+@manually-enhanced: Do not overwrite. The ported absolute GAS snapshot
+(slot 1) became a CodeGasMeasure delta asserted against fork-derived
+frame costs; the SELFDESTRUCT beneficiary is the (warm) static leaf so
+every address is dynamic, and its balance is asserted.
 """
 
 import pytest
 from execution_testing import (
     Account,
-    Address,
     Alloc,
-    Bytes,
-    Environment,
+    CodeGasMeasure,
+    Fork,
     StateTestFiller,
-    Storage,
     Transaction,
-)
-from execution_testing.forks import Fork
-from execution_testing.specs.static_state.expect_section import (
-    resolve_expect_post,
 )
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
+
+FLAG_SLOT = 0x0
+GAS_SLOT = 0x1
+TARGET_BALANCE = 10**18
 
 
 @pytest.mark.ported_from(
@@ -32,165 +39,104 @@ REFERENCE_SPEC_VERSION = "N/A"
     ],
 )
 @pytest.mark.valid_from("Cancun")
-@pytest.mark.slow
-@pytest.mark.parametrize(
-    "d, g, v",
-    [
-        pytest.param(
-            0,
-            0,
-            0,
-            id="-v0",
-        ),
-        pytest.param(
-            0,
-            0,
-            1,
-            id="-v1",
-        ),
-    ],
-)
-@pytest.mark.pre_alloc_mutable
+@pytest.mark.parametrize("tx_value", [0, 1])
 def test_static_callcodecallcodecall_110_suicide_end2(
     state_test: StateTestFiller,
     pre: Alloc,
     fork: Fork,
-    d: int,
-    g: int,
-    v: int,
+    tx_value: int,
 ) -> None:
-    """Test_static_callcodecallcodecall_110_suicide_end2."""
-    coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
-    sender = pre.fund_eoa(amount=0xDE0B6B3A7640000)
+    """Measure a nested CALLCODE chain ending in SELFDESTRUCT."""
+    sends_value = tx_value > 0
 
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=30000000,
-    )
+    # Static leaf: memory-only, runs in its own frame.
+    leaf_code = Op.MSTORE(offset=0x3, value=0x1, new_memory_size=0x23)
+    leaf = pre.deploy_contract(code=leaf_code + Op.STOP)
 
-    # Source: lll
-    # {  (MSTORE 3 1) }
-    addr_3 = pre.deploy_contract(  # noqa: F841
-        code=Op.MSTORE(offset=0x3, value=0x1) + Op.STOP,
-        balance=0x2540BE400,
-        nonce=0,
-        address=Address(0x48E2D4C0B593BFEBE5DDB4F13AA355B8BD83DDD3),  # noqa: E501
-    )
-    # Source: lll
-    # {  [[ 0 ]] (CALLCODE 150000 <contract:0x1000000000000000000000000000000000000001> (CALLVALUE) 0 64 0 64 ) [[ 1 ]] (GAS) }  # noqa: E501
-    target = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(
-            key=0x0,
-            value=Op.CALLCODE(
-                gas=0x249F0,
-                address=0x1D36753CD1D8D4795799D3F4D0925C63F72B2685,
-                value=Op.CALLVALUE,
-                args_offset=0x0,
-                args_size=0x40,
-                ret_offset=0x0,
-                ret_size=0x40,
-            ),
-        )
-        + Op.SSTORE(key=0x1, value=Op.GAS)
-        + Op.STOP,
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
-        address=Address(0x44D09DDF088DD88C0E91FA7EF74973FF94AD7414),  # noqa: E501
-    )
-    # Source: lll
-    # {  (CALLCODE 100000 <contract:0x1000000000000000000000000000000000000002> (CALLVALUE) 0 64 0 64 ) }  # noqa: E501
-    addr = pre.deploy_contract(  # noqa: F841
-        code=Op.CALLCODE(
-            gas=0x186A0,
-            address=0xB7770360E0B87603E3D9C87C866451760C95ABCA,
-            value=Op.CALLVALUE,
-            args_offset=0x0,
+    # Innermost delegate (target's context): static-call the leaf, then
+    # self-destruct the context account. The beneficiary is the leaf —
+    # warm from the call just made, and deployable without the address
+    # circularity of the ported layout (which paid the same warm-access
+    # cost for the mid-chain delegate).
+    inner_code = Op.POP(
+        Op.STATICCALL(
+            address=leaf,
             args_size=0x40,
-            ret_offset=0x0,
             ret_size=0x40,
+            new_memory_size=0x40,
         )
-        + Op.STOP,
-        balance=0x2540BE400,
-        nonce=0,
-        address=Address(0x1D36753CD1D8D4795799D3F4D0925C63F72B2685),  # noqa: E501
-    )
-    # Source: lll
-    # {  (STATICCALL 50000 <contract:0x1000000000000000000000000000000000000003> 0 64 0 64 ) (SELFDESTRUCT <contract:0x1000000000000000000000000000000000000001>) }  # noqa: E501
-    addr_2 = pre.deploy_contract(  # noqa: F841
-        code=Op.POP(
-            Op.STATICCALL(
-                gas=0xC350,
-                address=0x48E2D4C0B593BFEBE5DDB4F13AA355B8BD83DDD3,
-                args_offset=0x0,
-                args_size=0x40,
-                ret_offset=0x0,
-                ret_size=0x40,
-            )
+    ) + Op.SELFDESTRUCT(address=leaf, address_warm=True)
+    inner = pre.deploy_contract(code=inner_code)
+
+    # Middle delegate (target's context): CALLCODE into the innermost.
+    mid_code = (
+        Op.CALLCODE(
+            address=inner,
+            value=Op.CALLVALUE,
+            args_size=0x40,
+            ret_size=0x40,
+            new_memory_size=0x40,
+            value_transfer=sends_value,
         )
-        + Op.SELFDESTRUCT(address=0x1D36753CD1D8D4795799D3F4D0925C63F72B2685)
-        + Op.STOP,
-        balance=0x2540BE400,
-        nonce=0,
-        address=Address(0xB7770360E0B87603E3D9C87C866451760C95ABCA),  # noqa: E501
+        + Op.STOP
     )
+    mid = pre.deploy_contract(code=mid_code)
 
-    if fork.is_eip_enabled(8037):
-        target_storage = Storage.model_validate({0: 1})
-        target_storage.set_expect_any(1)
-        expect_entries_: list[dict] = [
-            {
-                "indexes": {"data": -1, "gas": -1, "value": -1},
-                "network": [">=Cancun"],
-                "result": {
-                    target: Account(storage=target_storage, balance=0, nonce=0)
-                },
-            },
-        ]
-    else:
-        expect_entries_ = [
-            {
-                "indexes": {"data": -1, "gas": -1, "value": 0},
-                "network": [">=Cancun"],
-                "result": {
-                    target: Account(
-                        storage={0: 1, 1: 0x2CEBFF},
-                        balance=0,
-                        nonce=0,
-                    )
-                },
-            },
-            {
-                "indexes": {"data": -1, "gas": -1, "value": 1},
-                "network": [">=Cancun"],
-                "result": {
-                    target: Account(
-                        storage={0: 1, 1: 0x2CB7A7},
-                        balance=0,
-                        nonce=0,
-                    )
-                },
-            },
-        ]
-
-    post, _exc = resolve_expect_post(expect_entries_, d, g, v, fork)
-
-    tx_data = [
-        Bytes(""),
-    ]
-    tx_gas = [3000000]
-    tx_value = [0, 1]
+    # The measured window: flag-storing CALLCODE into the chain. The
+    # SSTORE keeps the chain's success observable inside the window.
+    store_code = Op.SSTORE(
+        FLAG_SLOT,
+        Op.CALLCODE(
+            address=mid,
+            value=Op.CALLVALUE,
+            args_size=0x40,
+            ret_size=0x40,
+            new_memory_size=0x40,
+            value_transfer=sends_value,
+        ),
+        key_warm=False,
+        original_value=0,
+        new_value=1,
+    )
+    target = pre.deploy_contract(
+        code=CodeGasMeasure(
+            code=store_code,
+            extra_stack_items=0,
+            sstore_key=GAS_SLOT,
+        ),
+        balance=TARGET_BALANCE,
+    )
 
     tx = Transaction(
-        sender=sender,
+        sender=pre.fund_eoa(),
         to=target,
-        data=tx_data[d],
-        gas_limit=tx_gas[g],
-        value=tx_value[v],
-        error=_exc,
+        value=tx_value,
+        state_gas_reservoir=0,
     )
 
-    state_test(env=env, pre=pre, post=post, tx=tx)
+    # Every frame succeeds, so the window measures the sum of each
+    # frame's actual charges; each value-bearing hop's callee returns
+    # its unused 2300 stipend, shaving it off the measurement.
+    expected_gas = (
+        store_code.gas_cost(fork)
+        + mid_code.gas_cost(fork)
+        + inner_code.gas_cost(fork)
+        + leaf_code.gas_cost(fork)
+    )
+    if sends_value:
+        expected_gas -= 2 * fork.gas_costs().CALL_STIPEND
+
+    # EIP-6780: the pre-existing target survives its self-destruct; its
+    # whole balance (including the transaction value) moved to the leaf.
+    post = {
+        target: Account(
+            balance=0,
+            storage={FLAG_SLOT: 1, GAS_SLOT: expected_gas},
+        ),
+        leaf: Account(
+            balance=TARGET_BALANCE + tx_value,
+            storage={},
+        ),
+    }
+
+    state_test(pre=pre, post=post, tx=tx)

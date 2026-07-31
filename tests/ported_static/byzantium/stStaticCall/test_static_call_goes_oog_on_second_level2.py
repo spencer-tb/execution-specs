@@ -1,147 +1,105 @@
 """
-Test_static_call_goes_oog_on_second_level2.
+Verify a nested static frame that fails — by writing storage inside a
+static context or by burning its whole grant — leaves the top frame's
+1/64 retentions unable to fund its SSTORE, so the top frame runs out of
+gas and every write reverts.
 
 Ported from:
 state_tests/stStaticCall/static_CallGoesOOGOnSecondLevel2Filler.json
+
+@manually-enhanced: Do not overwrite. Gas budget guarded by fork-derived
+asserts (was a pinned 160000); dynamic addresses; d0/d1 renamed to the
+leaf behavior they select.
 """
 
 import pytest
 from execution_testing import (
     Account,
-    Address,
     Alloc,
-    Environment,
+    Fork,
     Hash,
     StateTestFiller,
     Transaction,
 )
-from execution_testing.forks import Fork
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
+# Post-intrinsic execution budget. Small enough that the top frame's
+# 1/64 retentions cannot fund an SSTORE (guarded below), large enough to
+# reach the depth-three leaf.
+GAS_BUDGET = 139_000
+
 
 @pytest.mark.ported_from(
     ["state_tests/stStaticCall/static_CallGoesOOGOnSecondLevel2Filler.json"],
 )
-@pytest.mark.valid_from("Frontier")
-@pytest.mark.slow
-@pytest.mark.parametrize(
-    "d, g, v",
-    [
-        pytest.param(
-            0,
-            0,
-            0,
-            id="d0",
-        ),
-        pytest.param(
-            1,
-            0,
-            0,
-            id="d1",
-        ),
-    ],
-)
-@pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_from("Byzantium")
+@pytest.mark.parametrize("leaf_behavior", ["static_violation", "gas_burner"])
 def test_static_call_goes_oog_on_second_level2(
     state_test: StateTestFiller,
     pre: Alloc,
     fork: Fork,
-    d: int,
-    g: int,
-    v: int,
+    leaf_behavior: str,
 ) -> None:
-    """Test_static_call_goes_oog_on_second_level2."""
-    coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
-    sender = pre.fund_eoa(amount=0xE8D4A51000)
-
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=10000000,
-    )
-
-    # Source: lll
-    # { (MSTORE 8 (GAS)) (MSTORE 9 (STATICCALL 600000 (CALLDATALOAD 0) 0 0 0 0)) }  # noqa: E501
-    addr = pre.deploy_contract(  # noqa: F841
+    """Run the top frame out of gas after a nested static frame fails."""
+    if leaf_behavior == "static_violation":
+        # Storage write inside a static context: exceptional halt that
+        # consumes the leaf's whole grant.
+        leaf = pre.deploy_contract(
+            code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP
+        )
+    else:
+        # EXTCODESIZE loop needing far more gas than any grant here.
+        leaf = pre.deploy_contract(
+            code=Op.JUMPDEST
+            + Op.JUMPI(
+                pc=0x1C,
+                condition=Op.ISZERO(Op.LT(Op.MLOAD(offset=0x80), 0xC350)),
+            )
+            + Op.POP(Op.EXTCODESIZE(address=0x1))
+            + Op.MSTORE(offset=0x80, value=Op.ADD(Op.MLOAD(offset=0x80), 0x1))
+            + Op.JUMP(pc=0x0)
+            + Op.JUMPDEST
+            + Op.STOP,
+        )
+    addr = pre.deploy_contract(
         code=Op.MSTORE(offset=0x8, value=Op.GAS)
         + Op.MSTORE(
             offset=0x9,
-            value=Op.STATICCALL(
-                gas=0x927C0,
-                address=Op.CALLDATALOAD(offset=0x0),
-                args_offset=0x0,
-                args_size=0x0,
-                ret_offset=0x0,
-                ret_size=0x0,
-            ),
+            value=Op.STATICCALL(address=Op.CALLDATALOAD(offset=0x0)),
         )
         + Op.STOP,
-        nonce=0,
-        address=Address(0x666EBB8AFC7A9BA4BEDB7D78F85184B65639531D),  # noqa: E501
     )
-    # Source: lll
-    # { (SSTORE 1 1) }
-    addr_2 = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x1, value=0x1) + Op.STOP,
-        nonce=0,
-        address=Address(0xF2774CEE95A518A51CD32426D3CE8DB19F095B37),  # noqa: E501
-    )
-    # Source: lll
-    # {  (def 'i 0x80) (for {} (< @i 50000) [i](+ @i 1) (EXTCODESIZE 1))  }
-    addr_3 = pre.deploy_contract(  # noqa: F841
-        code=Op.JUMPDEST
-        + Op.JUMPI(
-            pc=0x1C, condition=Op.ISZERO(Op.LT(Op.MLOAD(offset=0x80), 0xC350))
-        )
-        + Op.POP(Op.EXTCODESIZE(address=0x1))
-        + Op.MSTORE(offset=0x80, value=Op.ADD(Op.MLOAD(offset=0x80), 0x1))
-        + Op.JUMP(pc=0x0)
-        + Op.JUMPDEST
-        + Op.STOP,
-        nonce=0,
-        address=Address(0x45E70D14D712A8898DCE133FE063F71179F04059),  # noqa: E501
-    )
-    # Source: lll
-    # { (MSTORE 0 (CALLDATALOAD 0)) [[ 0 ]] (STATICCALL 600000 <contract:0x1000000000000000000000000000000000000113> 0 32 0 0) [[ 1 ]] 1 }  # noqa: E501
-    target = pre.deploy_contract(  # noqa: F841
+    target = pre.deploy_contract(
         code=Op.MSTORE(offset=0x0, value=Op.CALLDATALOAD(offset=0x0))
-        + Op.SSTORE(
-            key=0x0,
-            value=Op.STATICCALL(
-                gas=0x927C0,
-                address=0x666EBB8AFC7A9BA4BEDB7D78F85184B65639531D,
-                args_offset=0x0,
-                args_size=0x20,
-                ret_offset=0x0,
-                ret_size=0x0,
-            ),
-        )
+        + Op.SSTORE(key=0x0, value=Op.STATICCALL(address=addr, args_size=0x20))
         + Op.SSTORE(key=0x1, value=0x1)
         + Op.STOP,
-        nonce=0,
-        address=Address(0xB9C1C6C39CB3E528B2EF06493C17D63B7827077B),  # noqa: E501
     )
 
-    tx_data = [
-        Hash(addr_2, left_padding=True),
-        Hash(addr_3, left_padding=True),
-    ]
-    tx_gas = [160000]
+    # The depth-three frame consumes its whole grant either way; the top
+    # frame keeps only its own 1/64 plus the intermediate frame's
+    # returned 1/64, which must not fund the first SSTORE.
+    sstore_cost = Op.SSTORE(
+        key_warm=False, original_value=0, new_value=1
+    ).gas_cost(fork)
+    assert GAS_BUDGET // 32 + 100 < sstore_cost, (
+        "retained gas must not fund the top frame's SSTORE"
+    )
+    gas_limit = fork.transaction_intrinsic_cost_calculator()() + GAS_BUDGET
 
     tx = Transaction(
-        protected=fork.supports_protected_txs(),
-        sender=sender,
+        sender=pre.fund_eoa(),
         to=target,
-        data=tx_data[d],
-        gas_limit=tx_gas[g],
+        data=Hash(leaf, left_padding=True),
+        gas_limit=gas_limit,
     )
 
-    post = {target: Account(storage={0: 0, 1: 0})}
+    post = {
+        leaf: Account(storage={}),
+        target: Account(storage={}),
+    }
 
-    state_test(env=env, pre=pre, post=post, tx=tx)
+    state_test(pre=pre, post=post, tx=tx)

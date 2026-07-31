@@ -1,408 +1,281 @@
 """
-Ori Pomerantz   qbzzt1@gmail.com.
+Measure CREATE/CREATE2 gas when the constructor returns or reverts results
+of increasing size: a legal deposit is priced per byte, an oversized one
+(EIP-170) forfeits the whole child grant, and a revert charges only the
+work done.
 
 Ported from:
 state_tests/stCreateTest/createLargeResultFiller.yml
+
+@manually-enhanced: Do not overwrite. The runtime EXTCODECOPY factory and
+its absolute GAS-delta pins (functions of the removed 80M gas limit) were
+replaced by a calldata-delivered init code and a gas-capped creator frame,
+so every expectation derives from fork composites and the EIP-150 63/64
+rule; this also lifts the old Prague ceiling. The size axis derives from
+fork.max_code_size() (EIP-7954 raises it). Floors at Berlin: the SSTORE
+composites price warm/cold access, mismatching pre-Berlin schedules.
 """
 
 import pytest
 from execution_testing import (
-    EOA,
     Account,
-    Address,
     Alloc,
     Bytes,
-    Environment,
+    Fork,
     Hash,
     StateTestFiller,
     Transaction,
     compute_create_address,
-)
-from execution_testing.forks import Fork
-from execution_testing.specs.static_state.expect_section import (
-    resolve_expect_post,
 )
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
+ADDR_SLOT = 0x0
+GAS_SLOT = 0x1
+HASH_SLOT = 0x2
+CREATE2_SALT = 0x5A17
+# A comfortably legal deployed-code size; the other sizes derive from the
+# fork's deployed-code ceiling (EIP-170, raised by EIP-7954).
+NORMAL_SIZE = 0x100
+# The init code image: the constructor template padded to this offset,
+# followed by one word holding the requested deployed-code size.
+SIZE_WORD_OFFSET = 0x100
+INIT_CODE_SIZE = SIZE_WORD_OFFSET + 0x20
+# Creator memory: the init code image, then the gas snapshot word.
+SNAPSHOT_OFFSET = INIT_CODE_SIZE
+CREATOR_MEMORY = SNAPSHOT_OFFSET + 0x20
+# Fixed budget for the creator frame; the forfeited grant of an oversized
+# deposit derives from it via the 63/64 rule. It must cover the priciest
+# legal deposit (the fork's whole code-size ceiling) with headroom.
+CREATOR_GAS = 6_000_000
+BUDGET_MARGIN = 10_000
+
 
 @pytest.mark.ported_from(
     ["state_tests/stCreateTest/createLargeResultFiller.yml"],
 )
-@pytest.mark.valid_from("Cancun")
-@pytest.mark.valid_until("Prague")
+@pytest.mark.valid_from("Berlin")
 @pytest.mark.parametrize(
-    "d, g, v",
+    "create_op, reverts, size_kind",
     [
-        pytest.param(
-            0,
-            0,
-            0,
-            id="CREATE-RETURN",
-        ),
-        pytest.param(
-            1,
-            0,
-            0,
-            id="CREATE2-RETURN",
-        ),
-        pytest.param(
-            2,
-            0,
-            0,
-            id="CREATE-REVERT",
-        ),
-        pytest.param(
-            3,
-            0,
-            0,
-            id="CREATE2-REVERT",
-        ),
-        pytest.param(
-            4,
-            0,
-            0,
-            id="CREATE-RETURN-MAX",
-        ),
-        pytest.param(
-            5,
-            0,
-            0,
-            id="CREATE2-RETURN-MAX",
-        ),
-        pytest.param(
-            6,
-            0,
-            0,
-            id="CREATE-REVERT-MAX",
-        ),
-        pytest.param(
-            7,
-            0,
-            0,
-            id="CREATE2-REVERT-MAX",
-        ),
-        pytest.param(
-            8,
-            0,
-            0,
-            id="CREATE-RETURN-TOOBIG",
-        ),
-        pytest.param(
-            9,
-            0,
-            0,
-            id="CREATE2-RETURN-TOOBIG",
-        ),
-        pytest.param(
-            10,
-            0,
-            0,
-            id="CREATE-REVERT-TOOBIG",
-        ),
-        pytest.param(
-            11,
-            0,
-            0,
-            id="CREATE2-REVERT-TOOBIG",
-        ),
-        pytest.param(
-            12,
-            0,
-            0,
-            id="CREATE-RETURN-HUGE",
-        ),
-        pytest.param(
-            13,
-            0,
-            0,
-            id="CREATE2-RETURN-HUGE",
-        ),
-        pytest.param(
-            14,
-            0,
-            0,
-            id="CREATE-REVERT-HUGE",
-        ),
-        pytest.param(
-            15,
-            0,
-            0,
-            id="CREATE2-REVERT-HUGE",
-        ),
+        pytest.param(Op.CREATE, False, "normal", id="CREATE-RETURN"),
+        pytest.param(Op.CREATE2, False, "normal", id="CREATE2-RETURN"),
+        pytest.param(Op.CREATE, True, "normal", id="CREATE-REVERT"),
+        pytest.param(Op.CREATE2, True, "normal", id="CREATE2-REVERT"),
+        pytest.param(Op.CREATE, False, "max", id="CREATE-RETURN-MAX"),
+        pytest.param(Op.CREATE2, False, "max", id="CREATE2-RETURN-MAX"),
+        pytest.param(Op.CREATE, True, "max", id="CREATE-REVERT-MAX"),
+        pytest.param(Op.CREATE2, True, "max", id="CREATE2-REVERT-MAX"),
+        pytest.param(Op.CREATE, False, "toobig", id="CREATE-RETURN-TOOBIG"),
+        pytest.param(Op.CREATE2, False, "toobig", id="CREATE2-RETURN-TOOBIG"),
+        pytest.param(Op.CREATE, True, "toobig", id="CREATE-REVERT-TOOBIG"),
+        pytest.param(Op.CREATE2, True, "toobig", id="CREATE2-REVERT-TOOBIG"),
+        pytest.param(Op.CREATE, False, "huge", id="CREATE-RETURN-HUGE"),
+        pytest.param(Op.CREATE2, False, "huge", id="CREATE2-RETURN-HUGE"),
+        pytest.param(Op.CREATE, True, "huge", id="CREATE-REVERT-HUGE"),
+        pytest.param(Op.CREATE2, True, "huge", id="CREATE2-REVERT-HUGE"),
     ],
 )
-@pytest.mark.pre_alloc_mutable
 def test_create_large_result(
     state_test: StateTestFiller,
     pre: Alloc,
     fork: Fork,
-    d: int,
-    g: int,
-    v: int,
+    create_op: Op,
+    reverts: bool,
+    size_kind: str,
 ) -> None:
-    """Ori Pomerantz   qbzzt1@gmail."""
-    coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
-    contract_0 = Address(0x000000000000000000000000000000000000C0DE)
-    contract_1 = Address(0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC)
-    sender = EOA(
-        key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
-    )
+    """Create a contract of the requested size and measure the gas."""
+    max_code_size = fork.max_code_size()
+    deploy_size = {
+        "normal": NORMAL_SIZE,
+        "max": max_code_size,
+        "toobig": max_code_size + 1,
+        "huge": 2 * max_code_size,
+    }[size_kind]
+    deployed = deploy_size <= max_code_size and not reverts
 
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=100000000,
-    )
-
-    pre[sender] = Account(balance=0xBA1A9CE0BA1A9CE, nonce=1)
-    # Source: yul
-    # london
-    # {
-    #    // Store some data
-    #    mstore(0, not(0))
-    #
-    #    // Copy the requested length from the constructor code
-    #    codecopy(0x100, 0x100, 0x20)
-    #
-    #    // Return it as the new contract
-    #    return(0, mload(0x100))
-    # }
-    contract_0 = pre.deploy_contract(  # noqa: F841
-        code=Op.MSTORE(offset=0x0, value=Op.NOT(0x0))
-        + Op.CODECOPY(dest_offset=Op.DUP1, offset=0x100, size=0x20)
-        + Op.RETURN(offset=0x0, size=Op.MLOAD(offset=0x100)),
-        nonce=1,
-        address=Address(0x000000000000000000000000000000000000C0DE),  # noqa: E501
-    )
-    # Source: yul
-    # london
-    # {
-    #   sstore(1, gas())
-    #
-    #   // The operation to run
-    #   // F0 - CREATE
-    #   // F5 - CREATE2
-    #   let operation := calldataload(0x04)
-    #
-    #   // The constructor ends with
-    #   // F3 - RETURN
-    #   // FD - REVERT
-    #   let constructorEnd := calldataload(0x24)
-    #
-    #   // The size of the contract getting created
-    #   let contractSize := calldataload(0x44)
-    #
-    #   // Create the constructor.
-    #   let codeSize := extcodesize(0xC0DE)
-    #   extcodecopy(0xC0DE, 0, 0, codeSize)
-    #
-    #   // Modify the last opcode
-    #   mstore8(sub(codeSize, 1), constructorEnd)
-    #
-    #   // Include the requested contract size
-    #   mstore(0x100, contractSize)
-    #
-    #   // Create the contract
-    #   let newAddr
-    #   switch operation
-    # ... (10 more lines)
-    contract_1 = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x1, value=Op.GAS)
-        + Op.CALLDATALOAD(offset=0x4)
-        + Op.CALLDATALOAD(offset=0x24)
-        + Op.CALLDATALOAD(offset=0x44)
-        + Op.SWAP1
-        + Op.PUSH1[0x1]
-        + Op.EXTCODESIZE(address=contract_0)
-        + Op.EXTCODECOPY(
-            address=contract_0, dest_offset=Op.DUP1, offset=0x0, size=Op.DUP1
+    # The constructor writes a marker word, copies its trailing size word
+    # into scratch memory, and returns (or reverts) that many bytes.
+    child_memory = max(INIT_CODE_SIZE, deploy_size)
+    end_op = Op.REVERT if reverts else Op.RETURN
+    end_kwargs: dict = {
+        "offset": 0x0,
+        "size": Op.MLOAD(
+            offset=SIZE_WORD_OFFSET,
+            old_memory_size=INIT_CODE_SIZE,
+            new_memory_size=INIT_CODE_SIZE,
+        ),
+        "old_memory_size": INIT_CODE_SIZE,
+        "new_memory_size": child_memory,
+    }
+    if not reverts:
+        end_kwargs["code_deposit_size"] = deploy_size
+    child_code = (
+        Op.MSTORE(offset=0x0, value=Op.NOT(0x0), new_memory_size=0x20)
+        + Op.CODECOPY(
+            dest_offset=SIZE_WORD_OFFSET,
+            offset=SIZE_WORD_OFFSET,
+            size=0x20,
+            data_size=0x20,
+            old_memory_size=0x20,
+            new_memory_size=INIT_CODE_SIZE,
         )
-        + Op.SUB
-        + Op.MSTORE8
-        + Op.PUSH2[0x100]
-        + Op.MSTORE
-        + Op.PUSH1[0x0]
-        + Op.SWAP1
-        + Op.JUMPI(pc=0x53, condition=Op.EQ(0xF0, Op.DUP1))
-        + Op.PUSH1[0xF5]
-        + Op.JUMPI(pc=0x44, condition=Op.EQ)
-        + Op.JUMPDEST
-        + Op.SSTORE(key=0x0, value=Op.DUP1)
-        + Op.SSTORE(key=0x1, value=Op.SUB(Op.SLOAD(key=0x1), Op.GAS))
-        + Op.SSTORE(key=0x2, value=Op.EXTCODEHASH)
-        + Op.STOP
-        + Op.JUMPDEST
-        + Op.POP
-        + Op.CREATE2(value=Op.DUP1, offset=0x0, size=0x120, salt=0x5A17)
-        + Op.JUMP(pc=0x32)
-        + Op.JUMPDEST
-        + Op.POP * 2
-        + Op.CREATE(value=Op.DUP1, offset=0x0, size=0x120)
-        + Op.JUMP(pc=0x32),
-        storage={0: 24743, 1: 24743, 2: 24743},
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=1,
-        address=Address(0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC),  # noqa: E501
+        + end_op(**end_kwargs)
+    )
+    assert len(bytes(child_code)) <= SIZE_WORD_OFFSET
+    init_code = Bytes(
+        bytes(child_code).ljust(SIZE_WORD_OFFSET, b"\x00") + Hash(deploy_size)
     )
 
-    expect_entries_: list[dict] = [
-        {
-            "indexes": {"data": [0], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_1: Account(
-                    storage={
-                        0: compute_create_address(address=contract_1, nonce=1),
-                        1: 0x1777F,
-                        2: 0xD956C0ABD597440481902014A37B733358EE7685461EB1B5916EEFD83381E6D9,  # noqa: E501
-                    },
-                ),
-            },
-        },
-        {
-            "indexes": {"data": [1], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_1: Account(
-                    storage={
-                        0: 0x595C5D0C272757CFF0B3DCA4ED60D60CD6E9F58,
-                        1: 0x177C9,
-                        2: 0xD956C0ABD597440481902014A37B733358EE7685461EB1B5916EEFD83381E6D9,  # noqa: E501
-                    },
-                ),
-            },
-        },
-        {
-            "indexes": {"data": [2], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {contract_1: Account(storage={0: 0, 1: 44927, 2: 0})},
-        },
-        {
-            "indexes": {"data": [3], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {contract_1: Account(storage={0: 0, 1: 45001, 2: 0})},
-        },
-        {
-            "indexes": {"data": [4], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_1: Account(
-                    storage={
-                        0: compute_create_address(address=contract_1, nonce=1),
-                        1: 0x4BBCE4,
-                        2: 0xDCBCC213F0C91B71D38DEDD06C95CCB99467B9B05F275BED536DE1044F5F18FA,  # noqa: E501
-                    },
-                ),
-            },
-        },
-        {
-            "indexes": {"data": [5], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_1: Account(
-                    storage={
-                        0: 0xA5DC71D47D0D8DCF5990E81C74E981BAF24A8FA2,
-                        1: 0x4BBD2E,
-                        2: 0xDCBCC213F0C91B71D38DEDD06C95CCB99467B9B05F275BED536DE1044F5F18FA,  # noqa: E501
-                    },
-                ),
-            },
-        },
-        {
-            "indexes": {"data": [6], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {contract_1: Account(storage={0: 0, 1: 48356, 2: 0})},
-        },
-        {
-            "indexes": {"data": [7], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {contract_1: Account(storage={0: 0, 1: 48430, 2: 0})},
-        },
-        {
-            "indexes": {"data": [8], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_1: Account(storage={0: 0, 1: 0x4B16491, 2: 0})
-            },
-        },
-        {
-            "indexes": {"data": [9], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_1: Account(storage={0: 0, 1: 0x4B16492, 2: 0})
-            },
-        },
-        {
-            "indexes": {"data": [10], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {contract_1: Account(storage={0: 0, 1: 48362, 2: 0})},
-        },
-        {
-            "indexes": {"data": [11], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {contract_1: Account(storage={0: 0, 1: 48436, 2: 0})},
-        },
-        {
-            "indexes": {"data": [12], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_1: Account(storage={0: 0, 1: 0x4B1649D, 2: 0})
-            },
-        },
-        {
-            "indexes": {"data": [13], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_1: Account(storage={0: 0, 1: 0x4B1649E, 2: 0})
-            },
-        },
-        {
-            "indexes": {"data": [14], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {contract_1: Account(storage={0: 0, 1: 54116, 2: 0})},
-        },
-        {
-            "indexes": {"data": [15], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {contract_1: Account(storage={0: 0, 1: 54190, 2: 0})},
-        },
-    ]
+    # The creator loads the init code from calldata, then measures the
+    # create inside a GAS-snapshot window and records the code hash.
+    prelude = Op.CALLDATACOPY(
+        dest_offset=0x0,
+        offset=0x0,
+        size=Op.CALLDATASIZE,
+        data_size=INIT_CODE_SIZE,
+        new_memory_size=INIT_CODE_SIZE,
+    )
+    head = Op.MSTORE(
+        offset=SNAPSHOT_OFFSET,
+        value=Op.GAS,
+        old_memory_size=INIT_CODE_SIZE,
+        new_memory_size=CREATOR_MEMORY,
+    )
+    create_kwargs: dict = {
+        "value": 0x0,
+        "offset": 0x0,
+        "size": INIT_CODE_SIZE,
+        "init_code_size": INIT_CODE_SIZE,
+        "old_memory_size": CREATOR_MEMORY,
+        "new_memory_size": CREATOR_MEMORY,
+    }
+    if create_op == Op.CREATE2:
+        create_kwargs["salt"] = CREATE2_SALT
+    create_code = create_op(**create_kwargs)
+    body = Op.SSTORE(
+        key=ADDR_SLOT,
+        value=create_code,
+        key_warm=False,
+        original_value=0,
+        new_value=1 if deployed else 0,
+    )
+    tail = Op.SSTORE(
+        key=GAS_SLOT,
+        value=Op.SUB(
+            Op.MLOAD(
+                offset=SNAPSHOT_OFFSET,
+                old_memory_size=CREATOR_MEMORY,
+                new_memory_size=CREATOR_MEMORY,
+            ),
+            Op.GAS,
+        ),
+        key_warm=False,
+        original_value=0,
+        new_value=1,
+    )
+    hash_store = Op.SSTORE(
+        key=HASH_SLOT,
+        value=Op.EXTCODEHASH(
+            address=Op.SLOAD(key=ADDR_SLOT, key_warm=True),
+            address_warm=deployed,
+        ),
+        key_warm=False,
+        original_value=0,
+        new_value=1 if deployed else 0,
+    )
+    creator = pre.deploy_contract(
+        code=prelude + head + body + tail + hash_store + Op.STOP,
+    )
 
-    post, _exc = resolve_expect_post(expect_entries_, d, g, v, fork)
-
-    tx_data = [
-        Bytes("048071d3") + Hash(0xF0) + Hash(0xF3) + Hash(0x100),
-        Bytes("048071d3") + Hash(0xF5) + Hash(0xF3) + Hash(0x100),
-        Bytes("048071d3") + Hash(0xF0) + Hash(0xFD) + Hash(0x100),
-        Bytes("048071d3") + Hash(0xF5) + Hash(0xFD) + Hash(0x100),
-        Bytes("048071d3") + Hash(0xF0) + Hash(0xF3) + Hash(0x6000),
-        Bytes("048071d3") + Hash(0xF5) + Hash(0xF3) + Hash(0x6000),
-        Bytes("048071d3") + Hash(0xF0) + Hash(0xFD) + Hash(0x6000),
-        Bytes("048071d3") + Hash(0xF5) + Hash(0xFD) + Hash(0x6000),
-        Bytes("048071d3") + Hash(0xF0) + Hash(0xF3) + Hash(0x6001),
-        Bytes("048071d3") + Hash(0xF5) + Hash(0xF3) + Hash(0x6001),
-        Bytes("048071d3") + Hash(0xF0) + Hash(0xFD) + Hash(0x6001),
-        Bytes("048071d3") + Hash(0xF5) + Hash(0xFD) + Hash(0x6001),
-        Bytes("048071d3") + Hash(0xF0) + Hash(0xF3) + Hash(0xC000),
-        Bytes("048071d3") + Hash(0xF5) + Hash(0xF3) + Hash(0xC000),
-        Bytes("048071d3") + Hash(0xF0) + Hash(0xFD) + Hash(0xC000),
-        Bytes("048071d3") + Hash(0xF5) + Hash(0xFD) + Hash(0xC000),
-    ]
-    tx_gas = [80000000]
+    # A fixed outer grant makes the creator's window independent of the
+    # transaction gas limit (the entry's 63/64 withhold never binds).
+    entry = pre.deploy_contract(
+        code=Op.CALLDATACOPY(dest_offset=0x0, offset=0x0, size=Op.CALLDATASIZE)
+        + Op.CALL(
+            gas=CREATOR_GAS,
+            address=creator,
+            args_offset=0x0,
+            args_size=Op.CALLDATASIZE,
+        )
+        + Op.STOP,
+    )
 
     tx = Transaction(
-        sender=sender,
-        to=contract_1,
-        data=tx_data[d],
-        gas_limit=tx_gas[g],
-        nonce=1,
-        error=_exc,
+        protected=fork.supports_protected_txs(),
+        sender=pre.fund_eoa(),
+        to=entry,
+        data=init_code,
     )
 
-    state_test(env=env, pre=pre, post=post, tx=tx)
+    # With a maxed-out state-gas reservoir (no explicit gas limit), the
+    # GAS-visible window is the execution cost alone; before EIP-8037 the
+    # execution cost is the whole cost, so one expression fits every fork.
+    if reverts or deployed:
+        child_consumed = child_code.execution_cost(fork)
+    else:
+        # An oversized deposit aborts the child (EIP-170), forfeiting the
+        # whole grant the EIP-150 63/64 rule forwarded to it.
+        available = (
+            CREATOR_GAS
+            - prelude.execution_cost(fork)
+            - head.execution_cost(fork)
+            - create_code.execution_cost(fork)
+        )
+        child_consumed = available - available // 64
+    gas_delta = (
+        head.execution_cost(fork) + body.execution_cost(fork) + child_consumed
+    )
+    # The budget must cover the whole creator frame (or, when the child
+    # forfeits its grant, the 1/64 retention must cover the unwind).
+    unwind_cost = tail.execution_cost(fork) + hash_store.execution_cost(fork)
+    if reverts or deployed:
+        assert (
+            CREATOR_GAS
+            > prelude.execution_cost(fork)
+            + gas_delta
+            + unwind_cost
+            + BUDGET_MARGIN
+        ), "creator budget too small"
+    else:
+        assert available // 64 > unwind_cost + BUDGET_MARGIN, (
+            "grant retention too small for the unwind"
+        )
+
+    if create_op == Op.CREATE:
+        created = compute_create_address(address=creator, nonce=1)
+    else:
+        created = compute_create_address(
+            address=creator,
+            salt=CREATE2_SALT,
+            initcode=init_code,
+            opcode=Op.CREATE2,
+        )
+    # The deployed image: the constructor's marker word, then zeroed
+    # memory, with the copied size word visible when the result is large
+    # enough to reach it.
+    image = bytearray(deploy_size)
+    image[0:32] = b"\xff" * 32
+    if deploy_size > SIZE_WORD_OFFSET:
+        word = bytes(Hash(deploy_size))
+        image[SIZE_WORD_OFFSET : SIZE_WORD_OFFSET + 0x20] = word[
+            : deploy_size - SIZE_WORD_OFFSET
+        ]
+    deployed_code = Bytes(bytes(image))
+
+    post = {
+        creator: Account(
+            storage={
+                ADDR_SLOT: created if deployed else 0,
+                GAS_SLOT: gas_delta,
+                HASH_SLOT: deployed_code.keccak256() if deployed else 0,
+            },
+        ),
+        created: (
+            Account(nonce=1, balance=0) if deployed else Account.NONEXISTENT
+        ),
+    }
+
+    state_test(pre=pre, post=post, tx=tx)

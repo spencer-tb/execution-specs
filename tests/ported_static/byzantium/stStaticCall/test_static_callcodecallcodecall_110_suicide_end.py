@@ -1,26 +1,37 @@
 """
-Test_static_callcodecallcodecall_110_suicide_end.
+Measure the gas consumed by a DELEGATECALL-DELEGATECALL-STATICCALL
+chain that ends in a SELFDESTRUCT of the shared context account: under
+EIP-6780 the pre-existing account survives, its balance moves to the
+beneficiary, and the chain's cost is exactly the sum of each frame's
+charges — independent of the transaction value, which delegate calls
+carry without transferring.
 
 Ported from:
 state_tests/stStaticCall/static_callcodecallcodecall_110_SuicideEndFiller.json
+
+@manually-enhanced: Do not overwrite. The ported absolute GAS snapshot
+(slot 1) became a CodeGasMeasure delta asserted against fork-derived
+frame costs; the SELFDESTRUCT beneficiary is the (warm) static leaf so
+every address is dynamic, and its balance is asserted.
 """
 
 import pytest
 from execution_testing import (
     Account,
-    Address,
     Alloc,
-    Bytes,
-    Environment,
+    CodeGasMeasure,
+    Fork,
     StateTestFiller,
-    Storage,
     Transaction,
 )
-from execution_testing.forks import Fork
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
+
+FLAG_SLOT = 0x0
+GAS_SLOT = 0x1
+TARGET_BALANCE = 10**18
 
 
 @pytest.mark.ported_from(
@@ -29,129 +40,96 @@ REFERENCE_SPEC_VERSION = "N/A"
     ],
 )
 @pytest.mark.valid_from("Cancun")
-@pytest.mark.slow
-@pytest.mark.parametrize(
-    "d, g, v",
-    [
-        pytest.param(
-            0,
-            0,
-            0,
-            id="-v0",
-        ),
-        pytest.param(
-            0,
-            0,
-            1,
-            id="-v1",
-        ),
-    ],
-)
-@pytest.mark.pre_alloc_mutable
+@pytest.mark.parametrize("tx_value", [0, 1])
 def test_static_callcodecallcodecall_110_suicide_end(
     state_test: StateTestFiller,
     pre: Alloc,
     fork: Fork,
-    d: int,
-    g: int,
-    v: int,
+    tx_value: int,
 ) -> None:
-    """Test_static_callcodecallcodecall_110_suicide_end."""
-    coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
-    sender = pre.fund_eoa(amount=0xDE0B6B3A7640000)
+    """Measure a nested DELEGATECALL chain ending in SELFDESTRUCT."""
+    # Static leaf: memory-only, runs in its own frame.
+    leaf_code = Op.MSTORE(offset=0x3, value=0x1, new_memory_size=0x23)
+    leaf = pre.deploy_contract(code=leaf_code + Op.STOP)
 
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=30000000,
-    )
-
-    # Source: lll
-    # {  (MSTORE 3 1) }
-    addr_3 = pre.deploy_contract(  # noqa: F841
-        code=Op.MSTORE(offset=0x3, value=0x1) + Op.STOP,
-        balance=0x2540BE400,
-        nonce=0,
-        address=Address(0x48E2D4C0B593BFEBE5DDB4F13AA355B8BD83DDD3),  # noqa: E501
-    )
-    # Source: lll
-    # {  [[ 0 ]] (DELEGATECALL 150000 <contract:0x1000000000000000000000000000000000000001> 0 64 0 64 ) [[ 1 ]] (GAS) }  # noqa: E501
-    target = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(
-            key=0x0,
-            value=Op.DELEGATECALL(
-                gas=0x249F0,
-                address=0x92D7028788CAA240253B7B2A92386464690CDC72,
-                args_offset=0x0,
-                args_size=0x40,
-                ret_offset=0x0,
-                ret_size=0x40,
-            ),
-        )
-        + Op.SSTORE(key=0x1, value=Op.GAS)
-        + Op.STOP,
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
-        address=Address(0x5F7FDF1F0D4F4AD14C6996AE17BB6698D22343D8),  # noqa: E501
-    )
-    # Source: lll
-    # {  (DELEGATECALL 100000 <contract:0x1000000000000000000000000000000000000002> 0 64 0 64 ) }  # noqa: E501
-    addr = pre.deploy_contract(  # noqa: F841
-        code=Op.DELEGATECALL(
-            gas=0x186A0,
-            address=0xB7770360E0B87603E3D9C87C866451760C95ABCA,
-            args_offset=0x0,
+    # Innermost delegate (target's context): static-call the leaf, then
+    # self-destruct the context account. The beneficiary is the leaf —
+    # warm from the call just made, and deployable without the address
+    # circularity of the ported layout (which paid the same warm-access
+    # cost for the mid-chain delegate).
+    inner_code = Op.POP(
+        Op.STATICCALL(
+            address=leaf,
             args_size=0x40,
-            ret_offset=0x0,
             ret_size=0x40,
+            new_memory_size=0x40,
         )
-        + Op.STOP,
-        balance=0x2540BE400,
-        nonce=0,
-        address=Address(0x92D7028788CAA240253B7B2A92386464690CDC72),  # noqa: E501
-    )
-    # Source: lll
-    # {  (STATICCALL 50000 <contract:0x1000000000000000000000000000000000000003> 0 64 0 64 ) (SELFDESTRUCT <contract:0x1000000000000000000000000000000000000001>) }  # noqa: E501
-    addr_2 = pre.deploy_contract(  # noqa: F841
-        code=Op.POP(
-            Op.STATICCALL(
-                gas=0xC350,
-                address=0x48E2D4C0B593BFEBE5DDB4F13AA355B8BD83DDD3,
-                args_offset=0x0,
-                args_size=0x40,
-                ret_offset=0x0,
-                ret_size=0x40,
-            )
-        )
-        + Op.SELFDESTRUCT(address=0x92D7028788CAA240253B7B2A92386464690CDC72)
-        + Op.STOP,
-        balance=0x2540BE400,
-        nonce=0,
-        address=Address(0xB7770360E0B87603E3D9C87C866451760C95ABCA),  # noqa: E501
-    )
+    ) + Op.SELFDESTRUCT(address=leaf, address_warm=True)
+    inner = pre.deploy_contract(code=inner_code)
 
-    tx_data = [
-        Bytes(""),
-    ]
-    tx_gas = [3000000]
-    tx_value = [0, 1]
+    # Middle delegate (target's context): DELEGATECALL the innermost.
+    mid_code = (
+        Op.DELEGATECALL(
+            address=inner,
+            args_size=0x40,
+            ret_size=0x40,
+            new_memory_size=0x40,
+        )
+        + Op.STOP
+    )
+    mid = pre.deploy_contract(code=mid_code)
+
+    # The measured window: flag-storing DELEGATECALL into the chain.
+    # The SSTORE keeps the chain's success observable in the window.
+    store_code = Op.SSTORE(
+        FLAG_SLOT,
+        Op.DELEGATECALL(
+            address=mid,
+            args_size=0x40,
+            ret_size=0x40,
+            new_memory_size=0x40,
+        ),
+        key_warm=False,
+        original_value=0,
+        new_value=1,
+    )
+    target = pre.deploy_contract(
+        code=CodeGasMeasure(
+            code=store_code,
+            extra_stack_items=0,
+            sstore_key=GAS_SLOT,
+        ),
+        balance=TARGET_BALANCE,
+    )
 
     tx = Transaction(
-        protected=fork.supports_protected_txs(),
-        sender=sender,
+        sender=pre.fund_eoa(),
         to=target,
-        data=tx_data[d],
-        gas_limit=tx_gas[g],
-        value=tx_value[v],
+        value=tx_value,
+        state_gas_reservoir=0,
     )
 
-    target_storage = Storage.model_validate({0: 1, 1: 0x2CEC03})
-    if fork.is_eip_enabled(8037):
-        target_storage = Storage.model_validate({0: 1})
-        target_storage.set_expect_any(1)
-    post = {target: Account(storage=target_storage, balance=0, nonce=0)}
+    # Every frame succeeds, so the window measures the sum of each
+    # frame's actual charges; delegate calls move no value, so nothing
+    # here depends on the transaction value.
+    expected_gas = (
+        store_code.gas_cost(fork)
+        + mid_code.gas_cost(fork)
+        + inner_code.gas_cost(fork)
+        + leaf_code.gas_cost(fork)
+    )
 
-    state_test(env=env, pre=pre, post=post, tx=tx)
+    # EIP-6780: the pre-existing target survives its self-destruct; its
+    # whole balance (including the transaction value) moved to the leaf.
+    post = {
+        target: Account(
+            balance=0,
+            storage={FLAG_SLOT: 1, GAS_SLOT: expected_gas},
+        ),
+        leaf: Account(
+            balance=TARGET_BALANCE + tx_value,
+            storage={},
+        ),
+    }
+
+    state_test(pre=pre, post=post, tx=tx)

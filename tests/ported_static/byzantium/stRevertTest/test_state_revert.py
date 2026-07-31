@@ -1,298 +1,127 @@
 """
-Ori Pomerantz qbzzt1@gmail.com.
+Verify every kind of frame failure — revert, out-of-gas, huge-size
+out-of-gas, undefined opcode, bad jump, stack underflow and stack
+overflow — rolls back the failing delegate frame's storage write while
+the calling frame keeps its own state and observes the failure.
 
 Ported from:
 state_tests/stRevertTest/stateRevertFiller.yml
+
+@manually-enhanced: Do not overwrite. The ported dispatch computed
+0x1000+d addresses that no contract occupied, so the failure modes
+never executed; the target now delegate-calls the failing contract
+directly and stores the observed failure (the ported never-dispatched
+guard slot is superseded by this flag). The pinned 2^24 gas limit is
+dropped for the maxed default.
 """
 
 import pytest
 from execution_testing import (
     Account,
-    Address,
     Alloc,
-    Bytes,
-    Environment,
+    Bytecode,
+    Fork,
     Hash,
     StateTestFiller,
     Transaction,
 )
-from execution_testing.forks import Fork
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
+
+# Sentinel the target writes before the failing delegate call.
+SENTINEL = 0x60A7
+# Marker the failing frame writes first; it must never persist.
+MARKER = 0x1001
+# Gas kept back from the throwaway delegate call to the dead address,
+# left for the failure op itself.
+DEAD_CALL_RESERVE = 0x7530
+# Empty address the failing frame delegate-calls before failing.
+DEAD_ADDRESS = 0xDEAD
+
+FAILURE_MODES = [
+    "revert",
+    "out_of_gas",
+    "xtreme_oog",
+    "bad_opcode",
+    "jump_badly",
+    "stack_underflow",
+    "stack_overflow",
+]
 
 
 @pytest.mark.ported_from(
     ["state_tests/stRevertTest/stateRevertFiller.yml"],
 )
 @pytest.mark.valid_from("TangerineWhistle")
-@pytest.mark.parametrize(
-    "d, g, v",
-    [
-        pytest.param(
-            0,
-            0,
-            0,
-            id="revert",
-        ),
-        pytest.param(
-            1,
-            0,
-            0,
-            id="outOfGas",
-        ),
-        pytest.param(
-            2,
-            0,
-            0,
-            id="xtremeOOG",
-        ),
-        pytest.param(
-            3,
-            0,
-            0,
-            id="badOpcode",
-        ),
-        pytest.param(
-            4,
-            0,
-            0,
-            id="jumpBadly",
-        ),
-        pytest.param(
-            5,
-            0,
-            0,
-            id="stackUnder",
-        ),
-        pytest.param(
-            6,
-            0,
-            0,
-            id="stackOver",
-        ),
-    ],
-)
-@pytest.mark.pre_alloc_mutable
+@pytest.mark.parametrize("failure_mode", FAILURE_MODES)
 def test_state_revert(
     state_test: StateTestFiller,
     pre: Alloc,
     fork: Fork,
-    d: int,
-    g: int,
-    v: int,
+    failure_mode: str,
 ) -> None:
-    """Ori Pomerantz qbzzt1@gmail."""
-    coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
-    sender = pre.fund_eoa(amount=0x100000000000)
+    """Roll back a failing delegate frame and observe the failure."""
+    # Common prologue: record a marker (must revert), then make a
+    # throwaway delegate call to an empty address, keeping enough gas
+    # for the failure op.
+    prologue = Op.SSTORE(key=0x1, value=MARKER) + Op.POP(
+        Op.DELEGATECALL(
+            gas=Op.SUB(Op.GAS, DEAD_CALL_RESERVE), address=DEAD_ADDRESS
+        )
+    )
+    failing_code: Bytecode | bytes
+    if failure_mode == "revert":
+        failing_code = prologue + Op.REVERT(offset=0x0, size=0x10) + Op.STOP
+    elif failure_mode == "out_of_gas":
+        # Hashing a 16 MiB window costs more than any legal budget.
+        failing_code = prologue + Op.SHA3(offset=0x0, size=0x1000000)
+    elif failure_mode == "xtreme_oog":
+        # A 2**256-1 hash size overflows any gas accounting.
+        failing_code = prologue + Op.SHA3(offset=0x0, size=Op.SUB(0x0, 0x1))
+    elif failure_mode == "bad_opcode":
+        # 0xBA is undefined on every fork.
+        failing_code = bytes(prologue) + b"\xba"
+    elif failure_mode == "jump_badly":
+        # Position zero is a PUSH, not a JUMPDEST.
+        failing_code = prologue + Op.JUMP(pc=0x0)
+    elif failure_mode == "stack_underflow":
+        # The stack is empty after the prologue's POP.
+        failing_code = prologue + Op.ADD + Op.ADD + Op.ADD
+    else:
+        # Each loop iteration leaves one PC value behind until the
+        # stack overflows.
+        failing_code = (
+            prologue + Op.JUMPDEST + Op.PC + Op.JUMP(pc=Op.SUB(Op.PC, 0x4))
+        )
+    failing = pre.deploy_contract(code=failing_code)
 
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=100000000,
-    )
-
-    # Source: lll
-    # {
-    #     [[2]] 0x60A7
-    # }
-    addr = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x2, value=0x60A7) + Op.STOP,
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-        address=Address(0x4EDC28FF01C9F8731EDE6D0FD953DA91F749A659),  # noqa: E501
-    )
-    # Source: lll
-    # {
-    #     [[1]] 0x1000
-    #     (delegatecall (- (gas) 30000) 0xDEAD 0 0 0 0)
-    #     (revert 0 0x10)
-    # }
-    addr_2 = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x1, value=0x1000)
-        + Op.POP(
-            Op.DELEGATECALL(
-                gas=Op.SUB(Op.GAS, 0x7530),
-                address=0xDEAD,
-                args_offset=0x0,
-                args_size=0x0,
-                ret_offset=0x0,
-                ret_size=0x0,
-            )
-        )
-        + Op.REVERT(offset=0x0, size=0x10)
-        + Op.STOP,
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-        address=Address(0x71A06D553F1AC38B5E568CE5A1B5DF253AD08D73),  # noqa: E501
-    )
-    # Source: lll
-    # {
-    #     [[1]] 0x1001
-    #     (delegatecall (- (gas) 30000) 0xDEAD 0 0 0 0)
-    #     (while 1 (sha3 0 0x1000000))
-    # }
-    addr_3 = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x1, value=0x1001)
-        + Op.POP(
-            Op.DELEGATECALL(
-                gas=Op.SUB(Op.GAS, 0x7530),
-                address=0xDEAD,
-                args_offset=0x0,
-                args_size=0x0,
-                ret_offset=0x0,
-                ret_size=0x0,
-            )
-        )
-        + Op.JUMPDEST
-        + Op.JUMPI(pc=0x2B, condition=Op.ISZERO(0x1))
-        + Op.POP(Op.SHA3(offset=0x0, size=0x1000000))
-        + Op.JUMP(pc=0x18)
-        + Op.JUMPDEST
-        + Op.STOP,
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-        address=Address(0x16D83DA4C22C26F92C5A8D4CEDF367E171F60977),  # noqa: E501
-    )
-    # Source: lll
-    # {
-    #     [[1]] 0x1002
-    #     (delegatecall (- (gas) 30000) 0xDEAD 0 0 0 0)
-    #     (sha3 0 (- 0 1))
-    # }
-    addr_4 = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x1, value=0x1002)
-        + Op.POP(
-            Op.DELEGATECALL(
-                gas=Op.SUB(Op.GAS, 0x7530),
-                address=0xDEAD,
-                args_offset=0x0,
-                args_size=0x0,
-                ret_offset=0x0,
-                ret_size=0x0,
-            )
-        )
-        + Op.SHA3(offset=0x0, size=Op.SUB(0x0, 0x1))
-        + Op.STOP,
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-        address=Address(0xEBE3A4514FECA3EB2819BF83EBD926C5E4143739),  # noqa: E501
-    )
-    # Source: raw
-    # 0x610103600155600060006000600061dead6175305a03f450BA
-    addr_5 = pre.deploy_contract(  # noqa: F841
-        code=bytes.fromhex(
-            "610103600155600060006000600061dead6175305a03f450ba"
-        ),
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-        address=Address(0x1985064D96BAAF3305FEE248DE22965FBF7FBAB6),  # noqa: E501
-    )
-    # Source: raw
-    # 0x610104600155600060006000600061dead6175305a03f450600056
-    addr_6 = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x1, value=0x104)
-        + Op.POP(
-            Op.DELEGATECALL(
-                gas=Op.SUB(Op.GAS, 0x7530),
-                address=0xDEAD,
-                args_offset=0x0,
-                args_size=0x0,
-                ret_offset=0x0,
-                ret_size=0x0,
-            )
-        )
-        + Op.JUMP(pc=0x0),
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-        address=Address(0xDD77382F06BFEEA4258E6F7BFFC6D9D31B885815),  # noqa: E501
-    )
-    # Source: raw
-    # 0x610105600155600060006000600061dead6175305a03f450010101
-    addr_7 = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x1, value=0x105)
-        + Op.POP(
-            Op.DELEGATECALL(
-                gas=Op.SUB(Op.GAS, 0x7530),
-                address=0xDEAD,
-                args_offset=0x0,
-                args_size=0x0,
-                ret_offset=0x0,
-                ret_size=0x0,
-            )
-        )
-        + Op.ADD(Op.ADD, Op.ADD),
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-        address=Address(0xBF0FC73E06F3B2ECA8CB8094BDB81D4D2AA2F9B0),  # noqa: E501
-    )
-    # Source: raw
-    # 0x610106600155600060006000600061dead6175305a03f4505b586004580356
-    addr_8 = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x1, value=0x106)
-        + Op.POP(
-            Op.DELEGATECALL(
-                gas=Op.SUB(Op.GAS, 0x7530),
-                address=0xDEAD,
-                args_offset=0x0,
-                args_size=0x0,
-                ret_offset=0x0,
-                ret_size=0x0,
-            )
-        )
-        + Op.JUMPDEST
-        + Op.PC
-        + Op.JUMP(pc=Op.SUB(Op.PC, 0x4)),
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-        address=Address(0xE08A8DE27B3798640D504F1431A360F276B9F2AE),  # noqa: E501
-    )
-    # Source: lll
-    # {
-    #     [[0]] 0x60A7
-    #     (delegatecall (gas) (+ 0x1000 $4) 0 0 0 0)
-    # }
-    target = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x0, value=0x60A7)
-        + Op.DELEGATECALL(
-            gas=Op.GAS,
-            address=Op.ADD(0x1000, Op.CALLDATALOAD(offset=0x4)),
-            args_offset=0x0,
-            args_size=0x0,
-            ret_offset=0x0,
-            ret_size=0x0,
+    # The target writes its sentinel, delegate-calls the failing
+    # contract, and stores 1 if (and only if) that frame failed.
+    target = pre.deploy_contract(
+        code=Op.SSTORE(key=0x0, value=SENTINEL)
+        + Op.SSTORE(
+            key=0x2,
+            value=Op.ISZERO(
+                Op.DELEGATECALL(address=Op.CALLDATALOAD(offset=0x0))
+            ),
         )
         + Op.STOP,
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-        address=Address(0x3559AFE49654B532B7E67E6ACD87DEB8C569E7AD),  # noqa: E501
     )
-
-    tx_data = [
-        Bytes("693c6139") + Hash(0x0),
-        Bytes("693c6139") + Hash(0x1),
-        Bytes("693c6139") + Hash(0x2),
-        Bytes("693c6139") + Hash(0x3),
-        Bytes("693c6139") + Hash(0x4),
-        Bytes("693c6139") + Hash(0x5),
-        Bytes("693c6139") + Hash(0x6),
-    ]
-    tx_gas = [16777216]
-    tx_value = [1]
 
     tx = Transaction(
         protected=fork.supports_protected_txs(),
-        sender=sender,
+        sender=pre.fund_eoa(),
         to=target,
-        data=tx_data[d],
-        gas_limit=tx_gas[g],
-        value=tx_value[v],
+        data=Hash(failing, left_padding=True),
     )
 
-    post = {target: Account(storage={0: 24743, 1: 0, 2: 0})}
+    # The sentinel survives, the failing frame's marker does not, and
+    # the observed failure flag is set.
+    post = {
+        target: Account(storage={0: SENTINEL, 1: 0, 2: 1}),
+        failing: Account(storage={}),
+    }
 
-    state_test(env=env, pre=pre, post=post, tx=tx)
+    state_test(pre=pre, post=post, tx=tx)

@@ -1,17 +1,19 @@
 """
-Test_static_call_oog_additional_gas_costs1.
+Verify a STATICCALL's additional gas costs (memory expansion plus the
+callee's gas ask) fit the budget while the following SSTORE does not, so
+the frame runs out of gas and every pending write reverts.
 
 Ported from:
 state_tests/stStaticCall/static_call_OOG_additionalGasCosts1Filler.json
+
+@manually-enhanced: Do not overwrite. Gas budget derived from the fork
+(was a pinned 30000); dynamic callee; post asserts the revert.
 """
 
 import pytest
 from execution_testing import (
     Account,
-    Address,
     Alloc,
-    Bytes,
-    Environment,
     Fork,
     StateTestFiller,
     Transaction,
@@ -21,61 +23,56 @@ from execution_testing.vm import Op
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
+# The legacy ask: granted in full to the code-less callee and returned
+# unused, so it is exactly the caller's gas left after the call.
+CALLEE_GAS_ASK = 0x1770
+
 
 @pytest.mark.ported_from(
     [
         "state_tests/stStaticCall/static_call_OOG_additionalGasCosts1Filler.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Frontier")
-@pytest.mark.slow
-@pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_from("Byzantium")
 def test_static_call_oog_additional_gas_costs1(
     state_test: StateTestFiller,
     pre: Alloc,
     fork: Fork,
 ) -> None:
-    """Test_static_call_oog_additional_gas_costs1."""
-    coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
-    sender = pre.fund_eoa(amount=0xDE0B6B3A7640000)
-
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=3000000000,
+    """Run out of gas on the SSTORE right after a paid-for STATICCALL."""
+    callee = pre.nonexistent_account()
+    call_code = Op.STATICCALL(
+        gas=CALLEE_GAS_ASK,
+        address=callee,
+        args_size=0x40,
+        ret_size=0x40,
+        new_memory_size=0x40,
     )
-
-    # Source: lll
-    # {  [[ 0 ]] (STATICCALL 6000 0x1000000000000000000000000000000000000001 0 64 0 64 ) [[ 1 ]] (GAS) }  # noqa: E501
-    target = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(
-            key=0x0,
-            value=Op.STATICCALL(
-                gas=0x1770,
-                address=0x1000000000000000000000000000000000000001,
-                args_offset=0x0,
-                args_size=0x40,
-                ret_offset=0x0,
-                ret_size=0x40,
-            ),
-        )
+    target = pre.deploy_contract(
+        code=Op.SSTORE(key=0x0, value=call_code)
         + Op.SSTORE(key=0x1, value=Op.GAS)
         + Op.STOP,
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
     )
+
+    # Budget covers the call machinery and the callee's full ask; the ask
+    # comes back unused, leaving ~CALLEE_GAS_ASK gas — less than any
+    # fork's first-write SSTORE charge, so the first SSTORE OOGs.
+    intrinsic = fork.transaction_intrinsic_cost_calculator()()
+    gas_limit = intrinsic + call_code.gas_cost(fork) + CALLEE_GAS_ASK
+    sstore_cost = Op.SSTORE(
+        key_warm=False, original_value=0, new_value=1
+    ).gas_cost(fork)
+    assert CALLEE_GAS_ASK < sstore_cost, "ask must not fund the SSTORE"
 
     tx = Transaction(
-        protected=fork.supports_protected_txs(),
-        sender=sender,
+        sender=pre.fund_eoa(),
         to=target,
-        data=Bytes(""),
-        gas_limit=30000,
+        gas_limit=gas_limit,
     )
 
-    post = {sender: Account(nonce=1)}
+    post = {
+        target: Account(storage={}),
+        callee: Account.NONEXISTENT,
+    }
 
-    state_test(env=env, pre=pre, post=post, tx=tx)
+    state_test(pre=pre, post=post, tx=tx)

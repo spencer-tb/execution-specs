@@ -1,18 +1,21 @@
 """
-Test_static_callcodecallcodecall_110_suicide_middle2.
+Verify a SELFDESTRUCT to self in the middle of a CALLCODE-CALLCODE
+chain halts its frame immediately — the static call after it never
+runs — while under EIP-6780 the pre-existing account is not deleted
+and the enclosing frames complete normally.
 
 Ported from:
 state_tests/stStaticCall/static_callcodecallcodecall_110_SuicideMiddle2Filler.json
+
+@manually-enhanced: Do not overwrite. Self-beneficiary expressed as
+ADDRESS; the chain's result and a completion canary are stored and
+asserted (the ported post checked only the balance).
 """
 
 import pytest
 from execution_testing import (
     Account,
-    Address,
     Alloc,
-    Bytes,
-    Environment,
-    Fork,
     StateTestFiller,
     Transaction,
 )
@@ -21,6 +24,9 @@ from execution_testing.vm import Op
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
+TARGET_BALANCE = 10**18
+CANARY = 0xC0DE
+
 
 @pytest.mark.ported_from(
     [
@@ -28,100 +34,60 @@ REFERENCE_SPEC_VERSION = "N/A"
     ],
 )
 @pytest.mark.valid_from("Cancun")
-@pytest.mark.slow
-@pytest.mark.pre_alloc_mutable
 def test_static_callcodecallcodecall_110_suicide_middle2(
     state_test: StateTestFiller,
     pre: Alloc,
-    fork: Fork,
 ) -> None:
-    """Test_static_callcodecallcodecall_110_suicide_middle2."""
-    coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
-    sender = pre.fund_eoa(amount=0xDE0B6B3A7640000)
-
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=30000000,
+    """Halt a frame at SELFDESTRUCT to self and keep the account."""
+    # Never reached: the SELFDESTRUCT before the static call halts the
+    # frame first.
+    leaf = pre.deploy_contract(code=Op.MSTORE(offset=0x3, value=0x1) + Op.STOP)
+    # Runs in the target's context two CALLCODEs deep: self-destructs
+    # with itself as the beneficiary, which ends the frame before the
+    # static call.
+    inner = pre.deploy_contract(
+        code=Op.SELFDESTRUCT(address=Op.ADDRESS)
+        + Op.STATICCALL(address=leaf, args_size=0x40, ret_size=0x40)
+        + Op.STOP,
     )
-
-    # Source: lll
-    # {  (MSTORE 3 1) }
-    addr_3 = pre.deploy_contract(  # noqa: F841
-        code=Op.MSTORE(offset=0x3, value=0x1) + Op.STOP,
-        balance=0x2540BE400,
-        nonce=0,
-        address=Address(0x48E2D4C0B593BFEBE5DDB4F13AA355B8BD83DDD3),  # noqa: E501
+    outer = pre.deploy_contract(
+        code=Op.CALLCODE(
+            address=inner,
+            value=Op.CALLVALUE,
+            args_size=0x40,
+            ret_size=0x40,
+        )
+        + Op.STOP,
     )
-    # Source: lll
-    # {  [[ 0 ]] (CALLCODE 150000 <contract:0x1000000000000000000000000000000000000001> (CALLVALUE) 0 64 0 64 ) [[ 1 ]] (GAS) }  # noqa: E501
-    target = pre.deploy_contract(  # noqa: F841
+    target = pre.deploy_contract(
         code=Op.SSTORE(
             key=0x0,
             value=Op.CALLCODE(
-                gas=0x249F0,
-                address=0x1D36753CD1D8D4795799D3F4D0925C63F72B2685,
+                address=outer,
                 value=Op.CALLVALUE,
-                args_offset=0x0,
                 args_size=0x40,
-                ret_offset=0x0,
                 ret_size=0x40,
             ),
         )
-        + Op.SSTORE(key=0x1, value=Op.GAS)
+        + Op.SSTORE(key=0x1, value=CANARY)
         + Op.STOP,
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
-        address=Address(0x44D09DDF088DD88C0E91FA7EF74973FF94AD7414),  # noqa: E501
-    )
-    # Source: lll
-    # {  (CALLCODE 100000 <contract:0x1000000000000000000000000000000000000002> (CALLVALUE) 0 64 0 64 ) }  # noqa: E501
-    addr = pre.deploy_contract(  # noqa: F841
-        code=Op.CALLCODE(
-            gas=0x186A0,
-            address=0x408F1ACEFFEC7BDAA35D77006CDCAEAD563BB694,
-            value=Op.CALLVALUE,
-            args_offset=0x0,
-            args_size=0x40,
-            ret_offset=0x0,
-            ret_size=0x40,
-        )
-        + Op.STOP,
-        balance=0x2540BE400,
-        nonce=0,
-        address=Address(0x1D36753CD1D8D4795799D3F4D0925C63F72B2685),  # noqa: E501
-    )
-    # Source: lll
-    # {  (SELFDESTRUCT <contract:target:0x1000000000000000000000000000000000000000>) (STATICCALL 50000 <contract:0x1000000000000000000000000000000000000003> 0 64 0 64 ) }  # noqa: E501
-    addr_2 = pre.deploy_contract(  # noqa: F841
-        code=Op.SELFDESTRUCT(
-            address=0x44D09DDF088DD88C0E91FA7EF74973FF94AD7414
-        )
-        + Op.STATICCALL(
-            gas=0xC350,
-            address=0x48E2D4C0B593BFEBE5DDB4F13AA355B8BD83DDD3,
-            args_offset=0x0,
-            args_size=0x40,
-            ret_offset=0x0,
-            ret_size=0x40,
-        )
-        + Op.STOP,
-        balance=0x2540BE400,
-        nonce=0,
-        address=Address(0x408F1ACEFFEC7BDAA35D77006CDCAEAD563BB694),  # noqa: E501
+        balance=TARGET_BALANCE,
     )
 
     tx = Transaction(
-        protected=fork.supports_protected_txs(),
-        sender=sender,
+        sender=pre.fund_eoa(),
         to=target,
-        data=Bytes(""),
-        gas_limit=3000000,
     )
 
-    post = {target: Account(balance=0xDE0B6B3A7640000)}
+    # SELFDESTRUCT halts its frame successfully, so the chain reports
+    # success; EIP-6780 keeps the pre-existing target, whose balance
+    # only moved to itself.
+    post = {
+        leaf: Account(storage={}),
+        target: Account(
+            balance=TARGET_BALANCE,
+            storage={0: 1, 1: CANARY},
+        ),
+    }
 
-    state_test(env=env, pre=pre, post=post, tx=tx)
+    state_test(pre=pre, post=post, tx=tx)

@@ -1,59 +1,55 @@
 """
-Test_test_random_test.
+Run a fuzzed nested-CREATE sequence (a create inside another create's
+operand chain, funded with a raw GAS reading) and verify the survivors.
 
 Ported from:
 state_tests/stSystemOperationsTest/testRandomTestFiller.json
+
+@manually-enhanced: Do not overwrite. Hardcoded addresses, the fixed
+sender key, and the per-fork gas-limit band-aids were dropped; the stored
+slot key derives from the creator's nonce and the stored value from the
+block timestamp.
 """
 
 import pytest
 from execution_testing import (
-    EOA,
     Account,
-    Address,
     Alloc,
-    Bytes,
     Environment,
     Fork,
     StateTestFiller,
     Transaction,
+    compute_create_address,
 )
-from execution_testing.forks import Amsterdam
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
+
+BLOCK_NUMBER = 1
+TIMESTAMP = 1000
+CONTRACT_BALANCE = 10**18
 
 
 @pytest.mark.ported_from(
     ["state_tests/stSystemOperationsTest/testRandomTestFiller.json"],
 )
 @pytest.mark.valid_from("Frontier")
-@pytest.mark.pre_alloc_mutable
 def test_test_random_test(
     state_test: StateTestFiller,
     fork: Fork,
     pre: Alloc,
 ) -> None:
-    """Test_test_random_test."""
-    coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
-    contract_0 = Address(0x0F572E5295C57F15886F9B263E2F6D2D6C7B5EC6)
-    sender = EOA(
-        key=0x45A915E4D060149EB4365960E6A7A45F334393093061116B197E3240065FF2D8
-    )
+    """Store the block timestamp under the second created address."""
+    env = Environment(number=BLOCK_NUMBER, timestamp=TIMESTAMP)
 
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=3000000 if fork >= Amsterdam else 1000000,
-    )
-
-    pre[sender] = Account(balance=0xDE0B6B3A7640000)
     # Source: raw
     # 0x424443444243434383f0155af055
-    contract_0 = pre.deploy_contract(  # noqa: F841
+    # The leading block-info reads are fuzzer junk left on the stack; the
+    # first CREATE deploys an empty one-byte-initcode contract, and the
+    # second (funded with a raw GAS reading as wei) supplies the storage
+    # key for the final SSTORE.
+    contract = pre.deploy_contract(
         code=Op.TIMESTAMP
         + Op.PREVRANDAO
         + Op.NUMBER
@@ -68,24 +64,21 @@ def test_test_random_test(
             ),
             value=Op.TIMESTAMP,
         ),
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
-        address=Address(0x0F572E5295C57F15886F9B263E2F6D2D6C7B5EC6),  # noqa: E501
+        balance=CONTRACT_BALANCE,
     )
 
     tx = Transaction(
         protected=fork.supports_protected_txs(),
-        sender=sender,
-        to=contract_0,
-        data=Bytes(""),
-        gas_limit=2300000 if fork >= Amsterdam else 300000,
-        value=0x186A0,
+        sender=pre.fund_eoa(),
+        to=contract,
     )
 
+    # The deployed creator starts at nonce 1; the second CREATE uses 2.
+    second_created = compute_create_address(address=contract, nonce=2)
     post = {
-        contract_0: Account(
-            storage={0xEBCCE5F60530275EE9318CE1EFF9E4BFEE810172: 1000},
-            nonce=2,
+        contract: Account(
+            storage={second_created: TIMESTAMP},
+            nonce=3,
         ),
     }
 
