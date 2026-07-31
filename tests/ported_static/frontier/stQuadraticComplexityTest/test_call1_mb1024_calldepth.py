@@ -1,139 +1,107 @@
 """
-Test_call1_mb1024_calldepth.
+Verify a self-call recursion that copies 1MB of call arguments per level:
+the quadratic memory cost starves the recursion long before the 1024
+depth limit, and only the deepest frame's work reverts.
 
 Ported from:
 state_tests/stQuadraticComplexityTest/Call1MB1024CalldepthFiller.json
+
+@manually-enhanced: Do not overwrite. The 250M/882500M gas limits are
+impossible under the EIP-7825 cap; the budget is a fixed named constant
+and the reached depth is pinned per gas-schedule era (the ported absolute
+depth 69 was a function of the old 250M budget). The self-call address is
+resolved at runtime instead of a hardcoded self-reference.
 """
 
 import pytest
 from execution_testing import (
     Account,
-    Address,
     Alloc,
-    Bytes,
-    Environment,
+    Conditional,
+    Fork,
     StateTestFiller,
     Transaction,
-)
-from execution_testing.forks import Fork
-from execution_testing.specs.static_state.expect_section import (
-    resolve_expect_post,
 )
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
+COUNTER_SLOT = 0x0
+RESULT_SLOT = 0x1
+DEPTH_LIMIT_SLOT = 0x2
+# 1MB of call arguments copied per recursion level.
+ARGS_SIZE = 0xF4240
+DEPTH_LIMIT = 0x400
+# Gas withheld by each level before recursing (ported reserve).
+GAS_RESERVE = 0xF55C8
+# The recursion depth is a function of this budget via the per-level
+# memory expansion cost; changing it changes the pinned frame counts.
+GAS_BUDGET = 10_000_000
+# Too little for even one level's 1MB memory expansion.
+STARVED_GAS_BUDGET = 150_000
+
 
 @pytest.mark.ported_from(
     ["state_tests/stQuadraticComplexityTest/Call1MB1024CalldepthFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
-@pytest.mark.valid_until("Prague")
-@pytest.mark.slow
-@pytest.mark.parametrize(
-    "d, g, v",
-    [
-        pytest.param(
-            0,
-            0,
-            0,
-            id="-g0",
-        ),
-        pytest.param(
-            0,
-            1,
-            0,
-            id="-g1",
-        ),
-    ],
-)
-@pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_from("Berlin")
+@pytest.mark.parametrize("starved", [True, False], ids=["starved", "funded"])
 def test_call1_mb1024_calldepth(
     state_test: StateTestFiller,
     pre: Alloc,
     fork: Fork,
-    d: int,
-    g: int,
-    v: int,
+    starved: bool,
 ) -> None:
-    """Test_call1_mb1024_calldepth."""
-    coinbase = Address(0xB94F5374FCE5EDBC8E2A8697C15331677E6EBF0B)
-    sender = pre.fund_eoa(amount=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=882500000000,
-    )
-
-    addr = pre.fund_eoa(amount=0xFFFFFFFFFFFFF)  # noqa: F841
+    """Recurse with 1MB call arguments until the gas budget starves it."""
     # Source: lll
-    # { (def 'i 0x80) [[ 0 ]] (+ @@0 1) (if (LT @@0 1024) [[ 1 ]] (CALL (- (GAS) 1005000) <contract:target:0xbbbf5374fce5edbc8e2a8697c15331677e6ebf0b> 0 0 1000000 0 0) [[ 2 ]] 1 )  }  # noqa: E501
-    target = pre.deploy_contract(  # noqa: F841
-        code=Op.SSTORE(key=0x0, value=Op.ADD(Op.SLOAD(key=0x0), 0x1))
-        + Op.JUMPI(pc=0x1B, condition=Op.LT(Op.SLOAD(key=0x0), 0x400))
-        + Op.SSTORE(key=0x2, value=0x1)
-        + Op.JUMP(pc=0x47)
-        + Op.JUMPDEST
-        + Op.SSTORE(
-            key=0x1,
-            value=Op.CALL(
-                gas=Op.SUB(Op.GAS, 0xF55C8),
-                address=0x9D15232F6851F9F3A88F88A3B358ED1579977A5A,
-                value=0x0,
-                args_offset=0x0,
-                args_size=0xF4240,
-                ret_offset=0x0,
-                ret_size=0x0,
-            ),
+    # { (def 'i 0x80) [[ 0 ]] (+ @@0 1)
+    #   (if (LT @@0 1024)
+    #       [[ 1 ]] (CALL (- (GAS) 1005000) <self> 0 0 1000000 0 0)
+    #       [[ 2 ]] 1 ) }
+    target = pre.deploy_contract(
+        code=Op.SSTORE(
+            key=COUNTER_SLOT, value=Op.ADD(Op.SLOAD(key=COUNTER_SLOT), 0x1)
         )
-        + Op.JUMPDEST
+        + Conditional(
+            condition=Op.LT(Op.SLOAD(key=COUNTER_SLOT), DEPTH_LIMIT),
+            if_true=Op.SSTORE(
+                key=RESULT_SLOT,
+                value=Op.CALL(
+                    gas=Op.SUB(Op.GAS, GAS_RESERVE),
+                    address=Op.ADDRESS,
+                    args_size=ARGS_SIZE,
+                ),
+            ),
+            if_false=Op.SSTORE(key=DEPTH_LIMIT_SLOT, value=0x1),
+        )
         + Op.STOP,
-        balance=0xFFFFFFFFFFFFF,
-        nonce=0,
-        address=Address(0x9D15232F6851F9F3A88F88A3B358ED1579977A5A),  # noqa: E501
     )
 
-    expect_entries_: list[dict] = [
-        {
-            "indexes": {"data": -1, "gas": 1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                sender: Account(storage={}, code=b"", nonce=1),
-                addr: Account(storage={}, code=b"", nonce=0),
-                target: Account(storage={0: 69, 1: 1}, nonce=0),
-            },
-        },
-        {
-            "indexes": {"data": -1, "gas": 0, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                sender: Account(storage={}, code=b"", nonce=1),
-                addr: Account(storage={}, code=b"", nonce=0),
-                target: Account(storage={}, nonce=0),
-            },
-        },
-    ]
-
-    post, _exc = resolve_expect_post(expect_entries_, d, g, v, fork)
-
-    tx_data = [
-        Bytes(""),
-    ]
-    tx_gas = [150000, 250000000]
-    tx_value = [10]
+    # The starved budget cannot pay for the first level's memory expansion,
+    # so the whole first frame reverts.
+    memory_cost = fork.memory_expansion_gas_calculator()(new_bytes=ARGS_SIZE)
+    assert STARVED_GAS_BUDGET < memory_cost, "starved budget must OOG"
 
     tx = Transaction(
-        sender=sender,
+        protected=fork.supports_protected_txs(),
+        sender=pre.fund_eoa(),
         to=target,
-        data=tx_data[d],
-        gas_limit=tx_gas[g],
-        value=tx_value[v],
-        error=_exc,
+        gas_limit=STARVED_GAS_BUDGET if starved else GAS_BUDGET,
     )
 
-    state_test(env=env, pre=pre, post=post, tx=tx)
+    if starved:
+        post = {target: Account(storage={})}
+    else:
+        # Completed frames under GAS_BUDGET, pinned per gas-schedule era.
+        # EIP-8037 (reservoir 0): the unwind's one zero-to-non-zero store
+        # of a call result (~111k with its state spill) exceeds the 63/64
+        # retention of the ancestor paying it, reverting two more frames.
+        depth = 2 if fork.is_eip_enabled(8037) else 4
+        post = {
+            target: Account(
+                storage={COUNTER_SLOT: depth, RESULT_SLOT: 1},
+            ),
+        }
+
+    state_test(pre=pre, post=post, tx=tx)

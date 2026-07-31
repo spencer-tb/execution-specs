@@ -1,8 +1,17 @@
 """
-Test_create_oo_gafter_max_codesize.
+Verify mass creation of max-codesize contracts: a delegatecalled creator
+commits its creations to the caller, a called creator either reverts them
+all on a final INVALID or keeps them, and a self-destruct sweep removes a
+prefix of the created contracts.
 
 Ported from:
 state_tests/stCreateTest/CreateOOGafterMaxCodesizeFiller.yml
+
+@manually-enhanced: Do not overwrite. The expect table was folded into a
+post derived from the per-case creation counts. The compiled-Yul bytecode
+(pc-sensitive, with embedded 0xC0DE* addresses) is kept verbatim, and the
+4-gigagas budget keeps the test capped at Prague: EIP-7825 cannot fit
+hundreds of max-codesize deposits in one transaction.
 """
 
 import pytest
@@ -17,14 +26,15 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Fork
-from execution_testing.specs.static_state.expect_section import (
-    resolve_expect_post,
-)
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
+
+# Deployed size of every created contract, fixed by the init-code template
+# contract's RETURN(0, 0x6000); the clones store their CODESIZE when run.
+DEPLOYED_SIZE = 0x6000
+TX_GAS_LIMIT = 2**32
 
 
 @pytest.mark.ported_from(
@@ -34,42 +44,48 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.valid_until("Prague")
 @pytest.mark.slow
 @pytest.mark.parametrize(
-    "d, g, v",
+    "delegate_count, subcall_count, subcall_oog, selfdestruct_count",
     [
         pytest.param(
-            0,
-            0,
-            0,
+            0x0,
+            0xA,
+            True,
+            0x0,
             id="LowContractCount_NoDelegateCreate_CallCreateOOG",
         ),
         pytest.param(
-            1,
-            0,
-            0,
+            0xA,
+            0xA,
+            True,
+            0x0,
             id="LowContractCount_DelegateCreate_CallCreateOOG",
         ),
         pytest.param(
-            2,
-            0,
-            0,
+            0xA,
+            0xA,
+            False,
+            0xE,
             id="LowContractCount_DelegateCreate_CallCreate_SelfDestruct",
         ),
         pytest.param(
-            3,
-            0,
-            0,
+            0x0,
+            0xFA,
+            True,
+            0x0,
             id="HighContractCount_NoDelegateCreate_CallCreateOOG",
         ),
         pytest.param(
-            4,
-            0,
-            0,
+            0xFA,
+            0xFA,
+            True,
+            0x0,
             id="HighContractCount_DelegateCreate_CallCreateOOG",
         ),
         pytest.param(
-            5,
-            0,
-            0,
+            0xFA,
+            0xFA,
+            False,
+            0x1EE,
             id="HighContractCount_DelegateCreate_CallCreate_SelfDestruct",
         ),
     ],
@@ -78,12 +94,12 @@ REFERENCE_SPEC_VERSION = "N/A"
 def test_create_oo_gafter_max_codesize(
     state_test: StateTestFiller,
     pre: Alloc,
-    fork: Fork,
-    d: int,
-    g: int,
-    v: int,
+    delegate_count: int,
+    subcall_count: int,
+    subcall_oog: bool,
+    selfdestruct_count: int,
 ) -> None:
-    """Test_create_oo_gafter_max_codesize."""
+    """Create max-codesize contracts by delegate, call, and sweep paths."""
     coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
     contract_0 = Address(0x00000000000000000000000000000000000C0DE0)
     contract_1 = Address(0x00000000000000000000000000000000000C0DE1)
@@ -97,7 +113,7 @@ def test_create_oo_gafter_max_codesize(
         timestamp=1000,
         prev_randao=0x20000,
         base_fee_per_gas=10,
-        gas_limit=4294967296,
+        gas_limit=TX_GAS_LIMIT,
     )
 
     # Source: yul
@@ -314,171 +330,57 @@ def test_create_oo_gafter_max_codesize(
         nonce=1,
     )
 
-    expect_entries_: list[dict] = [
-        {
-            "indexes": {"data": [0], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_3: Account(storage={1: 1}, nonce=1),
-                contract_2: Account(storage={}, nonce=1),
-                compute_create_address(
-                    address=contract_2, nonce=1
-                ): Account.NONEXISTENT,
-                compute_create_address(
-                    address=contract_2, nonce=10
-                ): Account.NONEXISTENT,
-            },
-        },
-        {
-            "indexes": {"data": [1], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_3: Account(storage={1: 1}, nonce=11),
-                contract_2: Account(storage={}, nonce=1),
-                compute_create_address(address=contract_3, nonce=1): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_3, nonce=10): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(
-                    address=contract_2, nonce=1
-                ): Account.NONEXISTENT,
-                compute_create_address(
-                    address=contract_2, nonce=10
-                ): Account.NONEXISTENT,
-            },
-        },
-        {
-            "indexes": {"data": [2], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_3: Account(storage={1: 1}, nonce=11),
-                contract_2: Account(storage={1: 1}, nonce=11),
-                compute_create_address(
-                    address=contract_3, nonce=1
-                ): Account.NONEXISTENT,
-                compute_create_address(
-                    address=contract_3, nonce=10
-                ): Account.NONEXISTENT,
-                compute_create_address(
-                    address=contract_2, nonce=1
-                ): Account.NONEXISTENT,
-                compute_create_address(
-                    address=contract_2, nonce=4
-                ): Account.NONEXISTENT,
-                compute_create_address(address=contract_2, nonce=5): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_2, nonce=6): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_2, nonce=7): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_2, nonce=8): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_2, nonce=9): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_2, nonce=10): Account(
-                    storage={0: 24576}
-                ),
-            },
-        },
-        {
-            "indexes": {"data": [3], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_3: Account(storage={1: 1}, nonce=1),
-                contract_2: Account(storage={}, nonce=1),
-                compute_create_address(
-                    address=contract_2, nonce=1
-                ): Account.NONEXISTENT,
-                compute_create_address(
-                    address=contract_2, nonce=250
-                ): Account.NONEXISTENT,
-            },
-        },
-        {
-            "indexes": {"data": [4], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_3: Account(storage={1: 1}, nonce=251),
-                contract_2: Account(storage={}, nonce=1),
-                compute_create_address(address=contract_3, nonce=1): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_3, nonce=250): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(
-                    address=contract_2, nonce=1
-                ): Account.NONEXISTENT,
-                compute_create_address(
-                    address=contract_2, nonce=250
-                ): Account.NONEXISTENT,
-            },
-        },
-        {
-            "indexes": {"data": [5], "gas": -1, "value": -1},
-            "network": [">=Cancun<Osaka"],
-            "result": {
-                contract_3: Account(storage={1: 1}, nonce=251),
-                contract_2: Account(storage={1: 1}, nonce=251),
-                compute_create_address(
-                    address=contract_3, nonce=1
-                ): Account.NONEXISTENT,
-                compute_create_address(
-                    address=contract_3, nonce=250
-                ): Account.NONEXISTENT,
-                compute_create_address(
-                    address=contract_2, nonce=1
-                ): Account.NONEXISTENT,
-                compute_create_address(
-                    address=contract_2, nonce=244
-                ): Account.NONEXISTENT,
-                compute_create_address(address=contract_2, nonce=245): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_2, nonce=246): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_2, nonce=247): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_2, nonce=248): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_2, nonce=249): Account(
-                    storage={0: 24576}
-                ),
-                compute_create_address(address=contract_2, nonce=250): Account(
-                    storage={0: 24576}
-                ),
-            },
-        },
-    ]
-
-    post, _exc = resolve_expect_post(expect_entries_, d, g, v, fork)
-
-    tx_data = [
-        Bytes("a6f227c0") + Hash(0x0) + Hash(0xA) + Hash(0x1) + Hash(0x0),
-        Bytes("a6f227c0") + Hash(0xA) + Hash(0xA) + Hash(0x1) + Hash(0x0),
-        Bytes("a6f227c0") + Hash(0xA) + Hash(0xA) + Hash(0x0) + Hash(0xE),
-        Bytes("a6f227c0") + Hash(0x0) + Hash(0xFA) + Hash(0x1) + Hash(0x0),
-        Bytes("a6f227c0") + Hash(0xFA) + Hash(0xFA) + Hash(0x1) + Hash(0x0),
-        Bytes("a6f227c0") + Hash(0xFA) + Hash(0xFA) + Hash(0x0) + Hash(0x1EE),
-    ]
-    tx_gas = [4294967296]
+    data = (
+        Bytes("a6f227c0")
+        + Hash(delegate_count)
+        + Hash(subcall_count)
+        + Hash(1 if subcall_oog else 0)
+        + Hash(selfdestruct_count)
+    )
 
     tx = Transaction(
         sender=sender,
         to=contract_3,
-        data=tx_data[d],
-        gas_limit=tx_gas[g],
-        error=_exc,
+        data=data,
+        gas_limit=TX_GAS_LIMIT,
     )
+
+    # The delegatecalled creator commits its work to the top contract: its
+    # marker store lands in contract_3's storage and its creations consume
+    # contract_3's nonces. The called creator keeps its work only when it
+    # does not end on INVALID.
+    post: dict = {
+        contract_3: Account(storage={1: 1}, nonce=1 + delegate_count),
+        contract_2: (
+            Account(storage={}, nonce=1)
+            if subcall_oog
+            else Account(storage={1: 1}, nonce=1 + subcall_count)
+        ),
+    }
+    # The self-destruct sweep removes the delegate-created contracts
+    # first, then a prefix of the call-created ones.
+    destroyed_subcall = selfdestruct_count - delegate_count
+    if delegate_count:
+        for nonce in {1, delegate_count}:
+            post[compute_create_address(address=contract_3, nonce=nonce)] = (
+                Account.NONEXISTENT
+                if selfdestruct_count
+                else Account(storage={0: DEPLOYED_SIZE})
+            )
+    if subcall_oog:
+        # Every call-created contract was reverted by the INVALID.
+        for nonce in {1, subcall_count}:
+            post[compute_create_address(address=contract_2, nonce=nonce)] = (
+                Account.NONEXISTENT
+            )
+    else:
+        for nonce in {1, destroyed_subcall}:
+            post[compute_create_address(address=contract_2, nonce=nonce)] = (
+                Account.NONEXISTENT
+            )
+        for nonce in range(destroyed_subcall + 1, subcall_count + 1):
+            post[compute_create_address(address=contract_2, nonce=nonce)] = (
+                Account(storage={0: DEPLOYED_SIZE})
+            )
 
     state_test(env=env, pre=pre, post=post, tx=tx)

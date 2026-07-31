@@ -446,6 +446,13 @@ floor: pass `return_cost_deducted_prior_execution=True` to the intrinsic
 calculator whenever the tx has calldata, or the derived `executed` (and
 the cap) overstate. Validated on `test_refund_suicide50procent_cap`.
 
+**Derive EIP-170 size boundaries from `fork.max_code_size()`.**
+EIP-7954 raises the deployed-code ceiling (0x6000 → 0x10000 on
+Amsterdam), so a pinned "one byte too big" size silently deploys on the
+future fork. Compute max/toobig/huge sizes from the fork accessor and
+let the created-account expectation follow. Validated on
+`test_create_large_result`.
+
 **A CREATE address collision burns the child's gas allowance** (the
 EIP-684 path): the withheld child grant is consumed, nothing is created,
 and under EIP-8037 the new-account state charge is refunded. Useful to
@@ -458,12 +465,38 @@ legal budget gets there. For call-loop depth tests the honest shape is a
 fixed named budget with per-gas-schedule-era pinned depth counts, each
 shift explained (±1 frame ≈ 64·ln(cost ratio)). Validated on
 `test_loop_calls_depth_then_revert`.
+**EIP-8037 corollary: pinned depths can shift by more than one frame.**
+With reservoir 0, the unwind's single zero→non-zero store of a call
+result (~111k with its state spill) can exceed the 63/64 retention of
+the ancestor paying it, so that frame reverts too and the cascade drops
+extra increments — trace the unwind before pinning. Validated on
+`test_call1_mb1024_calldepth` (depth 4 → 2 on Amsterdam).
 
 **Framework wart: the SSTORE dirty-rewrite composite prices 100 on every
 fork**, but Constantinople/Petersburg charge 5,000 for a dirty re-store —
 a derived budget that must survive pre-Istanbul forks needs an explicit
 headroom constant for it (named, commented). Observed on
 `test_revert_depth_create_address_collision`'s ConstantinopleFix sweep.
+The general form of the wart: **every composite prices every fork with
+the Berlin schedule** (cold 2600/warm 100, EXP 50/byte, SSTORE 20k+2100,
+CALL 2600+9000). Two consequences: (a) any measurement asserting a
+warm/cold composite floors at Berlin — the pre-Berlin sweep fails on the
+gas value itself; (b) a *budget* derived from composites overshoots by a
+few thousand on TangerineWhistle..Istanbul, so a threshold that must
+hold there (e.g. "retention stays ≤ the EIP-2200 stipend") needs a named
+drift-headroom constant subtracted before deriving (validated on
+`test_call_goes_oog_on_second_level2`, where the surplus pushed
+Istanbul's retention past 2300).
+
+**Size a reservoir as `N * store.state_cost(fork)` to keep a frame-gas
+scenario alive on EIP-8037 forks.** When a ported cascade needs several
+cold first-set SSTOREs to fit inside small frame budgets (impossible
+in-frame on 8037: each is ~111k), set
+`state_gas_reservoir = N * entry_store.state_cost(fork)` for the N
+stores: the frames then pay only `execution_cost` and the pre-8037
+arithmetic carries over unchanged. The expression needs no fork branch —
+`state_cost` is 0 before 8037, and a zero reservoir is accepted there.
+Validated on `test_call_goes_oog_on_second_level2`.
 
 **EIP-8037 repriced the code deposit's regular part — boundaries beware.**
 On 8037 forks the deposit charges only the keccak word cost

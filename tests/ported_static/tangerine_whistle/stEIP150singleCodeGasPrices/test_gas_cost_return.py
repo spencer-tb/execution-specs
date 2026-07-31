@@ -1,17 +1,22 @@
 """
-Ori Pomerantz qbzzt1@gmail.com.
+Measure that terminating a callee via RETURN costs the same as STOP
+(by Ori Pomerantz qbzzt1@gmail.com).
 
 Ported from:
 state_tests/stEIP150singleCodeGasPrices/gasCostReturnFiller.yml
+
+@manually-enhanced: Do not overwrite. The legacy raw GAS-delta windows
+(whose stored difference was asserted to be zero) are reframed as two
+CodeGasMeasure windows over each CALL, asserting the same fork-derived
+`call_code.gas_cost(fork)` for both, with the callee addresses threaded
+dynamically instead of hardcoded.
 """
 
 import pytest
 from execution_testing import (
     Account,
-    Address,
     Alloc,
-    Bytes,
-    Environment,
+    CodeGasMeasure,
     Fork,
     StateTestFiller,
     Transaction,
@@ -21,124 +26,57 @@ from execution_testing.vm import Op
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
+GAS_SLOT_STOP = 0x0
+GAS_SLOT_RETURN = 0x1
+
 
 @pytest.mark.ported_from(
     ["state_tests/stEIP150singleCodeGasPrices/gasCostReturnFiller.yml"],
 )
-@pytest.mark.valid_from("Frontier")
-@pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_from("Berlin")
 def test_gas_cost_return(
     state_test: StateTestFiller,
     pre: Alloc,
     fork: Fork,
 ) -> None:
-    """Ori Pomerantz qbzzt1@gmail."""
-    coinbase = Address(0x2ADC25665018AA1FE0E6BC666DAC8FC2697FF9BA)
-    sender = pre.fund_eoa(amount=0xBA1A9CE0BA1A9CE)
+    """Measure that a callee ending in RETURN costs the same as STOP."""
+    # Identical callee bodies except the terminal opcode. RETURN pops the
+    # two pushed words as (offset=0xFF, size=0x0); a zero-size RETURN
+    # expands no memory, so both callees consume exactly the same gas.
+    stop_body = Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP
+    return_body = Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.RETURN
+    stop_target = pre.deploy_contract(code=stop_body)
+    return_target = pre.deploy_contract(code=return_body)
 
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=100000000,
-    )
-
-    # Source: raw
-    # 0x600060FF00
-    addr = pre.deploy_contract(  # noqa: F841
-        code=Op.PUSH1[0x0] + Op.PUSH1[0xFF] + Op.STOP,
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-    )
-    # Source: raw
-    # 0x600060FFF3
-    addr_2 = pre.deploy_contract(  # noqa: F841
-        code=Op.RETURN(offset=0xFF, size=0x0),
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
-    )
-    # Source: lll
-    # {
-    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    #   ; Initialization
-    #
-    #   ; Variables (0x20 byte wide)
-    #   (def 'gasB4         0x000)  ; Before the action being measured
-    #
-    #   ; Gas for the STOP call
-    #   (def 'gasSTOP       0x020)
-    #
-    #   ; Gas for the RETURN call
-    #   (def 'gasRETURN     0x040)
-    #
-    #   ; Play with the variables here to avoid having the memory allocation
-    #   ; affect the gas calculation
-    #   [gasB4] 0x60A7
-    #   [gasSTOP] 0x60A7
-    #   [gasRETURN] 0x60A7
-    #
-    #   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    #   ; Run the operation
-    #
-    #   [gasB4] (gas)
-    #   (call 0x10000 0x1000 0 0 0 0 0)
-    #   [gasSTOP] (- @gasB4 (gas))
-    #
-    #
-    #   [gasB4] (gas)
-    #   (call 0x10000 0x2000 0 0 0 0 0)
-    #   [gasRETURN] (- @gasB4 (gas))
-    # ... (11 more lines)
-    target = pre.deploy_contract(  # noqa: F841
-        code=Op.MSTORE(offset=0x0, value=0x60A7)
-        + Op.MSTORE(offset=0x20, value=0x60A7)
-        + Op.MSTORE(offset=0x40, value=0x60A7)
-        + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.POP(
-            Op.CALL(
-                gas=0x10000,
-                address=0x1000,
-                value=0x0,
-                args_offset=0x0,
-                args_size=0x0,
-                ret_offset=0x0,
-                ret_size=0x0,
-            )
+    call_stop = Op.CALL(address=stop_target, address_warm=False)
+    call_return = Op.CALL(address=return_target, address_warm=False)
+    contract = pre.deploy_contract(
+        code=CodeGasMeasure(
+            code=call_stop,
+            extra_stack_items=1,
+            sstore_key=GAS_SLOT_STOP,
         )
-        + Op.MSTORE(offset=0x20, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
-        + Op.MSTORE(offset=0x0, value=Op.GAS)
-        + Op.POP(
-            Op.CALL(
-                gas=0x10000,
-                address=0x2000,
-                value=0x0,
-                args_offset=0x0,
-                args_size=0x0,
-                ret_offset=0x0,
-                ret_size=0x0,
-            )
-        )
-        + Op.MSTORE(offset=0x40, value=Op.SUB(Op.MLOAD(offset=0x0), Op.GAS))
-        + Op.SSTORE(
-            key=0x0, value=Op.SUB(Op.MLOAD(offset=0x20), Op.MLOAD(offset=0x40))
-        )
-        + Op.STOP,
-        storage={0: 24743},
-        balance=0xBA1A9CE0BA1A9CE,
-        nonce=0,
+        + CodeGasMeasure(
+            code=call_return,
+            extra_stack_items=1,
+            sstore_key=GAS_SLOT_RETURN,
+        ),
     )
 
-    tx = Transaction(
-        protected=fork.supports_protected_txs(),
-        sender=sender,
-        to=target,
-        data=Bytes("00"),
-        gas_limit=16777216,
-        value=1,
-    )
+    tx = Transaction(sender=pre.fund_eoa(), to=contract)
 
-    post = {target: Account(storage={0: 0, 1: 0})}
+    # Each measured window covers the CALL plus what its callee consumed;
+    # the two expectations are equal by construction (STOP and a
+    # zero-size RETURN both cost nothing).
+    post = {
+        contract: Account(
+            storage={
+                GAS_SLOT_STOP: call_stop.gas_cost(fork)
+                + stop_body.gas_cost(fork),
+                GAS_SLOT_RETURN: call_return.gas_cost(fork)
+                + return_body.gas_cost(fork),
+            },
+        ),
+    }
 
-    state_test(env=env, pre=pre, post=post, tx=tx)
+    state_test(pre=pre, post=post, tx=tx)

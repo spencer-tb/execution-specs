@@ -1,176 +1,125 @@
 """
-Test_refund_multimple_suicide.
+Verify gas accounting when a contract calls itself twice and each inner
+frame self-destructs with the contract as its own beneficiary: the balance
+survives, and the sender pays the executed gas minus the capped refund.
 
 Ported from:
 state_tests/stRefundTest/refund_multimpleSuicideFiller.json
 
-@manually-enhanced: Do not overwrite. The post-state asserts the sender
-balance, which the original fixture hardcoded as 0x61EC43A. EIP-2780
-decomposes the intrinsic cost and lowers it for non-self, non-value
-txs, so the balance is derived from the fork model instead: take
-`fork.transaction_intrinsic_cost_calculator()()` minus the pre-EIP-2780
-baseline 21_000, then add `gas_price (10) * |delta|` back to the sender
-(the delta is negative on Amsterdam). This keeps the adjustment exactly
-0 pre-EIP-2780. Do not hardcode the Amsterdam value.
+@manually-enhanced: Do not overwrite. The compiled Solidity dispatcher
+(with its SUB(GAS, ...) forwarding and pinned sender balance) was rewritten
+as a minimal calldata-dispatched double self-call; the sender balance,
+refund cap and budget derive from fork composites and the post branches on
+EIP-6780 for the contract's survival.
 """
 
 import pytest
 from execution_testing import (
     Account,
-    Address,
     Alloc,
     Bytes,
-    Environment,
+    Fork,
     StateTestFiller,
     Transaction,
 )
-from execution_testing.forks import Fork
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
+TARGET_BALANCE = 0xDE0B6B3A7640000
+INITIAL_BALANCE = 10**18
+GAS_PRICE = 10
+FIRST_FLAG_SLOT = 0xA
+SECOND_FLAG_SLOT = 0xB
+# Any non-empty calldata selects the outer (double self-call) path.
+RUN_SELECTOR = Bytes("c0406226")
+
 
 @pytest.mark.ported_from(
     ["state_tests/stRefundTest/refund_multimpleSuicideFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
-@pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_from("London")
 def test_refund_multimple_suicide(
     state_test: StateTestFiller,
     pre: Alloc,
     fork: Fork,
 ) -> None:
-    """Test_refund_multimple_suicide."""
-    coinbase = Address(0xEB201D2887816E041F6E807E804F64F3A7A226FE)
-    sender = pre.fund_eoa(amount=0x623A7C0)
-
-    env = Environment(
-        fee_recipient=coinbase,
-        number=1,
-        timestamp=1000,
-        prev_randao=0x20000,
-        base_fee_per_gas=10,
-        gas_limit=1000000,
+    """Self-destruct to self twice; derive the gas accounting."""
+    # The dispatch runs in all three frames: taken with calldata (outer),
+    # not taken without (both inner). Both directions cost the same.
+    kill_code = Op.SELFDESTRUCT(
+        address=Op.CALLER, address_warm=True, account_new=False
     )
-
-    pre[coinbase] = Account(balance=0, nonce=1)
-    # Source: raw
-    # 0x606060405260e060020a600035046309e587a58114610031578063c04062261461004d578063dd4f1f2a1461005a575b005b61002f3373ffffffffffffffffffffffffffffffffffffffff16ff5b6100f5600061010961005e565b61002f5b60003090508073ffffffffffffffffffffffffffffffffffffffff166309e587a56040518160e060020a0281526004018090506000604051808303816000876161da5a03f1156100025750604080517f09e587a500000000000000000000000000000000000000000000000000000000815290516004828101926000929190829003018183876161da5a03f1156100025750505050565b604080519115158252519081900360200190f35b5060019056  # noqa: E501
-    target = pre.deploy_contract(  # noqa: F841
-        code=Op.MSTORE(offset=0x40, value=0x60)
-        + Op.DIV(Op.CALLDATALOAD(offset=0x0), Op.EXP(0x2, 0xE0))
-        + Op.JUMPI(pc=Op.PUSH2[0x31], condition=Op.EQ(Op.DUP2, 0x9E587A5))
-        + Op.JUMPI(pc=Op.PUSH2[0x4D], condition=Op.EQ(0xC0406226, Op.DUP1))
-        + Op.JUMPI(pc=Op.PUSH2[0x5A], condition=Op.EQ(0xDD4F1F2A, Op.DUP1))
-        + Op.JUMPDEST
+    run_pc = len(bytes(Op.JUMPI(pc=0, condition=Op.CALLDATASIZE))) + len(
+        bytes(kill_code)
+    )
+    dispatch_code = Op.JUMPI(pc=run_pc, condition=Op.CALLDATASIZE)
+    run_code = (
+        Op.JUMPDEST
+        + Op.SSTORE(
+            key=FIRST_FLAG_SLOT,
+            value=Op.CALL(address=Op.ADDRESS, address_warm=True),
+            key_warm=False,
+            original_value=0,
+            new_value=1,
+        )
+        + Op.SSTORE(
+            key=SECOND_FLAG_SLOT,
+            value=Op.CALL(address=Op.ADDRESS, address_warm=True),
+            key_warm=False,
+            original_value=0,
+            new_value=1,
+        )
         + Op.STOP
-        + Op.JUMPDEST
-        + Op.PUSH2[0x2F]
-        + Op.SELFDESTRUCT(
-            address=Op.AND(
-                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, Op.CALLER
-            )
-        )
-        + Op.JUMPDEST
-        + Op.PUSH2[0xF5]
-        + Op.PUSH1[0x0]
-        + Op.PUSH2[0x109]
-        + Op.JUMP(pc=Op.PUSH2[0x5E])
-        + Op.JUMPDEST
-        + Op.PUSH2[0x2F]
-        + Op.JUMPDEST
-        + Op.PUSH1[0x0]
-        + Op.ADDRESS
-        + Op.SWAP1
-        + Op.POP
-        + Op.AND(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF, Op.DUP1)
-        + Op.PUSH4[0x9E587A5]
-        + Op.MLOAD(offset=0x40)
-        + Op.MSTORE(offset=Op.DUP2, value=Op.MUL(Op.EXP(0x2, 0xE0), Op.DUP2))
-        + Op.PUSH1[0x4]
-        + Op.ADD
-        + Op.DUP1
-        + Op.SWAP1
-        + Op.POP
-        + Op.JUMPI(
-            pc=Op.PUSH2[0x2],
-            condition=Op.ISZERO(
-                Op.CALL(
-                    gas=Op.SUB(Op.GAS, 0x61DA),
-                    address=Op.DUP8,
-                    value=0x0,
-                    args_offset=Op.DUP2,
-                    args_size=Op.SUB(Op.DUP4, Op.DUP1),
-                    ret_offset=Op.MLOAD(offset=0x40),
-                    ret_size=0x0,
-                )
-            ),
-        )
-        + Op.POP
-        + Op.PUSH1[0x40]
-        + Op.MLOAD(offset=Op.DUP1)
-        + Op.MSTORE(
-            offset=Op.DUP2,
-            value=0x9E587A500000000000000000000000000000000000000000000000000000000,  # noqa: E501
-        )
-        + Op.SWAP1
-        + Op.MLOAD
-        + Op.PUSH1[0x4]
-        + Op.ADD(Op.DUP2, Op.DUP3)
-        + Op.SWAP3
-        + Op.PUSH1[0x0]
-        + Op.SWAP3
-        + Op.SWAP2
-        + Op.SWAP1
-        + Op.DUP3
-        + Op.SWAP1
-        + Op.SUB
-        + Op.ADD
-        + Op.DUP2
-        + Op.DUP4
-        + Op.DUP8
-        + Op.SUB(Op.GAS, 0x61DA)
-        + Op.JUMPI(pc=Op.PUSH2[0x2], condition=Op.ISZERO(Op.CALL))
-        + Op.POP * 4
-        + Op.JUMP
-        + Op.JUMPDEST
-        + Op.PUSH1[0x40]
-        + Op.MLOAD(offset=Op.DUP1)
-        + Op.SWAP2
-        + Op.MSTORE(offset=Op.DUP3, value=Op.ISZERO(Op.ISZERO))
-        + Op.MLOAD
-        + Op.SWAP1
-        + Op.DUP2
-        + Op.SWAP1
-        + Op.ADD(0x20, Op.SUB)
-        + Op.SWAP1
-        + Op.RETURN
-        + Op.JUMPDEST
-        + Op.POP
-        + Op.PUSH1[0x1]
-        + Op.SWAP1
-        + Op.JUMP,
-        balance=0xDE0B6B3A7640000,
-        nonce=0,
+    )
+    target = pre.deploy_contract(
+        code=dispatch_code + kill_code + run_code,
+        balance=TARGET_BALANCE,
     )
 
+    # The refund cap is a fifth of the gas actually deducted before
+    # execution, which excludes the EIP-7623 calldata floor.
+    intrinsic = fork.transaction_intrinsic_cost_calculator()(
+        calldata=RUN_SELECTOR, return_cost_deducted_prior_execution=True
+    )
+    body_cost = (
+        3 * dispatch_code.gas_cost(fork)
+        + 2 * kill_code.gas_cost(fork)
+        + run_code.gas_cost(fork)
+    )
+    executed = intrinsic + body_cost
+    gas_limit = executed + 5_000
+
+    sender = pre.fund_eoa(amount=INITIAL_BALANCE)
     tx = Transaction(
         protected=fork.supports_protected_txs(),
         sender=sender,
         to=target,
-        data=Bytes("c0406226"),
-        gas_limit=300000,
+        data=RUN_SELECTOR,
+        gas_limit=gas_limit,
+        gas_price=GAS_PRICE,
     )
 
-    # EIP-2780 lowers the intrinsic for non-self non-value txs; the
-    # delta is negative on Amsterdam and raises the sender balance by
-    # ``gas_price * |delta|``.
-    intrinsic_delta = fork.transaction_intrinsic_cost_calculator()() - 21_000
+    # EIP-3529 caps the refund at a fifth of the executed gas. The
+    # self-destruct refund (zero from London on) is counted once per
+    # account, not once per SELFDESTRUCT.
+    refund = min(kill_code.refund(fork), executed // 5)
+    gas_used = executed - refund
+
     post = {
-        target: Account(balance=0xDE0B6B3A7640000),
-        coinbase: Account(balance=0),
-        sender: Account(balance=0x61EC43A - 10 * intrinsic_delta, nonce=1),
+        # EIP-6780: the pre-existing contract survives its self-destructs
+        # and, as its own beneficiary, keeps its balance. Before it, the
+        # account is deleted and the self-sent balance burned with it.
+        target: (
+            Account(
+                balance=TARGET_BALANCE,
+                storage={FIRST_FLAG_SLOT: 1, SECOND_FLAG_SLOT: 1},
+            )
+            if fork.is_eip_enabled(6780)
+            else Account.NONEXISTENT
+        ),
+        sender: Account(balance=INITIAL_BALANCE - gas_used * GAS_PRICE),
     }
 
-    state_test(env=env, pre=pre, post=post, tx=tx)
+    state_test(pre=pre, post=post, tx=tx)
