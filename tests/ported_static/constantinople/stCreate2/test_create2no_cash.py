@@ -10,7 +10,9 @@ state_tests/stCreate2/create2noCashFiller.json
 @manually-enhanced: Do not overwrite. The creation-transaction wrapper
 and tuned gas budgets are replaced by a deployed entry contract that
 records the call result; the created account and the creator's nonce
-(no bump on the balance preflight) are asserted explicitly.
+(no bump on the balance preflight) are asserted explicitly. The post
+branches per era: pre-Constantinople the undefined CREATE2 byte
+faults the creator frame, so every arm's call fails.
 """
 
 import pytest
@@ -22,6 +24,7 @@ from execution_testing import (
     Transaction,
     compute_create2_address,
 )
+from execution_testing.forks import Constantinople
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -34,7 +37,7 @@ CREATE2_ENDOWMENT = 0x65
 @pytest.mark.ported_from(
     ["state_tests/stCreate2/create2noCashFiller.json"],
 )
-@pytest.mark.valid_from("ConstantinopleFix")
+@pytest.mark.valid_from("Byzantium")
 @pytest.mark.parametrize(
     "opcode, top_up",
     [
@@ -82,7 +85,10 @@ def test_create2no_cash(
     )
 
     created = compute_create2_address(creator, 0, b"")
-    create_succeeds = opcode == Op.CALL and top_up > 0
+    # Before Constantinople the CREATE2 byte is undefined: the creator
+    # frame faults on it, so no arm can create.
+    create2_defined = fork >= Constantinople
+    create_succeeds = create2_defined and opcode == Op.CALL and top_up > 0
     if create_succeeds:
         # The whole (topped-up) balance moved into the created account,
         # and the creator's nonce was consumed by the creation.
@@ -91,17 +97,20 @@ def test_create2no_cash(
             nonce=1, code=b"", balance=CREATE2_ENDOWMENT
         )
     else:
-        # The balance preflight (or the static fault) aborts before any
+        # The balance preflight (or the frame fault) aborts before any
         # account is touched: no creation and no nonce bump.
         creator_account = Account(nonce=1, balance=CREATE2_ENDOWMENT - 1)
         created_account = Account.NONEXISTENT
 
-    # A static frame faults on CREATE2, so only that arm's call fails.
-    call_result = 0 if opcode == Op.STATICCALL else 1
+    # A static frame faults on CREATE2 (and pre-Constantinople every
+    # frame faults on the undefined byte), so those arms' calls fail.
+    call_result = 1 if create2_defined and opcode != Op.STATICCALL else 0
 
     post = {
         entry: Account(
-            storage={CALL_RESULT_SLOT: 0x1 + call_result}, balance=0
+            storage={CALL_RESULT_SLOT: 0x1 + call_result},
+            # A failed call bounces the forwarded top-up back here.
+            balance=0 if create_succeeds else top_up,
         ),
         creator: creator_account,
         created: created_account,

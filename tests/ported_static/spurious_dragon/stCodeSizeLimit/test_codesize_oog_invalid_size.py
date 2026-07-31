@@ -3,6 +3,10 @@ Test_codesize_oog_invalid_size.
 
 Ported from:
 state_tests/stCodeSizeLimit/codesizeOOGInvalidSizeFiller.json
+
+@manually-enhanced: Do not overwrite. Sizes derive from
+fork.max_code_size(); pre-EIP-170 eras assert the oversized code
+deploys (per-era post branch).
 """
 
 import pytest
@@ -15,7 +19,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Fork
+from execution_testing.forks import Fork, SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -25,7 +29,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.ported_from(
     ["state_tests/stCodeSizeLimit/codesizeOOGInvalidSizeFiller.json"],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.valid_before("EIP7954")
 @pytest.mark.parametrize(
     "d, g, v",
@@ -91,8 +95,23 @@ def test_codesize_oog_invalid_size(
         value=tx_value[v],
     )
 
-    post = {
-        compute_create_address(address=sender, nonce=0): Account.NONEXISTENT
-    }
+    created = compute_create_address(address=sender, nonce=0)
+    if fork >= SpuriousDragon:
+        # EIP-170 caps deployed code: the oversized RETURN aborts the
+        # creation and no account may remain.
+        created_account: Account | None = Account.NONEXISTENT
+    else:
+        # No code-size cap before EIP-170: the deposit succeeds, with
+        # CODECOPY zero-padding past the init code's end; created
+        # contracts start at nonce 0 before EIP-161.
+        return_size = size_d0 if d == 0 else size_d1
+        initcode = bytes(tx_data[d])
+        deployed_code = (initcode[0xD:] + b"\x00" * return_size)[:return_size]
+        created_account = Account(
+            balance=tx_value[v],
+            nonce=0,
+            code=deployed_code,
+        )
+    post = {created: created_account}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

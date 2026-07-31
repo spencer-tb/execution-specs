@@ -3,6 +3,9 @@ Test_call_outsize_then_create2_successful_then_returndatasize.
 
 Ported from:
 state_tests/stCreate2/call_outsize_then_create2_successful_then_returndatasizeFiller.json
+
+@manually-enhanced: Do not overwrite. Post branches per era: the
+undefined CREATE2 byte faults the frame before Constantinople.
 """
 
 import pytest
@@ -16,7 +19,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.forks import Amsterdam
+from execution_testing.forks import Amsterdam, Constantinople
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -28,7 +31,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCreate2/call_outsize_then_create2_successful_then_returndatasizeFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("ConstantinopleFix")
+@pytest.mark.valid_from("Byzantium")
 @pytest.mark.pre_alloc_mutable
 def test_call_outsize_then_create2_successful_then_returndatasize(
     state_test: StateTestFiller,
@@ -97,6 +100,14 @@ def test_call_outsize_then_create2_successful_then_returndatasize(
         gas_limit=2100000 if fork >= Amsterdam else 100000,
     )
 
-    post = {contract_1: Account(storage={0: 0})}
+    if fork >= Constantinople:
+        # A successful CREATE2 clears the return data buffer, so the
+        # stored RETURNDATASIZE is 0.
+        post = {contract_1: Account(storage={0: 0})}
+    else:
+        # The CREATE2 byte is undefined before Constantinople: the
+        # frame faults and forfeits its gas, so the pre storage's 1
+        # persists.
+        post = {contract_1: Account(storage={0: 1})}
 
     state_test(env=env, pre=pre, post=post, tx=tx)

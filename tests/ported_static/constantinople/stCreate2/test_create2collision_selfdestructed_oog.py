@@ -13,7 +13,8 @@ state_tests/stCreate2/create2collisionSelfdestructedOOGFiller.json
 are computed instead of hardcoded, the budget is derived from fork
 composites, and the post-collision work is sized above the collision's
 1/64 retention on every fork (the alive collider means the CREATE2
-charges — and refunds — no new-account state gas).
+charges — and refunds — no new-account state gas). Pre-Constantinople
+the undefined CREATE2 byte faults the frame: the same rollback post.
 """
 
 import pytest
@@ -27,6 +28,7 @@ from execution_testing import (
     compute_create2_address,
     compute_create_address,
 )
+from execution_testing.forks import Constantinople
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -42,7 +44,7 @@ CHILD_GRANT_SLACK = 30_000
 @pytest.mark.ported_from(
     ["state_tests/stCreate2/create2collisionSelfdestructedOOGFiller.json"],
 )
-@pytest.mark.valid_from("ConstantinopleFix")
+@pytest.mark.valid_from("Byzantium")
 @pytest.mark.parametrize(
     "inner_initcode",
     [
@@ -137,6 +139,10 @@ def test_create2collision_selfdestructed_oog(
     # frame must die and the whole creation rolls back. The collider is
     # alive at the CREATE2 (only emptied by its selfdestruct), so no
     # new-account state gas is charged — or refunded — there.
+    # Pre-Constantinople the CREATE2 byte is undefined (and has no
+    # priced composite): the frame faults right on it, forfeiting the
+    # whole budget — the same wholesale rollback, no child grant.
+    create2_cost = create2_code.gas_cost(fork) if fork >= Constantinople else 0
     gas_limit = (
         fork.transaction_intrinsic_cost_calculator()(
             calldata=outer_initcode,
@@ -146,7 +152,7 @@ def test_create2collision_selfdestructed_oog(
         + call_code.gas_cost(fork)
         + collider_work.gas_cost(fork)
         + setup.gas_cost(fork)
-        + create2_code.gas_cost(fork)
+        + create2_cost
         + CHILD_GRANT_SLACK
     )
     leftover = CHILD_GRANT_SLACK // 64
