@@ -5,7 +5,8 @@ Ported from:
 state_tests/stCreateTest/CREATE_EContractCreateNEContractInInit_TrFiller.json
 @manually-enhanced: Do not overwrite. Inner-CALL gas and tx `gas_limit`
 bumped on Amsterdam to cover EIP-8037 state-gas spill; pre-EIP-8037
-unchanged.
+unchanged. Pre-SpuriousDragon posts encode the EIP-161 nonce shift
+(created contracts start at nonce 0, moving the nested child address).
 
 """
 
@@ -19,7 +20,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
-from execution_testing.forks import Fork
+from execution_testing.forks import Fork, SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -31,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCreateTest/CREATE_EContractCreateNEContractInInit_TrFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_create_e_contract_create_ne_contract_in_init_tr(
     state_test: StateTestFiller,
@@ -87,12 +88,16 @@ def test_create_e_contract_create_ne_contract_in_init_tr(
         gas_limit=tx_gas_limit,
     )
 
+    # EIP-161 (SpuriousDragon): created contracts start at nonce 1, so
+    # the nested CREATE lands at the era's start-nonce address.
+    start_nonce = 1 if fork >= SpuriousDragon else 0
+    created = compute_create_address(address=sender, nonce=0)
     post = {
         contract_0: Account(storage={1: 12}),
-        compute_create_address(address=sender, nonce=0): Account(nonce=2),
-        compute_create_address(
-            address=compute_create_address(address=sender, nonce=0), nonce=1
-        ): Account(code=bytes.fromhex("600c600055")),
+        created: Account(nonce=start_nonce + 1),
+        compute_create_address(address=created, nonce=start_nonce): Account(
+            code=bytes.fromhex("600c600055")
+        ),
     }
 
     state_test(env=env, pre=pre, post=post, tx=tx)

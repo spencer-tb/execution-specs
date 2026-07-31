@@ -11,7 +11,9 @@ state_tests/stInitCodeTest/OutOfGasPrefundedContractCreationFiller.json
 the fork (intrinsic + top-frame state gas + the composed init/child code
 costs), and the child account is asserted, disambiguating the ported
 "balance 1" outcomes (outer-failure vs child-success) that were previously
-indistinguishable.
+indistinguishable. Per-era posts: EIP-161 start-nonce shift, and
+pre-EIP-150 the all-gas-forwarding CREATE turns a child OOG into an
+outer failure.
 """
 
 import pytest
@@ -23,6 +25,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon, TangerineWhistle
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -39,7 +42,7 @@ CHILD_STORED = 0x112233
         "state_tests/stInitCodeTest/OutOfGasPrefundedContractCreationFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.parametrize(
     "outcome",
     [
@@ -138,24 +141,34 @@ def test_out_of_gas_prefunded_contract_creation(
         value=TX_VALUE,
     )
 
-    child = compute_create_address(address=created, nonce=1)
-    if outcome == "outer_oog":
-        # Creation rolled back: only the prefund remains, nonce untouched.
+    # EIP-161 (SpuriousDragon): created contracts start at nonce 1, so
+    # the child lands at the era's start-nonce address.
+    start_nonce = 1 if fork >= SpuriousDragon else 0
+    child = compute_create_address(address=created, nonce=start_nonce)
+    if outcome == "outer_oog" or (
+        outcome == "child_oog" and fork < TangerineWhistle
+    ):
+        # Creation rolled back: only the prefund remains, nonce
+        # untouched. Pre-EIP-150 the child_oog budget lands here too:
+        # CREATE forwards all remaining gas, so the failing child
+        # leaves the outer frame nothing and the creation fails whole.
         created_account = Account(nonce=0, balance=PREFUND)
         child_account: Account | None = Account.NONEXISTENT
     elif outcome == "child_oog":
         # The inner CREATE increments the creator's nonce even when the
         # child fails.
         created_account = Account(
-            nonce=2, code=b"", balance=PREFUND + TX_VALUE
+            nonce=start_nonce + 1, code=b"", balance=PREFUND + TX_VALUE
         )
         child_account = Account.NONEXISTENT
     else:
         created_account = Account(
-            nonce=2, code=b"", balance=PREFUND + TX_VALUE - CHILD_VALUE
+            nonce=start_nonce + 1,
+            code=b"",
+            balance=PREFUND + TX_VALUE - CHILD_VALUE,
         )
         child_account = Account(
-            nonce=1,
+            nonce=start_nonce,
             balance=CHILD_VALUE,
             storage={0: CHILD_STORED},
         )

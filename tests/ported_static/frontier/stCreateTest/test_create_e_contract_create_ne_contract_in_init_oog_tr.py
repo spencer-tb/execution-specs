@@ -1,8 +1,8 @@
 """
 Verify a contract-creation transaction whose init code first calls an
 existing contract and then CREATEs a child: with a full budget both the
-call and the nested creation land (the child at the creator's nonce-1
-address, not nonce 0); with a starved budget the callee and the whole
+call and the nested creation land (the child at the creator's EIP-161
+start-nonce address); with a starved budget the callee and the whole
 creation fail together.
 
 Ported from:
@@ -11,8 +11,9 @@ state_tests/stCreateTest/CREATE_EContractCreateNEContractInInitOOG_TrFiller.json
 @manually-enhanced: Do not overwrite. Budgets are derived from the fork
 (intrinsic + EIP-8037 top-frame and nested-create state gas + composed
 code costs), the callee call forwards all gas instead of a ported fixed
-budget, and the nested child is now asserted at its real nonce-1 address
-(the port only checked the vacuous nonce-0 address).
+budget, and the nested child is now asserted at its real start-nonce
+address (the port only checked the vacuous nonce-0 address). Per-era
+post: pre-SpuriousDragon (EIP-161) the start nonce is 0, not 1.
 """
 
 import pytest
@@ -24,6 +25,7 @@ from execution_testing import (
     Transaction,
     compute_create_address,
 )
+from execution_testing.forks import SpuriousDragon
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -37,7 +39,7 @@ CALLEE_STORED = 0xC
         "state_tests/stCreateTest/CREATE_EContractCreateNEContractInInitOOG_TrFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("SpuriousDragon")
+@pytest.mark.valid_from("TangerineWhistle")
 @pytest.mark.parametrize("oog", [False, True], ids=["enough-gas", "oog"])
 def test_create_e_contract_create_ne_contract_in_init_oog_tr(
     state_test: StateTestFiller,
@@ -129,11 +131,14 @@ def test_create_e_contract_create_ne_contract_in_init_oog_tr(
     )
 
     created = compute_create_address(address=sender, nonce=0)
-    # The nested CREATE runs while the creator's nonce is 1 (EIP-161),
-    # so the child lands at the nonce-1 address and the nonce-0 address
-    # must stay empty.
-    child = compute_create_address(address=created, nonce=1)
-    child_at_nonce0 = compute_create_address(address=created, nonce=0)
+    # The nested CREATE runs while the creator's nonce is its EIP-161
+    # start nonce (1 from SpuriousDragon, 0 before), so the child lands
+    # at that address and the other-nonce address must stay empty.
+    start_nonce = 1 if fork >= SpuriousDragon else 0
+    child = compute_create_address(address=created, nonce=start_nonce)
+    child_unused = compute_create_address(
+        address=created, nonce=1 - start_nonce
+    )
 
     if oog:
         post = {
@@ -141,15 +146,17 @@ def test_create_e_contract_create_ne_contract_in_init_oog_tr(
             callee: Account(storage={1: 0}),
             created: Account.NONEXISTENT,
             child: Account.NONEXISTENT,
-            child_at_nonce0: Account.NONEXISTENT,
+            child_unused: Account.NONEXISTENT,
         }
     else:
         post = {
             sender: Account(nonce=1),
             callee: Account(storage={1: CALLEE_STORED}),
-            created: Account(nonce=2, code=b""),
-            child: Account(nonce=1, code=bytes(child_runtime), storage={}),
-            child_at_nonce0: Account.NONEXISTENT,
+            created: Account(nonce=start_nonce + 1, code=b""),
+            child: Account(
+                nonce=start_nonce, code=bytes(child_runtime), storage={}
+            ),
+            child_unused: Account.NONEXISTENT,
         }
 
     state_test(pre=pre, post=post, tx=tx)

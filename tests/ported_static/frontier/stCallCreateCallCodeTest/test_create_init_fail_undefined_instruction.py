@@ -5,6 +5,8 @@ Ported from:
 state_tests/stCallCreateCallCodeTest/createInitFailUndefinedInstructionFiller.json
 
 @manually-enhanced: Do not overwrite. tx `gas_limit` has been removed.
+Pre-EIP-150 the failed CREATE leaves its caller 0 gas, but SELFDESTRUCT
+is free, so the CREATE-path callee still succeeds (per-era post).
 """
 
 import pytest
@@ -18,6 +20,7 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
+from execution_testing.forks import TangerineWhistle
 from execution_testing.vm import Op
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
@@ -29,7 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
         "state_tests/stCallCreateCallCodeTest/createInitFailUndefinedInstructionFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("TangerineWhistle")
+@pytest.mark.valid_from("Frontier")
 @pytest.mark.pre_alloc_mutable
 def test_create_init_fail_undefined_instruction(
     state_test: StateTestFiller,
@@ -109,6 +112,16 @@ def test_create_init_fail_undefined_instruction(
         protected=fork.supports_protected_txs(),
     )
 
-    post = {target: Account(storage={2: 1})}
+    if fork >= TangerineWhistle:
+        # EIP-150: CREATE withholds 1/64 of the caller's gas, and the
+        # repriced SELFDESTRUCT (5000 + 25000 new-account) exceeds that
+        # retention, so both callee frames fail; only the flag lands.
+        post = {target: Account(storage={2: 1})}
+    else:
+        # Pre-EIP-150 CREATE forwards all gas: the invalid-opcode init
+        # consumes it, leaving the callee 0 gas — but SELFDESTRUCT is
+        # free, so the CREATE-path callee (slot 0) still succeeds. The
+        # CREATE2 byte is undefined, so that callee fails (slot 1).
+        post = {target: Account(storage={0: 1, 2: 1})}
 
     state_test(env=env, pre=pre, post=post, tx=tx)
