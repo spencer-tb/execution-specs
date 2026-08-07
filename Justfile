@@ -155,6 +155,23 @@ fill-release *args:
         --log-level=DEBUG \
         "$@"
 
+# Fill the consensus tests using EELS in PBT mode (--state-trie pbt)
+[group('consensus tests')]
+fill-state-trie-pbt *args: (_tmp-logs "fill-state-trie-pbt")
+    uv run fill \
+        -m "not slow" \
+        -n {{ xdist_workers }} --dist=loadgroup \
+        --skip-index \
+        --state-trie pbt \
+        --output="{{ output_dir }}/fill-state-trie-pbt/fixtures" \
+        --basetemp="{{ output_dir }}/fill-state-trie-pbt/tmp" \
+        --log-to "{{ output_dir }}/fill-state-trie-pbt/logs" \
+        --clean \
+        --until "{{ latest_fork }}" \
+        --durations=50 \
+        "$@" \
+        tests
+
 # --- Integration Tests ---
 
 # Fill the base coverage consensus tests using EELS with PyPy
@@ -206,6 +223,7 @@ json-loader *args: (_tmp "json-loader")
         --cov-report "xml:{{ output_dir }}/json-loader/coverage.xml" \
         --durations=50 \
         --basetemp="{{ output_dir }}/json-loader/tmp" \
+        --ignore=tests/binary_trie \
         "$@" \
         tests/json_loader
 
@@ -244,6 +262,21 @@ test-tests-pypy *args: (_tmp "test-tests-pypy")
 [group('unit tests')]
 test-ci-scripts *args:
     uv run pytest "$@" .github/scripts/tests/
+
+# Run the binary trie state-provider unit tests
+[group('unit tests')]
+binary-trie-unit-test *args: (_tmp "binary-trie-unit-test")
+    uv run pytest \
+        -n {{ xdist_workers }} \
+        --cov=ethereum.partitioned_binary_tree \
+        --cov=ethereum.state_pbt \
+        --cov-branch \
+        --cov-report=term \
+        --cov-report "xml:{{ output_dir }}/binary-trie-unit-test/coverage.xml" \
+        --no-cov-on-fail \
+        --basetemp="{{ output_dir }}/binary-trie-unit-test/tmp" \
+        "$@" \
+        tests/binary_trie
 
 # --- Benchmarks ---
 
