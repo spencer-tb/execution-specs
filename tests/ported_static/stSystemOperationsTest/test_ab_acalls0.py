@@ -1,24 +1,21 @@
 """
 Verify mutual A<->B recursion with value transfers and fixed gas asks.
 
-Contract A calls B forwarding a fixed 100,000-gas ask with 24 wei; B
-calls its caller back with a 50,000 ask and 23 wei, storing one plus
-the result. Both store into a PC-derived slot only after their call
-returns, so every level's store competes with what the descent left
-behind: levels too deep to afford it halt and forfeit, rolling back
-their stores and transfers, and the surviving storage and balances pin
-exactly how far the budget reaches.
+Contracts A and B call each other with a fixed gas ask and a value
+transfer, each storing the result only after its call returns. A frame
+too poor for that store halts, rolling back both the store and the
+transfer that funded it.
 
 Ported from:
 state_tests/stSystemOperationsTest/ABAcalls0Filler.json
 
-@manually-enhanced: Do not overwrite. The post state (stores and
-balances) is predicted by an exact fork-derived replay of the gas flow
-(EIP-150 grants, stipend gifting and return, warm/cold and SSTORE
-pricing via opcode metadata, EIP-8037 state-gas spill), validated
-against the ported Cancun stores. B reaches A as its CALLER instead of
-a hardcoded address, which shifts B's PC-derived slot; both slots are
-computed from the assembled code.
+@manually-enhanced: Do not overwrite. The post state follows from a
+single decision -- whether B's frame can still afford its store --
+because the fixed asks pin every grant below the top frame; the third
+frame's death is asserted from the fork's schedule rather than
+assumed. B reaches A as its CALLER instead of a hardcoded address, and
+both contracts store into a fixed slot rather than the filler's
+PC-derived one, whose number tracked nothing but code length.
 """
 
 import pytest
@@ -26,154 +23,31 @@ from execution_testing import (
     Account,
     Address,
     Alloc,
+    Bytecode,
     Fork,
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
+from execution_testing.vm import Op, Opcode
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
-A_CALL_GAS = 100_000
-A_CALL_VALUE = 0x18
-B_CALL_GAS = 50_000
-B_CALL_VALUE = 0x17
-# One transfer per level up to the call-depth limit can never run dry.
-A_INITIAL_BALANCE = A_CALL_VALUE * 1024
-# Exactly one return payment before any income (the ported balance).
-B_INITIAL_BALANCE = B_CALL_VALUE
-# Ported budget; pins how deep the mutual recursion reaches.
-TX_GAS_LIMIT = 1_000_000
 
-
-def predict_final_state(
-    fork: Fork, tx_gas_limit: int, b_address: Address
-) -> tuple[int, int, int, int]:
+def chain_call(gas: int, address: Address | Opcode, value: int) -> Bytecode:
     """
-    Replay the mutual recursion's gas flow.
+    Return the value-bearing CALL that carries the chain one frame on.
 
-    Return A's stored value, B's stored value, and the committed
-    balance deltas of A and B. Descend the alternating call chain
-    computing each level's EIP-150 grant (both asks are pushed
-    constants; a value-bearing call gifts the callee the stipend and
-    gets any unused part back), then unwind: a level that cannot afford
-    its post-call store (EIP-2200's stipend rule included) halts and
-    forfeits its grant, reverting its own store and the transfer that
-    funded it. Every cost is derived from the fork via opcode metadata,
-    including EIP-8037 state gas: with a sub-cap gas limit the state
-    reservoir is zero, so state charges spill from the charging frame's
-    own gas.
+    The warmth metadata describes the frames costed in the test, not
+    the cold top-level call; it does not change the bytecode.
     """
-    stipend = fork.gas_costs().CALL_STIPEND
-    pc_cost = Op.PC.gas_cost(fork)
-
-    def raw_store_cost(key_warm: bool, current: int, new: int) -> int:
-        """Cost of a bare SSTORE; original value is always zero here."""
-        return Op.SSTORE(
-            key_warm=key_warm,
-            original_value=0,
-            current_value=current,
-            new_value=new,
-        ).gas_cost(fork)
-
-    # A's charges before forwarding: argument pushes plus the call's
-    # upfront costs (B is cold only in the top level). The ask is a
-    # pushed constant, so the whole call expression charges up front.
-    def a_charges(b_warm: bool) -> int:
-        return Op.CALL(
-            gas=A_CALL_GAS,
-            address=b_address,
-            value=A_CALL_VALUE,
-            address_warm=b_warm,
-            value_transfer=True,
-        ).gas_cost(fork)
-
-    b_value_expr = Op.ADD(
-        1,
-        Op.CALL(
-            gas=B_CALL_GAS,
-            address=Op.CALLER,
-            value=B_CALL_VALUE,
-            # A is the transaction target: always warm.
-            address_warm=True,
-            value_transfer=True,
-        ),
+    return Op.CALL(
+        gas=gas,
+        address=address,
+        value=value,
+        address_warm=True,
+        value_transfer=True,
     )
-    # B's ADD and its constant push run only after the call returns.
-    b_post_call = Op.PUSH1[0].gas_cost(fork) + Op.ADD.gas_cost(fork)
-    b_charges = b_value_expr.gas_cost(fork) - b_post_call
-
-    # Descend: alternate A and B levels until one dies mid-charges.
-    gas = (
-        tx_gas_limit
-        - fork.transaction_intrinsic_cost_calculator()()
-        - fork.transaction_top_frame_state_gas()
-    )
-    levels: list[tuple[int, int]] = []
-    level = 0
-    balance = {"A": A_INITIAL_BALANCE, "B": B_INITIAL_BALANCE}
-    while True:
-        level += 1
-        is_a = level % 2 == 1
-        if is_a:
-            gas -= a_charges(b_warm=level > 1)
-            ask, value = A_CALL_GAS, A_CALL_VALUE
-        else:
-            gas -= b_charges
-            ask, value = B_CALL_GAS, B_CALL_VALUE
-        if gas < 0:
-            break
-        assert level < 1024, "recursion must die of gas, not depth"
-        payer = "A" if is_a else "B"
-        assert balance[payer] >= value, "value transfer must be funded"
-        balance[payer] -= value
-        balance["B" if is_a else "A"] += value
-        forwarded = min(ask, gas - gas // 64)
-        levels.append((gas, forwarded))
-        gas = forwarded + stipend
-
-    # Unwind: a failed level forfeits its grant and reverts the whole
-    # committed state below it (stores, warmth, and transfers).
-    child_ok = False
-    leftover = 0
-    a_val, a_warm, b_val, b_warm = 0, False, 0, False
-    a_delta, b_delta = 0, 0
-    for lvl in range(len(levels), 0, -1):
-        available, forwarded = levels[lvl - 1]
-        is_a = lvl % 2 == 1
-        gas = available - forwarded + (leftover if child_ok else 0)
-        result = 1 if child_ok else 0
-        if is_a:
-            gas -= pc_cost
-            store_value, current, warm = result, a_val, a_warm
-        else:
-            gas -= b_post_call + pc_cost
-            store_value, current, warm = 1 + result, b_val, b_warm
-        ok = gas >= 0 and gas > stipend
-        if ok:
-            gas -= raw_store_cost(warm, current, store_value)
-            ok = gas >= 0
-        if ok:
-            # Commit this level: its store and the transfer into it.
-            if is_a:
-                a_val, a_warm = store_value, True
-                if lvl > 1:
-                    a_delta += B_CALL_VALUE
-                    b_delta -= B_CALL_VALUE
-            else:
-                b_val, b_warm = store_value, True
-                a_delta -= A_CALL_VALUE
-                b_delta += A_CALL_VALUE
-            leftover = gas
-            child_ok = True
-        else:
-            child_ok = False
-            leftover = 0
-            a_val, a_warm, b_val, b_warm = 0, False, 0, False
-            a_delta, b_delta = 0, 0
-    assert child_ok, "the top level must complete"
-    return a_val, b_val, a_delta, b_delta
 
 
 @pytest.mark.ported_from(
@@ -186,46 +60,64 @@ def test_ab_acalls0(
     fork: Fork,
 ) -> None:
     """Pin how deep a value-bearing A<->B recursion reaches."""
-    # B calls whoever called it, so it needs no embedded address.
-    b_value_expr = Op.ADD(
-        1,
-        Op.CALL(gas=B_CALL_GAS, address=Op.CALLER, value=B_CALL_VALUE),
+    result_slot = 0
+
+    b_gas, b_value = 50_000, 23
+    b_call_code = chain_call(b_gas, Op.CALLER, b_value)
+    # Split out because the gas check below costs exactly this tail.
+    b_code_after_call = (
+        Op.PUSH1[1]
+        + Op.ADD
+        + Op.PUSH1[result_slot]
+        + Op.SSTORE(
+            key_warm=False, original_value=0, current_value=0, new_value=1
+        )
     )
     contract_b = pre.deploy_contract(
-        code=Op.SSTORE(key=Op.PC, value=b_value_expr) + Op.STOP,
-        balance=B_INITIAL_BALANCE,
+        code=b_call_code + b_code_after_call + Op.STOP,
+        balance=b_value,  # one return payment, before any income
     )
 
-    a_value_expr = Op.CALL(
-        gas=A_CALL_GAS, address=contract_b, value=A_CALL_VALUE
-    )
+    a_gas, a_value = 100_000, 24
+    a_call_code = chain_call(a_gas, contract_b, a_value)
+    a_initial_balance = a_value * 1024  # the call-depth ceiling
     contract_a = pre.deploy_contract(
-        code=Op.SSTORE(key=Op.PC, value=a_value_expr) + Op.STOP,
-        balance=A_INITIAL_BALANCE,
+        code=Op.SSTORE(key=result_slot, value=a_call_code),
+        balance=a_initial_balance,
     )
 
-    # PC keys: each store's key is the code offset of its PC opcode,
-    # which sits right after the assembled value expression.
-    a_key = len(bytes(a_value_expr))
-    b_key = len(bytes(b_value_expr))
+    # Fixed call gas pins every grant below the top frame, so three
+    # frames settle the chain: the first always stores, the third never
+    # can, and B is the only one a repricing flips.
+    stipend = fork.gas_costs().CALL_STIPEND
+    third_frame_gas = b_gas + stipend - a_call_code.gas_cost(fork)
+    assert third_frame_gas < a_gas, "the third frame must be clamped"
+    assert third_frame_gas // 64 <= stipend, (
+        "a clamped frame must fall short of the SSTORE gas gate"
+    )
 
+    # B does fund its call, so it keeps the whole remainder, not a 64th.
+    b_gas_kept = a_gas + stipend - b_call_code.gas_cost(fork) - b_gas
+    b_stores = (
+        b_gas_kept > stipend and b_gas_kept >= b_code_after_call.gas_cost(fork)
+    )
+
+    # B stores `1 + 0`: its own call back to A always dies.
+    a_stored, b_stored, wei_moved = (1, 1, a_value) if b_stores else (0, 0, 0)
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=contract_a,
-        gas_limit=TX_GAS_LIMIT,
-    )
-
-    a_val, b_val, a_delta, b_delta = predict_final_state(
-        fork, TX_GAS_LIMIT, contract_b
+        # Only keeps the top frame alive; the call gas sets the depth.
+        gas_limit=1_000_000,
     )
     post = {
         contract_a: Account(
-            storage={a_key: a_val},
-            balance=A_INITIAL_BALANCE + a_delta,
+            storage={result_slot: a_stored},
+            balance=a_initial_balance - wei_moved,
         ),
         contract_b: Account(
-            storage={b_key: b_val},
-            balance=B_INITIAL_BALANCE + b_delta,
+            storage={result_slot: b_stored},
+            balance=b_value + wei_moved,
         ),
     }
 
