@@ -13,6 +13,9 @@ inputs:
   split_label:
     description: "Label for this fork-range split. Empty for unsplit builds."
     default: ""
+  extra_params:
+    description: "Extra fill params appended after the feature's own (last flag wins). Empty for none."
+    default: ""
   split_retention_days:
     description: "retention-days for the split fixture artifact. Empty for the repo default."
     default: ""
@@ -72,7 +75,7 @@ runs:
 
         # Allow exit code 5 (NO_TESTS_COLLECTED) for fork ranges with no tests.
         EXIT_CODE=0
-        just fill-release $EVM_ARGS ${{ steps.properties.outputs.fill-params }} $FORK_ARGS $OUTPUT_ARG --build-name ${{ inputs.release_name }} || EXIT_CODE=$?
+        just fill-release $EVM_ARGS ${{ steps.properties.outputs.fill-params }} $FORK_ARGS ${{ inputs.extra_params }} $OUTPUT_ARG --build-name ${{ inputs.release_name }} || EXIT_CODE=$?
         if [ "$EXIT_CODE" -ne 0 ] && [ "$EXIT_CODE" -ne 5 ]; then
           exit "$EXIT_CODE"
         fi
