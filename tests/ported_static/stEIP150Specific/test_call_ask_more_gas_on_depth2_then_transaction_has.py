@@ -26,16 +26,6 @@ from execution_testing.vm import Op
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
-FLAG_SLOT = 0x0
-DEPTH2_GAS_SLOT = 0x1
-DEPTH1_GAS_SLOT = 0x2
-
-# The ported depth-1 budget: affordable, so it is forwarded exactly.
-CALLER_GAS = 0x30D40
-# The ported depth-2 ask: above anything the depth-1 frame can hold, so
-# the 63/64 clamp decides what the depth-2 frame receives.
-ASK_GAS = 0x927C0
-
 
 @pytest.mark.ported_from(
     [
@@ -49,63 +39,93 @@ def test_call_ask_more_gas_on_depth2_then_transaction_has(
     fork: Fork,
 ) -> None:
     """A depth-2 call asking above the frame budget gets 63/64 of it."""
-    # Depth 2: returns the gas it observed on entry.
-    gas_return_contract = pre.deploy_contract(
-        code=Op.MSTORE(0, Op.GAS, new_memory_size=0x20) + Op.RETURN(0, 0x20),
+    flag_slot = 0x0
+    depth2_gas_slot = 0x1
+    depth1_gas_slot = 0x2
+
+    # According to EIP-150, forwarded = min(gas, available - available // 64)
+    # On depth 1, gas (call_gas: 200_000) affordable, so ask_gas dominates.
+    # On depth 2, gas (call_gas: 600_000) above depth-1 frame, clamp decides.
+    caller_gas = 200_000
+    ask_gas = 600_000
+
+    # MEM[0x00:0x20] Depth 2 Gas Consumption
+    # MEM[0x20:0x40] Depth 1 Gas Consumption
+
+    # returns the gas it observed on depth 2.
+    depth2_snapshot = pre.deploy_contract(
+        code=Op.MSTORE(
+            0,
+            Op.GAS,
+            # gas accounting
+            old_memory_size=0x00,
+            new_memory_size=0x20,
+        )
+        + Op.RETURN(0, 0x20),
     )
 
-    # Depth 1: records its own entry gas, then asks depth 2 for more gas
-    # than this frame holds; both observations return to the top frame.
-    entry_snapshot = Op.MSTORE(0x20, Op.GAS, new_memory_size=0x40)
+    # returns the gas it observed on depth 1.
+    depth1_snapshot = Op.MSTORE(
+        0x20,
+        Op.GAS,
+        # gas accounting
+        old_memory_size=0x00,
+        new_memory_size=0x40,
+    )
+
     depth2_call = Op.CALL(
-        gas=ASK_GAS,
-        address=gas_return_contract,
+        gas=ask_gas,
+        address=depth2_snapshot,
         ret_size=0x20,
+        # gas accounting
         address_warm=False,
         account_new=False,
         new_memory_size=0x40,
         old_memory_size=0x40,
     )
-    caller = pre.deploy_contract(
-        code=entry_snapshot + depth2_call + Op.RETURN(0, 0x40),
+
+    # Depth 1's ask is affordable, so it arrives whole;
+    depth1 = pre.deploy_contract(
+        code=depth1_snapshot + depth2_call + Op.RETURN(0, 0x40),
     )
+    depth1_observed = caller_gas - Op.GAS.gas_cost(fork)
+
+    # Depth 2's ask is not, so EIP-150 forwards all but 1/64 of whatever
+    # the depth-1 frame still holds after the snapshot and the call.
+    base = (
+        caller_gas
+        - depth1_snapshot.gas_cost(fork)
+        - depth2_call.gas_cost(fork)
+    )
+    assert 0 < base < ask_gas, "the 63/64 clamp must apply at depth 2"
+    forwarded = base - base // 64
+    depth2_observed = forwarded - Op.GAS.gas_cost(fork)
 
     # Top frame: forwards the exact (affordable) depth-1 budget and stores
-    # the success flag plus both returned observations.
+    # the success flag plus both returned readings.
     entry = pre.deploy_contract(
         code=Op.SSTORE(
-            key=FLAG_SLOT,
-            value=Op.CALL(gas=CALLER_GAS, address=caller, ret_size=0x40),
+            key=flag_slot,
+            value=Op.CALL(gas=caller_gas, address=depth1, ret_size=0x40),
         )
-        + Op.SSTORE(key=DEPTH2_GAS_SLOT, value=Op.MLOAD(0))
-        + Op.SSTORE(key=DEPTH1_GAS_SLOT, value=Op.MLOAD(0x20)),
+        + Op.SSTORE(key=depth2_gas_slot, value=Op.MLOAD(0))
+        + Op.SSTORE(key=depth1_gas_slot, value=Op.MLOAD(0x20)),
     )
+
+    post = {
+        entry: Account(
+            storage={
+                flag_slot: 1,
+                depth2_gas_slot: depth2_observed,
+                depth1_gas_slot: depth1_observed,
+            },
+        ),
+    }
 
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=entry,
         state_gas_reservoir=0,
     )
-
-    # Depth 1 received exactly CALLER_GAS; its snapshot reads it minus the
-    # GAS opcode itself. The depth-2 base is what remains after the
-    # snapshot and the call's own costs, clamped by EIP-150.
-    depth1_observed = CALLER_GAS - Op.GAS.gas_cost(fork)
-    base = (
-        CALLER_GAS - entry_snapshot.gas_cost(fork) - depth2_call.gas_cost(fork)
-    )
-    assert 0 < base < ASK_GAS, "the 63/64 clamp must apply at depth 2"
-    forwarded = base - base // 64
-    depth2_observed = forwarded - Op.GAS.gas_cost(fork)
-
-    post = {
-        entry: Account(
-            storage={
-                FLAG_SLOT: 1,
-                DEPTH2_GAS_SLOT: depth2_observed,
-                DEPTH1_GAS_SLOT: depth1_observed,
-            },
-        ),
-    }
 
     state_test(pre=pre, post=post, tx=tx)

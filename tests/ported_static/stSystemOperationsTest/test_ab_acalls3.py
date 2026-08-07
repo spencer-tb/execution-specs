@@ -1,26 +1,28 @@
 """
-Verify mutual A<->B recursion where each side reserves 100,000 gas.
+Verify mutual A<->B recursion throttled by a per-level gas reserve.
 
-Both contracts bump their own depth counter during descent, then call
-the other side forwarding everything but a 100,000-gas reserve (A sends
-one wei each level; B sends nothing back). Nothing runs after the call,
-so only the single deepest level dies of gas and every completed
-level's counter bump and transfer persist: the counters and balances
-pin exactly how many rounds the budget sustains.
+Both contracts bump their own counter, then call the other side
+forwarding everything but a 100,000-gas reserve (A sends one wei each
+level; B sends nothing back). Nothing runs after the call, so a level
+either completes -- keeping its bump and its transfer -- or dies of gas
+and reverts both.
 
 Ported from:
 state_tests/stSystemOperationsTest/ABAcalls3Filler.json
 
-@manually-enhanced: Do not overwrite. The post state (counters and
-balances) is predicted by an exact fork-derived replay of the gas flow
-(EIP-150 grants, stipend gifting, warm/cold and SSTORE pricing via
-opcode metadata, EIP-8037 state-gas spill), validated against the
-ported Cancun counters. B reaches A as its CALLER instead of a
-hardcoded address.
+@manually-enhanced: Do not overwrite. The ported test fixed the budget
+and recorded the depth it reached, a golden value only a full replay of
+the schedule can carry across forks. This fixes the depth and derives
+the budget instead, which is a closed form because an access list
+pre-warms every access, the budget stays far below 64 reserves so the
+reserve rather than the EIP-150 clamp sets every grant, and it runs out
+exactly at the chosen round so the chain dies at once. B reaches A as
+its CALLER instead of a hardcoded address.
 """
 
 import pytest
 from execution_testing import (
+    AccessList,
     Account,
     Address,
     Alloc,
@@ -29,131 +31,10 @@ from execution_testing import (
     StateTestFiller,
     Transaction,
 )
-from execution_testing.vm import Op
+from execution_testing.vm import Op, Opcode
 
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
-
-COUNTER_SLOT = 0
-# Gas each level keeps back for itself before forwarding the rest.
-GAS_RESERVE = 100_000
-A_CALL_VALUE = 1
-# One transfer per level up to the call-depth limit can never run dry.
-A_INITIAL_BALANCE = A_CALL_VALUE * 1024
-# Ported budget; pins how many rounds the recursion sustains.
-TX_GAS_LIMIT = 10_000_000
-
-
-def predict_depths(
-    fork: Fork, tx_gas_limit: int, b_address: Address
-) -> tuple[int, int]:
-    """
-    Replay the mutual recursion's gas flow.
-
-    Return how many A and B levels complete. Descend the alternating
-    call chain: each level bumps its own counter (one cold set per
-    contract, then dirty rewrites), pays its call charges, and forwards
-    everything but the reserve under the EIP-150 63/64 rule; once the
-    reserve underflows, the wrapped ask forwards the 63/64 maximum.
-    Nothing runs after a call, so only the single deepest level dies
-    and its bump and incoming transfer revert. Every cost is derived
-    from the fork via opcode metadata, including EIP-8037 state gas:
-    with a sub-cap gas limit the state reservoir is zero, so state
-    charges spill from the charging frame's own gas.
-    """
-    push_cost = Op.PUSH1[0].gas_cost(fork)
-    # The ask expression's SUB runs after GAS reads gas_left.
-    post_gas_read = Op.SUB.gas_cost(fork)
-    # EIP-2200: any SSTORE with gas_left <= stipend halts exceptionally.
-    stipend = fork.gas_costs().CALL_STIPEND
-
-    def raw_store_cost(key_warm: bool, current: int, new: int) -> int:
-        """Cost of a bare SSTORE; original value is always zero here."""
-        return Op.SSTORE(
-            key_warm=key_warm,
-            original_value=0,
-            current_value=current,
-            new_value=new,
-        ).gas_cost(fork)
-
-    sstore_warm_set = raw_store_cost(True, 0, 1)
-    sstore_warm_dirty = raw_store_cost(True, 1, 2)
-
-    def bump_statics(key_warm: bool) -> int:
-        """Counter-bump costs before its SSTORE (value expr plus key)."""
-        return (
-            Op.ADD(Op.SLOAD(key=COUNTER_SLOT, key_warm=key_warm), 1).gas_cost(
-                fork
-            )
-            + push_cost
-        )
-
-    def call_split(
-        address: Address | Op, warm: bool, value: int
-    ) -> tuple[int, int]:
-        """Pre-GAS-read and upfront charges of one side's call."""
-        upfront = Op.CALL(
-            address_warm=warm, value_transfer=value > 0
-        ).gas_cost(fork)
-        composite = Op.CALL(
-            gas=Op.SUB(Op.GAS, GAS_RESERVE),
-            address=address,
-            value=value,
-            address_warm=warm,
-            value_transfer=value > 0,
-        ).gas_cost(fork)
-        return composite - upfront - post_gas_read, upfront
-
-    a_pre, a_upfront_cold = call_split(b_address, False, A_CALL_VALUE)
-    _, a_upfront_warm = call_split(b_address, True, A_CALL_VALUE)
-    # A is the transaction target: always warm for B's call back.
-    b_pre, b_upfront = call_split(Op.CALLER, True, 0)
-
-    gas = (
-        tx_gas_limit
-        - fork.transaction_intrinsic_cost_calculator()()
-        - fork.transaction_top_frame_state_gas()
-    )
-    level = 0
-    a_balance = A_INITIAL_BALANCE
-    while True:
-        level += 1
-        is_a = level % 2 == 1
-        # Each contract's first level pays the cold counter set.
-        first = level <= 2
-        gas -= bump_statics(key_warm=not first)
-        if gas < 0 or gas <= stipend:
-            break
-        gas -= sstore_warm_set if first else sstore_warm_dirty
-        if gas < 0:
-            break
-        gas -= a_pre if is_a else b_pre
-        if gas < 0:
-            break
-        gas_read = gas
-        if is_a:
-            gas -= post_gas_read + (
-                a_upfront_cold if level == 1 else a_upfront_warm
-            )
-        else:
-            gas -= post_gas_read + b_upfront
-        if gas < 0:
-            break
-        assert level < 1024, "recursion must die of gas, not depth"
-        if is_a:
-            assert a_balance >= A_CALL_VALUE, "transfer must be funded"
-            a_balance -= A_CALL_VALUE
-        # A reserve underflow wraps mod 2**256: an effectively infinite
-        # ask, clamped to the 63/64 forwardable maximum.
-        ask = gas_read - GAS_RESERVE if gas_read >= GAS_RESERVE else 1 << 256
-        forwarded = min(ask, gas - gas // 64)
-        gas = forwarded + (stipend if is_a else 0)
-
-    completed = level - 1
-    assert completed >= 2, "both sides must run at least once"
-    a_count = (completed + 1) // 2
-    b_count = completed // 2
-    return a_count, b_count
 
 
 @pytest.mark.ported_from(
@@ -166,51 +47,114 @@ def test_ab_acalls3(
     fork: Fork,
 ) -> None:
     """Pin how many rounds a reserve-throttled A<->B recursion runs."""
+    counter_slot, counter_seed = 0, 1
+
+    # Ported: each level holds this much back instead of forwarding it.
+    gas_reserve = 100_000
+    a_value = 1
+
+    rounds = 8
+    a_rounds, b_rounds = (rounds + 1) // 2, rounds // 2
 
     def bounce_code(call: Bytecode) -> Bytecode:
         """Bump the own-depth counter, then call the other side."""
         return (
             Op.SSTORE(
-                key=COUNTER_SLOT,
-                value=Op.ADD(Op.SLOAD(key=COUNTER_SLOT), 1),
+                key=counter_slot,
+                value=Op.ADD(Op.SLOAD(key=counter_slot), 1),
             )
             + call
-            + Op.STOP
         )
 
-    # B calls whoever called it, so it needs no embedded address.
+    def reserve_call(address: Address | Opcode, value: int) -> Bytecode:
+        """Return one side's call: forward all but the reserve."""
+        return Op.CALL(
+            gas=Op.SUB(Op.GAS, gas_reserve),
+            address=address,
+            value=value,
+            # gas accounting
+            address_warm=True,
+            value_transfer=value > 0,
+        )
+
+    b_call = reserve_call(Op.CALLER, 0)
     contract_b = pre.deploy_contract(
-        code=bounce_code(
-            Op.CALL(gas=Op.SUB(Op.GAS, GAS_RESERVE), address=Op.CALLER)
-        ),
+        code=bounce_code(b_call),
+        storage={counter_slot: counter_seed},
     )
+
+    a_call = reserve_call(contract_b, a_value)
     contract_a = pre.deploy_contract(
-        code=bounce_code(
-            Op.CALL(
-                gas=Op.SUB(Op.GAS, GAS_RESERVE),
-                address=contract_b,
-                value=A_CALL_VALUE,
-            )
-        ),
-        balance=A_INITIAL_BALANCE,
+        code=bounce_code(a_call),
+        storage={counter_slot: counter_seed},
+        balance=a_rounds * a_value,
     )
+
+    # Pre-warm every account and slot the chain touches,
+    # so no level pays a cold price.
+    access_list = [
+        AccessList(address=contract_a, storage_keys=[counter_slot]),
+        AccessList(address=contract_b, storage_keys=[counter_slot]),
+    ]
+
+    stipend = fork.gas_costs().CALL_STIPEND
+    statics = (
+        Op.ADD(Op.SLOAD(key=counter_slot, key_warm=True), 1)
+        + Op.PUSH1[counter_slot]
+    ).gas_cost(fork)
+
+    first_store = Op.SSTORE(
+        key_warm=True,
+        original_value=counter_seed,
+        current_value=counter_seed,
+        new_value=counter_seed + 1,
+    ).gas_cost(fork)
+    later_store = Op.SSTORE(
+        key_warm=True,
+        original_value=counter_seed,
+        current_value=counter_seed + 1,
+        new_value=counter_seed + 2,
+    ).gas_cost(fork)
+
+    def pushes_before_gas_read(call: Bytecode, sends_value: bool) -> int:
+        """What the call charges before its GAS opcode reads."""
+        upfront = Op.CALL(
+            address_warm=True, value_transfer=sends_value
+        ).gas_cost(fork)
+        return call.gas_cost(fork) - upfront - Op.SUB.gas_cost(fork)
+
+    chain_gas = (
+        rounds * (gas_reserve + statics)
+        + 2 * first_store
+        + (rounds - 2) * later_store
+        + a_rounds * (pushes_before_gas_read(a_call, True) - stipend)
+        + b_rounds * pushes_before_gas_read(b_call, False)
+    )
+    # Above 64 reserves the EIP-150 clamp would set the grants instead,
+    # and the sum above would stop describing the chain.
+    assert chain_gas < 64 * gas_reserve, "the reserve must bind throughout"
 
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=contract_a,
-        gas_limit=TX_GAS_LIMIT,
+        access_list=access_list,
+        gas_limit=(
+            fork.transaction_intrinsic_cost_calculator()(
+                access_list=access_list
+            )
+            + fork.transaction_top_frame_state_gas()
+            + chain_gas
+        ),
     )
 
-    a_count, b_count = predict_depths(fork, TX_GAS_LIMIT, contract_b)
-    # Each completed B level keeps the wei its calling A level sent.
     post = {
         contract_a: Account(
-            storage={COUNTER_SLOT: a_count},
-            balance=A_INITIAL_BALANCE - b_count * A_CALL_VALUE,
+            storage={counter_slot: counter_seed + a_rounds},
+            balance=0,
         ),
         contract_b: Account(
-            storage={COUNTER_SLOT: b_count},
-            balance=b_count * A_CALL_VALUE,
+            storage={counter_slot: counter_seed + b_rounds},
+            balance=a_rounds * a_value,
         ),
     }
 
