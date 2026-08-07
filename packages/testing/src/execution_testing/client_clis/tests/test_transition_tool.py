@@ -8,6 +8,11 @@ from typing import Any, Type
 
 import ijson  # type: ignore[import-untyped]
 import pytest
+from ethereum.merkle_patricia_trie import Trie
+from ethereum.state import EMPTY_CODE_HASH, Account, Address, BlockDiff
+from ethereum_spec_tools.evm_tools.t8n.result import build_result
+from ethereum_types.bytes import Bytes20
+from ethereum_types.numeric import U256, Uint
 
 from execution_testing.base_types import StateCommitment
 from execution_testing.client_clis import (
@@ -486,3 +491,57 @@ def test_opcode_count_accumulation() -> None:
     tool.reset_opcode_count()
     assert tool.opcode_count == OpcodeCount({})
     assert tool.opcode_count_per_block == []
+
+
+def test_build_result_reports_uncommittable_state_as_rejected() -> None:
+    """
+    `build_result` catches `InvalidBlock` from `compute_state_root` --
+    state the active commitment cannot encode, such as a balance past
+    the binary tree's sixteen-byte field -- and reports the block as
+    rejected with the pre-state root rather than crashing.
+    """
+    from types import SimpleNamespace
+
+    alloc = Alloc.model_validate(
+        {0xA: {"balance": 1, "nonce": 0, "code": "0x"}}
+    )
+    alloc.migrate_state_commitment(StateCommitment.PBT)
+    pre_state_root = alloc.state_root()
+
+    overflow_diff = BlockDiff(
+        account_changes={
+            Address(Bytes20(b"\x00" * 19 + b"\x0a")): Account(
+                nonce=Uint(0),
+                balance=U256(2) ** U256(128),
+                code_hash=EMPTY_CODE_HASH,
+            )
+        },
+    )
+    t8n_stub = SimpleNamespace(
+        fork=SimpleNamespace(
+            extract_block_diff=lambda _block_state: overflow_diff,
+            logs_bloom=lambda _logs: b"\x00" * 256,
+        ),
+        _block_state=None,
+        alloc=alloc,
+        exception_mapper=None,
+    )
+    block_output = SimpleNamespace(
+        transactions_trie=Trie(secured=False, default=None),
+        receipts_trie=Trie(secured=False, default=None),
+        block_logs=(),
+        receipt_keys=(),
+        block_gas_used=Uint(0),
+    )
+
+    result = build_result(
+        t8n_stub,  # type: ignore[arg-type]
+        block_env=SimpleNamespace(),
+        block_output=block_output,
+        block_exception=None,
+        rejected_transactions=[],
+    )
+
+    assert result.state_root == pre_state_root
+    assert result.block_exception is not None
+    assert "sixteen-byte" in str(result.block_exception)
