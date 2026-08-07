@@ -32,8 +32,18 @@ devnet:
 # with extra fill params on its own runner and is packaged by the
 # combine job as `<tarball>_<variant>.tar.gz`. A failed variant fill
 # never blocks the release; its tarball is simply absent.
+#
+# A variant with a `ref` fills from that branch's tip instead of the
+# tagged commit, so its content tracks the branch, not the tag: the
+# interim shape for project branches whose filling machinery has not
+# been upstreamed yet.
 variants:
   binary:
     from: Amsterdam
     until: Amsterdam
     fill-params: --state-trie pbt
+  zkevm:
+    ref: projects/zkevm
+    from: Amsterdam
+    until: Amsterdam
+    fill-params: -m "blockchain_test or blockchain_test_engine"

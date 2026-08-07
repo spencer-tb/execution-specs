@@ -94,12 +94,16 @@ class TestGenerateBuildMatrix:
             assert result.returncode == 0
             out = parse_matrix_output(result.stdout)
             matrix = json.loads(out["build_matrix"])
-            assert out["variant_labels"] == "binary"
+            assert out["variant_labels"] == "binary zkevm"
             (binary,) = [e for e in matrix if e["variant"] == "binary"]
             assert binary["label"] == "binary"
             assert binary["from_fork"] == "Amsterdam"
             assert binary["until_fork"] == "Amsterdam"
             assert "--state-trie pbt" in binary["extra_params"]
+            assert binary["ref"] == ""
+            (zkevm,) = [e for e in matrix if e["variant"] == "zkevm"]
+            assert zkevm["ref"] == "projects/zkevm"
+            assert "blockchain_test" in zkevm["extra_params"]
             # Non-variant entries carry the uniform empty fields.
             assert all(
                 e["extra_params"] == "" for e in matrix if e["variant"] == ""

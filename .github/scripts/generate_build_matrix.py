@@ -256,6 +256,7 @@ def main() -> None:
     for entry in build:
         entry.setdefault("variant", "")
         entry.setdefault("extra_params", "")
+        entry.setdefault("ref", "")
     variants = config.get("variants") or {}
     variant_labels = ""
     if lookup in ("tests", "devnet") and variants:
@@ -268,6 +269,7 @@ def main() -> None:
                     "until_fork": variant.get("until", variant["from"]),
                     "variant": variant_name,
                     "extra_params": variant["fill-params"],
+                    "ref": variant.get("ref", ""),
                 }
             )
         variant_labels = " ".join(variants)
