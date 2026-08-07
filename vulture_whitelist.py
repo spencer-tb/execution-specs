@@ -11,6 +11,16 @@ from ethereum_spec_tools.evm_tools.t8n.transition_tool import EELST8N
 
 from ethereum.ethash import *
 from ethereum.fork_criteria import Unscheduled
+from ethereum.partitioned_binary_tree import (
+    EMPTY_CODE_HASH,
+    address20_to_address32,
+    chunkify_code,
+    encode_basic_data,
+    get_tree_key_for_basic_data,
+    get_tree_key_for_code_chunk,
+    get_tree_key_for_code_hash,
+    get_tree_key_for_storage_slot,
+)
 from ethereum.trace import EvmTracer
 from ethereum.utils.hexadecimal import hex_to_bytes256
 from ethereum_optimized.state_db import State
@@ -37,6 +47,17 @@ from ethereum_spec_tools.new_fork.codemod.constant import SetConstantCommand
 from ethereum_spec_tools.new_fork.codemod.string_replace import (
     StringReplaceCommand,
 )
+
+# src/ethereum/binary_trie/embedding.py - EIP-8297 public API, exercised
+# via tests
+EMPTY_CODE_HASH
+address20_to_address32
+chunkify_code
+encode_basic_data
+get_tree_key_for_basic_data
+get_tree_key_for_code_chunk
+get_tree_key_for_code_hash
+get_tree_key_for_storage_slot
 
 # src/ethereum/utils/hexadecimal.py
 hex_to_bytes256

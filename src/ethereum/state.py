@@ -115,7 +115,11 @@ class PreState(Protocol):
         """
         Get the bytecode for a given code hash.
 
-        Return ``b""`` for ``EMPTY_CODE_HASH``.
+        Return ``b""`` for ``EMPTY_CODE_HASH``. A code hash with no
+        stored bytecode is a malformed pre-state; providers raise
+        [`UnknownCodeHashError`] rather than a raw lookup error.
+
+        [`UnknownCodeHashError`]: ref:ethereum.exceptions.UnknownCodeHashError
         """
         ...
 
@@ -140,6 +144,13 @@ class PreState(Protocol):
         new bytecode is not yet in the provider's code store when the
         root is computed.
 
+        A commitment whose encoding bounds a field more tightly than
+        the protocol types -- such as the binary tree's sixteen-byte
+        balance field -- raises [`InvalidBlock`] when the diffed state
+        cannot be committed.
+
         Return the new state root.
+
+        [`InvalidBlock`]: ref:ethereum.exceptions.InvalidBlock
         """
         ...
