@@ -142,6 +142,7 @@ class FillCommand(PytestCommand):
         default_ignores = [
             "tests/evm_tools",
             "tests/json_loader",
+            "tests/binary_trie",
             "tests/fixtures",
         ]
 

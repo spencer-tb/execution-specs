@@ -84,6 +84,42 @@ class TestGenerateBuildMatrix:
         # Entries keep the friendly name, not the shared "devnet" key.
         assert all(e["feature"] == "bal-devnet" for e in matrix)
 
+    def test_mainnet_features_gain_variant_entries(self):
+        """Verify tests/devnet matrices append the configured variants."""
+        for args in (
+            ("tests", "v24.0.0"),
+            ("bal-devnet", "v7.0.0", "devnets/bal/7"),
+        ):
+            result = run_script(BUILD_MATRIX_SCRIPT, *args)
+            assert result.returncode == 0
+            out = parse_matrix_output(result.stdout)
+            matrix = json.loads(out["build_matrix"])
+            assert out["variant_labels"] == "binary"
+            (binary,) = [e for e in matrix if e["variant"] == "binary"]
+            assert binary["label"] == "binary"
+            assert binary["from_fork"] == "Amsterdam"
+            assert binary["until_fork"] == "Amsterdam"
+            assert "--state-trie pbt" in binary["extra_params"]
+            # Non-variant entries carry the uniform empty fields.
+            assert all(
+                e["extra_params"] == "" for e in matrix if e["variant"] == ""
+            )
+
+    def test_feature_only_features_gain_no_variants(self):
+        """Verify non-mainnet features are variant-free."""
+        result = run_script(BUILD_MATRIX_SCRIPT, "benchmark", "v24.0.0")
+        assert result.returncode == 0
+        out = parse_matrix_output(result.stdout)
+        matrix = json.loads(out["build_matrix"])
+        assert out["variant_labels"] == ""
+        assert all(e["variant"] == "" for e in matrix)
+
+    def test_variants_is_not_a_releasable_feature(self):
+        """Verify the reserved `variants` key is rejected."""
+        result = run_script(BUILD_MATRIX_SCRIPT, "variants", "v1.0.0")
+        assert result.returncode == 1
+        assert "reserved" in result.stderr
+
     def test_unknown_feature_fails(self):
         """Verify error exit for unknown feature name."""
         result = run_script(BUILD_MATRIX_SCRIPT, "nonexistent", "v1.0.0")
@@ -101,10 +137,11 @@ class TestGenerateBuildMatrix:
         result = run_script(BUILD_MATRIX_SCRIPT, "tests", "v24.0.0")
         assert result.returncode == 0
         lines = result.stdout.strip().splitlines()
-        assert len(lines) == 3
+        assert len(lines) == 4
         assert lines[0].startswith("build_matrix=")
         assert lines[1].startswith("feature_name=")
         assert lines[2].startswith("combine_labels=")
+        assert lines[3].startswith("variant_labels=")
 
 
 class TestValidateInputs:

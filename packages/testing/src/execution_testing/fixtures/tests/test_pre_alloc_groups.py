@@ -2,20 +2,22 @@
 
 import json
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Iterator
 
 import pytest
 
-from execution_testing.base_types import Account, Address
+from execution_testing.base_types import Account, Address, StateCommitment
 from execution_testing.fixtures.pre_alloc_groups import (
     TEST_GROUP_INDEX_FILE,
     GroupIndexEntry,
+    PreAllocGroup,
     PreAllocGroupBuilder,
     pack_pre_alloc_groups,
     packed_group_hash_for_test,
     read_test_group_index,
 )
-from execution_testing.forks import Fork, Osaka, Prague
+from execution_testing.forks import Amsterdam, Fork, Osaka, Prague
+from execution_testing.forks.base_fork import BaseFork
 from execution_testing.test_types import Alloc, Environment
 
 
@@ -526,3 +528,98 @@ def test_pack_isolates_disagreeing_shared_address(tmp_path: Path) -> None:
         "tests/b.py::test_b",
         "tests/c.py::test_c",
     ]
+
+
+def _commitment_pre(
+    commitment: StateCommitment | None = None,
+) -> Alloc:
+    """
+    Build a small, deterministic pre-allocation for genesis tests.
+
+    A fresh `Alloc` is returned on every call because a state
+    commitment, once migrated onto an instance (whether explicitly via
+    `commitment` or by a builder seeding it from its fork), sticks to
+    it -- so the same instance cannot be reused across assertions that
+    expect different commitment schemes.
+    """
+    alloc = Alloc(
+        {
+            Address(0x1000): Account(balance=1000, nonce=1),
+            Address(0x2000): Account(balance=2, code=b"\x00"),
+        }
+    )
+    if commitment is not None:
+        alloc.migrate_state_commitment(commitment)
+    return alloc
+
+
+@pytest.fixture
+def pbt_session() -> Iterator[None]:
+    """
+    Run the test under the PBT session override, as `--state-trie
+    binary` would, restoring the fork-defined default afterwards.
+    """
+    BaseFork.set_state_commitment_override(StateCommitment.PBT)
+    yield
+    BaseFork.set_state_commitment_override(None)
+
+
+@pytest.mark.usefixtures("pbt_session")
+def test_calculate_genesis_uses_the_session_state_commitment() -> None:
+    """
+    A builder's genesis `state_root` follows the session state
+    commitment (`--state-trie`), not always the plain MPT root of the
+    same allocation.
+
+    Regression test: `calculate_genesis` used to always compute the
+    MPT root regardless of the active commitment; the builder now
+    seeds the pre-alloc's scheme from `fork.state_commitment()` --
+    which honors the session override -- on construction.
+    """
+    builder = PreAllocGroupBuilder(
+        environment=Environment().set_fork_requirements(Amsterdam),
+        fork=Amsterdam,
+        pre=_commitment_pre(),
+    )
+
+    genesis = builder.calculate_genesis()
+
+    assert (
+        genesis.state_root == _commitment_pre(StateCommitment.PBT).state_root()
+    )
+
+
+@pytest.mark.usefixtures("pbt_session")
+def test_group_pre_alloc_state_root_is_commitment_correct_after_reload(
+    tmp_path: Path,
+) -> None:
+    """
+    `GroupPreAlloc.state_root()` returns the commitment-correct root
+    even after a disk round trip, where private attrs -- including the
+    migrated state commitment -- do not survive
+    `model_dump`/`model_validate`.
+
+    `PreAllocGroup.model_post_init` re-seeds the commitment from the
+    group's fork -- honoring the session override -- and caches
+    `_cached_state_root` from `genesis.state_root` on every
+    construction (including the one `from_file` performs after its
+    dump/validate round trip), so this pins that a reloaded group's
+    pre-allocation stays commitment-correct.
+    """
+    builder = PreAllocGroupBuilder(
+        test_ids=["tests/a.py::test_a"],
+        environment=Environment().set_fork_requirements(Amsterdam),
+        fork=Amsterdam,
+        pre=_commitment_pre(),
+    )
+    group_file = tmp_path / "0x01.json"
+    group_file.write_text(
+        builder.model_dump_json(by_alias=True, exclude_none=True, indent=2)
+    )
+
+    group = PreAllocGroup.from_file(group_file)
+
+    assert (
+        group.pre.state_root()
+        == _commitment_pre(StateCommitment.PBT).state_root()
+    )

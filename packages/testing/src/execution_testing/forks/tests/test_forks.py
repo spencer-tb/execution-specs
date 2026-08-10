@@ -5,9 +5,10 @@ from typing import Dict
 import pytest
 from pydantic import BaseModel
 
-from execution_testing.base_types import BlobSchedule
+from execution_testing.base_types import BlobSchedule, StateCommitment
 from execution_testing.vm import Opcodes
 
+from ..base_fork import BaseFork
 from ..forks.eips.paris.eip_3675 import EIP3675
 from ..forks.forks import (
     BPO1,
@@ -827,4 +828,37 @@ def test_oog_budget_lift() -> None:
             deploy_code_size=64,
         )
         == 3 * sstore + 2 * create + code_64
+    )
+
+
+def test_state_commitment_defaults() -> None:
+    """
+    Every fork defaults to the MPT commitment: the scheme is a session
+    property (`--state-trie`), not a fork property. The alloc seeding
+    sites rely on this default to pick the right state module.
+    """
+    assert all(
+        fork.state_commitment() is StateCommitment.MPT for fork in get_forks()
+    )
+
+
+def test_state_commitment_override() -> None:
+    """
+    `--state-trie` forces the scheme on every fork -- transition forks
+    included -- and `None` restores the fork-defined default.
+    """
+    BaseFork.set_state_commitment_override(StateCommitment.PBT)
+    try:
+        assert all(
+            fork.state_commitment() is StateCommitment.PBT
+            for fork in get_forks()
+        )
+        assert (
+            BerlinToLondonAt5.transitions_from().state_commitment()
+            is StateCommitment.PBT
+        )
+    finally:
+        BaseFork.set_state_commitment_override(None)
+    assert all(
+        fork.state_commitment() is StateCommitment.MPT for fork in get_forks()
     )

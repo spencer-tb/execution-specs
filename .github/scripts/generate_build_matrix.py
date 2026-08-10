@@ -107,6 +107,11 @@ def validate_inputs(feature: str, version: str, branch: str, evm: str) -> None:
     if feature in ("devnet", "-devnet"):
         fail("devnet releases require a <feat>- prefix, e.g. bal-devnet")
 
+    # `variants` configures the extra tarballs of mainnet-type
+    # releases; it is not a releasable feature itself.
+    if feature == "variants":
+        fail("'variants' is a reserved config key, not a feature")
+
     # `<feat>-devnet-<n>`: the devnet index belongs in the version (X of
     # vX.Y.Z), not in the feature name.
     if "-devnet-" in feature:
@@ -244,9 +249,33 @@ def main() -> None:
 
     build, labels = build_matrix(config[lookup], name, fork_ranges)
 
+    # Mainnet-type releases (`tests` and `<feat>-devnet`) also fill
+    # each configured variant on its own runner. Variant entries ride
+    # the same matrix; the combine job packages each one into its own
+    # `<tarball>_<variant>.tar.gz` beside the main fixtures asset.
+    for entry in build:
+        entry.setdefault("variant", "")
+        entry.setdefault("extra_params", "")
+    variants = config.get("variants") or {}
+    variant_labels = ""
+    if lookup in ("tests", "devnet") and variants:
+        for variant_name, variant in variants.items():
+            build.append(
+                {
+                    "feature": name,
+                    "label": variant_name,
+                    "from_fork": variant["from"],
+                    "until_fork": variant.get("until", variant["from"]),
+                    "variant": variant_name,
+                    "extra_params": variant["fill-params"],
+                }
+            )
+        variant_labels = " ".join(variants)
+
     print(f"build_matrix={json.dumps(build)}")
     print(f"feature_name={name}")
     print(f"combine_labels={labels}")
+    print(f"variant_labels={variant_labels}")
 
 
 if __name__ == "__main__":

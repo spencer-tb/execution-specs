@@ -26,3 +26,14 @@ benchmark_fast:
 devnet:
   evm-type: eels
   fill-params: --until=Amsterdam --generate-all-formats
+
+# Variant tarballs attached beside the main fixtures asset of `tests`
+# and `<feat>-devnet` releases. Each variant fills its own fork range
+# with extra fill params on its own runner and is packaged by the
+# combine job as `<tarball>_<variant>.tar.gz`. A failed variant fill
+# never blocks the release; its tarball is simply absent.
+variants:
+  binary:
+    from: Amsterdam
+    until: Amsterdam
+    fill-params: --state-trie pbt
