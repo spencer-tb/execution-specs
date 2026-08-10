@@ -60,16 +60,6 @@ logger = get_logger(__name__)
 _JSONRPC_METHOD_NOT_FOUND = -32601
 
 
-def skip_unsuitable_stateless_fixture(
-    fixture: Union[BlockchainEngineFixture, BlockchainEngineXFixture],
-) -> None:
-    """Skip fixtures the stateless engine mode cannot consume."""
-    if any(p.execution_witness_mutated for p in fixture.payloads):
-        pytest.skip("fixture contains a deliberately mutated executionWitness")
-    if not any(p.execution_witness is not None for p in fixture.payloads):
-        pytest.skip("fixture has no executionWitness on any payload")
-
-
 def _witness_endpoint_label(
     payload: FixtureEngineNewPayload,
     *,
@@ -234,7 +224,6 @@ def test_blockchain_via_engine(
     of the same block before failing the test.
     """
     if stateless:
-        skip_unsuitable_stateless_fixture(fixture)
         transport_label = "REST+SSZ" if use_ssz_transport else "JSON-RPC+RLP"
         logger.info(f"Using {transport_label} witness transport")
 

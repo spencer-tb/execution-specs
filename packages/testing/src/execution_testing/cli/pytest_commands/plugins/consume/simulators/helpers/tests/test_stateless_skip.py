@@ -5,7 +5,7 @@ from typing import Any, cast
 
 import pytest
 
-from execution_testing.cli.pytest_commands.plugins.consume.simulators.simulator_logic.test_via_engine import (  # noqa: E501
+from execution_testing.cli.pytest_commands.plugins.consume.simulators.engine_api import (  # noqa: E501
     skip_unsuitable_stateless_fixture,
 )
 
