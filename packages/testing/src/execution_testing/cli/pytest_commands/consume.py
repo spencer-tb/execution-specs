@@ -51,13 +51,6 @@ def get_command_logic_test_paths(command_name: str) -> List[Path]:
             / "simulator_logic"
             / f"test_via_{test_command}.py"
         ]
-    elif command_name == "engine_witness":
-        command_logic_test_paths = [
-            base_path
-            / "simulators"
-            / "simulator_logic"
-            / "test_via_engine_witness.py"
-        ]
     elif command_name == "sync":
         command_logic_test_paths = [
             base_path / "simulators" / "simulator_logic" / "test_via_sync.py"
@@ -125,18 +118,6 @@ def rlp() -> None:
 @consume_command(is_hive=True)
 def engine() -> None:
     """Client consumes via the Engine API."""
-    pass
-
-
-@consume_command(is_hive=True)
-def engine_witness() -> None:
-    """
-    Verify client-emitted execution witnesses against the fixture.
-
-    Default transport: JSON-RPC engine_newPayloadWithWitnessVX with RLP
-    witness.
-    Pass --ssz to use the REST POST /new-payload-with-witness endpoint.
-    """
     pass
 
 

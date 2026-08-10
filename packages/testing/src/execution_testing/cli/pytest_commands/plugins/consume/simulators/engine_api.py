@@ -6,7 +6,34 @@ import pytest
 from hive.client import Client
 
 from execution_testing.exceptions import ExceptionMapper
-from execution_testing.rpc import EngineRPC
+from execution_testing.rpc import EngineRPC, EngineSszRPC
+
+
+@pytest.fixture(scope="session")
+def stateless(request: pytest.FixtureRequest) -> bool:
+    """Return True when `--stateless` was passed on the CLI."""
+    return bool(request.config.getoption("--stateless", False))
+
+
+@pytest.fixture(scope="session")
+def use_ssz_transport(request: pytest.FixtureRequest) -> bool:
+    """Return True when `--ssz` was passed on the CLI."""
+    return bool(request.config.getoption("--ssz", False))
+
+
+@pytest.fixture(scope="function")
+def engine_ssz_rpc(
+    client: Client, client_exception_mapper: ExceptionMapper | None
+) -> EngineSszRPC:
+    """Provide the REST client used by the `--ssz` witness transport."""
+    if client_exception_mapper:
+        return EngineSszRPC(
+            f"http://{client.ip}:8551",
+            response_validation_context={
+                "exception_mapper": client_exception_mapper,
+            },
+        )
+    return EngineSszRPC(f"http://{client.ip}:8551")
 
 
 @pytest.fixture(scope="function")

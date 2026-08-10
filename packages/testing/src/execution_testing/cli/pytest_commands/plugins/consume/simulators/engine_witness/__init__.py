@@ -1,1 +1,0 @@
-"""Engine witness simulator package."""

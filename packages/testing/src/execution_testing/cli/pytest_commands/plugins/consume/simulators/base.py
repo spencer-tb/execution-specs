@@ -60,9 +60,10 @@ def check_live_port(test_suite_name: str) -> Literal[8545, 8551]:
         return 8545
     elif test_suite_name in {
         "eels/consume-engine",
+        "eels/consume-engine-stateless",
         "eels/consume-enginex",
+        "eels/consume-enginex-stateless",
         "eels/consume-sync",
-        "eels/consume-engine-witness",
         "eels/build-block",
     }:
         return 8551
