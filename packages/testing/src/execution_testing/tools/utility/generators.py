@@ -49,6 +49,9 @@ class SystemContractTestType(StrEnum):
             SystemContractTestType.GAS_LIMIT,
             SystemContractTestType.OUT_OF_GAS_ERROR,
         ):
+            # These variants install oversized gas-burning mock system
+            # contracts that exceed the stateless input's SSZ code-size
+            # bound, so their blocks cannot carry a guest witness.
             marks.append(pytest.mark.skip_stateless_validation)
 
         return pytest.param(self, id=self.value, marks=marks)
