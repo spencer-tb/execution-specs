@@ -303,27 +303,19 @@ def finalize_stateless_artifacts(
     )
 
     has_witness_modifier = artifacts.execution_witness_mutated
-    if has_witness_modifier and options.expected_validation_success is None:
-        raise AssertionError(
-            "Mutated execution witness tests must set "
-            "expected_stateless_validation_success explicitly"
-        )
-    if (
-        options.has_public_keys_modifier
-        and options.expected_validation_success is None
+    for modifier_active, modifier_name in (
+        (has_witness_modifier, "execution witness"),
+        (options.has_public_keys_modifier, "stateless input public-key"),
+        (
+            options.has_stateless_input_bytes_modifier,
+            "stateless input byte",
+        ),
     ):
-        raise AssertionError(
-            "Mutated stateless input public-key tests must set "
-            "expected_stateless_validation_success explicitly"
-        )
-    if (
-        options.has_stateless_input_bytes_modifier
-        and options.expected_validation_success is None
-    ):
-        raise AssertionError(
-            "Mutated stateless input byte tests must set "
-            "expected_stateless_validation_success explicitly"
-        )
+        if modifier_active and options.expected_validation_success is None:
+            raise AssertionError(
+                f"Mutated {modifier_name} tests must set "
+                "expected_stateless_validation_success explicitly"
+            )
 
     public_keys: Tuple[Bytes, ...] | None = None
     should_verify_stateless_input_public_keys = (
