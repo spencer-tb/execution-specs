@@ -110,10 +110,7 @@ from execution_testing.test_types.execution_witness.modifiers import (
 
 from .base import BaseTest, FillResult, OpMode, verify_result
 from .blockchain_stateless import (
-    apply_execution_witness_expectations,
-    finalize_stateless_artifacts,
-    require_stateless_artifacts_or_trusted_fill,
-    stateless_artifacts_from_t8n,
+    build_stateless_artifacts,
     stateless_options_for_block,
 )
 from .debugging import print_traces
@@ -1127,48 +1124,20 @@ class BlockchainTest(BaseTest):
                 # header hash
                 header.block_access_list_hash = Hash(bal.rlp.keccak256())
 
-        t8n_witness = transition_tool_output.result.execution_witness
-        stateless_artifacts = apply_execution_witness_expectations(
+        stateless_artifacts = build_stateless_artifacts(
+            options=stateless_options,
             block=block,
             fork=fork,
             previous_alloc=previous_alloc,
-            block_number=int(env.number),
-            timestamp=int(env.timestamp),
-            parent_hash=header.parent_hash,
-            execution_witness=t8n_witness,
-        )
-        require_stateless_artifacts_or_trusted_fill(
-            options=stateless_options,
+            previous_env=previous_env,
+            env=env,
+            header=header,
+            txs=txs,
             result=transition_tool_output.result,
-            execution_witness=t8n_witness,
+            requests_list=requests_list,
             block_access_list=bal,
             t8n=t8n,
             operation_mode=self.operation_mode,
-            block_exception=block.exception,
-        )
-        stateless_artifacts = stateless_artifacts_from_t8n(
-            options=stateless_options,
-            artifacts=stateless_artifacts,
-            fork=fork,
-            block_number=int(env.number),
-            timestamp=int(env.timestamp),
-            header=header,
-            previous_env=previous_env,
-            txs=txs,
-            result=transition_tool_output.result,
-            withdrawals=env.withdrawals,
-            requests_list=requests_list,
-            execution_witness=t8n_witness,
-            block_access_list=bal,
-            chain_id=self.chain_id,
-        )
-        stateless_artifacts = finalize_stateless_artifacts(
-            options=stateless_options,
-            artifacts=stateless_artifacts,
-            block=block,
-            fork=fork,
-            block_number=int(env.number),
-            timestamp=int(env.timestamp),
             chain_id=self.chain_id,
         )
 

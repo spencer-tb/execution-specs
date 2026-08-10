@@ -528,6 +528,79 @@ def finalize_stateless_artifacts(
     )
 
 
+def build_stateless_artifacts(
+    *,
+    options: StatelessBlockOptions,
+    block: StatelessBlockProtocol,
+    fork: Fork,
+    previous_alloc: Alloc | LazyAlloc,
+    previous_env: Environment,
+    env: Environment,
+    header: FixtureHeader,
+    txs: List[Transaction],
+    result: Result,
+    requests_list: List[Bytes] | None,
+    block_access_list: BlockAccessList | None,
+    t8n: FillerBackend,
+    operation_mode: OpMode | None,
+    chain_id: int,
+) -> StatelessValidationArtifacts:
+    """
+    Run the post-t8n stateless pipeline for one block.
+
+    Apply witness expectations, gate the trust path for fills whose
+    transition tool emits no stateless bytes, collect or rebuild the
+    serialized artifacts, and verify them -- rerunning the guest for
+    mutation tests.
+    """
+    block_number = int(env.number)
+    timestamp = int(env.timestamp)
+    execution_witness = result.execution_witness
+    artifacts = apply_execution_witness_expectations(
+        block=block,
+        fork=fork,
+        previous_alloc=previous_alloc,
+        block_number=block_number,
+        timestamp=timestamp,
+        parent_hash=header.parent_hash,
+        execution_witness=execution_witness,
+    )
+    require_stateless_artifacts_or_trusted_fill(
+        options=options,
+        result=result,
+        execution_witness=execution_witness,
+        block_access_list=block_access_list,
+        t8n=t8n,
+        operation_mode=operation_mode,
+        block_exception=block.exception,
+    )
+    artifacts = stateless_artifacts_from_t8n(
+        options=options,
+        artifacts=artifacts,
+        fork=fork,
+        block_number=block_number,
+        timestamp=timestamp,
+        header=header,
+        previous_env=previous_env,
+        txs=txs,
+        result=result,
+        withdrawals=env.withdrawals,
+        requests_list=requests_list,
+        execution_witness=execution_witness,
+        block_access_list=block_access_list,
+        chain_id=chain_id,
+    )
+    return finalize_stateless_artifacts(
+        options=options,
+        artifacts=artifacts,
+        block=block,
+        fork=fork,
+        block_number=block_number,
+        timestamp=timestamp,
+        chain_id=chain_id,
+    )
+
+
 def execution_witness_implicit_codes_for_block(
     *,
     fork: Fork,
