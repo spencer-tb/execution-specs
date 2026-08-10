@@ -5,8 +5,9 @@ Fork-agnostic orchestration of stateless validation during filling:
 option derivation, witness expectation application, and the artifact
 pipeline between block-generation phases. Operations only the spec can
 perform -- running the guest, rebuilding its input, decoding or
-verifying its payloads -- dispatch through the filler backend's
-stateless operations, which resolve the active fork on the spec side.
+verifying its payloads -- dispatch through the optional
+`StatelessBackend` capability of the filler backend, which resolves
+the active fork on the spec side.
 """
 
 from dataclasses import dataclass, replace
@@ -21,6 +22,9 @@ from execution_testing.client_clis import (
     FillerBackend,
     LazyAlloc,
     Result,
+)
+from execution_testing.client_clis.stateless_operations import (
+    require_stateless_backend,
 )
 from execution_testing.fixtures.blockchain import FixtureHeader
 from execution_testing.forks import Fork
@@ -305,11 +309,12 @@ def finalize_stateless_artifacts(
 
     public_keys: Tuple[Bytes, ...] | None = None
     if stateless_input_bytes is not None:
+        stateless_backend = require_stateless_backend(t8n)
         # The block could be invalid because of invalid txs, thus
         # the public keys might not be properly constructed given they
         # can't be decoded and thus provided in the execution witness.
         if block.exception is None:
-            t8n.stateless_verify_input_public_keys(
+            stateless_backend.stateless_verify_input_public_keys(
                 fork=fork,
                 block_number=block_number,
                 timestamp=timestamp,
@@ -317,7 +322,7 @@ def finalize_stateless_artifacts(
                 chain_id=chain_id,
             )
         if options.has_public_keys_modifier:
-            public_keys = t8n.stateless_input_public_keys(
+            public_keys = stateless_backend.stateless_input_public_keys(
                 fork=fork,
                 block_number=block_number,
                 timestamp=timestamp,
@@ -339,11 +344,14 @@ def finalize_stateless_artifacts(
             raise StatelessValidationError(
                 "Stateless guest verification requires stateless output bytes"
             )
-        final_successful_validation = t8n.stateless_validation_result(
-            fork=fork,
-            block_number=block_number,
-            timestamp=timestamp,
-            output_bytes=stateless_output_bytes,
+        stateless_backend = require_stateless_backend(t8n)
+        final_successful_validation = (
+            stateless_backend.stateless_validation_result(
+                fork=fork,
+                block_number=block_number,
+                timestamp=timestamp,
+                output_bytes=stateless_output_bytes,
+            )
         )
 
     has_structured_stateless_overrides = (
@@ -366,7 +374,8 @@ def finalize_stateless_artifacts(
                     "Stateless guest rerun requires public keys"
                 )
             modified_public_keys = options.public_keys_modifier(public_keys)
-        stateless_input_bytes = t8n.stateless_rebuild_input(
+        stateless_backend = require_stateless_backend(t8n)
+        stateless_input_bytes = stateless_backend.stateless_rebuild_input(
             fork=fork,
             block_number=block_number,
             timestamp=timestamp,
@@ -401,11 +410,12 @@ def finalize_stateless_artifacts(
             raise StatelessValidationError(
                 "Stateless guest rerun requires stateless input bytes"
             )
+        stateless_backend = require_stateless_backend(t8n)
         (
             stateless_input_bytes,
             stateless_output_bytes,
             final_successful_validation,
-        ) = t8n.stateless_run_guest(
+        ) = stateless_backend.stateless_run_guest(
             fork=fork,
             block_number=block_number,
             timestamp=timestamp,
@@ -427,7 +437,8 @@ def finalize_stateless_artifacts(
             raise StatelessValidationError(
                 "Stateless output verification requires stateless input bytes"
             )
-        t8n.stateless_verify_output(
+        stateless_backend = require_stateless_backend(t8n)
+        stateless_backend.stateless_verify_output(
             fork=fork,
             block_number=block_number,
             timestamp=timestamp,

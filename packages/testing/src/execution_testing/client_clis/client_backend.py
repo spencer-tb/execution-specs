@@ -53,7 +53,6 @@ from .cli_types import (
     TransitionToolOutput,
     validate_opcode,
 )
-from .stateless_operations import StatelessOperations
 from .transition_tool import TransitionTool
 
 logger = get_logger(__name__)
@@ -152,7 +151,7 @@ class ClientBackendExceptionMapper(ExceptionMapper):
     reliable: ClassVar[bool] = False
 
 
-class ClientBackend(StatelessOperations):
+class ClientBackend:
     """
     ``FillerBackend`` driven by ``testing_buildBlockV1``.
 

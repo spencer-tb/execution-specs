@@ -1,40 +1,34 @@
 """
-Stateless guest operations exposed by filler backends.
+Optional stateless guest operations for filler backends.
 
 The blockchain-test stateless pipeline needs a handful of operations
 that only the spec can perform: run the stateless guest, rebuild its
-serialized input, and decode or verify its payloads. `StatelessOperations`
-declares them for every filler backend, with defaults that reject the
-call. Keeping these behind the backend interface keeps fork resolution
-and payload knowledge on the spec side, so the pipeline itself stays
-fork-agnostic. Backends override them when their transition tool gains
-guest support.
+serialized input, and decode or verify its payloads. `StatelessBackend`
+declares them as an optional capability protocol -- backends gain guest
+support by implementing the methods, without any change to backends
+that lack it. The pipeline resolves the capability with
+`require_stateless_backend` at the point of use, so fork resolution and
+payload knowledge stay on the spec side of the interface.
 """
 
-from typing import NoReturn, Tuple
+from typing import Protocol, Tuple, runtime_checkable
 
 from execution_testing.base_types import Bytes
 from execution_testing.forks import Fork
 from execution_testing.test_types import ExecutionWitness
+from execution_testing.test_types.execution_witness import (
+    StatelessValidationError,
+)
 
 
-class StatelessOperations:
+@runtime_checkable
+class StatelessBackend(Protocol):
     """
-    Stateless guest operations with unsupported-by-default behavior.
+    Optional filler-backend capability for stateless guest operations.
 
     Every operation takes the fork with the block number and timestamp
-    that select the active fork, plus serialized guest payloads. A
-    backend that cannot perform an operation raises `NotImplementedError`
-    through these defaults; the stateless pipeline only reaches them for
-    fills that produced guest payloads in the first place.
+    that select the active fork, plus serialized guest payloads.
     """
-
-    def _stateless_unsupported(self, operation: str) -> NoReturn:
-        """Reject a stateless guest operation this backend cannot do."""
-        raise NotImplementedError(
-            f"{type(self).__name__} does not support stateless guest "
-            f"{operation}"
-        )
 
     def stateless_validation_result(
         self,
@@ -45,8 +39,7 @@ class StatelessOperations:
         output_bytes: Bytes,
     ) -> bool:
         """Decode serialized guest output and return its validation flag."""
-        del fork, block_number, timestamp, output_bytes
-        self._stateless_unsupported("output decoding")
+        ...
 
     def stateless_input_public_keys(
         self,
@@ -57,8 +50,7 @@ class StatelessOperations:
         input_bytes: Bytes,
     ) -> Tuple[Bytes, ...]:
         """Extract the transaction public keys from serialized input."""
-        del fork, block_number, timestamp, input_bytes
-        self._stateless_unsupported("input decoding")
+        ...
 
     def stateless_verify_input_public_keys(
         self,
@@ -70,8 +62,7 @@ class StatelessOperations:
         chain_id: int,
     ) -> None:
         """Verify input public keys against transaction recovery."""
-        del fork, block_number, timestamp, input_bytes, chain_id
-        self._stateless_unsupported("input verification")
+        ...
 
     def stateless_rebuild_input(
         self,
@@ -84,9 +75,7 @@ class StatelessOperations:
         public_keys: Tuple[Bytes, ...] | None = None,
     ) -> Bytes:
         """Re-serialize guest input with overridden witness or keys."""
-        del fork, block_number, timestamp, input_bytes
-        del execution_witness, public_keys
-        self._stateless_unsupported("input rebuilding")
+        ...
 
     def stateless_run_guest(
         self,
@@ -102,8 +91,7 @@ class StatelessOperations:
         Return the input bytes, the serialized guest output, and the
         guest's validation flag.
         """
-        del fork, block_number, timestamp, input_bytes
-        self._stateless_unsupported("execution")
+        ...
 
     def stateless_verify_output(
         self,
@@ -117,6 +105,13 @@ class StatelessOperations:
         input_bytes_modified: bool,
     ) -> None:
         """Verify serialized guest output invariants against its input."""
-        del fork, block_number, timestamp, chain_id
-        del input_bytes, output_bytes, input_bytes_modified
-        self._stateless_unsupported("output verification")
+        ...
+
+
+def require_stateless_backend(backend: object) -> StatelessBackend:
+    """Return the backend as a `StatelessBackend`, or reject the fill."""
+    if isinstance(backend, StatelessBackend):
+        return backend
+    raise StatelessValidationError(
+        f"{type(backend).__name__} does not support stateless guest operations"
+    )
