@@ -79,10 +79,9 @@ def consume_command(
         command_name = func.__name__
         command_help = func.__doc__
         command_logic_test_paths = get_command_logic_test_paths(command_name)
-        cli_name = command_name.replace("_", "-")
 
         @consume.command(
-            name=cli_name,
+            name=command_name,
             help=command_help,
             context_settings={"ignore_unknown_options": True},
         )
