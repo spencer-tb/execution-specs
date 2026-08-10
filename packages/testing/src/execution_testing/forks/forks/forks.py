@@ -1516,6 +1516,21 @@ class Cancun(
 
     pass
 
+    @classmethod
+    def execution_witness_implicit_code_addresses(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> List[Address]:
+        """Add the beacon roots contract, read by its pre-block system call."""
+        return [
+            *super().execution_witness_implicit_code_addresses(
+                block_number=block_number, timestamp=timestamp
+            ),
+            Address(
+                0x000F3DF6D732807EF1319FB7B8BB8522D0BEAC02,
+                label="BEACON_ROOTS_ADDRESS",
+            ),
+        ]
+
 
 class Prague(
     eips.EIP7691,
@@ -1532,6 +1547,29 @@ class Prague(
     """Prague fork."""
 
     pass
+
+    @classmethod
+    def execution_witness_implicit_code_addresses(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> List[Address]:
+        """Add the Prague system contracts read by block-level system calls."""
+        return [
+            *super().execution_witness_implicit_code_addresses(
+                block_number=block_number, timestamp=timestamp
+            ),
+            Address(
+                0x00000961EF480EB55E80D19AD83579A64C007002,
+                label="WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS",
+            ),
+            Address(
+                0x0000BBDDC7CE488642FB579F8B00F3A590007251,
+                label="CONSOLIDATION_REQUEST_PREDEPLOY_ADDRESS",
+            ),
+            Address(
+                0x0000F90827F1C53A10CB7A02335B175320002935,
+                label="HISTORY_STORAGE_ADDRESS",
+            ),
+        ]
 
 
 class Osaka(
@@ -1636,12 +1674,25 @@ class Amsterdam(
     #  live on mainnet.
 
     @classmethod
+    def engine_payload_attribute_target_gas_limit(cls) -> bool:
+        """
+        Starting from Amsterdam, payload attributes now include the target gas
+        limit.
+        """
+        return True
+
+    @classmethod
     def execution_witness_implicit_code_addresses(
         cls, *, block_number: int = 0, timestamp: int = 0
     ) -> List[Address]:
-        """Include tracked block-level system code."""
-        del block_number, timestamp
+        """
+        Add the builder deposit and exit contracts read by their
+        system calls.
+        """
         return [
+            *super().execution_witness_implicit_code_addresses(
+                block_number=block_number, timestamp=timestamp
+            ),
             Address(
                 0x0000BFF46984E3725691FA540A8C7589300D8282,
                 label="BUILDER_DEPOSIT_CONTRACT_ADDRESS",
@@ -1650,28 +1701,4 @@ class Amsterdam(
                 0x000064D678505AD48F8CCB093BC65613800E8282,
                 label="BUILDER_EXIT_CONTRACT_ADDRESS",
             ),
-            Address(
-                0x000F3DF6D732807EF1319FB7B8BB8522D0BEAC02,
-                label="BEACON_ROOTS_ADDRESS",
-            ),
-            Address(
-                0x00000961EF480EB55E80D19AD83579A64C007002,
-                label="WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS",
-            ),
-            Address(
-                0x0000BBDDC7CE488642FB579F8B00F3A590007251,
-                label="CONSOLIDATION_REQUEST_PREDEPLOY_ADDRESS",
-            ),
-            Address(
-                0x0000F90827F1C53A10CB7A02335B175320002935,
-                label="HISTORY_STORAGE_ADDRESS",
-            ),
         ]
-
-    @classmethod
-    def engine_payload_attribute_target_gas_limit(cls) -> bool:
-        """
-        Starting from Amsterdam, payload attributes now include the target gas
-        limit.
-        """
-        return True
