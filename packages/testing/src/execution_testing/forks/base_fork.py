@@ -1054,8 +1054,24 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
         """
         Return addresses whose pre-state bytecodes are implicitly expected in
         execution witnesses for block execution at this fork.
+
+        Block-level execution reads the code of every system contract it
+        calls, so this is `system_contracts` minus the exempt ones.
         """
         del block_number, timestamp
+        exempt = set(cls.execution_witness_exempt_system_contracts())
+        return [
+            address
+            for address in cls.system_contracts()
+            if address not in exempt
+        ]
+
+    @classmethod
+    def execution_witness_exempt_system_contracts(cls) -> List[Address]:
+        """
+        Return system contracts whose code block-level execution never
+        reads, and which therefore appear in no block's witness.
+        """
         return []
 
     @classmethod
