@@ -2,9 +2,7 @@
 
 
 class ExecutionWitnessValidationError(Exception):
-    """Custom exception for execution witness validation errors."""
-
-    pass
+    """Raised when execution witness content fails an expectation."""
 
 
 class StatelessValidationError(Exception):
@@ -12,5 +10,3 @@ class StatelessValidationError(Exception):
     Raised when stateless validation cannot proceed: a required
     artifact is missing, or the active fork has no stateless support.
     """
-
-    pass
