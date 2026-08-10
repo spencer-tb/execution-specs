@@ -585,15 +585,9 @@ class BuiltBlock(CamelModel):
             block_access_list=self.block_access_list
             if self.block_access_list
             else None,
-            execution_witness=self.execution_witness
-            if self.execution_witness
-            else None,
-            stateless_input_bytes=self.stateless_input_bytes
-            if self.stateless_input_bytes is not None
-            else None,
-            stateless_output_bytes=self.stateless_output_bytes
-            if self.stateless_output_bytes is not None
-            else None,
+            execution_witness=self.execution_witness,
+            stateless_input_bytes=self.stateless_input_bytes,
+            stateless_output_bytes=self.stateless_output_bytes,
             fork=self.fork,
         ).with_rlp(txs=self.txs)
 
