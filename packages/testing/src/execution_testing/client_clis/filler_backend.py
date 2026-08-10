@@ -18,9 +18,12 @@ fill's perspective.
 callers continue to work unchanged.
 """
 
-from typing import List, Protocol, runtime_checkable
+from typing import List, Protocol, Tuple, runtime_checkable
 
+from execution_testing.base_types import Bytes
 from execution_testing.exceptions import ExceptionMapper
+from execution_testing.forks import Fork
+from execution_testing.test_types import ExecutionWitness
 
 from .cli_types import Traces
 from .transition_tool import TransitionTool, TransitionToolOutput
@@ -55,4 +58,76 @@ class FillerBackend(Protocol):
 
     def get_traces(self) -> List[Traces] | None:
         """Return per-transaction traces if available, ``None`` otherwise."""
+        ...
+
+    def stateless_validation_result(
+        self,
+        *,
+        fork: Fork,
+        block_number: int,
+        timestamp: int,
+        output_bytes: Bytes,
+    ) -> bool:
+        """Decode serialized guest output and return its validation flag."""
+        ...
+
+    def stateless_input_public_keys(
+        self,
+        *,
+        fork: Fork,
+        block_number: int,
+        timestamp: int,
+        input_bytes: Bytes,
+    ) -> Tuple[Bytes, ...]:
+        """Extract the transaction public keys from serialized input."""
+        ...
+
+    def stateless_verify_input_public_keys(
+        self,
+        *,
+        fork: Fork,
+        block_number: int,
+        timestamp: int,
+        input_bytes: Bytes,
+        chain_id: int,
+    ) -> None:
+        """Verify input public keys against transaction recovery."""
+        ...
+
+    def stateless_rebuild_input(
+        self,
+        *,
+        fork: Fork,
+        block_number: int,
+        timestamp: int,
+        input_bytes: Bytes,
+        execution_witness: ExecutionWitness | None = None,
+        public_keys: Tuple[Bytes, ...] | None = None,
+    ) -> Bytes:
+        """Re-serialize guest input with overridden witness or keys."""
+        ...
+
+    def stateless_run_guest(
+        self,
+        *,
+        fork: Fork,
+        block_number: int,
+        timestamp: int,
+        input_bytes: Bytes,
+    ) -> Tuple[Bytes, Bytes, bool]:
+        """Run the stateless guest on serialized input."""
+        ...
+
+    def stateless_verify_output(
+        self,
+        *,
+        fork: Fork,
+        block_number: int,
+        timestamp: int,
+        chain_id: int,
+        input_bytes: Bytes,
+        output_bytes: Bytes,
+        input_bytes_modified: bool,
+    ) -> None:
+        """Verify serialized guest output invariants against its input."""
         ...

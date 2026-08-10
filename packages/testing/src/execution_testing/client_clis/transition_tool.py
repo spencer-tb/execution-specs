@@ -57,6 +57,7 @@ from .cli_types import (
 )
 from .ethereum_cli import EthereumCLI
 from .file_utils import dump_files_to_directory
+from .stateless_operations import StatelessOperations
 
 model_dump_config: Mapping = {"by_alias": True, "exclude_none": True}
 
@@ -179,7 +180,7 @@ class OutputCache:
         self.key = None
 
 
-class TransitionTool(EthereumCLI):
+class TransitionTool(EthereumCLI, StatelessOperations):
     """
     Transition tool abstract base class which should be inherited by all
     transition tool implementations.
