@@ -15,7 +15,12 @@ from execution_testing.base_types import (
     Bytes,
     Hash,
 )
-from execution_testing.client_clis import LazyAlloc, Result
+from execution_testing.client_clis import (
+    ExecutionSpecsTransitionTool,
+    FillerBackend,
+    LazyAlloc,
+    Result,
+)
 from execution_testing.fixtures.blockchain import FixtureHeader
 from execution_testing.forks import Fork
 from execution_testing.test_types import (
@@ -36,6 +41,7 @@ from execution_testing.test_types.execution_witness.modifiers import (
     PublicKeyModifier,
 )
 
+from .base import OpMode
 from .blockchain_stateless_amsterdam import (
     build_amsterdam_stateless_artifacts_from_t8n,
     decode_amsterdam_stateless_output,
@@ -181,6 +187,51 @@ def stateless_options_for_block(
         stateless_input_bytes_modifier=stateless_input_bytes_modifier,
         expected_validation_success=expected_success,
     )
+
+
+def require_stateless_artifacts_or_trusted_fill(
+    *,
+    options: StatelessBlockOptions,
+    result: Result,
+    execution_witness: ExecutionWitness | None,
+    block_access_list: BlockAccessList | None,
+    t8n: FillerBackend,
+    operation_mode: OpMode | None,
+    block_exception: object | None,
+) -> None:
+    """
+    Require t8n stateless bytes, or a fill trusted to rebuild them.
+
+    The EELS t8n always emits both stateless byte fields beside a
+    witness. External benchmark fills are the temporary trust path:
+    their artifacts are rebuilt from the Python spec (see
+    `build_amsterdam_stateless_artifacts_from_t8n`), which is only
+    sound for valid blocks.
+    """
+    missing_stateless_artifacts = (
+        not options.skip_validation
+        and execution_witness is not None
+        and block_access_list is not None
+        and (
+            result.stateless_input_bytes is None
+            or result.stateless_output_bytes is None
+        )
+    )
+    if not missing_stateless_artifacts:
+        return
+    if isinstance(t8n, ExecutionSpecsTransitionTool):
+        raise StatelessValidationError(
+            "EELS must provide stateless input and output bytes"
+        )
+    if operation_mode != OpMode.BENCHMARKING:
+        raise StatelessValidationError(
+            "Missing stateless artifacts are only supported for external "
+            "benchmark fills"
+        )
+    if block_exception is not None:
+        raise StatelessValidationError(
+            "Missing stateless artifacts require a valid benchmark block"
+        )
 
 
 def apply_execution_witness_expectations(
