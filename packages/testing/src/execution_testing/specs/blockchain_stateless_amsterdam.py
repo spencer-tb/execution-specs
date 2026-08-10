@@ -22,6 +22,9 @@ from execution_testing.test_types import (
     Withdrawal,
 )
 from execution_testing.test_types.block_access_list import BlockAccessList
+from execution_testing.test_types.execution_witness.exceptions import (
+    StatelessValidationError,
+)
 
 
 def rebuild_amsterdam_stateless_input_with_overrides(
@@ -41,7 +44,7 @@ def rebuild_amsterdam_stateless_input_with_overrides(
     """
     active_fork = fork.fork_at(block_number=block_number, timestamp=timestamp)
     if active_fork.name() != "Amsterdam":
-        raise Exception(
+        raise StatelessValidationError(
             "Execution witness input rebuild is only supported for Amsterdam"
         )
 
@@ -102,7 +105,7 @@ def rerun_amsterdam_stateless_guest_with_input_bytes(
     """
     active_fork = fork.fork_at(block_number=block_number, timestamp=timestamp)
     if active_fork.name() != "Amsterdam":
-        raise Exception(
+        raise StatelessValidationError(
             "Stateless guest raw input rerun is only supported for Amsterdam"
         )
 
@@ -135,7 +138,7 @@ def get_amsterdam_stateless_input_public_key_data(
     """
     active_fork = fork.fork_at(block_number=block_number, timestamp=timestamp)
     if active_fork.name() != "Amsterdam":
-        raise Exception(
+        raise StatelessValidationError(
             "Stateless input public-key decoding is only supported for "
             "Amsterdam"
         )

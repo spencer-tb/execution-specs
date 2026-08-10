@@ -30,6 +30,7 @@ from execution_testing.test_types.execution_witness import (
     ExecutionWitnessCodesExpectation,
     ExecutionWitnessHeadersExpectation,
     ExecutionWitnessStateExpectation,
+    StatelessValidationError,
 )
 from execution_testing.test_types.execution_witness.modifiers import (
     PublicKeyModifier,
@@ -345,7 +346,7 @@ def finalize_stateless_artifacts(
                 chain_id,
             )
     elif options.has_public_keys_modifier:
-        raise Exception(
+        raise StatelessValidationError(
             "Stateless input public-key mutation requires stateless "
             "input bytes"
         )
@@ -357,11 +358,11 @@ def finalize_stateless_artifacts(
         or options.expected_validation_success is not None
     ):
         if stateless_output_bytes is None:
-            raise Exception(
+            raise StatelessValidationError(
                 "Stateless guest verification requires stateless output bytes"
             )
         if stateless_output is None:
-            raise Exception(
+            raise StatelessValidationError(
                 "Stateless output decoding is only supported for Amsterdam"
             )
         canonical_successful_validation = (
@@ -374,18 +375,20 @@ def finalize_stateless_artifacts(
     final_successful_validation = canonical_successful_validation
     if has_structured_stateless_overrides:
         if stateless_input_bytes is None:
-            raise Exception(
+            raise StatelessValidationError(
                 "Stateless guest rerun requires stateless input bytes"
             )
         if has_witness_modifier and artifacts.execution_witness is None:
-            raise Exception(
+            raise StatelessValidationError(
                 "Stateless guest witness mutation rerun requires "
                 "execution witness"
             )
         modified_public_keys: Tuple[Bytes, ...] | None = None
         if options.public_keys_modifier is not None:
             if public_keys is None:
-                raise Exception("Stateless guest rerun requires public keys")
+                raise StatelessValidationError(
+                    "Stateless guest rerun requires public keys"
+                )
             modified_public_keys = options.public_keys_modifier(public_keys)
         stateless_input_bytes = (
             rebuild_amsterdam_stateless_input_with_overrides(
@@ -408,20 +411,22 @@ def finalize_stateless_artifacts(
     )
     if options.has_stateless_input_bytes_modifier:
         if stateless_input_bytes is None:
-            raise Exception(
+            raise StatelessValidationError(
                 "Stateless guest raw input rerun requires stateless "
                 "input bytes"
             )
         stateless_input_bytes_modifier = options.stateless_input_bytes_modifier
         if stateless_input_bytes_modifier is None:
-            raise Exception("Stateless input bytes modifier is required")
+            raise StatelessValidationError(
+                "Stateless input bytes modifier is required"
+            )
         stateless_input_bytes = stateless_input_bytes_modifier(
             stateless_input_bytes
         )
 
     if should_rerun_stateless_guest:
         if stateless_input_bytes is None:
-            raise Exception(
+            raise StatelessValidationError(
                 "Stateless guest rerun requires stateless input bytes"
             )
         (
@@ -454,7 +459,7 @@ def finalize_stateless_artifacts(
 
     if stateless_output is not None:
         if stateless_input_bytes is None:
-            raise Exception(
+            raise StatelessValidationError(
                 "Stateless output verification requires stateless input bytes"
             )
         verify_amsterdam_stateless_output(
