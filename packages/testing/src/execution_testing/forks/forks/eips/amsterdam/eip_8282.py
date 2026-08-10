@@ -57,6 +57,24 @@ class EIP8282(BaseFork):
         ] + super(EIP8282, cls).system_contracts()
 
     @classmethod
+    def execution_witness_implicit_code_addresses(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> List[Address]:
+        """Add the builder contract codes, read by their system calls."""
+        return [
+            Address(
+                BUILDER_DEPOSIT_CONTRACT_ADDRESS,
+                label="BUILDER_DEPOSIT_CONTRACT_ADDRESS",
+            ),
+            Address(
+                BUILDER_EXIT_CONTRACT_ADDRESS,
+                label="BUILDER_EXIT_CONTRACT_ADDRESS",
+            ),
+        ] + super(EIP8282, cls).execution_witness_implicit_code_addresses(
+            block_number=block_number, timestamp=timestamp
+        )
+
+    @classmethod
     def pre_allocation_blockchain(cls) -> Mapping:
         """Pre-allocate the builder deposit and exit request contracts."""
         return {

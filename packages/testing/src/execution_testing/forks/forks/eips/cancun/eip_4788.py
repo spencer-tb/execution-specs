@@ -40,6 +40,20 @@ class EIP4788(BaseFork):
         return [Address(BEACON_ROOTS_ADDRESS, label="BEACON_ROOTS_ADDRESS")]
 
     @classmethod
+    def execution_witness_implicit_code_addresses(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> List[Address]:
+        """Add the beacon roots contract code, read by its system call."""
+        return [
+            Address(
+                BEACON_ROOTS_ADDRESS,
+                label="BEACON_ROOTS_ADDRESS",
+            ),
+        ] + super(EIP4788, cls).execution_witness_implicit_code_addresses(
+            block_number=block_number, timestamp=timestamp
+        )
+
+    @classmethod
     def pre_allocation_blockchain(cls) -> Mapping:
         """Pre-allocate the beacon root contract."""
         return {

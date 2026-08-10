@@ -42,6 +42,23 @@ class EIP7002(BaseFork):
         ] + super(EIP7002, cls).system_contracts()
 
     @classmethod
+    def execution_witness_implicit_code_addresses(
+        cls, *, block_number: int = 0, timestamp: int = 0
+    ) -> List[Address]:
+        """
+        Add the withdrawal request contract code, read by its
+        system call.
+        """
+        return [
+            Address(
+                WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS,
+                label="WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS",
+            ),
+        ] + super(EIP7002, cls).execution_witness_implicit_code_addresses(
+            block_number=block_number, timestamp=timestamp
+        )
+
+    @classmethod
     def pre_allocation_blockchain(cls) -> Mapping:
         """Pre-allocate the withdrawal request contract."""
         return {
