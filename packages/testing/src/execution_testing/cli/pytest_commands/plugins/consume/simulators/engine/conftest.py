@@ -50,6 +50,11 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 def pytest_configure(config: pytest.Config) -> None:
     """Set the supported fixture formats for the engine simulator."""
+    if config.getoption("--ssz") and not config.getoption("--stateless"):
+        raise pytest.UsageError(
+            "--ssz selects the stateless witness transport and requires "
+            "--stateless"
+        )
     config.supported_fixture_formats = [BlockchainEngineFixture]  # type: ignore[attr-defined]
 
 
