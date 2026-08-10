@@ -72,3 +72,12 @@ def test_multi_field_mismatch_reports_all() -> None:
     assert "state:" in msg
     assert "codes:" in msg
     assert "headers:" in msg
+
+
+def test_mismatch_previews_are_truncated() -> None:
+    """Long witness items are previewed, never dumped in full."""
+    expected = _w(state=[b"\xaa" * 4096])
+    actual = _w(state=[b"\xbb" * 4096])
+    with pytest.raises(WitnessMismatchError) as excinfo:
+        assert_witness_matches(expected=expected, actual=actual)
+    assert len(str(excinfo.value)) < 500
