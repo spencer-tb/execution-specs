@@ -3,9 +3,10 @@ Stateless helpers for blockchain test generation.
 
 Fork-agnostic orchestration of stateless validation during filling:
 option derivation, witness expectation application, and the artifact
-pipeline between block-generation phases. Everything that reaches
-into the EELS stateless modules lives in the fork-specific
-`blockchain_stateless_amsterdam` bridge module.
+pipeline between block-generation phases. Operations only the spec can
+perform -- running the guest, rebuilding its input, decoding or
+verifying its payloads -- dispatch through the filler backend's
+stateless operations, which resolve the active fork on the spec side.
 """
 
 from dataclasses import dataclass, replace
@@ -27,8 +28,6 @@ from execution_testing.test_types import (
     Alloc,
     Environment,
     ExecutionWitness,
-    Transaction,
-    Withdrawal,
 )
 from execution_testing.test_types.block_access_list import BlockAccessList
 from execution_testing.test_types.execution_witness import (
@@ -42,15 +41,6 @@ from execution_testing.test_types.execution_witness.modifiers import (
 )
 
 from .base import OpMode
-from .blockchain_stateless_amsterdam import (
-    build_amsterdam_stateless_artifacts_from_t8n,
-    decode_amsterdam_stateless_output,
-    get_amsterdam_stateless_input_public_key_data,
-    rebuild_amsterdam_stateless_input_with_overrides,
-    rerun_amsterdam_stateless_guest_with_input_bytes,
-    verify_amsterdam_stateless_output,
-    verify_stateless_input_public_keys,
-)
 
 
 class StatelessBlockProtocol(Protocol):
@@ -200,13 +190,12 @@ def require_stateless_artifacts_or_trusted_fill(
     block_exception: object | None,
 ) -> None:
     """
-    Require t8n stateless bytes, or a fill trusted to rebuild them.
+    Require t8n stateless bytes, or a fill trusted without them.
 
     The EELS t8n always emits both stateless byte fields beside a
     witness. External benchmark fills are the temporary trust path:
-    their artifacts are rebuilt from the Python spec (see
-    `build_amsterdam_stateless_artifacts_from_t8n`), which is only
-    sound for valid blocks.
+    they may produce a witness without serialized guest payloads, and
+    are only trusted for valid blocks.
     """
     missing_stateless_artifacts = (
         not options.skip_validation
@@ -284,56 +273,6 @@ def apply_execution_witness_expectations(
     )
 
 
-def stateless_artifacts_from_t8n(
-    *,
-    options: StatelessBlockOptions,
-    artifacts: StatelessValidationArtifacts,
-    fork: Fork,
-    block_number: int,
-    timestamp: int,
-    header: FixtureHeader,
-    previous_env: Environment,
-    txs: List[Transaction],
-    result: Result,
-    withdrawals: List[Withdrawal] | None,
-    requests_list: List[Bytes] | None,
-    execution_witness: ExecutionWitness | None,
-    block_access_list: BlockAccessList | None,
-    chain_id: int,
-) -> StatelessValidationArtifacts:
-    """Collect or derive serialized stateless artifacts from t8n output."""
-    stateless_input_bytes = result.stateless_input_bytes
-    stateless_output_bytes = result.stateless_output_bytes
-    if (
-        not options.skip_validation
-        and execution_witness is not None
-        and block_access_list is not None
-        and (stateless_input_bytes is None or stateless_output_bytes is None)
-    ):
-        built_artifacts = build_amsterdam_stateless_artifacts_from_t8n(
-            fork=fork,
-            block_number=block_number,
-            timestamp=timestamp,
-            header=header,
-            previous_env=previous_env,
-            txs=txs,
-            result=result,
-            withdrawals=withdrawals,
-            requests_list=requests_list,
-            execution_witness=execution_witness,
-            block_access_list=block_access_list,
-            chain_id=chain_id,
-        )
-        if built_artifacts is not None:
-            stateless_input_bytes, stateless_output_bytes = built_artifacts
-
-    return replace(
-        artifacts,
-        stateless_input_bytes=stateless_input_bytes,
-        stateless_output_bytes=stateless_output_bytes,
-    )
-
-
 def finalize_stateless_artifacts(
     *,
     options: StatelessBlockOptions,
@@ -342,17 +281,12 @@ def finalize_stateless_artifacts(
     fork: Fork,
     block_number: int,
     timestamp: int,
+    t8n: FillerBackend,
     chain_id: int,
 ) -> StatelessValidationArtifacts:
     """Verify, mutate, and rerun stateless guest artifacts as needed."""
     stateless_input_bytes = artifacts.stateless_input_bytes
     stateless_output_bytes = artifacts.stateless_output_bytes
-    stateless_output = decode_amsterdam_stateless_output(
-        fork=fork,
-        block_number=block_number,
-        timestamp=timestamp,
-        stateless_output_bytes=stateless_output_bytes,
-    )
 
     has_witness_modifier = artifacts.execution_witness_mutated
     for modifier_active, modifier_name in (
@@ -370,31 +304,24 @@ def finalize_stateless_artifacts(
             )
 
     public_keys: Tuple[Bytes, ...] | None = None
-    should_verify_stateless_input_public_keys = (
-        stateless_input_bytes is not None
+    if stateless_input_bytes is not None:
         # The block could be invalid because of invalid txs, thus
         # the public keys might not be properly constructed given they
         # can't be decoded and thus provided in the execution witness.
-        and block.exception is None
-    )
-    if stateless_input_bytes is not None and (
-        should_verify_stateless_input_public_keys
-        or options.has_public_keys_modifier
-    ):
-        payload_transactions: Tuple[Bytes, ...]
-        public_keys, payload_transactions = (
-            get_amsterdam_stateless_input_public_key_data(
+        if block.exception is None:
+            t8n.stateless_verify_input_public_keys(
                 fork=fork,
                 block_number=block_number,
                 timestamp=timestamp,
-                stateless_input_bytes=stateless_input_bytes,
+                input_bytes=stateless_input_bytes,
+                chain_id=chain_id,
             )
-        )
-        if should_verify_stateless_input_public_keys:
-            verify_stateless_input_public_keys(
-                public_keys,
-                payload_transactions,
-                chain_id,
+        if options.has_public_keys_modifier:
+            public_keys = t8n.stateless_input_public_keys(
+                fork=fork,
+                block_number=block_number,
+                timestamp=timestamp,
+                input_bytes=stateless_input_bytes,
             )
     elif options.has_public_keys_modifier:
         raise StatelessValidationError(
@@ -402,7 +329,7 @@ def finalize_stateless_artifacts(
             "input bytes"
         )
 
-    canonical_successful_validation: bool | None = None
+    final_successful_validation: bool | None = None
     if (
         has_witness_modifier
         or options.has_public_keys_modifier
@@ -412,18 +339,16 @@ def finalize_stateless_artifacts(
             raise StatelessValidationError(
                 "Stateless guest verification requires stateless output bytes"
             )
-        if stateless_output is None:
-            raise StatelessValidationError(
-                "Stateless output decoding is only supported for Amsterdam"
-            )
-        canonical_successful_validation = (
-            stateless_output.successful_validation
+        final_successful_validation = t8n.stateless_validation_result(
+            fork=fork,
+            block_number=block_number,
+            timestamp=timestamp,
+            output_bytes=stateless_output_bytes,
         )
 
     has_structured_stateless_overrides = (
         has_witness_modifier or options.has_public_keys_modifier
     )
-    final_successful_validation = canonical_successful_validation
     if has_structured_stateless_overrides:
         if stateless_input_bytes is None:
             raise StatelessValidationError(
@@ -441,19 +366,15 @@ def finalize_stateless_artifacts(
                     "Stateless guest rerun requires public keys"
                 )
             modified_public_keys = options.public_keys_modifier(public_keys)
-        stateless_input_bytes = (
-            rebuild_amsterdam_stateless_input_with_overrides(
-                fork=fork,
-                block_number=block_number,
-                timestamp=timestamp,
-                original_stateless_input_bytes=stateless_input_bytes,
-                execution_witness=(
-                    artifacts.execution_witness
-                    if has_witness_modifier
-                    else None
-                ),
-                public_keys=modified_public_keys,
-            )
+        stateless_input_bytes = t8n.stateless_rebuild_input(
+            fork=fork,
+            block_number=block_number,
+            timestamp=timestamp,
+            input_bytes=stateless_input_bytes,
+            execution_witness=(
+                artifacts.execution_witness if has_witness_modifier else None
+            ),
+            public_keys=modified_public_keys,
         )
 
     should_rerun_stateless_guest = (
@@ -483,20 +404,13 @@ def finalize_stateless_artifacts(
         (
             stateless_input_bytes,
             stateless_output_bytes,
-            successful_validation,
-        ) = rerun_amsterdam_stateless_guest_with_input_bytes(
+            final_successful_validation,
+        ) = t8n.stateless_run_guest(
             fork=fork,
             block_number=block_number,
             timestamp=timestamp,
-            stateless_input_bytes=stateless_input_bytes,
+            input_bytes=stateless_input_bytes,
         )
-        stateless_output = decode_amsterdam_stateless_output(
-            fork=fork,
-            block_number=block_number,
-            timestamp=timestamp,
-            stateless_output_bytes=stateless_output_bytes,
-        )
-        final_successful_validation = successful_validation
 
     if (
         options.expected_validation_success is not None
@@ -508,16 +422,18 @@ def finalize_stateless_artifacts(
             f"want {options.expected_validation_success}"
         )
 
-    if stateless_output is not None:
+    if stateless_output_bytes is not None:
         if stateless_input_bytes is None:
             raise StatelessValidationError(
                 "Stateless output verification requires stateless input bytes"
             )
-        verify_amsterdam_stateless_output(
+        t8n.stateless_verify_output(
+            fork=fork,
             block_number=block_number,
+            timestamp=timestamp,
             chain_id=chain_id,
-            stateless_input_bytes=stateless_input_bytes,
-            stateless_output=stateless_output,
+            input_bytes=stateless_input_bytes,
+            output_bytes=stateless_output_bytes,
             input_bytes_modified=options.has_stateless_input_bytes_modifier,
         )
 
@@ -534,12 +450,9 @@ def build_stateless_artifacts(
     block: StatelessBlockProtocol,
     fork: Fork,
     previous_alloc: Alloc | LazyAlloc,
-    previous_env: Environment,
     env: Environment,
     header: FixtureHeader,
-    txs: List[Transaction],
     result: Result,
-    requests_list: List[Bytes] | None,
     block_access_list: BlockAccessList | None,
     t8n: FillerBackend,
     operation_mode: OpMode | None,
@@ -549,9 +462,9 @@ def build_stateless_artifacts(
     Run the post-t8n stateless pipeline for one block.
 
     Apply witness expectations, gate the trust path for fills whose
-    transition tool emits no stateless bytes, collect or rebuild the
-    serialized artifacts, and verify them -- rerunning the guest for
-    mutation tests.
+    transition tool emits no stateless bytes, collect the serialized
+    artifacts, and verify them -- rerunning the guest through the
+    backend for mutation tests.
     """
     block_number = int(env.number)
     timestamp = int(env.timestamp)
@@ -574,21 +487,10 @@ def build_stateless_artifacts(
         operation_mode=operation_mode,
         block_exception=block.exception,
     )
-    artifacts = stateless_artifacts_from_t8n(
-        options=options,
-        artifacts=artifacts,
-        fork=fork,
-        block_number=block_number,
-        timestamp=timestamp,
-        header=header,
-        previous_env=previous_env,
-        txs=txs,
-        result=result,
-        withdrawals=env.withdrawals,
-        requests_list=requests_list,
-        execution_witness=execution_witness,
-        block_access_list=block_access_list,
-        chain_id=chain_id,
+    artifacts = replace(
+        artifacts,
+        stateless_input_bytes=result.stateless_input_bytes,
+        stateless_output_bytes=result.stateless_output_bytes,
     )
     return finalize_stateless_artifacts(
         options=options,
@@ -597,6 +499,7 @@ def build_stateless_artifacts(
         fork=fork,
         block_number=block_number,
         timestamp=timestamp,
+        t8n=t8n,
         chain_id=chain_id,
     )
 
