@@ -557,7 +557,7 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 # `recover_transaction_public_key` is added to the Amsterdam
 # transactions module by the same EELS witness PR.
-module = "execution_testing.specs.blockchain_stateless"
+module = "execution_testing.specs.blockchain_stateless_amsterdam"
 disable_error_code = ["attr-defined"]
 
 [tool.uv]
