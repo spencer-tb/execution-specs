@@ -15,6 +15,7 @@ from ethereum_types.numeric import U64, U256, Uint
 from ethereum.crypto.hash import Hash32, keccak256
 from ethereum.exceptions import InvalidBlock
 from ethereum.merkle_patricia_trie import root, trie_get
+from ethereum.trace import discard_evm_trace, set_evm_trace
 
 if TYPE_CHECKING:
     from execution_testing.client_clis.cli_types import (
@@ -206,9 +207,16 @@ def _build_stateless_artifacts(
         chain_id=block_env.chain_id,
     )
     stateless_input_bytes = t8n.fork.serialize_stateless_input(stateless_input)
-    stateless_output_bytes = t8n.fork.run_stateless_guest(
-        stateless_input_bytes
-    )
+    # The guest re-executes the block. Route its trace events to the
+    # discard tracer so fill metadata such as opcode counts reflects
+    # the host execution only.
+    previous_tracer = set_evm_trace(discard_evm_trace)
+    try:
+        stateless_output_bytes = t8n.fork.run_stateless_guest(
+            stateless_input_bytes
+        )
+    finally:
+        set_evm_trace(previous_tracer)
     stateless_output = t8n.fork.deserialize_stateless_output(
         stateless_output_bytes
     )
