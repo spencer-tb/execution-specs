@@ -155,6 +155,69 @@ class ForkLoad:
         return hasattr(module, "hash_block_access_list")
 
     @property
+    def has_execution_witness(self) -> bool:
+        """Check if the fork has an `ExecutionWitness` type."""
+        try:
+            module = self._module("stateless")
+        except ModuleNotFoundError:
+            return False
+        return hasattr(module, "ExecutionWitness")
+
+    @property
+    def stateless_input_fork_index(self) -> int | None:
+        """Fork index byte of the fork's stateless input schema id."""
+        try:
+            module = self._module("stateless_ssz")
+        except ModuleNotFoundError:
+            return None
+        schema_id = getattr(module, "STATELESS_INPUT_SCHEMA_ID", None)
+        if schema_id is None:
+            return None
+        return int(schema_id) >> 8
+
+    @property
+    def stateless_ssz_module(self) -> Any:
+        """The fork's stateless SSZ codec module."""
+        return self._module("stateless_ssz")
+
+    @property
+    def transactions_module(self) -> Any:
+        """The fork's transactions module."""
+        return self._module("transactions")
+
+    @property
+    def execution_payload_type(self) -> Any:
+        """The fork's ExecutionPayload dataclass."""
+        return self._module("execution_engine.types").ExecutionPayload
+
+    @property
+    def new_payload_request_type(self) -> Any:
+        """The fork's NewPayloadRequest dataclass."""
+        return self._module("execution_engine.types").NewPayloadRequest
+
+    @property
+    def stateless_input_type(self) -> Any:
+        """The fork's StatelessInput dataclass."""
+        return self._module("stateless").StatelessInput
+
+    @property
+    def execution_witness_type(self) -> Any:
+        """The fork's ExecutionWitness dataclass."""
+        return self._module("stateless").ExecutionWitness
+
+    @property
+    def decode_execution_requests(self) -> Any:
+        """decode_execution_requests function of the fork."""
+        return self._module(
+            "execution_engine.requests"
+        ).decode_execution_requests
+
+    @property
+    def run_stateless_guest(self) -> Any:
+        """run_stateless_guest function of the fork."""
+        return self._module("stateless_guest").run_stateless_guest
+
+    @property
     def BlockAccessIndex(self) -> Any:
         """BlockAccessIndex type of the fork."""
         return self._module("block_access_lists").BlockAccessIndex
@@ -205,6 +268,12 @@ class ForkLoad:
     def Block(self) -> Any:
         """Block class of the fork."""
         return self._module("blocks").Block
+
+    @property
+    def block_rlp_size_limit(self) -> int | None:
+        """Return the maximum RLP-encoded block size, if defined."""
+        limit = getattr(self._module("fork"), "MAX_RLP_BLOCK_SIZE", None)
+        return int(limit) if limit is not None else None
 
     @property
     def decode_receipt(self) -> Any:
@@ -319,6 +388,20 @@ class ForkLoad:
     def BlockState(self) -> Any:
         """BlockState class of the fork."""
         return self._module("state_tracker").BlockState
+
+    @property
+    def has_track_ancestor_access(self) -> bool:
+        """Check if the fork has ancestor tracking."""
+        try:
+            module = self._module("state_tracker")
+        except ModuleNotFoundError:
+            return False
+        return hasattr(module, "track_ancestor_access")
+
+    @property
+    def track_ancestor_access(self) -> Any:
+        """track_ancestor_access function of the fork."""
+        return self._module("state_tracker").track_ancestor_access
 
     @property
     def TransactionState(self) -> Any:

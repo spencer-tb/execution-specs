@@ -28,7 +28,12 @@ from ethereum.exceptions import (
 )
 from ethereum.forks.bpo5.blocks import Header as PreviousHeader
 from ethereum.merkle_patricia_trie import root, trie_set
-from ethereum.state import EMPTY_CODE_HASH, Address, BlockDiff
+from ethereum.state import (
+    EMPTY_CODE_HASH,
+    Address,
+    BlockDiff,
+    PreState,
+)
 from ethereum.state_mpt import State, apply_changes_to_state
 
 from . import vm
@@ -67,6 +72,7 @@ from .state_tracker import (
     incorporate_tx_into_block,
     increment_nonce,
     set_account_balance,
+    track_ancestor_access,
 )
 from .transactions import (
     BlobTransaction,
@@ -82,6 +88,7 @@ from .transactions import (
     get_transaction_hash,
     has_access_list,
     recover_sender,
+    recover_sender_from_public_key,
     validate_transaction,
 )
 from .utils.address import compute_contract_address
@@ -274,8 +281,9 @@ def state_transition(chain: BlockChain, block: Block) -> None:
 
 def execute_block(
     block: Block,
-    pre_state: State,
+    pre_state: PreState,
     chain_context: ChainContext,
+    transaction_public_keys: Optional[Tuple[Bytes, ...]] = None,
 ) -> BlockDiff:
     """
     Execute a block and validate the resulting roots against the header.
@@ -290,6 +298,8 @@ def execute_block(
         Pre-execution state provider.
     chain_context :
         Chain context that the block may need during execution.
+    transaction_public_keys :
+        Optional transaction public keys in block order.
 
     Returns
     -------
@@ -299,6 +309,13 @@ def execute_block(
     """
     if len(rlp.encode(block)) > MAX_RLP_BLOCK_SIZE:
         raise InvalidBlock("Block rlp size exceeds MAX_RLP_BLOCK_SIZE")
+
+    if transaction_public_keys is not None and len(
+        transaction_public_keys
+    ) != len(block.transactions):
+        raise InvalidBlock(
+            "Transaction public key count does not match block transactions"
+        )
 
     parent_header = chain_context.parent_header
     validate_header(parent_header, block.header)
@@ -322,6 +339,7 @@ def execute_block(
         parent_beacon_block_root=block.header.parent_beacon_block_root,
         block_access_list_builder=BlockAccessListBuilder(),
         slot_number=block.header.slot_number,
+        transaction_public_keys=transaction_public_keys,
     )
 
     block_output = apply_body(
@@ -541,7 +559,19 @@ def check_transaction(
         limit.
 
     """
-    sender = recover_sender(tx)
+    sender_public_key = None
+    if block_env.transaction_public_keys is not None:
+        sender_public_key = block_env.transaction_public_keys[int(index)]
+
+    if sender_public_key is None:
+        sender = recover_sender(tx)
+    else:
+        sender = recover_sender_from_public_key(
+            block_env.chain_id,
+            tx,
+            sender_public_key,
+        )
+
     intrinsic = validate_transaction(tx, sender)
     tx_state = TransactionState(parent=block_env.state)
 
@@ -574,7 +604,11 @@ def check_transaction(
 
     if Uint(sender_account.balance) < max_gas_fee + Uint(tx.value):
         raise InsufficientBalanceError("insufficient sender balance")
-    sender_code = get_code(tx_state, sender_account.code_hash)
+    sender_code = get_code(
+        tx_state,
+        sender_account.code_hash,
+        sender,
+    )
     if sender_account.code_hash != EMPTY_CODE_HASH and not is_valid_delegation(
         sender_code
     ):
@@ -704,6 +738,7 @@ def process_checked_system_transaction(
     system_contract_code = get_code(
         untracked_state,
         get_account(untracked_state, target_address).code_hash,
+        target_address,
     )
 
     if len(system_contract_code) == 0:
@@ -828,6 +863,10 @@ def apply_body(
         block_env=block_env,
         target_address=HISTORY_STORAGE_ADDRESS,
         data=block_env.block_hashes[-1],  # The parent hash
+    )
+    track_ancestor_access(
+        block_env.state,
+        Uint(1),
     )
 
     for i, tx in enumerate(map(decode_transaction, transactions)):

@@ -89,6 +89,15 @@ def t8n_arguments(subparsers: argparse._SubParsersAction) -> None:
     t8n_parser.add_argument("--opcode.count", dest="opcode_count", type=str)
 
     t8n_parser.add_argument("--state-test", action="store_true")
+    t8n_parser.add_argument(
+        "--stateless",
+        dest="stateless",
+        action="store_true",
+        help=(
+            "Enable stateless witness generation, input serialization, "
+            "and guest validation. Off by default."
+        ),
+    )
 
 
 def _read_json_input(
@@ -366,6 +375,11 @@ def build_t8n_from_cli_options(
         reward=_resolve_state_reward(options.state_reward, fork_module),
         blob_schedule=blob_schedule,
         state_test=options.state_test,
+    )
+    # The framework request class gains this field with the framework
+    # tier. Set it dynamically so this tier stands alone.
+    t8n_data.skip_stateless_validation = (  # type: ignore[attr-defined]
+        not options.stateless
     )
 
     # ``Ommer.address`` is parsed via the per-fork ``hex_to_address``
