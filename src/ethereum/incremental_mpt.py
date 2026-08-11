@@ -1,16 +1,20 @@
 """
 Incremental Merkle Patricia Trie.
 
-.. contents:: Table of Contents
-    :backlinks: none
-    :local:
+Provide a mutable MPT that supports incremental updates and witness
+tracking. The tree structure is updated in place rather than rebuilt
+from scratch on each root calculation.
 
-Introduction
-------------
+[`merkle_patricia_trie`] remains the normative definition of the trie:
+[`patricialize`] is a pure function from a whole mapping to a root and
+serves as the oracle this engine is checked against wherever both are
+available. The incremental form exists because a stateless guest holds
+only witness nodes, never the full state, so recomputing a root from
+scratch is impossible there and incremental update over a partial node
+set is the only way to roll the state root forward inside a proof.
 
-Provide a mutable MPT that supports incremental updates and
-witness tracking. The tree structure is updated in-place rather
-than rebuilt from scratch on each root calculation.
+[`merkle_patricia_trie`]: ref:ethereum.merkle_patricia_trie
+[`patricialize`]: ref:ethereum.merkle_patricia_trie.patricialize
 """
 
 from dataclasses import dataclass, field
