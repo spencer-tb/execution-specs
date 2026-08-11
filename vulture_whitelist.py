@@ -193,6 +193,14 @@ SetConstantCommand.leave_AnnAssign
 SetConstantCommand.leave_Module
 
 # src/ethereum_spec_tools/new_fork/codemod/remove_docstring.py - codemod class
+from ethereum.forks.amsterdam.execution_engine.requests import (
+    decode_execution_requests,
+)
+from ethereum.forks.amsterdam.execution_engine.types import (
+    BlobsBundle,
+    GetPayloadResponse,
+    PayloadAttributes,
+)
 from ethereum_spec_tools.new_fork.codemod.remove_docstring import (
     RemoveDocstringCommand,
 )
@@ -203,3 +211,15 @@ RemoveDocstringCommand
 _configure_client_manager  # autouse fixture
 test_suite_name  # hive test suite name fixture
 genesis_header  # genesis header fixture
+
+# src/ethereum/forks/amsterdam/execution_engine - consumed by callers that
+# arrive with the stateless tier
+decode_execution_requests  # noqa
+
+# src/ethereum/forks/amsterdam/execution_engine/types.py - Engine API fields
+PayloadAttributes.suggested_fee_recipient
+BlobsBundle.commitments
+BlobsBundle.proofs
+BlobsBundle.blobs
+GetPayloadResponse.block_value
+GetPayloadResponse.blobs_bundle
