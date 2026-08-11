@@ -67,6 +67,10 @@ class TestCaseIndexFile(TestCaseBase):
     """
 
     json_path: Path
+    has_execution_witness: bool | None = None
+    """Whether any payload carries an execution witness; None if unknown."""
+    execution_witness_mutated: bool | None = None
+    """Whether any payload witness was deliberately mutated by the filler."""
     __test__ = False  # stop pytest from collecting this class as a test
 
     # TODO: add pytest marks
