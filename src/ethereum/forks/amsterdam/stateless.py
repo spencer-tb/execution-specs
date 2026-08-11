@@ -4,7 +4,7 @@ Stateless validation interfaces.
 
 from dataclasses import dataclass
 from enum import IntEnum
-from typing import List, Sequence, Tuple, final
+from typing import TYPE_CHECKING, List, Sequence, Tuple, final
 
 from ethereum_rlp import rlp
 from ethereum_types.bytes import Bytes
@@ -17,9 +17,22 @@ from ethereum.state import Root
 from ethereum.witness_state import WitnessState, build_code_db, build_node_db
 
 from .blocks import Header
-from .execution_engine.new_payload import execute_new_payload_request
-from .execution_engine.requests import ExecutionRequests
-from .execution_engine.types import NewPayloadRequest
+
+if TYPE_CHECKING:
+    from .execution_engine.new_payload import execute_new_payload_request
+    from .execution_engine.requests import ExecutionRequests
+    from .execution_engine.types import NewPayloadRequest
+else:
+    # The execution engine modeling ships as its own PR. Fall
+    # back to placeholders so this tier imports on its own.
+    try:
+        from .execution_engine.new_payload import execute_new_payload_request
+        from .execution_engine.requests import ExecutionRequests
+        from .execution_engine.types import NewPayloadRequest
+    except ImportError:
+        execute_new_payload_request = ExecutionRequests = NewPayloadRequest = (
+            object
+        )
 from .fork import ChainContext
 from .fork_types import VersionedHash
 

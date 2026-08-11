@@ -2,7 +2,7 @@
 Host-side assembly of stateless input from block execution data.
 """
 
-from typing import List
+from typing import TYPE_CHECKING, List
 
 from ethereum_rlp import rlp
 from ethereum_types.bytes import Bytes
@@ -13,8 +13,18 @@ from ethereum.exceptions import InvalidSignatureError
 
 from .block_access_lists import BlockAccessList
 from .blocks import Block
-from .execution_engine.requests import ExecutionRequests
-from .execution_engine.types import ExecutionPayload, NewPayloadRequest
+
+if TYPE_CHECKING:
+    from .execution_engine.requests import ExecutionRequests
+    from .execution_engine.types import ExecutionPayload, NewPayloadRequest
+else:
+    # The execution engine modeling ships as its own PR. Fall
+    # back to placeholders so this tier imports on its own.
+    try:
+        from .execution_engine.requests import ExecutionRequests
+        from .execution_engine.types import ExecutionPayload, NewPayloadRequest
+    except ImportError:
+        ExecutionRequests = ExecutionPayload = NewPayloadRequest = object
 from .fork_types import VersionedHash
 from .stateless import (
     ExecutionWitness,

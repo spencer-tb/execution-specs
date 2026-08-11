@@ -6,6 +6,8 @@ types in ``stateless`` and ``execution_engine.types``, plus conversion
 functions between the two representations.
 """
 
+from typing import TYPE_CHECKING
+
 from ethereum_types.bytes import Bytes, Bytes48, Bytes96
 from ethereum_types.numeric import U16, U64, U256, Uint
 from remerkleable.basic import boolean, uint16, uint64, uint256
@@ -22,15 +24,36 @@ from ethereum.crypto.hash import Hash32
 from ethereum.state import Address, Root
 
 from .blocks import Withdrawal
-from .execution_engine.requests import (
-    BuilderDepositRequest,
-    BuilderExitRequest,
-    ConsolidationRequest,
-    DepositRequest,
-    ExecutionRequests,
-    WithdrawalRequest,
-)
-from .execution_engine.types import ExecutionPayload, NewPayloadRequest
+
+if TYPE_CHECKING:
+    from .execution_engine.requests import (
+        BuilderDepositRequest,
+        BuilderExitRequest,
+        ConsolidationRequest,
+        DepositRequest,
+        ExecutionRequests,
+        WithdrawalRequest,
+    )
+    from .execution_engine.types import ExecutionPayload, NewPayloadRequest
+else:
+    # The execution engine modeling ships as its own PR. Fall
+    # back to placeholders so this tier imports on its own.
+    try:
+        from .execution_engine.requests import (
+            BuilderDepositRequest,
+            BuilderExitRequest,
+            ConsolidationRequest,
+            DepositRequest,
+            ExecutionRequests,
+            WithdrawalRequest,
+        )
+        from .execution_engine.types import ExecutionPayload, NewPayloadRequest
+    except ImportError:
+        BuilderDepositRequest = BuilderExitRequest = ConsolidationRequest = (
+            DepositRequest
+        ) = ExecutionRequests = WithdrawalRequest = ExecutionPayload = (
+            NewPayloadRequest
+        ) = object
 from .fork_types import Bloom, VersionedHash
 from .stateless import (
     ExecutionWitness,
