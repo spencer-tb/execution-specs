@@ -193,6 +193,10 @@ SetConstantCommand.leave_AnnAssign
 SetConstantCommand.leave_Module
 
 # src/ethereum_spec_tools/new_fork/codemod/remove_docstring.py - codemod class
+from ethereum.forks.amsterdam.stateless import (
+    NewPayloadRequestHeader,
+    ProtocolFork,
+)
 from ethereum_spec_tools.new_fork.codemod.remove_docstring import (
     RemoveDocstringCommand,
 )
@@ -203,3 +207,28 @@ RemoveDocstringCommand
 _configure_client_manager  # autouse fixture
 test_suite_name  # hive test suite name fixture
 genesis_header  # genesis header fixture
+
+# src/ethereum/forks/amsterdam/stateless.py - stateless public API scaffolding
+NewPayloadRequestHeader
+NewPayloadRequestHeader.execution_payload_header
+ProtocolFork.Frontier
+ProtocolFork.Homestead
+ProtocolFork.DAOFork
+ProtocolFork.TangerineWhistle
+ProtocolFork.SpuriousDragon
+ProtocolFork.Byzantium
+ProtocolFork.StPetersburg
+ProtocolFork.Istanbul
+ProtocolFork.MuirGlacier
+ProtocolFork.Berlin
+ProtocolFork.London
+ProtocolFork.ArrowGlacier
+ProtocolFork.GrayGlacier
+ProtocolFork.Paris
+ProtocolFork.Shanghai
+ProtocolFork.Cancun
+ProtocolFork.Prague
+ProtocolFork.Osaka
+ProtocolFork.BPO1
+ProtocolFork.BPO2
+ProtocolFork.Amsterdam
