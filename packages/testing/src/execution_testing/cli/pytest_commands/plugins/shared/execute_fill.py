@@ -182,6 +182,11 @@ def pytest_configure(config: pytest.Config) -> None:
     )
     config.addinivalue_line(
         "markers",
+        "skip_stateless_validation: Skip stateless witness generation, "
+        "input serialization, and guest validation for this test.",
+    )
+    config.addinivalue_line(
+        "markers",
         "eip_checklist(item_id, eip=None): Mark a test as implementing a "
         "specific checklist item. The first positional parameter is the "
         "checklist item ID. The optional 'eip' keyword parameter specifies "

@@ -214,6 +214,23 @@ List of uncle headers included in the block RLP. An empty list post merge.
 
 Optional list of withdrawals included in the block RLP.
 
+#### - `executionWitness`: Optional execution witness object
+
+Optional fixture metadata for stateless validation. When present, contains
+`state`, `codes`, and `headers` byte lists associated with this block.
+
+#### - `statelessInputBytes`: [`Optional`](./common_types.md#optional)`[`[`Bytes`](./common_types.md#bytes)`]`
+
+Optional fixture metadata for stateless validation. SSZ-serialized stateless
+guest input for this block: the new-payload request, the execution witness,
+the chain id, and the per-transaction sender public keys.
+
+#### - `statelessOutputBytes`: [`Optional`](./common_types.md#optional)`[`[`Bytes`](./common_types.md#bytes)`]`
+
+Optional fixture metadata for stateless validation. SSZ-serialized stateless
+guest output for this block: the new-payload request root, the validation
+verdict, the chain id, and the input schema id.
+
 ### `InvalidFixtureBlock`
 
 #### - `expectException`: [`TransactionException`](../../library/execution_testing_exceptions.md#execution_testing.exceptions.TransactionException)` | `[`BlockException`](../../library/execution_testing_exceptions.md#execution_testing.exceptions.BlockException)
@@ -226,7 +243,26 @@ RLP serialized version of the block.
 
 #### - `rlp_decoded`: [`Optional`](./common_types.md#optional)`[`[`FixtureBlock`](#fixtureblock)`]`
 
-Decoded block attributes included in the block RLP.
+Decoded block attributes included in the block RLP. Does not repeat the
+stateless validation fields, which are carried at the top level of the
+invalid block instead.
+
+#### - `executionWitness`: Optional execution witness object
+
+Optional fixture metadata for stateless validation. When present, contains
+`state`, `codes`, and `headers` byte lists associated with this block.
+
+#### - `statelessInputBytes`: [`Optional`](./common_types.md#optional)`[`[`Bytes`](./common_types.md#bytes)`]`
+
+Optional fixture metadata for stateless validation. SSZ-serialized stateless
+guest input for this block: the new-payload request, the execution witness,
+the chain id, and the per-transaction sender public keys.
+
+#### - `statelessOutputBytes`: [`Optional`](./common_types.md#optional)`[`[`Bytes`](./common_types.md#bytes)`]`
+
+Optional fixture metadata for stateless validation. SSZ-serialized stateless
+guest output for this block: the new-payload request root, the validation
+verdict, the chain id, and the input schema id.
 
 ### `FixtureTransaction`
 

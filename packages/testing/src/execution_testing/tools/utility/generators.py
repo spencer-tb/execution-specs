@@ -42,13 +42,19 @@ class SystemContractTestType(StrEnum):
 
     def param(self) -> Any:
         """Return the parameter for the test."""
-        return pytest.param(
-            self,
-            id=self.value,
-            marks=pytest.mark.exception_test
-            if self != SystemContractTestType.GAS_LIMIT
-            else [],
-        )
+        marks: List[Any] = []
+        if self != SystemContractTestType.GAS_LIMIT:
+            marks.append(pytest.mark.exception_test)
+        if self in (
+            SystemContractTestType.GAS_LIMIT,
+            SystemContractTestType.OUT_OF_GAS_ERROR,
+        ):
+            # These variants install oversized gas-burning mock system
+            # contracts that exceed the stateless input's SSZ code-size
+            # bound, so their blocks cannot carry a guest witness.
+            marks.append(pytest.mark.skip_stateless_validation)
+
+        return pytest.param(self, id=self.value, marks=marks)
 
 
 class ContractAddressHasBalance(StrEnum):

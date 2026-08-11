@@ -35,6 +35,20 @@ class EIP6110(BaseFork):
         ] + super(EIP6110, cls).system_contracts()
 
     @classmethod
+    def execution_witness_exempt_system_contracts(cls) -> List[Address]:
+        """
+        Exempt the deposit contract: deposits are read from its logs,
+        never by executing its code, so its bytecode appears in no
+        block's execution witness.
+        """
+        return [
+            Address(
+                DEPOSIT_CONTRACT_ADDRESS,
+                label="DEPOSIT_CONTRACT_ADDRESS",
+            ),
+        ] + super(EIP6110, cls).execution_witness_exempt_system_contracts()
+
+    @classmethod
     def pre_allocation_blockchain(cls) -> Mapping:
         """Pre-allocate the beacon chain deposit contract."""
         deposit_contract_tree_depth = 32
