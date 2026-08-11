@@ -531,6 +531,17 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         "tests", "Arguments defining filler location and output"
     )
     test_group.addoption(
+        "--stateless",
+        action="store_true",
+        dest="stateless",
+        default=False,
+        help=(
+            "Enable stateless witness generation and validation while "
+            "filling. Off by default. Tests marked "
+            "skip_stateless_validation remain skipped."
+        ),
+    )
+    test_group.addoption(
         "--filler-path",
         action="store",
         dest="filler_path",
@@ -1619,8 +1630,11 @@ def base_test_parametrizer(cls: Type[BaseTest]) -> Any:
                 if (
                     "skip_stateless_validation" in cls.model_fields
                     and "skip_stateless_validation" not in kwargs
-                    and request.node.get_closest_marker(
-                        "skip_stateless_validation"
+                    and (
+                        not request.config.getoption("stateless")
+                        or request.node.get_closest_marker(
+                            "skip_stateless_validation"
+                        )
                     )
                 ):
                     kwargs["skip_stateless_validation"] = True
