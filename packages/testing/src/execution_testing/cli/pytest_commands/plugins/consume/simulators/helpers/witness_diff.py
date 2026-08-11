@@ -1,4 +1,4 @@
-"""Strict witness comparison helper for the engine-witness simulator."""
+"""Strict witness comparison helper for the stateless consume mode."""
 
 from typing import Iterable
 
