@@ -17,6 +17,13 @@ from ethereum.exceptions import InvalidBlock
 from ethereum.merkle_patricia_trie import root, trie_get
 from ethereum.trace import discard_evm_trace, set_evm_trace
 
+from ...stateless_host import (
+    build_execution_witness,
+    build_stateless_input,
+    deserialize_stateless_output,
+    serialize_stateless_input,
+)
+
 if TYPE_CHECKING:
     from execution_testing.client_clis.cli_types import (
         Result as TestingResult,
@@ -110,7 +117,8 @@ def _build_execution_witness(
     # the flat pre-state tries. ``T8N.run`` applies the block diff only after
     # ``build_result`` returns, so this is still the original pre-state.
     pre_state = t8n.alloc._materialize_state()
-    return t8n.fork.build_execution_witness(
+    return build_execution_witness(
+        t8n.fork,
         block_env.state,
         expected_post_state_root=state_root,
         pre_state_accounts_data=pre_state._main_trie,
@@ -200,14 +208,17 @@ def _build_stateless_artifacts(
         # They cannot be represented in the typed stateless input.
         return None
 
-    stateless_input = t8n.fork.build_stateless_input(
+    stateless_input = build_stateless_input(
+        t8n.fork,
         block,
         execution_witness=execution_witness,
         execution_requests=typed_requests,
         block_access_list=block_output.block_access_list,
         chain_id=block_env.chain_id,
     )
-    stateless_input_bytes = t8n.fork.serialize_stateless_input(stateless_input)
+    stateless_input_bytes = serialize_stateless_input(
+        t8n.fork, stateless_input
+    )
     # The guest re-executes the block. Route its trace events to the
     # discard tracer so fill metadata such as opcode counts reflects
     # the host execution only.
@@ -218,8 +229,8 @@ def _build_stateless_artifacts(
         )
     finally:
         set_evm_trace(previous_tracer)
-    stateless_output = t8n.fork.deserialize_stateless_output(
-        stateless_output_bytes
+    stateless_output = deserialize_stateless_output(
+        t8n.fork, stateless_output_bytes
     )
 
     # The transition phase executes the block body before the finalized block

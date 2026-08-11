@@ -176,15 +176,34 @@ class ForkLoad:
         return int(schema_id) >> 8
 
     @property
-    def build_execution_witness(self) -> Any:
-        """Build function of the fork."""
-        mod = self._module("stateless_host_exec_witness")
-        return mod.build_execution_witness
+    def stateless_ssz_module(self) -> Any:
+        """The fork's stateless SSZ codec module."""
+        return self._module("stateless_ssz")
 
     @property
-    def build_stateless_input(self) -> Any:
-        """build_stateless_input function of the fork."""
-        return self._module("stateless_host").build_stateless_input
+    def transactions_module(self) -> Any:
+        """The fork's transactions module."""
+        return self._module("transactions")
+
+    @property
+    def execution_payload_type(self) -> Any:
+        """The fork's ExecutionPayload dataclass."""
+        return self._module("execution_engine.types").ExecutionPayload
+
+    @property
+    def new_payload_request_type(self) -> Any:
+        """The fork's NewPayloadRequest dataclass."""
+        return self._module("execution_engine.types").NewPayloadRequest
+
+    @property
+    def stateless_input_type(self) -> Any:
+        """The fork's StatelessInput dataclass."""
+        return self._module("stateless").StatelessInput
+
+    @property
+    def execution_witness_type(self) -> Any:
+        """The fork's ExecutionWitness dataclass."""
+        return self._module("stateless").ExecutionWitness
 
     @property
     def decode_execution_requests(self) -> Any:
@@ -192,16 +211,6 @@ class ForkLoad:
         return self._module(
             "execution_engine.requests"
         ).decode_execution_requests
-
-    @property
-    def serialize_stateless_input(self) -> Any:
-        """serialize_stateless_input function of the fork."""
-        return self._module("stateless_host").serialize_stateless_input
-
-    @property
-    def deserialize_stateless_output(self) -> Any:
-        """deserialize_stateless_output function of the fork."""
-        return self._module("stateless_host").deserialize_stateless_output
 
     @property
     def run_stateless_guest(self) -> Any:
