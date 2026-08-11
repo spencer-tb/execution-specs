@@ -164,6 +164,18 @@ class ForkLoad:
         return hasattr(module, "ExecutionWitness")
 
     @property
+    def stateless_input_fork_index(self) -> int | None:
+        """Fork index byte of the fork's stateless input schema id."""
+        try:
+            module = self._module("stateless_ssz")
+        except ModuleNotFoundError:
+            return None
+        schema_id = getattr(module, "STATELESS_INPUT_SCHEMA_ID", None)
+        if schema_id is None:
+            return None
+        return int(schema_id) >> 8
+
+    @property
     def build_execution_witness(self) -> Any:
         """Build function of the fork."""
         mod = self._module("stateless_host_exec_witness")
