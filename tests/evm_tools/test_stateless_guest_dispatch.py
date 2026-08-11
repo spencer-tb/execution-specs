@@ -30,3 +30,14 @@ def test_unknown_fork_index_rejects_the_run() -> None:
     """Refuse to run when no fork matches the input fork index."""
     with pytest.raises(ValueError, match="no fork with stateless support"):
         run_stateless_guest(Bytes(bytes([0xEE, 0x01])))
+
+
+def test_pinned_guest_rejects_other_forks() -> None:
+    """A pinned guest refuses inputs naming a different fork."""
+    from ethereum_spec_tools.forks import Hardfork
+
+    forks = {h.short_name: h for h in Hardfork.discover()}
+    with pytest.raises(ValueError, match="different fork"):
+        run_stateless_guest(
+            Bytes(bytes([0x15, 0x01])), fork=forks["osaka"]
+        )

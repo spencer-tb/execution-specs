@@ -39,9 +39,15 @@ def fork_for_stateless_input(input_bytes: Bytes) -> Optional[Hardfork]:
     return None
 
 
-def run_stateless_guest(input_bytes: Bytes) -> Bytes:
+def run_stateless_guest(
+    input_bytes: Bytes, fork: Optional[Hardfork] = None
+) -> Bytes:
     """
     Run the stateless guest of the fork the input names.
+
+    When `fork` is given the guest is pinned: inputs naming any other
+    fork are rejected, so a single fork guest image attests exactly one
+    fork's rules through its code commitment.
 
     Raise `ValueError` when no known fork matches the input's fork
     index, since without a fork there is no output schema to encode a
@@ -51,5 +57,9 @@ def run_stateless_guest(input_bytes: Bytes) -> Bytes:
     if hardfork is None:
         raise ValueError(
             "no fork with stateless support matches the input fork index"
+        )
+    if fork is not None and hardfork.short_name != fork.short_name:
+        raise ValueError(
+            "input names a different fork than the pinned guest fork"
         )
     return ForkLoad(hardfork).run_stateless_guest(input_bytes)
