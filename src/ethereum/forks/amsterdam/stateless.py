@@ -14,6 +14,7 @@ from ethereum_types.numeric import U16, U64
 from ethereum.crypto.hash import Hash32, keccak256
 from ethereum.forks.bpo5.blocks import Header as PreviousHeader
 from ethereum.state import Root
+from ethereum.witness_state import WitnessState, build_code_db, build_node_db
 
 from .blocks import Header
 from .execution_engine.new_payload import execute_new_payload_request
@@ -21,7 +22,6 @@ from .execution_engine.requests import ExecutionRequests
 from .execution_engine.types import NewPayloadRequest
 from .fork import ChainContext
 from .fork_types import VersionedHash
-from .witness_state import WitnessState, build_code_db, build_node_db
 
 
 @final
