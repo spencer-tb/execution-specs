@@ -212,7 +212,11 @@ class T8N(Load):
         self.chain_id = U64(t8n_data.chain_id)
         self.state_test = t8n_data.state_test
         self.state_reward = t8n_data.reward
-        self.skip_stateless_validation = t8n_data.skip_stateless_validation
+        # The framework request class gains this field with the
+        # framework tier. Default to skipping so this tier stands alone.
+        self.skip_stateless_validation = getattr(
+            t8n_data, "skip_stateless_validation", True
+        )
         self.exception_mapper = exception_mapper
 
         from execution_testing.client_clis.cli_types import LazyAlloc

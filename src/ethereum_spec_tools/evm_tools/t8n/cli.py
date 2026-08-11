@@ -375,7 +375,11 @@ def build_t8n_from_cli_options(
         reward=_resolve_state_reward(options.state_reward, fork_module),
         blob_schedule=blob_schedule,
         state_test=options.state_test,
-        skip_stateless_validation=not options.stateless,
+    )
+    # The framework request class gains this field with the framework
+    # tier. Set it dynamically so this tier stands alone.
+    t8n_data.skip_stateless_validation = (  # type: ignore[attr-defined]
+        not options.stateless
     )
 
     # ``Ommer.address`` is parsed via the per-fork ``hex_to_address``

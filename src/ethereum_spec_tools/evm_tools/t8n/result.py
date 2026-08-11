@@ -78,12 +78,13 @@ def _ordered_block_headers(t8n: "T8N") -> List[Bytes]:
     Once header data is provided, require a contiguous sequence covering
     the available 256-block history, matching the legacy T8N behavior.
     """
-    if not t8n.fork.has_track_ancestor_access or not t8n.env.block_headers:
+    block_headers = getattr(t8n.env, "block_headers", None)
+    if not t8n.fork.has_track_ancestor_access or not block_headers:
         return []
 
     headers_by_number = {
         int(number): Bytes(bytes(header))
-        for number, header in t8n.env.block_headers.items()
+        for number, header in block_headers.items()
     }
     block_number = int(t8n.env.number)
     max_count = min(256, block_number)
