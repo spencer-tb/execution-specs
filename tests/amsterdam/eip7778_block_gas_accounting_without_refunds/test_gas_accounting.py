@@ -220,7 +220,9 @@ def test_simple_gas_accounting(
     # EIP-8037: block gas_used = max(block_execution_gas, block_state_gas),
     # with the calldata floor binding the execution dimension.
     block_execution = max(gas_used_pre_refund, call_data_floor_cost)
-    refund_tx_block_gas_used = max(block_execution, tx_state_gas)
+    refund_tx_block_gas_used = max(
+        block_execution, fork.normalized_block_state_gas(tx_state_gas)
+    )
 
     blockchain_test(
         pre=pre,
@@ -266,6 +268,7 @@ def test_simple_gas_accounting(
 @pytest.mark.with_all_refund_types()
 @pytest.mark.execute(pytest.mark.skip(reason="Requires specific gas price"))
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_multi_transaction_gas_accounting(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -347,7 +350,9 @@ def test_multi_transaction_gas_accounting(
     # Extra tx has no state gas, so its state gas contribution = 0
     block_execution = gas_used_pre_refund + extra_tx_block_gas
     block_state = tx_state_gas
-    total_block_gas_used = max(block_execution, block_state)
+    total_block_gas_used = max(
+        block_execution, fork.normalized_block_state_gas(block_state)
+    )
     # The block gas_limit must accommodate extra_tx's full gas_limit
     # (floor-inclusive, like its block-execution charge). For
     # exceed_block_gas_limit=True we set the limit below
@@ -517,7 +522,9 @@ def test_varying_calldata_costs(
     # EIP-8037: block gas_used = max(block_execution_gas, block_state_gas),
     # with the calldata floor binding the execution dimension.
     block_execution = max(gas_used_pre_refund, call_data_floor_cost)
-    refund_tx_block_gas_used = max(block_execution, tx_state_gas)
+    refund_tx_block_gas_used = max(
+        block_execution, fork.normalized_block_state_gas(tx_state_gas)
+    )
 
     blockchain_test(
         pre=pre,
@@ -552,6 +559,7 @@ def test_varying_calldata_costs(
 @pytest.mark.exception_test
 @pytest.mark.execute(pytest.mark.skip(reason="Requires specific gas price"))
 @pytest.mark.valid_from("EIP7778")
+@pytest.mark.valid_before("EIP8372")
 def test_extra_tx_admission_uses_pre_refund_gas(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -667,7 +675,9 @@ def test_multiple_refund_types_in_one_tx(
     # EIP-8037: block gas_used = max(block_execution_gas, block_state_gas),
     # with the calldata floor binding the execution dimension.
     block_execution = max(gas_used_pre_refund, call_data_floor_cost)
-    refund_tx_block_gas_used = max(block_execution, tx_state_gas)
+    refund_tx_block_gas_used = max(
+        block_execution, fork.normalized_block_state_gas(tx_state_gas)
+    )
 
     blockchain_test(
         pre=pre,

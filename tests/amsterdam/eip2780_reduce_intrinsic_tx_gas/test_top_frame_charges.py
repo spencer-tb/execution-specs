@@ -218,7 +218,10 @@ def test_top_frame_new_account_charged_as_state_gas(
     # No EVM bytecode runs (empty recipient), so the only execution gas
     # is the intrinsic and the only state gas is the top-frame
     # ``NEW_ACCOUNT`` charge.
-    expected_gas_used = max(intrinsic_execution, new_account_state_gas)
+    expected_gas_used = max(
+        intrinsic_execution,
+        fork.normalized_block_state_gas(new_account_state_gas),
+    )
 
     gas_price = 1_000_000_000
     tx = Transaction(
@@ -417,6 +420,7 @@ def test_top_frame_new_account_skipped_for_prefunded_create_target(
         pytest.param(1, id="non-zero_value"),
     ],
 )
+@pytest.mark.valid_before("EIP8372")
 def test_top_frame_new_account_skipped_for_create_target_funded_same_block(
     fork: Fork,
     pre: Alloc,
@@ -743,6 +747,7 @@ def test_initcode_selfdestruct_keeps_top_frame_state_charge(
     state_test(pre=pre, tx=tx, post=post)
 
 
+@pytest.mark.valid_before("EIP8372")
 def test_initcode_selfdestruct_state_gas_in_header(
     fork: Fork,
     pre: Alloc,

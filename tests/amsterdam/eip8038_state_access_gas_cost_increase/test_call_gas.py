@@ -262,6 +262,7 @@ def test_callcode_value_to_nonexistent_no_new_account(
 
 
 @EIPChecklist.GasCostChanges.Test.GasUpdatesMeasurement()
+@pytest.mark.valid_before("EIP8372")
 def test_call_value_to_new_account_seam(
     state_test: StateTestFiller,
     pre: Alloc,

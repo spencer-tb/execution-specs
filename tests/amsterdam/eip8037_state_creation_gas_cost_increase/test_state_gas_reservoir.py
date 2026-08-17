@@ -257,6 +257,7 @@ def test_block_execution_gas_limit(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_block_state_gas_limit_boundary(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -337,6 +338,7 @@ def test_block_state_gas_limit_boundary(
 @pytest.mark.inclusion_test
 @pytest.mark.exception_test
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_creation_tx_execution_check_uses_full_tx_gas(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -559,6 +561,7 @@ def test_block_gas_used_no_state_ops(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_block_gas_used_with_state_ops(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -601,6 +604,7 @@ def test_block_gas_used_with_state_ops(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_block_2d_gas_valid_when_cumulative_exceeds_limit(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -878,7 +882,10 @@ def test_creation_tx_failure_preserves_intrinsic_state_gas(
     )
 
     block_execution = tx_gas - create_intrinsic_state - sstore_state_gas
-    expected_gas_used = max(block_execution, create_intrinsic_state)
+    expected_gas_used = max(
+        block_execution,
+        fork.normalized_block_state_gas(create_intrinsic_state),
+    )
 
     blockchain_test(
         pre=pre,
@@ -893,6 +900,7 @@ def test_creation_tx_failure_preserves_intrinsic_state_gas(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_subcall_failure_does_not_zero_top_level_state_gas(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,

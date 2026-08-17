@@ -836,6 +836,7 @@ def test_set_code_to_self_caller(
 
 @pytest.mark.execute(pytest.mark.skip(reason="excessive gas"))
 @pytest.mark.eels_base_coverage
+@pytest.mark.valid_before("EIP8372")
 def test_set_code_max_depth_call_stack(
     state_test: StateTestFiller,
     pre: Alloc,

@@ -105,6 +105,7 @@ def stop_txs(pre: Alloc, fork: Fork, n: int) -> list[Transaction]:
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_block_gas_used_state_dominates(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -206,7 +207,9 @@ def test_block_gas_used_mixed_txs(
         num_stop * intrinsic_gas + num_sstore * tx_execution_sstore
     )
     block_state = num_sstore * tx_state_sstore
-    expected = max(block_execution, block_state)
+    expected = max(
+        block_execution, fork.normalized_block_state_gas(block_state)
+    )
 
     txs_sstore, post = sstore_txs(pre, fork, num_sstore)
     txs_stop = stop_txs(pre, fork, num_stop)
@@ -334,7 +337,9 @@ def test_block_2d_gas_boundary_exact_fit(
 
     block_execution = num_txs * tx_execution
     block_state = num_txs * tx_state
-    expected_gas_used = max(block_execution, block_state)
+    expected_gas_used = max(
+        block_execution, fork.normalized_block_state_gas(block_state)
+    )
 
     txs, post = sstore_txs(
         pre,
@@ -428,7 +433,10 @@ def test_block_gas_used_create_tx(
     )
     stop_execution = intrinsic_calc()
 
-    expected = max(create_execution + stop_execution, create_state_gas)
+    expected = max(
+        create_execution + stop_execution,
+        fork.normalized_block_state_gas(create_state_gas),
+    )
 
     txs = [
         Transaction(
@@ -452,6 +460,7 @@ def test_block_gas_used_create_tx(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_multi_block_dimension_flip(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -529,6 +538,7 @@ def test_multi_block_dimension_flip(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_tx_gas_limit_block_boundary(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -688,6 +698,7 @@ def test_tx_inclusion_at_execution_gas_block_limit_small(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_block_2d_gas_tx_gas_limit_exceeds_execution_remaining(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -747,6 +758,7 @@ def test_block_2d_gas_tx_gas_limit_exceeds_execution_remaining(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_receipt_cumulative_differs_from_header_gas_used(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -783,7 +795,9 @@ def test_receipt_cumulative_differs_from_header_gas_used(
 
     block_execution = num_txs * tx_execution
     block_state = num_txs * tx_state
-    header_gas_used = max(block_execution, block_state)
+    header_gas_used = max(
+        block_execution, fork.normalized_block_state_gas(block_state)
+    )
 
     assert block_state > block_execution
     assert header_gas_used < num_txs * per_tx_gas_used
@@ -809,6 +823,7 @@ def test_receipt_cumulative_differs_from_header_gas_used(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_base_fee_per_gas_follows_dominant_dimension(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -892,7 +907,9 @@ def test_base_fee_per_gas_follows_dominant_dimension(
             )
         )
 
-    block_1_gas_used = max(block_execution, block_state)
+    block_1_gas_used = max(
+        block_execution, fork.normalized_block_state_gas(block_state)
+    )
     assert block_1_gas_used < gas_limit, (
         "test needs update: gas_limit reached by usage, simply raise the "
         "anchored gas_limit value"
@@ -947,6 +964,7 @@ def test_base_fee_per_gas_follows_dominant_dimension(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_cumulative_block_state_gas_boundary(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -1028,6 +1046,7 @@ def test_cumulative_block_state_gas_boundary(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_block_2d_inclusion_execution_gate_full_gas_reservation(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,

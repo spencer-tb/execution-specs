@@ -345,6 +345,7 @@ def test_calldata_floor_counts_toward_block_gas(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_calldata_floor_not_discounted_by_state_gas(
     state_test: StateTestFiller,
     pre: Alloc,

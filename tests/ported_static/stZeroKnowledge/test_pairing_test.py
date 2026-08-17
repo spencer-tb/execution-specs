@@ -180,6 +180,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_before("EIP8372")
 def test_pairing_test(
     state_test: StateTestFiller,
     pre: Alloc,

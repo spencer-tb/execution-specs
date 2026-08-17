@@ -54,6 +54,7 @@ BLOCK_GAS_LIMITS = [
 @EIPChecklist.GasCostChanges.Test.GasUpdatesMeasurement()
 @pytest.mark.parametrize("block_gas_limit", BLOCK_GAS_LIMITS)
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_pricing_at_various_gas_limits(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -194,7 +195,10 @@ def test_charge_spill_boundary(
     )
 
     header = Header(
-        gas_used=max(intrinsic + execution, sstore_state_gas)
+        gas_used=max(
+            intrinsic + execution,
+            fork.normalized_block_state_gas(sstore_state_gas),
+        )
         if gas_delta == 0
         else gas_limit
     )
@@ -506,6 +510,7 @@ def test_calldata_floor_enforced_with_state_gas(
 
 @pytest.mark.parametrize("block_gas_limit", BLOCK_GAS_LIMITS)
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_create_state_gas_scales_with_cpsb(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -546,6 +551,7 @@ def test_create_state_gas_scales_with_cpsb(
 
 @pytest.mark.parametrize("block_gas_limit", BLOCK_GAS_LIMITS)
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_call_new_account_state_gas_scales_with_cpsb(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -588,6 +594,7 @@ def test_call_new_account_state_gas_scales_with_cpsb(
 
 @pytest.mark.parametrize("block_gas_limit", BLOCK_GAS_LIMITS)
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_selfdestruct_new_beneficiary_scales_with_cpsb(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -631,6 +638,7 @@ def test_selfdestruct_new_beneficiary_scales_with_cpsb(
 
 @pytest.mark.parametrize("block_gas_limit", BLOCK_GAS_LIMITS)
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_sstore_refund_scales_with_cpsb(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -665,6 +673,7 @@ def test_sstore_refund_scales_with_cpsb(
 
 @pytest.mark.parametrize("block_gas_limit", BLOCK_GAS_LIMITS)
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_auth_state_gas_scales_with_cpsb(
     state_test: StateTestFiller,
     pre: Alloc,

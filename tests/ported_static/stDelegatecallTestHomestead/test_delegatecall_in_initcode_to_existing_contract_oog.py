@@ -32,6 +32,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_before("EIP8372")
 def test_delegatecall_in_initcode_to_existing_contract_oog(
     state_test: StateTestFiller,
     fork: Fork,

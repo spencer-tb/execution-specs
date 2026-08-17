@@ -656,6 +656,7 @@ def test_tx_gas_limit_cap_access_list_with_diff_addr(
     ],
 )
 @pytest.mark.valid_from("Osaka")
+@pytest.mark.valid_before("EIP8372")
 def test_tx_gas_limit_cap_authorized_tx(
     state_test: StateTestFiller,
     pre: Alloc,

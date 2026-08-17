@@ -157,6 +157,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_before("EIP8372")
 def test_sstore_xto_x(
     state_test: StateTestFiller,
     pre: Alloc,

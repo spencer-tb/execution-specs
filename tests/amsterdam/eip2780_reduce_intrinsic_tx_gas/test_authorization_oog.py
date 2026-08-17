@@ -1218,6 +1218,7 @@ def test_auth_state_charges_survive_dispatch_halt_with_reservoir(
     state_test(pre=pre, tx=tx, post=post)
 
 
+@pytest.mark.valid_before("EIP8372")
 def test_auth_state_gas_in_header_on_dispatch_revert(
     fork: Fork,
     pre: Alloc,
@@ -1298,6 +1299,7 @@ def test_auth_state_gas_in_header_on_dispatch_revert(
         pytest.param(1, id="exceeded", marks=pytest.mark.exception_test),
     ],
 )
+@pytest.mark.valid_before("EIP8372")
 def test_reverted_dispatch_state_gas_counts_toward_block_limit(
     fork: Fork,
     pre: Alloc,

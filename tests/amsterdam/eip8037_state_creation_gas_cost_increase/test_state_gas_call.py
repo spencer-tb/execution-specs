@@ -1191,6 +1191,7 @@ def test_call_zero_value_to_self_destructed_same_tx_account(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_call_value_to_pre_existing_selfdestructed_account(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -1553,6 +1554,7 @@ def test_call_new_account_state_gas_boundary(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_child_failure_refunds_state_gas_to_reservoir_not_gas_left(
     state_test: StateTestFiller,
     pre: Alloc,

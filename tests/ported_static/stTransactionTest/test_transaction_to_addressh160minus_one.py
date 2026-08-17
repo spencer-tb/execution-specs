@@ -38,6 +38,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_before("EIP8372")
 def test_transaction_to_addressh160minus_one(
     state_test: StateTestFiller,
     pre: Alloc,

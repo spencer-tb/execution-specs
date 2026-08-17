@@ -27,6 +27,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ["state_tests/stTransactionTest/EmptyTransaction3Filler.json"],
 )
 @pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_before("EIP8372")
 def test_empty_transaction3(
     state_test: StateTestFiller,
     fork: Fork,

@@ -147,6 +147,7 @@ def test_access_list_no_fallback(
         pytest.param(2, id="two_auths"),
     ],
 )
+@pytest.mark.valid_before("EIP8372")
 def test_authorization_no_fallback(
     state_test: StateTestFiller,
     pre: Alloc,

@@ -35,6 +35,7 @@ REFERENCE_SPEC_VERSION = ref_spec_8037.version
 
 @pytest.mark.parametrize("funding", ["reservoir", "spill"])
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_selfdestruct_new_beneficiary_state_gas(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -304,7 +305,9 @@ def test_create_selfdestruct_no_refund_account_and_storage(
         + init_code.gas_cost(fork)
         - total_state_gas
     )
-    expected_gas_used = max(execution_used, total_state_gas)
+    expected_gas_used = max(
+        execution_used, fork.normalized_block_state_gas(total_state_gas)
+    )
 
     tx = Transaction(
         to=factory,
@@ -440,7 +443,10 @@ def test_create_selfdestruct_code_deposit_no_refund_header_check(
     )
 
     baseline_block_execution = 0x94C8
-    expected_gas_used = max(baseline_block_execution, total_state_gas)
+    expected_gas_used = max(
+        baseline_block_execution,
+        fork.normalized_block_state_gas(total_state_gas),
+    )
 
     blockchain_test(
         pre=pre,
@@ -455,6 +461,7 @@ def test_create_selfdestruct_code_deposit_no_refund_header_check(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_create_selfdestruct_sstore_restoration_refund(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -674,7 +681,9 @@ def test_selfdestruct_via_delegatecall_chain_no_refund(
         + chain_execution_gas
         - total_state_gas
     )
-    expected_gas_used = max(execution_used, total_state_gas)
+    expected_gas_used = max(
+        execution_used, fork.normalized_block_state_gas(total_state_gas)
+    )
 
     tx = Transaction(
         to=factory,
@@ -742,6 +751,7 @@ def test_selfdestruct_new_beneficiary_account_write_cost(
 )
 @pytest.mark.pre_alloc_mutable()
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_create_tx_selfdestruct_initcode_state_gas(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,

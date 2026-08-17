@@ -25,6 +25,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ["state_tests/stCodeSizeLimit/codesizeInitFiller.json"],
 )
 @pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_before("EIP8372")
 def test_codesize_init(
     state_test: StateTestFiller,
     pre: Alloc,

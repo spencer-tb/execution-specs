@@ -33,6 +33,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_before("EIP8372")
 def test_create_name_registrator_zero_mem(
     state_test: StateTestFiller,
     pre: Alloc,

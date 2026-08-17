@@ -186,6 +186,7 @@ def test_create2_child_spill_not_double_charged(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_code_deposit_state_gas_scales_with_size(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -1287,6 +1288,7 @@ def test_code_deposit_halt_discards_initcode_state_gas(
 )
 @pytest.mark.pre_alloc_mutable()
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_create_tx_header_gas_used(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -1425,6 +1427,7 @@ def test_create_initcode_halt_no_code_deposit_state_gas(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_state_gas_spill_header_gas_used(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -1542,6 +1545,7 @@ def test_failed_create_header_gas_used(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_create_silent_failure_refunds_state_gas(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -1600,6 +1604,7 @@ def test_create_silent_failure_refunds_state_gas(
 )
 @pytest.mark.with_all_create_opcodes()
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_create_child_revert_refunds_state_gas(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -1789,7 +1794,7 @@ def test_create_mixed_success_and_failure_block_accounting(
         + factory_code.gas_cost(fork)
         - 2 * create_account_state_gas
     )
-    expected = max(tx_execution, block_state)
+    expected = max(tx_execution, fork.normalized_block_state_gas(block_state))
 
     tx = Transaction(
         to=factory,
@@ -2481,6 +2486,7 @@ def test_oversized_initcode_opcode_no_state_gas(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_selfdestruct_in_create_tx_initcode(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -2546,6 +2552,7 @@ def test_selfdestruct_in_create_tx_initcode(
 )
 @pytest.mark.with_all_create_opcodes()
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_inner_create_succeeds_code_deposit_state_gas(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -2772,6 +2779,7 @@ def test_create_stack_depth_state_gas_consumed(
 )
 @pytest.mark.with_all_create_opcodes()
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_inner_create_fail_refunds_in_creation_tx(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
@@ -2926,6 +2934,7 @@ def test_create_collision_burned_gas_counted_in_block_execution(
 )
 @pytest.mark.with_all_create_opcodes()
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_create_account_creation_charge(
     state_test: StateTestFiller,
     pre: Alloc,

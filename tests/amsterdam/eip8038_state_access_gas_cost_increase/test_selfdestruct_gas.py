@@ -554,6 +554,7 @@ def test_same_tx_created_selfdestruct_self_burn(
 
 @EIPChecklist.GasCostChanges.Test.GasUpdatesMeasurement()
 @pytest.mark.pre_alloc_mutable()
+@pytest.mark.valid_before("EIP8372")
 def test_same_tx_created_selfdestruct_to_fresh_beneficiary(
     state_test: StateTestFiller,
     pre: Alloc,

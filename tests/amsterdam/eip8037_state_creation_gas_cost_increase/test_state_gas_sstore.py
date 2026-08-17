@@ -161,6 +161,7 @@ def test_sstore_zero_to_zero(
     ],
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_sstore_restoration_refund_credits_local_reservoir(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -573,7 +574,9 @@ def test_sstore_restoration_mixed_with_genuine_sstore(
     tx_execution = (
         intrinsic_gas + code.gas_cost(fork) - num_0_to_1 * sstore_state_gas
     )
-    expected = max(tx_execution, sstore_state_gas)
+    expected = max(
+        tx_execution, fork.normalized_block_state_gas(sstore_state_gas)
+    )
 
     contract = pre.deploy_contract(code=code)
     tx = Transaction(
@@ -671,7 +674,9 @@ def test_sstore_restoration_then_reset(
         )(0, 1)
     )
     tx_execution = intrinsic_gas + code.gas_cost(fork) - 2 * sstore_state_gas
-    expected = max(tx_execution, sstore_state_gas)
+    expected = max(
+        tx_execution, fork.normalized_block_state_gas(sstore_state_gas)
+    )
 
     contract = pre.deploy_contract(code=code)
     tx = Transaction(
@@ -714,7 +719,9 @@ def test_sstore_restoration_reservoir_replenished_inline(
         + Op.SSTORE(1, 1)
     )
     tx_execution = intrinsic_gas + code.gas_cost(fork) - 2 * sstore_state_gas
-    expected = max(tx_execution, sstore_state_gas)
+    expected = max(
+        tx_execution, fork.normalized_block_state_gas(sstore_state_gas)
+    )
 
     contract = pre.deploy_contract(code=code)
     tx = Transaction(
@@ -1008,6 +1015,7 @@ def test_sstore_restoration_ancestor_revert(
     selector=lambda call_opcode: call_opcode in (Op.DELEGATECALL, Op.CALLCODE)
 )
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8372")
 def test_sstore_restoration_charge_in_ancestor_intermediate_revert(
     state_test: StateTestFiller,
     pre: Alloc,

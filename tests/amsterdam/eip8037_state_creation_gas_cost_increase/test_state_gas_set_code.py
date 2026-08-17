@@ -93,6 +93,7 @@ def _auth_gas(
 
 
 def _receipt_and_header(
+    fork: Fork,
     intrinsic_execution: int,
     top_frame_execution: int,
     top_frame_state: int,
@@ -108,7 +109,9 @@ def _receipt_and_header(
     block_execution = intrinsic_execution + top_frame_execution + evm_execution
     block_state = top_frame_state + evm_state
     cumulative_gas_used = block_execution + block_state
-    header_gas_used = max(block_execution, block_state)
+    header_gas_used = max(
+        block_execution, fork.normalized_block_state_gas(block_state)
+    )
     return cumulative_gas_used, header_gas_used
 
 
@@ -154,7 +157,7 @@ def test_authorization_state_gas_scaling(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -267,7 +270,7 @@ def test_existing_account_no_refund(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -328,7 +331,7 @@ def test_mixed_new_and_existing_auths(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -394,6 +397,7 @@ def test_authorization_with_sstore(
         fork, authorization_list
     )
     _, header_gas_used = _receipt_and_header(
+        fork,
         intrinsic_execution,
         top_frame_execution,
         top_frame_state,
@@ -456,6 +460,7 @@ def test_existing_account_no_refund_with_sstore(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
+        fork,
         intrinsic_execution,
         top_frame_execution,
         top_frame_state,
@@ -575,7 +580,7 @@ def test_auth_block_gas_accounting(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     post_code = (
@@ -640,7 +645,7 @@ def test_invalid_nonce_auth_still_charges_intrinsic(
     assert top_frame_execution == 0
     assert top_frame_state == 0
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -696,7 +701,7 @@ def test_invalid_chain_id_auth_still_charges_intrinsic(
     assert top_frame_execution == 0
     assert top_frame_state == 0
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -758,7 +763,7 @@ def test_self_sponsored_authorization(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -827,7 +832,7 @@ def test_duplicate_signer_authorizations(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -898,6 +903,7 @@ def test_auth_with_calldata_and_access_list(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
+        fork,
         intrinsic_execution,
         top_frame_execution,
         top_frame_state,
@@ -985,7 +991,7 @@ def test_mixed_valid_and_invalid_auths(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -1044,7 +1050,7 @@ def test_many_authorizations(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -1107,6 +1113,7 @@ def test_auth_with_multiple_sstores(
         fork, authorization_list
     )
     _, header_gas_used = _receipt_and_header(
+        fork,
         intrinsic_execution,
         top_frame_execution,
         top_frame_state,
@@ -1294,7 +1301,7 @@ def test_multi_tx_block_auth_and_sstore(
         _auth_gas(fork, authorization_list)
     )
     tx1_gas, _ = _receipt_and_header(
-        intrinsic_execution_1, top_frame_execution_1, top_frame_state_1
+        fork, intrinsic_execution_1, top_frame_execution_1, top_frame_state_1
     )
     tx_1 = Transaction(
         to=contract,
@@ -1375,6 +1382,7 @@ def test_fresh_authority_and_sstores_full_state(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
+        fork,
         intrinsic_execution,
         top_frame_execution,
         top_frame_state,
@@ -1447,7 +1455,7 @@ def test_existing_account_auth_header_gas_used(
         fork, authorization_list
     )
     _, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -1522,7 +1530,7 @@ def test_mixed_auths_header_gas_used(
         fork, authorization_list
     )
     _, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -1592,6 +1600,7 @@ def test_auth_state_gas_persists_on_top_level_revert(
     # The SSTORE's state gas is refilled by the REVERT (the slot rolls
     # back); the authorization's state gas persists with its delegation.
     cumulative_gas_used, header_gas_used = _receipt_and_header(
+        fork,
         intrinsic_execution,
         top_frame_execution,
         top_frame_state,
@@ -1699,6 +1708,7 @@ def test_auth_state_gas_in_header_after_failure(
     if failure_mode == "revert":
         # The authorization's state gas persists with its delegation.
         _, expected_gas_used = _receipt_and_header(
+            fork,
             intrinsic_execution,
             top_frame_execution,
             top_frame_state,
@@ -1783,6 +1793,7 @@ def test_auth_sender_billing_after_failure(
     # The authorization's state gas persists with its delegation across
     # the REVERT and stays billed to the sender.
     expected_cumulative, header_gas_used = _receipt_and_header(
+        fork,
         intrinsic_execution,
         top_frame_execution,
         top_frame_state,
@@ -1880,7 +1891,10 @@ def test_top_level_halt_keeps_intrinsic_auth_state_gas(
         post=post,
         tx=tx,
         blockchain_test_header_verify=Header(
-            gas_used=max(gas_limit - auth_state_gas, auth_state_gas)
+            gas_used=max(
+                gas_limit - auth_state_gas,
+                fork.normalized_block_state_gas(auth_state_gas),
+            )
         ),
     )
 
@@ -1946,6 +1960,7 @@ def test_auth_and_execution_state_oog_boundary(
     fits = gas_delta >= 0
     if fits:
         _, header_gas_used = _receipt_and_header(
+            fork,
             intrinsic_execution,
             top_frame_execution,
             top_frame_state,
@@ -2044,7 +2059,7 @@ def test_invalid_auth_no_top_frame_charge(
     assert top_frame_execution == 0
     assert top_frame_state == 0
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -2107,7 +2122,7 @@ def test_same_tx_create_then_clear(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -2174,7 +2189,7 @@ def test_same_tx_clear_then_reset_pre_delegated(
     )
     assert top_frame_state == 0
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
@@ -2238,7 +2253,7 @@ def test_same_authority_increasing_nonce_net_once(
         fork, authorization_list
     )
     cumulative_gas_used, header_gas_used = _receipt_and_header(
-        intrinsic_execution, top_frame_execution, top_frame_state
+        fork, intrinsic_execution, top_frame_execution, top_frame_state
     )
 
     tx = Transaction(
