@@ -372,6 +372,11 @@ def test_bal_sponsored_payer_and_sender(
         fork.frame_transaction_intrinsic_cost_calculator()(
             frames=tx.frames,
             signatures=tx.signatures,
+            extra_charged_bytes=[
+                fork.keyed_nonce_calldata(
+                    nonce_keys=[0], nonce_seq=int(tx.nonce)
+                )
+            ],
             return_cost_deducted_prior_execution=True,
         )
         + fork.frame_entry_gas_calculator()()

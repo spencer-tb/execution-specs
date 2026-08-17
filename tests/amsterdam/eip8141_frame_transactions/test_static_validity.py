@@ -964,6 +964,9 @@ def test_gas_limit_cap_from_frame_gas(
     # data, so a frame count prices the intrinsic cost exactly.
     intrinsic = fork.frame_transaction_intrinsic_cost_calculator()(
         frames=1,
+        extra_charged_bytes=[
+            fork.keyed_nonce_calldata(nonce_keys=[0], nonce_seq=1)
+        ],
         return_cost_deducted_prior_execution=True,
     )
     cap = fork.transaction_gas_limit_cap()
@@ -1002,6 +1005,9 @@ def test_gas_limit_cap_from_frame_gas_transaction(
     )
     intrinsic = fork.frame_transaction_intrinsic_cost_calculator()(
         frames=1,
+        extra_charged_bytes=[
+            fork.keyed_nonce_calldata(nonce_keys=[0], nonce_seq=1)
+        ],
         return_cost_deducted_prior_execution=True,
     )
     cap = fork.transaction_gas_limit_cap()
@@ -1059,7 +1065,12 @@ def test_gas_limit_cap_from_calldata_floor(
     )
     # With no charged bytes the floor anchor is the always-paid base
     # costs alone; the data length is solved against it below.
-    base = fork.frame_transaction_data_floor_cost_calculator()(frames=2)
+    base = fork.frame_transaction_data_floor_cost_calculator()(
+        frames=2,
+        extra_charged_bytes=[
+            fork.keyed_nonce_calldata(nonce_keys=[0], nonce_seq=1)
+        ],
+    )
     cap = fork.transaction_gas_limit_cap()
     assert cap is not None
     data_length = (cap - base) // floor_per_byte + cap_excess
@@ -1105,7 +1116,12 @@ def test_gas_limit_cap_from_calldata_floor_transaction(
     )
     # With no charged bytes the floor anchor is the always-paid base
     # costs alone; the data length is solved against it below.
-    base = fork.frame_transaction_data_floor_cost_calculator()(frames=2)
+    base = fork.frame_transaction_data_floor_cost_calculator()(
+        frames=2,
+        extra_charged_bytes=[
+            fork.keyed_nonce_calldata(nonce_keys=[0], nonce_seq=1)
+        ],
+    )
     cap = fork.transaction_gas_limit_cap()
     assert cap is not None
     data_length = (cap - base) // floor_per_byte + cap_excess
