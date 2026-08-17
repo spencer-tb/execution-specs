@@ -17,6 +17,7 @@ from ...transactions.frame_transaction import (
     APPROVE_SCOPE_MASK,
     FrameFlag,
     FrameSignatureScheme,
+    nonce_keys_hash,
     resolve_frame_target,
 )
 from ...vm.memory import buffer_read, memory_read_bytes, memory_write
@@ -74,8 +75,14 @@ def approve(evm: Evm) -> None:
     # A scope with bits beyond the approval mask is never allowed.
     if scope & ~U256(APPROVE_SCOPE_MASK) != U256(0):
         raise Revert
-    if not attempt_approval(evm.tx_env, FrameFlag(Uint(scope))):
+    surcharge = attempt_approval(
+        evm.tx_env, FrameFlag(Uint(scope)), Uint(evm.gas_meter.gas_left)
+    )
+    if surcharge is None:
         raise Revert
+    # The keyed-nonce first-use surcharge; covered by the remaining
+    # gas, checked before the approval's effects were applied.
+    charge_gas(evm, ExecutionGas(surcharge))
 
     evm.output = Bytes(memory_read_bytes(evm.memory, offset, length))
     evm.running = False
@@ -103,7 +110,7 @@ def txparam(evm: Evm) -> None:
         # The frame transaction's type identifier.
         value = U256(0x06)
     elif param == U256(0x01):
-        value = U256(tx.nonce)
+        value = U256(tx.nonce_seq)
     elif param == U256(0x02):
         value = U256.from_be_bytes(tx.sender)
     elif param == U256(0x03):
@@ -124,6 +131,14 @@ def txparam(evm: Evm) -> None:
         value = U256(frame_context.current_frame_index)
     elif param == U256(0x0B):
         value = U256(len(tx.signatures))
+    elif param == U256(0x0C):
+        value = U256(frame_context.tx_legacy_nonce)
+    elif param == U256(0x0D):
+        value = U256(len(tx.nonce_keys))
+    elif param == U256(0x0E):
+        value = U256.from_be_bytes(nonce_keys_hash(tx.nonce_keys))
+    elif param == U256(0x10):
+        value = tx.nonce_keys[0]
     else:
         raise InvalidParameter("undefined TXPARAM parameter")
 

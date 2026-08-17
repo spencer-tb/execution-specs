@@ -93,6 +93,60 @@ Exact length, in bytes, of an expiry verifier frame's data: an unsigned
 big-endian expiry timestamp.
 """
 
+NONCE_MANAGER: Final[Address] = Address(
+    bytes.fromhex("0000000000000000000000000000000000008250")
+)
+"""
+System contract whose protocol-managed storage holds the keyed nonce
+sequences of [EIP-8250]. Ordinary calls to it revert; only the protocol
+reads and writes its slots.
+
+[EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
+"""
+
+NONCE_MANAGER_CODE: Final[bytes] = bytes.fromhex("60006000fd")
+"""
+Runtime code of [`NONCE_MANAGER`][nm]: revert with empty returndata on
+any ordinary call.
+
+[nm]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER
+"""  # noqa: E501
+
+MAX_NONCE_SEQ: Final[U64] = U64(U64.MAX_VALUE)
+"""
+Exhausted sequence value: a nonce key whose current sequence reaches it
+cannot be advanced further, and no transaction may select it.
+"""
+
+MAX_NONCE_KEYS: Final[int] = 16
+"""
+Maximum number of nonce keys a frame transaction may select.
+"""
+
+
+def keyed_nonce_slot(sender: Address, nonce_key: U256) -> Bytes32:
+    """
+    Derive the [`NONCE_MANAGER`][nm] storage slot holding the sequence
+    of `nonce_key` for `sender`: the hash of the 32-byte left-padded
+    sender address followed by the key's 32-byte big-endian encoding.
+
+    [nm]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER
+    """  # noqa: E501
+    padded_sender = bytes(12) + bytes(sender)
+    return Bytes32(keccak256(padded_sender + nonce_key.to_be_bytes32()))
+
+
+def nonce_keys_hash(keys: Tuple[U256, ...]) -> Hash32:
+    """
+    Hash the selected key set canonically: the key count followed by
+    each key, all as 32-byte big-endian words. Valid key sets are
+    strictly increasing, so each set has exactly one hash.
+    """
+    encoded = bytes(U256(len(keys)).to_be_bytes32())
+    for key in keys:
+        encoded += key.to_be_bytes32()
+    return keccak256(encoded)
+
 
 @final
 class FrameMode(UintEnum, boundary=STRICT):
@@ -333,12 +387,25 @@ class FrameTransaction:
     The ID of the chain on which this transaction is executed.
     """
 
-    nonce: U256
+    nonce_keys: Tuple[U256, ...]
     """
-    A scalar value equal to the number of transactions sent by the
-    [`sender`][s].
+    The selected nonce domains, per [EIP-8250]: `(0,)` aliases the
+    [`sender`][s]'s account nonce; each non-zero key selects an
+    independent sequence stored under [`NONCE_MANAGER`][nm]. Valid key
+    sets are non-empty, strictly increasing, and contain `0` only as
+    the sole key.
 
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
     [s]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.FrameTransaction.sender
+    [nm]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER
+    """  # noqa: E501
+
+    nonce_seq: U64
+    """
+    The sequence number every selected [`nonce_keys`][nk] entry must
+    currently hold for the transaction to be valid.
+
+    [nk]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.FrameTransaction.nonce_keys
     """  # noqa: E501
 
     sender: Address
@@ -588,8 +655,17 @@ def validate_frame_transaction(
         VERSIONED_HASH_VERSION_KZG,
     )
 
-    if tx.nonce >= U256(U64.MAX_VALUE):
-        raise NonceOverflowError("Nonce too high")
+    if tx.nonce_seq >= MAX_NONCE_SEQ:
+        raise NonceOverflowError("Nonce sequence too high")
+
+    key_count = len(tx.nonce_keys)
+    if key_count < 1 or key_count > MAX_NONCE_KEYS:
+        raise InvalidFrameError("nonce key count out of bounds")
+    for index, nonce_key in enumerate(tx.nonce_keys):
+        if index > 0 and nonce_key <= tx.nonce_keys[index - 1]:
+            raise InvalidFrameError("nonce keys not strictly increasing")
+        if nonce_key == U256(0) and key_count != 1:
+            raise InvalidFrameError("zero nonce key in a multi-key set")
 
     if tx.max_fee_per_gas > Uint(U256.MAX_VALUE):
         raise FeeOverflowError("Max fee per gas too high")
@@ -730,6 +806,14 @@ def calculate_frame_transaction_intrinsic_cost(
 
     tokens = Uint(0)
     data_length = Uint(0)
+
+    # The nonce encodings are priced as transaction data (EIP-8250).
+    nonce_calldata = Bytes(
+        rlp.encode(tx.nonce_keys) + rlp.encode(tx.nonce_seq)
+    )
+    tokens += count_tokens_in_data(nonce_calldata)
+    data_length += ulen(nonce_calldata)
+
     for frame in tx.frames:
         tokens += count_tokens_in_data(frame.data)
         data_length += ulen(frame.data)

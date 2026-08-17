@@ -198,6 +198,17 @@ class GasCosts:
     [ftx]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.FrameTransaction
     """  # noqa: E501
 
+    KEYED_NONCE_FIRST_USE: Final[ExecutionGas] = ExecutionGas(Uint(20000))
+    """
+    State-growth surcharge for each nonce key a frame transaction
+    consumes for the first time, charged to the frame executing the
+    payment-scoped `APPROVE` ([EIP-8250]). It references the
+    zero-to-nonzero storage-creation cost, not user-level `SSTORE`
+    pricing.
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
+    """
+
     FRAME_SIGNATURE_SCHEME_P256: Final[Uint] = Uint(6700)
     """
     Cost for verifying a [`P256`][s] signature in a [`FrameTransaction`][ftx].

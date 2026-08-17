@@ -50,6 +50,22 @@ class TransactionLoad:
         """Get the nonce for the transaction."""
         return hex_to_u256(self.raw.get("nonce"))
 
+    def json_to_nonce_keys(self) -> Any:
+        """Get the nonce keys of a frame transaction."""
+        raw_keys = self.raw.get("nonceKeys")
+        if raw_keys is None:
+            # A frame transaction authored pre-EIP-8250: its single
+            # legacy nonce maps to the aliasing key set.
+            return (U256(0),)
+        return tuple(hex_to_u256(key) for key in raw_keys)
+
+    def json_to_nonce_seq(self) -> U64:
+        """Get the nonce sequence of a frame transaction."""
+        raw_seq = self.raw.get("nonceSeq")
+        if raw_seq is None:
+            return hex_to_u64(self.raw.get("nonce"))
+        return hex_to_u64(raw_seq)
+
     def json_to_gas_price(self) -> Uint:
         """Get the gas price for the transaction."""
         return hex_to_uint(self.raw.get("gasPrice"))

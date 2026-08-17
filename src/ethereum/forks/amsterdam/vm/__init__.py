@@ -37,14 +37,19 @@ from ..state_tracker import (
     BlockState,
     TransactionState,
     get_account,
+    get_storage,
     increment_nonce,
     set_account_balance,
+    set_storage,
 )
 from ..transactions import LegacyTransaction
 from ..transactions.frame_transaction import (
     APPROVE_SCOPE_MASK,
+    MAX_NONCE_SEQ,
+    NONCE_MANAGER,
     FrameFlag,
     FrameTransaction,
+    keyed_nonce_slot,
     resolve_frame_target,
 )
 from .gas import GasMeter
@@ -232,6 +237,14 @@ class FrameContext:
     behalf.
     """
 
+    tx_legacy_nonce: Uint
+    """
+    The sender's account nonce observed from the transaction's actual
+    pre-state, before any frame executes. Transaction-scoped: payment
+    approval, keyed-nonce consumption, and same-transaction account
+    activity do not update it.
+    """
+
 
 @final
 @dataclass
@@ -314,7 +327,51 @@ def restore_frame_context(
     frame_context.sender_approved = snapshot.sender_approved
 
 
-def attempt_approval(tx_env: TransactionEnvironment, scope: FrameFlag) -> bool:
+def current_nonce_seq(
+    tx_state: TransactionState, sender: Address, nonce_key: U256
+) -> U256:
+    """
+    Read the current sequence of `sender`'s nonce domain selected by
+    `nonce_key`: the account nonce for key zero, the value of the
+    key's [`NONCE_MANAGER`][nm] slot otherwise. An absent slot reads
+    as zero, marking a never-used key.
+
+    [nm]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER
+    """  # noqa: E501
+    if nonce_key == U256(0):
+        return U256(get_account(tx_state, sender).nonce)
+    return get_storage(
+        tx_state, NONCE_MANAGER, keyed_nonce_slot(sender, nonce_key)
+    )
+
+
+def consume_nonce_set(
+    tx_state: TransactionState,
+    sender: Address,
+    nonce_keys: Tuple[U256, ...],
+    nonce_seq: U64,
+) -> None:
+    """
+    Advance every nonce domain the transaction selected: the legacy
+    account nonce is incremented from its current value; each keyed
+    slot is set to the sequence after the transaction's, so first use
+    of a key leaves a non-zero slot behind.
+    """
+    if nonce_keys == (U256(0),):
+        increment_nonce(tx_state, sender)
+    else:
+        for nonce_key in nonce_keys:
+            set_storage(
+                tx_state,
+                NONCE_MANAGER,
+                keyed_nonce_slot(sender, nonce_key),
+                U256(Uint(nonce_seq) + Uint(1)),
+            )
+
+
+def attempt_approval(
+    tx_env: TransactionEnvironment, scope: FrameFlag, remaining_gas: Uint
+) -> Optional[Uint]:
     """
     Attempt an `APPROVE` of `scope` on behalf of the executing frame's
     resolved target, applying its effects on success.
@@ -325,12 +382,22 @@ def attempt_approval(tx_env: TransactionEnvironment, scope: FrameFlag) -> bool:
     transaction's sender. Approving payment requires that no payer is
     set, that execution is approved (by this same scope or earlier),
     and that the resolved target can cover the transaction's maximum
-    cost; it increments the sender's nonce and collects the maximum
-    cost from the resolved target, which becomes the payer.
+    cost; it consumes the transaction's selected nonce set and
+    collects the maximum cost from the resolved target, which becomes
+    the payer.
 
-    Return whether the approval was granted; a refusal reverts the
-    requesting frame.
+    Consuming a never-used nonce key carries a state-growth surcharge
+    on the approving frame's gas: `remaining_gas` short of the total
+    surcharge halts the approval out-of-gas before any effect, and the
+    caller deducts the returned surcharge on success. A legacy nonce
+    at its exhaustion bound halts likewise.
+
+    Return the surcharge on a granted approval and `None` on a
+    refusal; a refusal reverts the requesting frame.
     """
+    from .exceptions import OutOfGasError
+    from .gas import GasCosts
+
     frame_context = tx_env.frame_context
     assert frame_context is not None
     tx = frame_context.tx
@@ -340,7 +407,7 @@ def attempt_approval(tx_env: TransactionEnvironment, scope: FrameFlag) -> bool:
     allowed_scope = frame.flags & APPROVE_SCOPE_MASK
     # An empty scope, or one beyond the frame's allowed flags.
     if not scope or scope & ~allowed_scope:
-        return False
+        return None
 
     approves_execution = FrameFlag.APPROVE_EXECUTION in scope
     approves_payment = FrameFlag.APPROVE_PAYMENT in scope
@@ -348,27 +415,49 @@ def attempt_approval(tx_env: TransactionEnvironment, scope: FrameFlag) -> bool:
     if approves_execution:
         # Execution is already approved.
         if frame_context.sender_approved:
-            return False
+            return None
         # Only the sender may approve execution on its own behalf.
         if resolved_target != tx.sender:
-            return False
+            return None
 
+    surcharge = Uint(0)
     if approves_payment:
         # Payment is already approved.
         if frame_context.payer is not None:
-            return False
+            return None
         # Payment approval requires execution approval first.
         if not (frame_context.sender_approved or approves_execution):
-            return False
+            return None
         payer_balance = get_account(tx_env.state, resolved_target).balance
         # The payer cannot cover the transaction's maximum cost.
         if Uint(payer_balance) < frame_context.max_cost:
-            return False
+            return None
+
+        if tx.nonce_keys == (U256(0),):
+            # Advancing an exhausted legacy nonce halts the approval.
+            sender_nonce = get_account(tx_env.state, tx.sender).nonce
+            if sender_nonce + Uint(1) > Uint(MAX_NONCE_SEQ):
+                raise OutOfGasError
+        else:
+            first_use_count = Uint(0)
+            for nonce_key in tx.nonce_keys:
+                raw_before = get_storage(
+                    tx_env.state,
+                    NONCE_MANAGER,
+                    keyed_nonce_slot(tx.sender, nonce_key),
+                )
+                if raw_before == U256(0):
+                    first_use_count += Uint(1)
+            surcharge = Uint(GasCosts.KEYED_NONCE_FIRST_USE) * (
+                first_use_count
+            )
+            if remaining_gas < surcharge:
+                raise OutOfGasError
 
     if approves_execution:
         frame_context.sender_approved = True
     if approves_payment:
-        increment_nonce(tx_env.state, tx.sender)
+        consume_nonce_set(tx_env.state, tx.sender, tx.nonce_keys, tx.nonce_seq)
         set_account_balance(
             tx_env.state,
             resolved_target,
@@ -376,7 +465,7 @@ def attempt_approval(tx_env: TransactionEnvironment, scope: FrameFlag) -> bool:
         )
         frame_context.payer = resolved_target
 
-    return True
+    return surcharge
 
 
 @final

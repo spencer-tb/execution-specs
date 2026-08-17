@@ -12,6 +12,7 @@ from ethereum_spec_tools.evm_tools.t8n.transition_tool import EELST8N
 from ethereum.ethash import *
 from ethereum.fork_criteria import Unscheduled
 from ethereum.forks.amsterdam.transactions.frame_transaction import (
+    NONCE_MANAGER_CODE,
     FrameMode,
 )
 from ethereum.trace import EvmTracer
@@ -52,6 +53,7 @@ Unscheduled
 
 # src/ethereum/forks/amsterdam/transactions/frame_transaction.py -
 # constructed while decoding transactions, never compared explicitly
+NONCE_MANAGER_CODE
 FrameMode.DEFAULT
 
 # src/ethereum/ethash.py
@@ -113,6 +115,8 @@ EELST8N.evaluate
 TransactionLoad.json_to_authorizations
 TransactionLoad.json_to_chain_id
 TransactionLoad.json_to_nonce
+TransactionLoad.json_to_nonce_keys
+TransactionLoad.json_to_nonce_seq
 TransactionLoad.json_to_gas
 TransactionLoad.json_to_to
 TransactionLoad.json_to_value

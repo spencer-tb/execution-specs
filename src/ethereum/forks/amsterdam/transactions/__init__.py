@@ -857,7 +857,11 @@ def calculate_max_gas_fee(tx: Transaction, gas_limit: Uint) -> Uint:
 def check_nonce(tx: Transaction, sender_nonce: Uint) -> None:
     """
     Check that the transaction's nonce equals the sender's next nonce.
+
+    Frame transactions carry keyed nonces instead and are checked in
+    the frame flow.
     """
+    assert not isinstance(tx, FrameTransaction)
     if sender_nonce > Uint(tx.nonce):
         raise NonceMismatchError("nonce too low")
     elif sender_nonce < Uint(tx.nonce):

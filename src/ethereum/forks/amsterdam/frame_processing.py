@@ -17,6 +17,7 @@ from ethereum_rlp import rlp
 from ethereum_types.bytes import Bytes
 from ethereum_types.numeric import U256, Uint
 
+from ethereum.exceptions import NonceMismatchError
 from ethereum.merkle_patricia_trie import trie_set
 from ethereum.state import Address
 
@@ -38,7 +39,6 @@ from .state_tracker import (
 )
 from .transactions import (
     calculate_effective_gas_price,
-    check_nonce,
     encode_transaction,
     get_transaction_hash,
 )
@@ -142,7 +142,14 @@ def check_frame_transaction(
         block_env.excess_blob_gas,
     )
 
-    check_nonce(tx, sender_account.nonce)
+    # Stateful validity (EIP-8250): every selected nonce domain must
+    # hold the transaction's sequence in the actual pre-state.
+    for nonce_key in tx.nonce_keys:
+        current = vm.current_nonce_seq(tx_state, tx.sender, nonce_key)
+        if current > U256(tx.nonce_seq):
+            raise NonceMismatchError("nonce too low")
+        elif current < U256(tx.nonce_seq):
+            raise NonceMismatchError("nonce too high")
 
     # A state gas reservoir holds only gas above `TX_MAX_GAS_LIMIT`,
     # and the derived `max_gas` never exceeds that cap: a frame
@@ -184,6 +191,7 @@ def check_frame_transaction(
             frame_receipts=[],
             payer=None,
             sender_approved=False,
+            tx_legacy_nonce=sender_account.nonce,
         ),
     )
 

@@ -28,6 +28,7 @@ from ..state_tracker import (
     get_account,
     get_code,
     restore_tx_state,
+    set_account_balance,
 )
 from ..transactions.frame_transaction import (
     APPROVE_SCOPE_MASK,
@@ -44,6 +45,7 @@ from . import (
     Evm,
     TransactionEnvironment,
     attempt_approval,
+    consume_nonce_set,
 )
 from .eoa_delegation import resolve_delegated_code_address
 from .exceptions import ExceptionalHalt
@@ -233,13 +235,34 @@ def unroll_atomic_batch(
     logs emptied. Return the batch's journal copy for the frame loop
     to continue from — carrying over the live journal's unused gas,
     because the gas the batch frames consumed remains charged.
+
+    Payment-approval effects are journaled outside the batch snapshot
+    (EIP-8250): a payment approved by a batch frame keeps its payer,
+    its collected maximum cost, and its consumed nonce set through the
+    unroll, re-applied on top of the restored state.
     """
     frame_context = tx_env.frame_context
     assert frame_context is not None
+    tx = frame_context.tx
+
+    payment_approved_in_batch = (
+        frame_context.payer is not None and batch.payer is None
+    )
+    batch_payer = frame_context.payer
 
     restore_tx_state(tx_env.state, batch.state_snapshot)
-    frame_context.payer = batch.payer
-    frame_context.sender_approved = batch.sender_approved
+    if payment_approved_in_batch:
+        assert batch_payer is not None
+        consume_nonce_set(tx_env.state, tx.sender, tx.nonce_keys, tx.nonce_seq)
+        payer_balance = get_account(tx_env.state, batch_payer).balance
+        set_account_balance(
+            tx_env.state,
+            batch_payer,
+            U256(Uint(payer_balance) - frame_context.max_cost),
+        )
+    else:
+        frame_context.payer = batch.payer
+        frame_context.sender_approved = batch.sender_approved
 
     receipts = frame_context.frame_receipts
     for index in range(int(batch.first_frame_index), len(receipts)):
@@ -338,7 +361,10 @@ def execute_default_verify_code(
 ) -> FrameReceipt:
     """
     Execute the protocol default code of a `VERIFY` frame whose
-    resolved target has no code. It consumes no gas.
+    resolved target has no code. It consumes no gas beyond the
+    keyed-nonce first-use surcharge of a payment approval, which is
+    charged to the frame; a frame whose gas cannot cover it fails with
+    all its gas consumed.
 
     The default code approves the scope allowed by the frame's flags,
     provided the transaction carries an authorizing secp256k1
@@ -382,10 +408,18 @@ def execute_default_verify_code(
     if frame_context.resolved_signers[signature_index] != resolved_target:
         return failure
 
-    if not attempt_approval(tx_env, allowed_scope):
+    try:
+        surcharge = attempt_approval(tx_env, allowed_scope, Uint(frame.gas))
+    except ExceptionalHalt:
+        return FrameReceipt(
+            status=FrameStatus.FAILURE, gas_used=Uint(frame.gas), logs=()
+        )
+    if surcharge is None:
         return failure
 
-    return FrameReceipt(status=FrameStatus.SUCCESS, gas_used=Uint(0), logs=())
+    return FrameReceipt(
+        status=FrameStatus.SUCCESS, gas_used=surcharge, logs=()
+    )
 
 
 def execute_frame(
@@ -417,9 +451,10 @@ def execute_frame(
         frame.mode == FrameMode.VERIFY
         and target_account.code_hash == EMPTY_CODE_HASH
     ):
+        receipt = execute_default_verify_code(tx_env, frame)
         return FrameOutcome(
-            receipt=execute_default_verify_code(tx_env, frame),
-            gas_left=Uint(frame.gas),
+            receipt=receipt,
+            gas_left=Uint(frame.gas) - receipt.gas_used,
             refund_counter=0,
             state_gas_used=0,
             accounts_to_delete=set(),
