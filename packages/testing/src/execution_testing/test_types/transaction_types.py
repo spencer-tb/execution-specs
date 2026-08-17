@@ -415,6 +415,9 @@ class Transaction(
     frames: List[Frame] | None = None
     signatures: List[FrameSignature] | None = None
 
+    nonce_keys: List[HexNumber] | None = None
+    nonce_seq: HexNumber | None = None
+
     secret_key: Hash | None = None
     error: List[TransactionException] | TransactionException | None = Field(
         None, exclude=True
@@ -647,6 +650,17 @@ class Transaction(
             else sig
             for sig in self.signatures
         ]
+
+    def resolve_keyed_nonce_defaults(self) -> None:
+        """
+        Fill in the EIP-8250 keyed nonce fields of a frame transaction:
+        an unset key set aliases the legacy account nonce, and an unset
+        sequence mirrors the legacy `nonce` field.
+        """
+        if self.nonce_keys is None:
+            self.nonce_keys = [HexNumber(0)]
+        if self.nonce_seq is None:
+            self.nonce_seq = HexNumber(self.nonce)
 
     def _sign_frame_signatures(self) -> None:
         """
@@ -950,9 +964,12 @@ class Transaction(
         field_list: List[str]
         if self.ty == 6 and self.frames is not None:
             # EIP-8141: https://eips.ethereum.org/EIPS/eip-8141
+            # EIP-8250 replaces `nonce` with `nonce_keys`, `nonce_seq`.
+            self.resolve_keyed_nonce_defaults()
             field_list = [
                 "chain_id",
-                "nonce",
+                "nonce_keys",
+                "nonce_seq",
                 "sender",
                 "frames",
                 "signing_signatures",

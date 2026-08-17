@@ -130,6 +130,7 @@ class EIP8141(BaseFork):
             *,
             frames: Sequence[FrameGasInfo] | int,
             signatures: Sequence[FrameSignatureGasInfo] = (),
+            extra_charged_bytes: Sequence[bytes] = (),
         ) -> int:
             frame_list = cls._frame_list(frames)
             data_length = sum(
@@ -137,7 +138,7 @@ class EIP8141(BaseFork):
                 for data in cls._frame_transaction_charged_bytes(
                     frame_list, signatures
                 )
-            )
+            ) + sum(len(data) for data in extra_charged_bytes)
             return cls._frame_transaction_base_cost(frame_list, signatures) + (
                 data_length
                 * gas_costs.TX_DATA_TOKEN_STANDARD
@@ -206,15 +207,21 @@ class EIP8141(BaseFork):
             *,
             frames: Sequence[FrameGasInfo] | int,
             signatures: Sequence[FrameSignatureGasInfo] = (),
+            extra_charged_bytes: Sequence[bytes] = (),
             return_cost_deducted_prior_execution: bool = False,
         ) -> int:
             frame_list = cls._frame_list(frames)
-            intrinsic_cost = cls._frame_transaction_base_cost(
-                frame_list, signatures
-            ) + sum(
-                calldata_gas_calculator(data=data)
-                for data in cls._frame_transaction_charged_bytes(
-                    frame_list, signatures
+            intrinsic_cost = (
+                cls._frame_transaction_base_cost(frame_list, signatures)
+                + sum(
+                    calldata_gas_calculator(data=data)
+                    for data in cls._frame_transaction_charged_bytes(
+                        frame_list, signatures
+                    )
+                )
+                + sum(
+                    calldata_gas_calculator(data=data)
+                    for data in extra_charged_bytes
                 )
             )
 
@@ -227,7 +234,9 @@ class EIP8141(BaseFork):
             return max(
                 standard_gas_limit,
                 floor_cost_calculator(
-                    frames=frame_list, signatures=signatures
+                    frames=frame_list,
+                    signatures=signatures,
+                    extra_charged_bytes=extra_charged_bytes,
                 ),
             )
 

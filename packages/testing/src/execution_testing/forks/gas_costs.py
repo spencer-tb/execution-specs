@@ -71,6 +71,7 @@ class GasCosts:
     # verification cost of a signature entry by scheme; 0 before frame
     # transactions are introduced.
     TX_FRAME_INTRINSIC: int = 0
+    KEYED_NONCE_FIRST_USE: int = 0
     TX_PER_FRAME: int = 0
     FRAME_SIGNATURE_SCHEME_ARBITRARY: int = 0
     FRAME_SIGNATURE_SCHEME_SECP256K1: int = 0

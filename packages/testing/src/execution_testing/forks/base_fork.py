@@ -222,6 +222,7 @@ class FrameTransactionIntrinsicCostCalculator(Protocol):
         *,
         frames: Sequence[FrameGasInfo] | int,
         signatures: Sequence[FrameSignatureGasInfo] = (),
+        extra_charged_bytes: Sequence[bytes] = (),
         return_cost_deducted_prior_execution: bool = False,
     ) -> int:
         """
@@ -234,6 +235,9 @@ class FrameTransactionIntrinsicCostCalculator(Protocol):
                   transaction gas limit. An integer stands for that
                   many frames carrying no data and, for the derived
                   gas limit, no frame gas.
+          extra_charged_bytes: Additional byte fields priced as
+                               calldata, e.g. the EIP-8250 nonce
+                               encodings.
           signatures: The transaction's signature entries as included
                       on the wire. For an exact cost the raw
                       `signature` bytes must already be filled in, so
@@ -272,11 +276,13 @@ class FrameTransactionDataFloorCostCalculator(Protocol):
         *,
         frames: Sequence[FrameGasInfo] | int,
         signatures: Sequence[FrameSignatureGasInfo] = (),
+        extra_charged_bytes: Sequence[bytes] = (),
     ) -> int:
         """
         Return the calldata floor anchor of a frame transaction given
         its frames and signature entries: every charged byte — frame
-        `data` and signature entry bytes — is counted uniformly at the
+        `data`, signature entry bytes, and any `extra_charged_bytes`,
+        e.g. the EIP-8250 nonce encodings — is counted uniformly at the
         floor price on top of the costs the transaction always pays
         regardless of execution. An integer stands for that many frames
         carrying no data.
@@ -1254,6 +1260,19 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
     def system_contracts(cls) -> List[Address]:
         """Return list of system contracts supported by the fork."""
         pass
+
+    @classmethod
+    def keyed_nonce_calldata(
+        cls,
+        nonce_keys: Sequence[int],  # noqa: ARG003
+        nonce_seq: int,  # noqa: ARG003
+    ) -> bytes:
+        """
+        Return the byte encoding a frame transaction's nonce fields
+        contribute as priced calldata; empty before EIP-8250
+        introduces keyed nonces.
+        """
+        return b""
 
     @classmethod
     @abstractmethod
