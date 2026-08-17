@@ -95,11 +95,13 @@ from .vm.gas import (
     StateGasCosts,
     TransactionGasSettlement,
     allocate_evm_gas,
+    block_state_gas_limit,
     calculate_data_fee,
     calculate_excess_blob_gas,
     calculate_total_blob_gas,
     check_block_gas_capacity,
     check_max_fee_per_blob_gas,
+    normalize_state_gas,
     settle_transaction_gas,
 )
 from .vm.interpreter import TransactionOutput, process_top_level
@@ -340,9 +342,15 @@ def execute_block(
         block_output.block_access_list
     )
 
+    # Raw state gas answers to its scaled limit; its normalized value
+    # competes with execution gas for the block's `gas_used`.
+    if Uint(block_output.block_state_gas_used) > block_state_gas_limit(
+        block.header.gas_limit
+    ):
+        raise InvalidBlock("state gas used exceeds the state gas limit")
     block_gas_used = max(
-        block_output.block_gas_used,
-        block_output.block_state_gas_used,
+        Uint(block_output.block_gas_used),
+        normalize_state_gas(block_output.block_state_gas_used),
     )
     if block_gas_used != block.header.gas_used:
         raise InvalidBlock(f"{block_gas_used} != {block.header.gas_used}")

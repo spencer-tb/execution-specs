@@ -54,7 +54,10 @@ class StateGasCosts:
     state-byte counts that convert into gas via `COST_PER_STATE_BYTE`.
     """
 
-    COST_PER_STATE_BYTE: Final[StateGasPerByte] = StateGasPerByte(Uint(1530))
+    # EIP-8372 calibration: the state-byte price and the raw
+    # state-gas limit scale move proportionally, preserving the
+    # normalized blockspace a state byte occupies.
+    COST_PER_STATE_BYTE: Final[StateGasPerByte] = StateGasPerByte(Uint(765))
     STATE_BYTES_PER_NEW_ACCOUNT: Final[Uint] = Uint(120)
     STATE_BYTES_PER_STORAGE_SET: Final[Uint] = Uint(64)
     STATE_BYTES_PER_AUTH_BASE: Final[Uint] = Uint(23)
@@ -1012,6 +1015,56 @@ def check_max_fee_per_blob_gas(
         )
 
 
+STATE_GAS_LIMIT_SCALE: Final[Uint] = Uint(50)
+"""
+Raw state-gas limit as a percentage of the block gas limit, per
+[EIP-8372]. Calibrated together with
+[`COST_PER_STATE_BYTE`][cpsb]: both scale proportionally so the
+normalized blockspace assigned to the targeted state bytes is
+preserved.
+
+[EIP-8372]: https://eips.ethereum.org/EIPS/eip-8372
+[cpsb]: ref:ethereum.forks.amsterdam.vm.gas.StateGasCosts.COST_PER_STATE_BYTE
+"""  # noqa: E501
+
+STATE_GAS_LIMIT_SCALE_DENOMINATOR: Final[Uint] = Uint(100)
+"""
+Denominator of [`STATE_GAS_LIMIT_SCALE`][sgls], providing
+one-percentage-point calibration steps.
+
+[sgls]: ref:ethereum.forks.amsterdam.vm.gas.STATE_GAS_LIMIT_SCALE
+"""  # noqa: E501
+
+
+def block_state_gas_limit(block_gas_limit: Uint) -> Uint:
+    """
+    The raw state-gas limit: the scaled share of the block gas limit
+    ([EIP-8372]).
+
+    [EIP-8372]: https://eips.ethereum.org/EIPS/eip-8372
+    """
+    return (
+        block_gas_limit
+        * STATE_GAS_LIMIT_SCALE
+        // STATE_GAS_LIMIT_SCALE_DENOMINATOR
+    )
+
+
+def normalize_state_gas(state_gas_used: StateGas) -> Uint:
+    """
+    Express raw state gas on the block gas scale, undoing the limit
+    scaling so block-level `gas_used` compares both dimensions on one
+    axis ([EIP-8372]).
+
+    [EIP-8372]: https://eips.ethereum.org/EIPS/eip-8372
+    """
+    return (
+        Uint(state_gas_used)
+        * STATE_GAS_LIMIT_SCALE_DENOMINATOR
+        // STATE_GAS_LIMIT_SCALE
+    )
+
+
 def check_block_gas_capacity(
     block_env: "BlockEnvironment",
     block_output: "BlockOutput",
@@ -1051,7 +1104,8 @@ def check_block_gas_capacity(
         block_env.block_gas_limit - block_output.block_gas_used
     )
     state_gas_available = (
-        block_env.block_gas_limit - block_output.block_state_gas_used
+        block_state_gas_limit(block_env.block_gas_limit)
+        - block_output.block_state_gas_used
     )
     blob_gas_available = MAX_BLOB_GAS_PER_BLOCK - block_output.blob_gas_used
 
