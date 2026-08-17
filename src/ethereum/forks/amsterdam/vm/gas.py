@@ -259,6 +259,15 @@ class GasCosts:
     OPCODE_LOG_TOPIC: Final[ExecutionGas] = ExecutionGas(Uint(375))
     OPCODE_SELFDESTRUCT_BASE: Final[ExecutionGas] = ExecutionGas(Uint(5000))
 
+    # Block access list data floor: the per-byte floor rate and the
+    # byte size of each recordable item.
+    ACCESS_DATA_FLOOR_PER_BYTE: Final[Uint] = Uint(64)
+    ACCESS_DATA_BYTES_PER_ADDRESS: Final[int] = 20
+    ACCESS_DATA_BYTES_PER_STORAGE_KEY: Final[int] = 32
+    ACCESS_DATA_BYTES_PER_STORAGE_VALUE: Final[int] = 32
+    ACCESS_DATA_BYTES_PER_BALANCE: Final[int] = 32
+    ACCESS_DATA_BYTES_PER_NONCE: Final[int] = 8
+
 
 MAX_BLOB_GAS_PER_BLOCK: Final[U64] = (
     GasCosts.BLOB_SCHEDULE_MAX * GasCosts.PER_BLOB
@@ -1203,3 +1212,32 @@ def settle_transaction_gas(
         execution_gas_used=execution_gas_used,
         state_gas_used=settled_state_gas_used,
     )
+
+
+def block_access_data_floor(calldata_floor: Uint, byte_count: int) -> Uint:
+    """
+    The transaction's floor: the static floor plus the bytes its
+    execution added to the block access list, at the floor rate.
+    """
+    return (
+        calldata_floor + Uint(byte_count) * GasCosts.ACCESS_DATA_FLOOR_PER_BYTE
+    )
+
+
+def meter_access_data(evm: "Evm", byte_count: int) -> None:
+    """
+    Meter bytes the operation is about to add to the block access
+    list, aborting when the implied floor exceeds the transaction's
+    gas limit -- before any unpaid byte exists.
+
+    A negative count refunds bytes for a storage slot restored to its
+    pre-transaction value; reverted frames keep their metered bytes.
+    """
+    meter = evm.tx_env.state.access_data_meter
+    prospective_count = meter.byte_count + byte_count
+    floor = block_access_data_floor(
+        evm.tx_env.calldata_floor, prospective_count
+    )
+    if floor > evm.tx_env.gas_limit:
+        raise OutOfGasError
+    meter.byte_count = prospective_count

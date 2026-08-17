@@ -56,6 +56,7 @@ from ..gas import (
     credit_state_gas_refund,
     drain_state_gas_reservoir,
     init_code_cost,
+    meter_access_data,
     restore_child_gas,
     withhold_create_gas,
 )
@@ -109,7 +110,9 @@ def generic_create(
     # DESTINATION ACCESS
     # The account-creation charge is decided by existence alone,
     # independently of the collision outcome below.
-    evm.accessed_addresses.add(contract_address)
+    if contract_address not in evm.accessed_addresses:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
+        evm.accessed_addresses.add(contract_address)
 
     new_account_charged = not is_account_alive(tx_state, contract_address)
     if new_account_charged:
@@ -128,6 +131,12 @@ def generic_create(
             credit_state_gas_refund(evm.gas_meter, StateGasCosts.NEW_ACCOUNT)
         push(evm.stack, U256(0))
         return
+
+    # The created contract's nonce always reaches the block access
+    # list; its balance does when the creation carries an endowment.
+    meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_NONCE)
+    if endowment > U256(0):
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_BALANCE)
 
     # The whole state gas reservoir rides along (no 63/64 rule for
     # state gas) and is restored when the child returns.
@@ -523,7 +532,12 @@ def call(evm: Evm) -> None:
     # gas.
     tx_state = evm.tx_env.state
     if is_cold_access:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
         evm.accessed_addresses.add(to)
+
+    # A value transfer to another account adds its balance bytes.
+    if value > U256(0) and to != evm.current_target:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_BALANCE)
 
     extra_gas = access_gas_cost + transfer_gas_cost
     (
@@ -537,6 +551,7 @@ def call(evm: Evm) -> None:
         extra_gas += delegation_access_cost
         check_gas(evm, extra_gas + extend_memory.cost)
         if code_address not in evm.accessed_addresses:
+            meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
             evm.accessed_addresses.add(code_address)
 
     code_hash = get_account(tx_state, code_address).code_hash
@@ -649,6 +664,7 @@ def callcode(evm: Evm) -> None:
     # with the child grant.
     tx_state = evm.tx_env.state
     if is_cold_access:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
         evm.accessed_addresses.add(code_address)
 
     extra_gas = access_gas_cost + transfer_gas_cost
@@ -663,6 +679,7 @@ def callcode(evm: Evm) -> None:
         extra_gas += delegation_access_cost
         check_gas(evm, extra_gas + extend_memory.cost)
         if code_address not in evm.accessed_addresses:
+            meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
             evm.accessed_addresses.add(code_address)
 
     code_hash = get_account(tx_state, code_address).code_hash
@@ -744,6 +761,7 @@ def selfdestruct(evm: Evm) -> None:
     # below.
     tx_state = evm.tx_env.state
     if is_cold_access:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
         evm.accessed_addresses.add(beneficiary)
 
     # STATE GAS
@@ -768,6 +786,11 @@ def selfdestruct(evm: Evm) -> None:
     # OPERATION
     originator = evm.current_target
     originator_balance = get_account(tx_state, originator).balance
+
+    # A sweep that moves a balance to another account adds its
+    # balance bytes.
+    if originator_balance != U256(0) and beneficiary != originator:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_BALANCE)
 
     # Transfer balance
     move_ether(tx_state, originator, beneficiary, originator_balance)
@@ -829,6 +852,7 @@ def delegatecall(evm: Evm) -> None:
     # a delegation adds its access cost; the execution gas is charged
     # with the child grant.
     if is_cold_access:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
         evm.accessed_addresses.add(code_address)
 
     extra_gas = access_gas_cost
@@ -843,6 +867,7 @@ def delegatecall(evm: Evm) -> None:
         extra_gas += delegation_access_cost
         check_gas(evm, extra_gas + extend_memory.cost)
         if code_address not in evm.accessed_addresses:
+            meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
             evm.accessed_addresses.add(code_address)
 
     tx_state = evm.tx_env.state
@@ -932,6 +957,7 @@ def staticcall(evm: Evm) -> None:
     # a delegation adds its access cost; the execution gas is charged
     # with the child grant.
     if is_cold_access:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
         evm.accessed_addresses.add(to)
 
     extra_gas = access_gas_cost
@@ -946,6 +972,7 @@ def staticcall(evm: Evm) -> None:
         extra_gas += delegation_access_cost
         check_gas(evm, extra_gas + extend_memory.cost)
         if code_address not in evm.accessed_addresses:
+            meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
             evm.accessed_addresses.add(code_address)
 
     tx_state = evm.tx_env.state

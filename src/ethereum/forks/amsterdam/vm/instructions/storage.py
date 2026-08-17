@@ -30,6 +30,7 @@ from ..gas import (
     charge_state_gas,
     check_gas,
     credit_state_gas_refund,
+    meter_access_data,
 )
 from ..stack import pop, push
 
@@ -52,6 +53,7 @@ def sload(evm: Evm) -> None:
     if (evm.current_target, key) in evm.accessed_storage_keys:
         charge_gas(evm, GasCosts.WARM_ACCESS)
     else:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_STORAGE_KEY)
         evm.accessed_storage_keys.add((evm.current_target, key))
         charge_gas(evm, GasCosts.COLD_STORAGE_ACCESS)
 
@@ -110,11 +112,21 @@ def sstore(evm: Evm) -> None:
     # the slot's original and current values, adjusting the
     # transaction's refunds.
     if is_cold_access:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_STORAGE_KEY)
         evm.accessed_storage_keys.add((evm.current_target, key))
 
     tx_state = evm.tx_env.state
     original_value = get_storage_original(tx_state, evm.current_target, key)
     current_value = get_storage(tx_state, evm.current_target, key)
+
+    # The slot's value bytes are metered once, when it first diverges
+    # from its pre-transaction value, and refunded when a later write
+    # restores it -- mirroring the no-op-write demotion in the block
+    # access list, not the gas refund.
+    if current_value == original_value and new_value != original_value:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_STORAGE_VALUE)
+    elif current_value != original_value and new_value == original_value:
+        meter_access_data(evm, -GasCosts.ACCESS_DATA_BYTES_PER_STORAGE_VALUE)
 
     state_gas = StateGas(Uint(0))
 

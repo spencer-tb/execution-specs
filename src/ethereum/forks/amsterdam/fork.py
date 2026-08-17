@@ -95,6 +95,7 @@ from .vm.gas import (
     StateGasCosts,
     TransactionGasSettlement,
     allocate_evm_gas,
+    block_access_data_floor,
     calculate_data_fee,
     calculate_excess_blob_gas,
     calculate_total_blob_gas,
@@ -1062,7 +1063,10 @@ def process_transaction(
 
     settlement = settle_transaction_gas(
         tx_env.gas_limit,
-        tx_env.calldata_floor,
+        block_access_data_floor(
+            tx_env.calldata_floor,
+            tx_env.state.access_data_meter.byte_count,
+        ),
         tx_output.gas_left,
         tx_output.state_gas_left,
         tx_output.refund_counter,

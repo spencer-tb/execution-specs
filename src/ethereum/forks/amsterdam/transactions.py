@@ -708,6 +708,7 @@ def calculate_intrinsic_cost(
     execution-gas portion of items 1 to 3 above rather than `TX_BASE`
     alone, so it never undercuts the transaction's own intrinsic base.
     """
+    from .vm.eoa_delegation import EOA_DELEGATION_MARKER_LENGTH
     from .vm.gas import GasCosts, init_code_cost
 
     tokens_in_calldata = count_tokens_in_data(tx.data)
@@ -763,6 +764,25 @@ def calculate_intrinsic_cost(
     data_floor_gas_cost = (
         total_floor_tokens * GasCosts.TX_DATA_TOKEN_FLOOR + base_execution_gas
     )
+
+    # Each authorization's worst-case block access list contribution
+    # (authority address, delegation code, authority nonce) is covered
+    # statically, so applying delegations never meters at runtime.
+    if isinstance(tx, SetCodeTransaction):
+        delegation_code_bytes = (
+            EOA_DELEGATION_MARKER_LENGTH
+            + GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS
+        )
+        auth_access_data_bytes = Uint(
+            GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS
+            + delegation_code_bytes
+            + GasCosts.ACCESS_DATA_BYTES_PER_NONCE
+        )
+        data_floor_gas_cost += (
+            GasCosts.ACCESS_DATA_FLOOR_PER_BYTE
+            * auth_access_data_bytes
+            * ulen(tx.authorizations)
+        )
 
     return IntrinsicGasCost(
         execution=ExecutionGas(

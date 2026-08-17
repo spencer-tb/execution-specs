@@ -65,6 +65,20 @@ class BlockState:
 
 @final
 @dataclass
+class BlockAccessDataMeter:
+    """
+    Byte meter for the transaction's block access list contribution.
+
+    Shared across state snapshots: a reverted frame keeps its metered
+    bytes, so the count is an upper bound on the final list and the
+    floor it implies can only rise.
+    """
+
+    byte_count: int = 0
+
+
+@final
+@dataclass
 class TransactionState:
     """
     Track in-flight state changes within a single transaction.
@@ -87,6 +101,9 @@ class TransactionState:
     )
     code_writes: Dict[Hash32, Bytes] = field(default_factory=dict)
     created_accounts: Set[Address] = field(default_factory=set)
+    access_data_meter: BlockAccessDataMeter = field(
+        default_factory=BlockAccessDataMeter
+    )
     transient_storage: Dict[Tuple[Address, Bytes32], U256] = field(
         default_factory=dict
     )
@@ -770,6 +787,7 @@ def copy_tx_state(tx_state: TransactionState) -> TransactionState:
         },
         code_writes=dict(tx_state.code_writes),
         created_accounts=tx_state.created_accounts,
+        access_data_meter=tx_state.access_data_meter,
         transient_storage=dict(tx_state.transient_storage),
         storage_reads=tx_state.storage_reads,
         account_reads=tx_state.account_reads,

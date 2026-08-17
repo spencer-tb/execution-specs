@@ -28,6 +28,7 @@ from ..gas import (
     calculate_blob_gas_price,
     calculate_gas_extend_memory,
     charge_gas,
+    meter_access_data,
 )
 from ..stack import pop, push
 
@@ -72,6 +73,7 @@ def balance(evm: Evm) -> None:
     if address in evm.accessed_addresses:
         charge_gas(evm, GasCosts.WARM_ACCESS)
     else:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
         evm.accessed_addresses.add(address)
         charge_gas(evm, GasCosts.COLD_ACCOUNT_ACCESS)
 
@@ -344,6 +346,7 @@ def extcodesize(evm: Evm) -> None:
     if address in evm.accessed_addresses:
         access_gas_cost = GasCosts.WARM_ACCESS
     else:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
         evm.accessed_addresses.add(address)
         access_gas_cost = GasCosts.COLD_ACCOUNT_ACCESS
     access_gas_cost += GasCosts.WARM_ACCESS  # Code reading cost (EIP-8038)
@@ -387,6 +390,7 @@ def extcodecopy(evm: Evm) -> None:
     if address in evm.accessed_addresses:
         access_gas_cost = GasCosts.WARM_ACCESS
     else:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
         evm.accessed_addresses.add(address)
         access_gas_cost = GasCosts.COLD_ACCOUNT_ACCESS
     access_gas_cost += GasCosts.WARM_ACCESS  # Code reading cost (EIP-8038)
@@ -490,6 +494,7 @@ def extcodehash(evm: Evm) -> None:
     if address in evm.accessed_addresses:
         access_gas_cost = GasCosts.WARM_ACCESS
     else:
+        meter_access_data(evm, GasCosts.ACCESS_DATA_BYTES_PER_ADDRESS)
         evm.accessed_addresses.add(address)
         access_gas_cost = GasCosts.COLD_ACCOUNT_ACCESS
 

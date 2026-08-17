@@ -57,6 +57,7 @@ from ..vm.gas import (
     charge_state_gas_from_meter,
     commit_state_gas,
     forfeit_remaining_gas,
+    meter_access_data,
     restore_state_gas,
     restore_state_gas_to_entry,
     tx_state_gas_used,
@@ -391,6 +392,8 @@ def process_create(evm: Evm) -> Evm:
             evm.output = b""
             evm.error = error
         else:
+            # The deployed code's bytes reach the block access list.
+            meter_access_data(evm, len(contract_code))
             set_code(tx_state, evm.current_target, contract_code)
     else:
         restore_tx_state(tx_state, snapshot)
