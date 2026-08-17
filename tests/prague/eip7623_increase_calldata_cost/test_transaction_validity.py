@@ -339,6 +339,7 @@ def test_transaction_validity_type_3(
     "ty",
     [pytest.param(4, id="type_4")],
 )
+@pytest.mark.valid_before("EIP8279")
 def test_transaction_validity_type_4(
     state_test: StateTestFiller,
     pre: Alloc,

@@ -702,6 +702,7 @@ def test_block_at_rlp_size_limit_boundary(
 @pytest.mark.verify_sync
 @pytest.mark.valid_from("Osaka")
 @pytest.mark.eels_base_coverage
+@pytest.mark.valid_before("EIP8279")
 def test_block_rlp_size_at_limit_with_all_typed_transactions(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,

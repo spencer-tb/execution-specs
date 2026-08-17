@@ -146,7 +146,9 @@ def test_max_initcode_size_via_create(
 @pytest.mark.parametrize(
     "gas_shortfall",
     [
-        pytest.param(0, id="exact_gas"),
+        pytest.param(
+            0, id="exact_gas", marks=pytest.mark.valid_before("EIP8279")
+        ),
         pytest.param(
             1,
             id="short_one_gas",

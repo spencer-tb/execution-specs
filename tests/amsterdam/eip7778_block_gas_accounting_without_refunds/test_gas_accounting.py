@@ -409,8 +409,14 @@ class CallDataTestType(Enum):
     "calldata_test_type",
     [
         CallDataTestType.DATA_FLOOR_LT_TX_GAS_AFTER_REFUND,
-        CallDataTestType.DATA_FLOOR_BETWEEN_TX_GAS_BEFORE_AND_AFTER,
-        CallDataTestType.DATA_FLOOR_GT_TX_GAS_BEFORE_REFUND,
+        pytest.param(
+            CallDataTestType.DATA_FLOOR_BETWEEN_TX_GAS_BEFORE_AND_AFTER,
+            marks=pytest.mark.valid_before("EIP8279"),
+        ),
+        pytest.param(
+            CallDataTestType.DATA_FLOOR_GT_TX_GAS_BEFORE_REFUND,
+            marks=pytest.mark.valid_before("EIP8279"),
+        ),
     ],
 )
 @pytest.mark.with_all_refund_types()

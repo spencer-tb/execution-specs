@@ -890,6 +890,7 @@ class TestRefundCapInteraction:
             tx=tx,
         )
 
+    @pytest.mark.valid_before("EIP8279")
     def test_floor_cost_not_reduced_by_refunds(
         self,
         state_test: StateTestFiller,

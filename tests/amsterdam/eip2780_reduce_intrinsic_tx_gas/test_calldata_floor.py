@@ -336,7 +336,11 @@ def test_calldata_floor_contract_creation(
 @pytest.mark.parametrize(
     "outcome",
     [
-        pytest.param("floor_binds", id="floor_binds"),
+        pytest.param(
+            "floor_binds",
+            id="floor_binds",
+            marks=pytest.mark.valid_before("EIP8279"),
+        ),
         pytest.param(
             "below_floor",
             id="below_floor_rejected",

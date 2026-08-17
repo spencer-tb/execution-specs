@@ -256,6 +256,7 @@ def test_calldata_floor_applied_to_sender_refund(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8279")
 def test_calldata_floor_binds_with_reservoir(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -345,6 +346,7 @@ def test_calldata_floor_counts_toward_block_gas(
 
 
 @pytest.mark.valid_from("EIP8037")
+@pytest.mark.valid_before("EIP8279")
 def test_calldata_floor_not_discounted_by_state_gas(
     state_test: StateTestFiller,
     pre: Alloc,

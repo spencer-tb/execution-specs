@@ -301,6 +301,7 @@ def tx_gas_limit(
     ],
 )
 @pytest.mark.with_all_refund_types()
+@pytest.mark.valid_before("EIP8279")
 def test_gas_refunds_from_data_floor(
     state_test: StateTestFiller,
     pre: Alloc,
