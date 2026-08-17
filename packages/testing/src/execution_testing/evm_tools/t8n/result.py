@@ -91,8 +91,15 @@ def build_result(
         "gas_used": int(block_output.block_gas_used),
     }
     if hasattr(block_output, "block_state_gas_used"):
-        if int(block_output.block_state_gas_used) > arguments["gas_used"]:
-            arguments["gas_used"] = int(block_output.block_state_gas_used)
+        state_gas_used = int(block_output.block_state_gas_used)
+        if hasattr(t8n.fork, "normalize_state_gas"):
+            # EIP-8372: raw state gas competes on the block gas axis
+            # only after normalization.
+            state_gas_used = int(
+                t8n.fork.normalize_state_gas(block_output.block_state_gas_used)
+            )
+        if state_gas_used > arguments["gas_used"]:
+            arguments["gas_used"] = state_gas_used
     if block_exception is not None:
         arguments["block_exception"] = block_exception
     if hasattr(block_env, "difficulty"):

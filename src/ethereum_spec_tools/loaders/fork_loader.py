@@ -146,6 +146,11 @@ class ForkLoad:
         return self._module("block_access_lists").hash_block_access_list
 
     @property
+    def normalize_state_gas(self) -> Any:
+        """normalize_state_gas function of the fork (EIP-8372)."""
+        return self._module("vm.gas").normalize_state_gas
+
+    @property
     def has_hash_block_access_list(self) -> bool:
         """Check if the fork has a `hash_block_access_list` function."""
         try:

@@ -343,8 +343,10 @@ class StateTest(BaseTest):
         )
 
         env = self.env.set_fork_requirements(fork)
+        # EIP-8372: admission bounds the whole gas limit by the scaled
+        # state-gas capacity; identity before the scale exists.
         tx = self.tx.with_gas_limit(
-            max_gas_limit=env.gas_limit,
+            max_gas_limit=fork.block_state_gas_limit(int(env.gas_limit)),
             transaction_gas_limit_cap=fork.transaction_gas_limit_cap(),
             state_gas_reservoir_enabled=fork.state_gas_reservoir_enabled(),
         ).with_signature_and_sender(keep_secret_key=True)

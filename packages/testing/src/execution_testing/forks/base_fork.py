@@ -1086,6 +1086,22 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
         pass
 
     @classmethod
+    def block_state_gas_limit(cls, block_gas_limit: int) -> int:
+        """
+        Return the block's raw state-gas limit; the whole block gas
+        limit until EIP-8372 scales it.
+        """
+        return block_gas_limit
+
+    @classmethod
+    def normalized_block_state_gas(cls, state_gas_used: int) -> int:
+        """
+        Express raw block state gas on the block gas scale; identity
+        until EIP-8372 normalizes it against the scaled limit.
+        """
+        return state_gas_used
+
+    @classmethod
     @abstractmethod
     def deterministic_factory_predeploy_address(cls) -> Address | None:
         """

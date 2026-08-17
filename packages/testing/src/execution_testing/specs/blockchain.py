@@ -882,7 +882,9 @@ class BlockchainTest(BaseTest):
         if any("gas_limit" not in tx.model_fields_set for tx in block.txs):
             max_tx_gas_limit = Transaction.calculate_max_gas_limit(
                 txs=txs,
-                env_gas_limit=int(env.gas_limit),
+                # EIP-8372: admission bounds the whole gas limit by
+                # the scaled state-gas capacity.
+                env_gas_limit=fork.block_state_gas_limit(int(env.gas_limit)),
                 transaction_gas_limit_cap=fork.transaction_gas_limit_cap(),
                 state_gas_reservoir_enabled=fork.state_gas_reservoir_enabled(),
             )
