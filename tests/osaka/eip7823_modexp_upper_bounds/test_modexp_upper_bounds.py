@@ -220,6 +220,7 @@ REFERENCE_SPEC_VERSION = ref_spec_7823.version
             b"\x01",
             True,
             id="base_boundary",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             ModExpInput(
@@ -230,6 +231,7 @@ REFERENCE_SPEC_VERSION = ref_spec_7823.version
             b"\x01",
             True,
             id="exp_boundary",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             ModExpInput(
@@ -240,6 +242,7 @@ REFERENCE_SPEC_VERSION = ref_spec_7823.version
             b"\x01".rjust(Spec.MAX_LENGTH_BYTES, b"\x00"),
             True,
             id="mod_boundary",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             ModExpInput(
@@ -250,6 +253,7 @@ REFERENCE_SPEC_VERSION = ref_spec_7823.version
             b"\x01".rjust(Spec.MAX_LENGTH_BYTES, b"\x00"),
             True,
             id="base_mod_boundary",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
     ],
 )

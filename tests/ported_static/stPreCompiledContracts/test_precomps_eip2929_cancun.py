@@ -82,6 +82,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             6,
@@ -94,6 +95,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             8,
@@ -118,6 +120,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             12,
@@ -190,6 +193,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="new",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             24,
@@ -202,6 +206,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="new",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             26,
@@ -226,6 +231,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             30,
@@ -316,6 +322,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             45,
@@ -328,6 +335,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             47,
@@ -352,6 +360,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             51,
@@ -442,6 +451,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="new",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             66,
@@ -454,6 +464,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="new",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             68,
@@ -478,6 +489,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             72,
@@ -568,6 +580,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             87,
@@ -580,6 +593,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             89,
@@ -604,6 +618,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             93,
@@ -694,6 +709,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="new",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             108,
@@ -706,6 +722,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="new",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             110,
@@ -730,6 +747,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             114,
@@ -820,6 +838,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             129,
@@ -832,6 +851,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             131,
@@ -856,6 +876,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             135,
@@ -946,6 +967,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             150,
@@ -958,6 +980,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             152,
@@ -982,6 +1005,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             156,
@@ -1072,6 +1096,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             171,
@@ -1084,6 +1109,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             173,
@@ -1108,6 +1134,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             177,
@@ -1198,6 +1225,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             192,
@@ -1210,6 +1238,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             194,
@@ -1234,6 +1263,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             198,
@@ -1324,6 +1354,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             213,
@@ -1336,6 +1367,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             215,
@@ -1360,6 +1392,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             219,
@@ -1450,6 +1483,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             234,
@@ -1462,6 +1496,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             236,
@@ -1486,6 +1521,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             240,
@@ -1576,6 +1612,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             255,
@@ -1588,6 +1625,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             257,
@@ -1612,6 +1650,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             261,
@@ -1702,6 +1741,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             276,
@@ -1714,6 +1754,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             278,
@@ -1738,6 +1779,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             282,
@@ -1828,6 +1870,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             297,
@@ -1840,6 +1883,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             299,
@@ -1864,6 +1908,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             303,
@@ -1954,6 +1999,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             318,
@@ -1966,6 +2012,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             320,
@@ -1990,6 +2037,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             324,
@@ -2080,6 +2128,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             339,
@@ -2092,6 +2141,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             341,
@@ -2116,6 +2166,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             345,
@@ -2206,6 +2257,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             360,
@@ -2218,6 +2270,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             362,
@@ -2242,6 +2295,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             366,
@@ -2332,6 +2386,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             381,
@@ -2344,6 +2399,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             383,
@@ -2368,6 +2424,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             387,
@@ -2458,6 +2515,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             402,
@@ -2470,6 +2528,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             404,
@@ -2494,6 +2553,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             408,
@@ -2584,6 +2644,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             423,
@@ -2596,6 +2657,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             425,
@@ -2620,6 +2682,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             429,
@@ -2710,6 +2773,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             444,
@@ -2722,6 +2786,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             446,
@@ -2746,6 +2811,7 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="yes",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             450,

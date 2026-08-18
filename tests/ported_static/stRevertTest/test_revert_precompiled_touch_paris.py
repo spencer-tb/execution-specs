@@ -61,6 +61,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ],
 )
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_before("EIP8200")
 def test_revert_precompiled_touch_paris(
     state_test: StateTestFiller,
     pre: Alloc,

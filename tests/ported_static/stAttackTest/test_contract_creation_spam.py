@@ -30,6 +30,7 @@ REFERENCE_SPEC_VERSION = "N/A"
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.slow
 @pytest.mark.pre_alloc_mutable
+@pytest.mark.valid_before("EIP8200")
 def test_contract_creation_spam(
     state_test: StateTestFiller,
     pre: Alloc,

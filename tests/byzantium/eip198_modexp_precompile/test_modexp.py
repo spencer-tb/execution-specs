@@ -462,6 +462,7 @@ REFERENCE_SPEC_VERSION = "5c8f066acb210c704ef80c1033a941aa5374aac5"
             ),
             ModExpOutput(returned_data="0x" + "00" * 127 + "09"),
             id="modexp_37120_37111_37111_1000000",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             ModExpInput(
@@ -471,6 +472,7 @@ REFERENCE_SPEC_VERSION = "5c8f066acb210c704ef80c1033a941aa5374aac5"
             ),
             ModExpOutput(returned_data="0x" + "00" * 127 + "09"),
             id="modexp_9_37111_37111_1000000",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
     ],
     ids=lambda param: param.__repr__(),  # only required to remove parameter
