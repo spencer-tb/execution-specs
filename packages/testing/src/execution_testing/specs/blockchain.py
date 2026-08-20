@@ -1402,6 +1402,10 @@ class BlockchainTest(BaseTest):
                     block.expected_gas_used = None
                 if block.expected_block_access_list:
                     block.expected_block_access_list = None
+                if block.engine_api_error_code:
+                    block.engine_api_error_code = None
+                if block.expected_post_state:
+                    block.expected_post_state = None
             built_block = self.generate_block_data(
                 t8n=t8n,
                 block=block,

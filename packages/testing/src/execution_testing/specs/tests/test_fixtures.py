@@ -43,7 +43,12 @@ from execution_testing.test_types import (
 )
 from execution_testing.vm import Op
 
-from ..blockchain import Block, BlockchainTest, Header
+from ..blockchain import (
+    BLOCKCHAIN_ENGINE_IL_FIXTURE_FORMATS,
+    Block,
+    BlockchainTest,
+    Header,
+)
 from ..state import StateTest
 from .helpers import remove_info_metadata
 
@@ -167,6 +172,53 @@ def test_blockchain_fixtures_include_inclusion_lists(
         engine_fixture.payloads[0].inclusion_list_satisfied
         == inclusion_list_satisfied
     )
+
+
+def test_inclusion_list_variant_clears_stale_block_expectations(
+    default_t8n: TransitionTool,
+) -> None:
+    """
+    Test that the inclusion-list variant drops `rlp_modifier`.
+
+    The modifier is computed from the pre-move transaction list and is
+    applied after the transition tool runs, so keeping it would stamp
+    stale header values onto a block that no longer executes the moved
+    transaction.
+    """
+    tx = Transaction(
+        nonce=0,
+        to=Address(0x1234),
+        gas_limit=21_000,
+        gas_price=10,
+    )
+    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    pre = Alloc({sender: Account(balance=10**18)})
+
+    engine_fixture = (
+        BlockchainTest(
+            fork=Bogota,
+            pre=pre,
+            post={},
+            blocks=[
+                Block(
+                    txs=[tx],
+                    rlp_modifier=Header(gas_used=21_000),
+                )
+            ],
+            genesis_environment=Environment(),
+        )
+        .generate(
+            t8n=default_t8n,
+            fixture_format=BLOCKCHAIN_ENGINE_IL_FIXTURE_FORMATS[0],
+        )
+        .fixture
+    )
+    assert isinstance(engine_fixture, BlockchainEngineFixture)
+    payload = engine_fixture.payloads[0]
+    assert payload.valid()
+    assert len(payload.params[0].transactions) == 0
+    assert payload.params[0].gas_used == 0
+    assert payload.inclusion_list_satisfied is False
 
 
 @pytest.mark.parametrize(
