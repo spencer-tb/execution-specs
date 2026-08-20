@@ -41,8 +41,9 @@ def test_tx_gas_limit(
     sender = pre.fund_eoa()
     to = pre.fund_eoa()
 
+    block_gas_limit = 100_000
     tx = Transaction(
-        gas_limit=21001,
+        gas_limit=block_gas_limit + 1,
         to=to,
         gas_price=0x10,  # Must be >= base fee to isolate gas limit validation
         sender=sender,
@@ -50,8 +51,8 @@ def test_tx_gas_limit(
         error=TransactionException.GAS_ALLOWANCE_EXCEEDED,
     )
 
-    modified_fields = {"gas_limit": ZeroPaddedHexNumber(21000)}
-    env.gas_limit = ZeroPaddedHexNumber(21000)
+    modified_fields = {"gas_limit": ZeroPaddedHexNumber(block_gas_limit)}
+    env.gas_limit = ZeroPaddedHexNumber(block_gas_limit)
 
     block = Block(
         txs=[tx],
