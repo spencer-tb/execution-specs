@@ -1098,6 +1098,11 @@ class BlockchainTest(BaseTest):
                     f"{actual_inclusion_list_satisfied}"
                 )
             else:
+                # With exception verification skipped, the transition tool
+                # did not execute the exact block (e.g. the invalid
+                # transaction only exists as an `rlp_override`), so its
+                # verdict is unusable; pin the declared expectation
+                # unverified.
                 actual_inclusion_list_satisfied = (
                     block.expected_inclusion_list_satisfied
                 )
@@ -1403,10 +1408,32 @@ class BlockchainTest(BaseTest):
         for block in self.blocks:
             is_last_block = block is self.blocks[-1]
             if is_last_block and is_inclusion_list_variant:
+                if not block.txs:
+                    raise Exception(
+                        "test correctness: an inclusion test requires at "
+                        "least one transaction in the last block to move "
+                        "to the inclusion list"
+                    )
                 if block.inclusion_list_txs is None:
                     block.inclusion_list_txs = []
                 block.inclusion_list_txs.append(block.txs.pop())
                 if block.exception:
+                    exceptions = (
+                        block.exception
+                        if isinstance(block.exception, list)
+                        else [block.exception]
+                    )
+                    if not any(
+                        isinstance(exception, TransactionException)
+                        for exception in exceptions
+                    ):
+                        raise Exception(
+                            "test correctness: the inclusion list variant "
+                            "derives its satisfied expectation from a "
+                            "transaction exception; a block invalidated "
+                            "only by block-level exceptions cannot be "
+                            "flipped valid by moving its last transaction"
+                        )
                     block.exception = None
                     block.expected_inclusion_list_satisfied = True
                 else:
