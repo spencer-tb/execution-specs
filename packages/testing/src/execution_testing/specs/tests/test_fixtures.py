@@ -26,6 +26,7 @@ from execution_testing.fixtures import (
     StateFixture,
 )
 from execution_testing.forks import (
+    Amsterdam,
     Berlin,
     Bogota,
     Cancun,
@@ -167,6 +168,61 @@ def test_blockchain_fixtures_include_inclusion_lists(
         engine_fixture.payloads[0].inclusion_list_satisfied
         == inclusion_list_satisfied
     )
+
+
+def test_blockchain_fixtures_without_inclusion_lists_pre_fork(
+    default_t8n: TransitionTool,
+) -> None:
+    """
+    Test filling at a fork that shares its spec module with an
+    inclusion-list fork but carries no inclusion lists itself.
+    """
+    tx = Transaction(
+        nonce=0,
+        to=Address(0x1234),
+        gas_limit=21_000,
+        gas_price=10,
+    )
+    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    pre = Alloc({sender: Account(balance=10**18)})
+
+    engine_fixture = (
+        BlockchainTest(
+            fork=Amsterdam,
+            pre=pre,
+            post={},
+            blocks=[Block(txs=[tx])],
+            genesis_environment=Environment(),
+        )
+        .generate(t8n=default_t8n, fixture_format=BlockchainEngineFixture)
+        .fixture
+    )
+    assert isinstance(engine_fixture, BlockchainEngineFixture)
+    assert engine_fixture.payloads[0].new_payload_version == 5
+    assert engine_fixture.payloads[0].inclusion_list_satisfied is None
+
+
+def test_blockchain_fixtures_reject_inclusion_lists_pre_fork(
+    default_t8n: TransitionTool,
+) -> None:
+    """Test that an inclusion list on a pre-fork block fails the fill."""
+    tx = Transaction(
+        nonce=0,
+        to=Address(0x1234),
+        gas_limit=21_000,
+        gas_price=10,
+    )
+    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    pre = Alloc({sender: Account(balance=10**18)})
+
+    with pytest.raises(Exception, match="carries no inclusion lists"):
+        BlockchainTest(
+            fork=Amsterdam,
+            pre=pre,
+            post={},
+            blocks=[Block(txs=[], inclusion_list_txs=[tx])],
+            genesis_environment=Environment(),
+        ).generate(t8n=default_t8n, fixture_format=BlockchainEngineFixture)
 
 
 @pytest.mark.parametrize(

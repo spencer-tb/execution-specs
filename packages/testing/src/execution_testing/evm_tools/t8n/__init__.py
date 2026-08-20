@@ -141,6 +141,8 @@ class T8N(Load):
     state_reward: int
     exception_mapper: Optional["ExceptionMapper"]
     inclusion_list_txs: Optional[List["TestingTransaction"]]
+    inclusion_lists_required: bool
+    fork_name: str
     _block_exception: Optional[str]
 
     def __init__(
@@ -238,6 +240,14 @@ class T8N(Load):
             if t8n_data.inclusion_list_txs is not None
             else None
         )
+        # Keyed off the *testing* fork, not the spec module: a testing
+        # fork can share its spec module with an inclusion-list fork
+        # (e.g. Amsterdam hosting Bogota's spec) without carrying
+        # inclusion lists in its own engine API.
+        self.inclusion_lists_required = (
+            t8n_data.fork.engine_new_payload_inclusion_list_transactions()
+        )
+        self.fork_name = t8n_data.fork_name
 
     def _tracer(self, type_: Type[T]) -> T:
         group = self.tracers
@@ -407,31 +417,32 @@ class T8N(Load):
             self.pay_block_rewards(U256(self.state_reward), block_env)
 
         if self.fork.has_inclusion_list_satisfied:
-            if self.inclusion_list_txs is None:
+            if self.inclusion_list_txs is not None:
+                block_output.inclusion_list_satisfied = (
+                    self.fork.check_inclusion_list_transactions(
+                        block_env,
+                        block_output,
+                        tuple(
+                            self.fork.encode_transaction(
+                                self.convert_transaction(tx)
+                            )
+                            for tx in self.txs
+                        ),
+                        tuple(
+                            self.fork.encode_transaction(
+                                self.convert_transaction(tx)
+                            )
+                            for tx in self.inclusion_list_txs
+                        ),
+                    )
+                )
+            elif self.inclusion_lists_required:
                 raise Exception(
-                    f"the `{self.fork.hardfork.short_name}` fork spec tracks "
-                    "`inclusion_list_satisfied`, so inclusion list "
-                    "transactions are required; a block without an inclusion "
-                    "list must pass an empty one"
+                    f"the `{self.fork_name}` fork's engine API carries "
+                    "inclusion lists, so inclusion list transactions are "
+                    "required; a block without an inclusion list must pass "
+                    "an empty one"
                 )
-            block_output.inclusion_list_satisfied = (
-                self.fork.check_inclusion_list_transactions(
-                    block_env,
-                    block_output,
-                    tuple(
-                        self.fork.encode_transaction(
-                            self.convert_transaction(tx)
-                        )
-                        for tx in self.txs
-                    ),
-                    tuple(
-                        self.fork.encode_transaction(
-                            self.convert_transaction(tx)
-                        )
-                        for tx in self.inclusion_list_txs
-                    ),
-                )
-            )
 
         if self.fork.has_withdrawal:
             withdrawals = self.env.withdrawals or []

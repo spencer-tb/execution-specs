@@ -116,7 +116,12 @@ def build_result(
         arguments["block_access_list_hash"] = t8n.fork.hash_block_access_list(
             block_output.block_access_list
         )
-    if hasattr(block_output, "inclusion_list_satisfied"):
+    # Only report a satisfaction the check actually computed: the field
+    # exists (with a default) on any spec module that tracks inclusion
+    # lists, but the check only runs when the block came with one.
+    if t8n.inclusion_list_txs is not None and hasattr(
+        block_output, "inclusion_list_satisfied"
+    ):
         arguments["inclusion_list_satisfied"] = (
             block_output.inclusion_list_satisfied
         )

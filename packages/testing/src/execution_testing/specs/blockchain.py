@@ -932,6 +932,11 @@ class BlockchainTest(BaseTest):
         txs = block.txs[:]
         inclusion_list_txs: List[Transaction] | None = None
         if block.inclusion_list_txs is not None:
+            if not fork.engine_new_payload_inclusion_list_transactions():
+                raise Exception(
+                    f"block sets `inclusion_list_txs` but {fork} carries no "
+                    "inclusion lists in its engine API"
+                )
             inclusion_list_txs = block.inclusion_list_txs[:]
         elif fork.engine_new_payload_inclusion_list_transactions():
             inclusion_list_txs = []
