@@ -18,6 +18,7 @@ from ethereum.exceptions import (
     InsufficientTransactionGasError,
     InvalidBlock,
     InvalidSignatureError,
+    InvalidTransaction,
     NonceMismatchError,
     NonceOverflowError,
 )
@@ -566,6 +567,8 @@ def decode_transaction(tx: LegacyTransaction | Bytes) -> Transaction:
     transaction (RLP list prefix).
     """
     if isinstance(tx, Bytes):
+        if len(tx) == 0:
+            raise InvalidTransaction("empty transaction bytes")
         if tx[0] == 1:
             return rlp.decode_to(AccessListTransaction, tx[1:])
         elif tx[0] == 2:
@@ -574,8 +577,7 @@ def decode_transaction(tx: LegacyTransaction | Bytes) -> Transaction:
             return rlp.decode_to(BlobTransaction, tx[1:])
         elif tx[0] == 4:
             return rlp.decode_to(SetCodeTransaction, tx[1:])
-        elif tx[0] >= 0xC0:
-            assert tx[0] <= 0xFE
+        elif 0xC0 <= tx[0] <= 0xFE:
             return rlp.decode_to(LegacyTransaction, tx)
         else:
             raise TransactionTypeError(tx[0])
