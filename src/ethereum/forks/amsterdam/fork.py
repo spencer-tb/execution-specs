@@ -1196,8 +1196,9 @@ def check_inclusion_list_transactions(
 
     For each inclusion list transaction not present in the block,
     check whether it could have been validly appended to the end of the block.
-    Blob transactions are excluded from this check. If any such transaction
-    could have been appended, the block fails the inclusion list check.
+    If any such transaction could have been appended, the block fails the
+    inclusion list check. A transaction that cannot be decoded, or that names
+    a chain other than the block's, can never be appended and so is skipped.
 
     The inclusion list compliance does not affect any other block outputs.
 
