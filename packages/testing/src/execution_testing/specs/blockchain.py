@@ -771,13 +771,18 @@ BLOCKCHAIN_ENGINE_FIXTURE_FORMATS: List[
 BLOCKCHAIN_ENGINE_IL_FIXTURE_FORMATS: List[
     FixtureFormat | LabeledFixtureFormat
 ] = [
+    # Only the formats whose consumption checks `inclusionListSatisfied`
+    # (the shared engine simulator logic) generate the inclusion-list
+    # variant: the sync simulator never reads it, and the stateful format
+    # would re-assert the same verdict at the cost of one extra un-cached
+    # transition tool run per marked test.
     InclusionListVariantFixtureFormat.with_label_suffix(
         fixture_format=f,
         suffix="inclusion_list",
         variant="inclusion_list",
         transition_tool_cache_key_suffix="inclusion_list",
     )
-    for f in BLOCKCHAIN_ENGINE_FIXTURE_FORMATS
+    for f in [BlockchainEngineFixture, BlockchainEngineXFixture]
 ]
 
 
