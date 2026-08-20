@@ -170,6 +170,48 @@ def test_blockchain_fixtures_include_inclusion_lists(
     )
 
 
+def test_blockchain_fixtures_omit_inclusion_list_satisfied_when_invalid(
+    default_t8n: TransitionTool,
+) -> None:
+    """
+    Test that an invalid payload carries no `inclusionListSatisfied`:
+    `PayloadStatusV2` only allows it on payloads deemed VALID.
+    """
+    bad_tx = Transaction(
+        nonce=0,
+        to=Address(0x1234),
+        gas_limit=21_000,
+        max_fee_per_gas=10,
+        max_priority_fee_per_gas=100,
+        error=TransactionException.PRIORITY_GREATER_THAN_MAX_FEE_PER_GAS,
+    )
+    sender = Address("0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b")
+    pre = Alloc({sender: Account(balance=10**18)})
+
+    engine_fixture = (
+        BlockchainTest(
+            fork=Bogota,
+            pre=pre,
+            post={},
+            blocks=[
+                Block(
+                    txs=[bad_tx],
+                    exception=(
+                        TransactionException.PRIORITY_GREATER_THAN_MAX_FEE_PER_GAS
+                    ),
+                )
+            ],
+            genesis_environment=Environment(),
+            is_exception_test=True,
+        )
+        .generate(t8n=default_t8n, fixture_format=BlockchainEngineFixture)
+        .fixture
+    )
+    assert isinstance(engine_fixture, BlockchainEngineFixture)
+    assert not engine_fixture.payloads[0].valid()
+    assert engine_fixture.payloads[0].inclusion_list_satisfied is None
+
+
 def test_blockchain_fixtures_without_inclusion_lists_pre_fork(
     default_t8n: TransitionTool,
 ) -> None:

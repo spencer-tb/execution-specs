@@ -595,7 +595,14 @@ class BuiltBlock(CamelModel):
             if self.block_access_list
             else None,
             inclusion_list_transactions=self.inclusion_list_txs,
-            inclusion_list_satisfied=self.inclusion_list_satisfied,
+            # `PayloadStatusV2.inclusionListSatisfied` must be null unless
+            # the payload is deemed VALID.
+            inclusion_list_satisfied=(
+                self.inclusion_list_satisfied
+                if self.expected_exception is None
+                and self.engine_api_error_code is None
+                else None
+            ),
             execution_payload_modifier=self.engine_payload_modifier(),
             validation_error=self.expected_exception,
             error_code=self.engine_api_error_code,
