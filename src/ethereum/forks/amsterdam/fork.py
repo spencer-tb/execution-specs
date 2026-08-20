@@ -28,8 +28,19 @@ from ethereum.exceptions import (
 )
 from ethereum.forks.bpo5.blocks import Header as PreviousHeader
 from ethereum.merkle_patricia_trie import root, trie_set
-from ethereum.state import EMPTY_CODE_HASH, Address, BlockDiff
-from ethereum.state_mpt import State, apply_changes_to_state
+from ethereum.state import (
+    EMPTY_ACCOUNT,
+    EMPTY_CODE_HASH,
+    Account,
+    Address,
+    BlockDiff,
+)
+from ethereum.state_mpt import (
+    State,
+    apply_changes_to_state,
+    set_account,
+    store_code,
+)
 
 from . import vm
 from .block_access_lists import (
@@ -40,6 +51,7 @@ from .block_access_lists import (
 )
 from .blocks import Block, Header, Log, Receipt, Withdrawal, encode_receipt
 from .bloom import logs_bloom
+from .evmified_precompiles import IDENTITY_ADDRESS, IDENTITY_EVM_CODE
 from .exceptions import WrongChainIdError
 from .fork_types import (
     Authorization,
@@ -178,6 +190,13 @@ def apply_fork(old: BlockChain) -> BlockChain:
     is used to handle the irregularity. See the :ref:`DAO Fork <dao-fork>` for
     an example.
 
+    As required by [EIP-7666], the EVM replacement for the retired
+    identity precompile is installed at its address when this fork
+    activates. Only the code is installed: the account's other fields
+    are left untouched, so a previously nonexistent account keeps a
+    zero nonce and any balance the account held before the fork is
+    preserved.
+
     Parameters
     ----------
     old :
@@ -188,7 +207,23 @@ def apply_fork(old: BlockChain) -> BlockChain:
     new : `BlockChain`
         Upgraded block chain object for this hard fork.
 
+    [EIP-7666]: https://eips.ethereum.org/EIPS/eip-7666
+
     """
+    state = old.state
+    existing_account = state.get_account_optional(IDENTITY_ADDRESS)
+    if existing_account is None:
+        existing_account = EMPTY_ACCOUNT
+    code_hash = store_code(state, IDENTITY_EVM_CODE)
+    set_account(
+        state,
+        IDENTITY_ADDRESS,
+        Account(
+            nonce=existing_account.nonce,
+            balance=existing_account.balance,
+            code_hash=code_hash,
+        ),
+    )
     return old
 
 

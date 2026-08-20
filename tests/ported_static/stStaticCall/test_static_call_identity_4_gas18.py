@@ -26,6 +26,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ["state_tests/stStaticCall/static_CallIdentity_4_gas18Filler.json"],
 )
 @pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_before("EIP7666")
 @pytest.mark.slow
 @pytest.mark.pre_alloc_mutable
 def test_static_call_identity_4_gas18(

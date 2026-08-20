@@ -364,10 +364,10 @@ def test_selfdestruct_self_or_precompile_beneficiary(
         )
         balance = 1
     else:
-        # Identity precompile (address 4) is pre-warmed. Zero balance so
-        # no value transfer and thus no account creation.
+        # Precompiles are pre-warmed. Zero balance so no value transfer
+        # and thus no account creation.
         destructor_code = Op.SELFDESTRUCT.with_metadata(address_warm=True)(
-            Address(4)
+            fork.precompiles()[0]
         )
         balance = 0
     destructor = pre.deploy_contract(code=destructor_code, balance=balance)

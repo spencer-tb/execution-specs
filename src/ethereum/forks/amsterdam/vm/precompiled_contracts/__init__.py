@@ -18,7 +18,6 @@ __all__ = (
     "ECRECOVER_ADDRESS",
     "SHA256_ADDRESS",
     "RIPEMD160_ADDRESS",
-    "IDENTITY_ADDRESS",
     "MODEXP_ADDRESS",
     "ALT_BN128_ADD_ADDRESS",
     "ALT_BN128_MUL_ADDRESS",
@@ -38,7 +37,6 @@ __all__ = (
 ECRECOVER_ADDRESS = hex_to_address("0x01")
 SHA256_ADDRESS = hex_to_address("0x02")
 RIPEMD160_ADDRESS = hex_to_address("0x03")
-IDENTITY_ADDRESS = hex_to_address("0x04")
 MODEXP_ADDRESS = hex_to_address("0x05")
 ALT_BN128_ADD_ADDRESS = hex_to_address("0x06")
 ALT_BN128_MUL_ADDRESS = hex_to_address("0x07")

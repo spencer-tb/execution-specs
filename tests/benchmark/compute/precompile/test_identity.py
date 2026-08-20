@@ -22,6 +22,8 @@ from tests.benchmark.helper.precompile import (
 )
 from tests.frontier.identity_precompile.spec import Spec as IdentitySpec
 
+pytestmark = pytest.mark.valid_before("EIP7666")
+
 
 def test_identity(
     benchmark_test: BenchmarkTestFiller,

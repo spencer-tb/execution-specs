@@ -648,11 +648,11 @@ def test_call_precompile_is_warm(
 
     Precompiles are part of the accessed-addresses set from the start of
     every transaction, so a call to one pays only ``WARM_ACCESS``.
-    The identity precompile (address 4) is used as the target.
+    The fork's first precompile is used as the target.
     """
-    identity_precompile = Address(4)
+    precompile = fork.precompiles()[0]
 
-    measured_code = call_opcode(gas=0, address=identity_precompile)
+    measured_code = call_opcode(gas=0, address=precompile)
     measure_address = _measure_call(
         pre, fork, measured_code, call_opcode(address_warm=False)
     )

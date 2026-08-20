@@ -120,8 +120,6 @@ class GasCosts:
     PRECOMPILE_RIPEMD160_PER_WORD: Final[ExecutionGas] = ExecutionGas(
         Uint(120)
     )
-    PRECOMPILE_IDENTITY_BASE: Final[ExecutionGas] = ExecutionGas(Uint(15))
-    PRECOMPILE_IDENTITY_PER_WORD: Final[ExecutionGas] = ExecutionGas(Uint(3))
     PRECOMPILE_BLAKE2F_PER_ROUND: Final[ExecutionGas] = ExecutionGas(Uint(1))
     PRECOMPILE_POINT_EVALUATION: Final[ExecutionGas] = ExecutionGas(
         Uint(50000)
