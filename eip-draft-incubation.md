@@ -86,7 +86,10 @@ preceding 90 days, it has publicly identified itself with at least one
 material implementation, testing, benchmarking, specification, or devnet
 artifact for the EIP. A branch that only imports another team's work, an
 unimplemented statement of interest, or attendance at a call is not
-sufficient. The team's evidence MUST be linked from the register.
+sufficient. Work primarily authored outside the client team, including work
+in a side library, counts only if the client team publicly states that it has
+adopted the artifact and is actively maintaining or integrating it. The
+team's evidence MUST be linked from the register.
 
 Where this document requires more than 40% of eligible client teams, the
 smallest qualifying integer is the smallest number strictly greater than
@@ -150,9 +153,10 @@ incompatibilities with other incubating work, and last passing continuous-
 integration run.
 
 Evidence produced during incubation MAY be considered when evaluating the
-EIP under EIP-7723. Incubation evidence MAY also inform headliner selection,
-but incubation MUST NOT be a prerequisite for proposing or selecting a
-headliner.
+EIP under EIP-7723. Headliner candidates SHOULD normally be Incubating at
+selection time or demonstrate equivalent public engineering evidence. Lack
+of incubation MUST NOT prevent proposal or selection, and incubation MUST
+NOT be interpreted as an inclusion preference.
 
 ### Periodic review and freshness
 
@@ -294,7 +298,8 @@ requiring EIP editors to merge routine operational updates indefinitely.
 
 ### A worked example
 
-Purely illustrative, using the binary state tree (EIP-7864):
+Purely illustrative, using the partitioned binary tree (EIP-8297), which
+develops and modifies the unified binary tree design introduced by EIP-7864:
 
 1. The EIP champion opens an incubation request containing an executable
    specification, a normative test seed, public work from more than 40% of
