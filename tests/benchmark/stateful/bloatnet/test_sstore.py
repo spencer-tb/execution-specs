@@ -427,10 +427,11 @@ def test_sstore_variants(
 #       │         SSTORE(slot, v1) → SSTORE(slot, v2) → ...
 #       │
 # WHY IT STRESSES CLIENTS:
-#   - Multiple writes per slot exercise EIP-2200/EIP-3529 refund
-#     branching: clean (original==current) vs dirty (original!=current)
-#   - Oscillation causes refund counter to swing up/down each write
-#   - Refund cap (gas_used/5) saturates with enough iterations
+#   - Multiple writes per slot exercise EIP-8038/EIP-3298 net-metered
+#     write reversals: clean (original==current) vs dirty
+#     (original!=current)
+#   - Oscillation accrues a refund whenever the original value is restored
+#   - Before EIP-3298, clears also accrue refunds and the quotient cap can bind
 #   - Tests correct tracking of original vs current vs new values
 
 
@@ -487,15 +488,17 @@ def test_sstore_dirty_transitions(
     """
     Benchmark SSTORE dirty state transitions.
 
-    Exercise EIP-2200/EIP-3529 refund logic by writing the same slot
-    multiple times per iteration. Uses EIP-7702 delegation: authority
-    EOA delegates to initializer then to dirty-write executor.
+    Exercise storage refund logic by writing the same slot multiple
+    times per iteration. EIP-3298 removes clear refunds and the quotient
+    cap while retaining EIP-8038 write reversals. Uses EIP-7702
+    delegation: authority EOA delegates to initializer then to
+    dirty-write executor.
 
     Variants:
 
     - oscillation: X→0→X→0, alternates clean (2900) and dirty (100)
     - triple_write_restore: X→B→C→X, all SSTORE branches
-    - mass_clear: X→0, maximum per-slot refund generation
+    - mass_clear: X→0, clearing refund before EIP-3298 and none afterward
     """
     # Initial Storage Construction
     initializer_code = create_sstore_initializer(initial_value)
@@ -550,8 +553,9 @@ def test_sstore_dirty_transitions(
             initializer_calldata_generator=(initializer_calldata_generator),
         )
 
-    # Execution phase — no expected_benchmark_gas_used because
-    # refund cap (gas_used/5) makes actual consumption non-trivial
+    # Execution phase — no expected_benchmark_gas_used because refund
+    # settlement remains non-trivial: capped clear refunds exist before
+    # EIP-3298 and uncapped write reversals survive afterward.
     with TestPhaseManager.execution():
         exec_txs = list(
             executor_code.transactions_by_gas_limit(

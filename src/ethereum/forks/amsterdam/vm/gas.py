@@ -106,11 +106,6 @@ class GasCosts:
     MEMORY_PER_WORD: Final[ExecutionGas] = ExecutionGas(Uint(3))
     FAST_STEP: Final[ExecutionGas] = ExecutionGas(Uint(5))
 
-    # Refunds
-    REFUND_STORAGE_CLEAR: Final[int] = int(
-        (STORAGE_WRITE + COLD_STORAGE_ACCESS) * Uint(4800) // Uint(5000)
-    )
-
     # Precompiles
     PRECOMPILE_ECRECOVER: Final[ExecutionGas] = ExecutionGas(Uint(3000))
     PRECOMPILE_P256VERIFY: Final[ExecutionGas] = ExecutionGas(Uint(6900))
@@ -1152,7 +1147,8 @@ def settle_transaction_gas(
 
     - the gas used before refunds, from the gas limit less the
       execution gas and reservoir the top frame returned;
-    - the refund, capped at one fifth of that pre-refund usage;
+    - the refund, applied in full ([EIP-3298] removes the [EIP-3529]
+      cap);
     - the gas used, taken as the larger of the post-refund usage and the
       calldata floor, so a transaction never pays below the floor; and
     - the per-dimension block amounts: the state gas used (clamped to
@@ -1183,11 +1179,12 @@ def settle_transaction_gas(
         The settled gas amounts.
 
     [EIP-7778]: https://eips.ethereum.org/EIPS/eip-7778
+    [EIP-3298]: https://eips.ethereum.org/EIPS/eip-3298
+    [EIP-3529]: https://eips.ethereum.org/EIPS/eip-3529
 
     """
     gas_used_before_refund = tx_gas - gas_left - state_gas_left
-    gas_refund = min(gas_used_before_refund // Uint(5), Uint(refund_counter))
-    gas_used_after_refund = gas_used_before_refund - gas_refund
+    gas_used_after_refund = gas_used_before_refund - Uint(refund_counter)
     gas_used = max(gas_used_after_refund, calldata_floor)
 
     settled_state_gas_used = StateGas(Uint(max(0, state_gas_used)))
