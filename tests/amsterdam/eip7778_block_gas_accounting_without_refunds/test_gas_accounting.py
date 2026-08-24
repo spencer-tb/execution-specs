@@ -415,15 +415,16 @@ class CallDataTestType(Enum):
 )
 @pytest.mark.with_all_refund_types()
 @pytest.mark.filter_combinations(
-    lambda refund_type, refund_tx_reverts, calldata_test_type, **_: not (
+    lambda refund_type, refund_tx_reverts, calldata_test_type, fork, **_: not (
         refund_type == RefundTypes.STORAGE_CLEAR
-        and refund_tx_reverts
+        and (refund_tx_reverts or fork.gas_costs().REFUND_STORAGE_CLEAR == 0)
         and calldata_test_type
         == CallDataTestType.DATA_FLOOR_BETWEEN_TX_GAS_BEFORE_AND_AFTER
     ),
     reason=(
-        "STORAGE_CLEAR refund is zero on revert, so the (post, pre) "
-        "interval that DATA_FLOOR_BETWEEN needs is empty"
+        "the STORAGE_CLEAR refund is zero (on revert, or from EIP-3298 "
+        "on), so the (post, pre) interval that DATA_FLOOR_BETWEEN needs "
+        "is empty"
     ),
 )
 @pytest.mark.valid_from("EIP8037")
@@ -552,6 +553,7 @@ def test_varying_calldata_costs(
 @pytest.mark.exception_test
 @pytest.mark.execute(pytest.mark.skip(reason="Requires specific gas price"))
 @pytest.mark.valid_from("EIP7778")
+@pytest.mark.valid_before("EIP3298")
 def test_extra_tx_admission_uses_pre_refund_gas(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
