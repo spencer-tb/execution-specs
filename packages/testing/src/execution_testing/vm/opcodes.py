@@ -5771,6 +5771,62 @@ class Opcodes(Opcode, Enum):
     Source: [evm.codes/#F5](https://www.evm.codes/#F5)
     """
 
+    SETDELEGATE = Opcode(
+        0xF6,
+        popped_stack_items=2,
+        pushed_stack_items=1,
+        kwargs=["salt", "target"],
+        metadata={
+            "address_warm": False,
+            "account_new": True,
+            "designation_new": True,
+            "designation_cleared": False,
+        },
+    )
+    """
+    SETDELEGATE(salt, target) = location
+    ----
+
+    Description
+    ----
+    Creates or updates a delegation designation at an address derived
+    from the current account and a salt (EIP-7819). The designation is
+    the same object an EIP-7702 authorization sets on an externally
+    owned account. A zero target clears the designation instead.
+
+    Inputs
+    ----
+    - salt: 32-byte value used to derive the written address
+    - target: the address the designation delegates to, or zero to
+      clear the designation
+
+    Outputs
+    ----
+    - location: the address the designation was written to
+
+    Fork
+    ----
+    Bogota (pseudo-fork)
+
+    Gas
+    ----
+    The access cost of the written address, `ACCOUNT_WRITE`, and state
+    gas for the account leaf and designation bytes it creates. Clearing
+    a designation created earlier in the transaction refills its state
+    gas.
+
+    Metadata
+    ----
+    - address_warm: whether the written address is warm (default: False)
+    - account_new: whether a new account is created (default: True)
+    - designation_new: whether a net-new designation is written
+      (default: True)
+    - designation_cleared: whether a designation created earlier in the
+      transaction is cleared (default: False)
+
+    Source: [eips.ethereum.org/EIPS/eip-7819](https://eips.ethereum.org/EIPS/eip-7819)
+    """
+
     STATICCALL = Opcode(
         0xFA,
         popped_stack_items=6,

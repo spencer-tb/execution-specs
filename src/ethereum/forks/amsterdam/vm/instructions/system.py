@@ -23,19 +23,26 @@ from ethereum.utils.numeric import ceil32
 from ...fork_types import ExecutionGas, StateGas
 from ...state_tracker import (
     account_deployable,
+    account_exists,
     get_account,
     get_code,
+    get_pre_state_account,
     increment_nonce,
     is_account_alive,
     move_ether,
+    set_code,
 )
 from ...utils.address import (
     compute_contract_address,
     compute_create2_contract_address,
+    compute_setdelegate_address,
     to_address_masked,
 )
 from ...vm.eoa_delegation import (
+    EOA_DELEGATION_MARKER,
+    NULL_ADDRESS,
     calculate_delegation_cost,
+    is_valid_delegation,
 )
 from .. import (
     CALL_SUCCESS,
@@ -43,7 +50,12 @@ from .. import (
     emit_transfer_log,
     incorporate_child,
 )
-from ..exceptions import OutOfGasError, Revert, WriteInStaticContext
+from ..exceptions import (
+    AddressCollision,
+    OutOfGasError,
+    Revert,
+    WriteInStaticContext,
+)
 from ..gas import (
     GasCosts,
     GasMeter,
@@ -308,6 +320,118 @@ def create2(evm: Evm) -> None:
         memory_start_position,
         memory_size,
     )
+
+    # PROGRAM COUNTER
+    evm.pc += Uint(1)
+
+
+def setdelegate(evm: Evm) -> None:
+    """
+    Create or update a delegation designation at an address derived
+    from the current account and a salt.
+
+    The designation written is the same object an EIP-7702
+    authorization sets on an externally owned account, and it is
+    priced using the EIP-8037/8038 cost components: the access cost of
+    the written address, an `ACCOUNT_WRITE`, and state gas for the
+    account leaf and designation bytes it creates. A zero target clears
+    the designation instead, refilling designation state gas when that
+    state was created earlier in the transaction. The account's nonce
+    is raised to one so the account can never return to an empty state.
+
+    Parameters
+    ----------
+    evm :
+        The current EVM frame.
+
+    """
+    if evm.is_static:
+        raise WriteInStaticContext
+
+    # STACK
+    salt = pop(evm.stack).to_be_bytes32()
+    target = to_address_masked(pop(evm.stack))
+
+    # GAS (STATE-INDEPENDENT)
+    # Price what is computable without touching state, and check it is
+    # affordable before any state access is performed.
+    location = compute_setdelegate_address(evm.current_target, salt)
+
+    gas_cost = GasCosts.ZERO
+    is_cold_access = location not in evm.accessed_addresses
+    if is_cold_access:
+        gas_cost += GasCosts.COLD_ACCOUNT_ACCESS
+    else:
+        gas_cost += GasCosts.WARM_ACCESS
+
+    # Gas must cover the access cost before the state access below
+    # records the account read in the Block Access List.
+    check_gas(evm, gas_cost)
+
+    # STATE ACCESS (STATE-DEPENDENT GAS)
+    if is_cold_access:
+        evm.accessed_addresses.add(location)
+
+    tx_state = evm.tx_env.state
+    account = get_account(tx_state, location)
+    current_code = get_code(tx_state, account.code_hash)
+
+    # Only an empty account or an existing designation may be written.
+    if current_code and not is_valid_delegation(current_code):
+        raise AddressCollision
+
+    # SETDELEGATE is an opcode-level account write, so EIP-8038 charges
+    # ACCOUNT_WRITE on every invocation. Its one-charge-per-authority
+    # exception applies only to EIP-7702 authorization processing.
+    gas_cost += GasCosts.ACCOUNT_WRITE
+
+    # STATE GAS
+    # A designation on a fresh account pays for the leaf it creates. A
+    # net-new designation pays for its own bytes. Runtime state gas is
+    # net-metered: clearing a designation created earlier in the
+    # transaction refills that charge, and frame rollback restores it
+    # automatically with the rest of the frame's state gas.
+    state_gas = StateGas(Uint(0))
+    if not account_exists(tx_state, location):
+        state_gas += StateGasCosts.NEW_ACCOUNT
+
+    pre_state_code = get_code(
+        tx_state, get_pre_state_account(tx_state, location).code_hash
+    )
+    creates_designation = (
+        target != NULL_ADDRESS
+        and not is_valid_delegation(pre_state_code)
+        and not is_valid_delegation(current_code)
+    )
+    clears_created_designation = (
+        target == NULL_ADDRESS
+        and location in tx_state.setdelegate_created_delegations
+    )
+    if creates_designation:
+        state_gas += StateGasCosts.AUTH_BASE
+
+    # Charge execution gas before state gas so that an execution-gas
+    # OOG does not consume state gas that would inflate the parent's
+    # reservoir on frame failure.
+    charge_gas(evm, gas_cost)
+    charge_state_gas(evm, state_gas)
+    if clears_created_designation:
+        credit_state_gas_refund(evm.gas_meter, StateGasCosts.AUTH_BASE)
+        tx_state.setdelegate_created_delegations.remove(location)
+    elif creates_designation:
+        tx_state.setdelegate_created_delegations.add(location)
+
+    # OPERATION
+    if target == NULL_ADDRESS:
+        code_to_set = b""
+    else:
+        code_to_set = EOA_DELEGATION_MARKER + target
+    set_code(tx_state, location, code_to_set)
+
+    if account.nonce == Uint(0):
+        increment_nonce(tx_state, location)
+
+    push(evm.stack, U256.from_be_bytes(location))
 
     # PROGRAM COUNTER
     evm.pc += Uint(1)

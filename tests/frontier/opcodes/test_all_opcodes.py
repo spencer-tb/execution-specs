@@ -292,6 +292,12 @@ def constant_gas_opcodes(fork: Fork) -> Generator[ParameterSet, None, None]:
         # delta used by gas_test. Excluded to keep the test meaningful.
         if fork.is_eip_enabled(8037) and opcode in (Op.CREATE, Op.CREATE2):
             continue
+        # EIP-7819: SETDELEGATE's gas depends on the written account's
+        # state and includes a state gas component charged from the
+        # reservoir, so it is not constant and cannot be measured via
+        # the GAS opcode delta used by gas_test.
+        if opcode == Op.SETDELEGATE:
+            continue
         yield pytest.param(
             opcode,
             id=f"{opcode}",

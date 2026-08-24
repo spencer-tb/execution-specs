@@ -87,6 +87,9 @@ class TransactionState:
     )
     code_writes: Dict[Hash32, Bytes] = field(default_factory=dict)
     created_accounts: Set[Address] = field(default_factory=set)
+    # Delegation designations whose runtime state-gas charge is live.
+    # Unlike reads and created-account tracking, this set is journaled.
+    setdelegate_created_delegations: Set[Address] = field(default_factory=set)
     transient_storage: Dict[Tuple[Address, Bytes32], U256] = field(
         default_factory=dict
     )
@@ -746,9 +749,10 @@ def copy_tx_state(tx_state: TransactionState) -> TransactionState:
     """
     Create a snapshot of the transaction state for rollback.
 
-    Deep-copy writes and transient storage.  The parent reference,
-    ``created_accounts``, ``storage_reads``, and ``account_reads``
-    are shared (not rolled back).
+    Deep-copy writes, transient storage, and journaled SETDELEGATE
+    charge tracking. The parent reference, ``created_accounts``,
+    ``storage_reads``, and ``account_reads`` are shared (not rolled
+    back).
 
     Parameters
     ----------
@@ -770,6 +774,9 @@ def copy_tx_state(tx_state: TransactionState) -> TransactionState:
         },
         code_writes=dict(tx_state.code_writes),
         created_accounts=tx_state.created_accounts,
+        setdelegate_created_delegations=set(
+            tx_state.setdelegate_created_delegations
+        ),
         transient_storage=dict(tx_state.transient_storage),
         storage_reads=tx_state.storage_reads,
         account_reads=tx_state.account_reads,
@@ -793,6 +800,9 @@ def restore_tx_state(
     tx_state.account_writes = snapshot.account_writes
     tx_state.storage_writes = snapshot.storage_writes
     tx_state.code_writes = snapshot.code_writes
+    tx_state.setdelegate_created_delegations = (
+        snapshot.setdelegate_created_delegations
+    )
     tx_state.transient_storage = snapshot.transient_storage
 
 
