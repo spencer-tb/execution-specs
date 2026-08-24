@@ -38,7 +38,7 @@ from ..transactions import (
     IntrinsicGasCost,
     Transaction,
 )
-from .exceptions import OutOfGasError
+from .exceptions import MemoryLimitExceeded, OutOfGasError
 
 if TYPE_CHECKING:
     from . import BlockEnvironment, BlockOutput, Evm
@@ -300,6 +300,15 @@ class GasMeter:
     non-refillable.
 
     [commit]: ref:ethereum.forks.amsterdam.vm.gas.commit_state_gas
+    """
+
+    gas_grant: ExecutionGas
+    """
+    Execution gas granted to the frame at entry. Fixed for the
+    frame's lifetime: [EIP-7686] caps the frame's memory at one byte
+    per gas of this grant.
+
+    [EIP-7686]: https://eips.ethereum.org/EIPS/eip-7686
     """
 
     refund_counter: int = 0
@@ -639,25 +648,31 @@ def forfeit_remaining_gas(gas_meter: GasMeter) -> None:
     gas_meter.gas_left = ExecutionGas(Uint(0))
 
 
-def withhold_create_gas(gas_meter: GasMeter) -> ExecutionGas:
+def withhold_create_gas(
+    gas_meter: GasMeter, memory_byte_size: Uint
+) -> ExecutionGas:
     """
     Withhold and return the gas made available to a `CREATE*` child.
 
-    Deduct the all-but-one-64th share from the frame's `gas_left` and
-    return it as the child frame's execution-gas grant.
+    Deduct the [`max_message_call_gas`][max] share from the frame's
+    `gas_left` and return it as the child frame's execution-gas grant.
 
     Parameters
     ----------
     gas_meter :
         The creating frame's gas meter.
+    memory_byte_size :
+        The size of the creating frame's memory.
 
     Returns
     -------
     child_gas : `ExecutionGas`
         The execution gas granted to the child frame.
 
+    [max]: ref:ethereum.forks.amsterdam.vm.gas.max_message_call_gas
+
     """
-    child_gas = max_message_call_gas(gas_meter.gas_left)
+    child_gas = max_message_call_gas(gas_meter.gas_left, memory_byte_size)
     gas_meter.gas_left -= child_gas
     return child_gas
 
@@ -716,6 +731,11 @@ def calculate_memory_gas_cost(size_in_bytes: Uint) -> ExecutionGas:
     to the smallest multiple of 32 bytes,
     such that the allocated size is at least as big as the given size.
 
+    The cost is linear: `MEMORY_PER_WORD` per allocated word
+    ([EIP-7686] removed the quadratic term).
+
+    [EIP-7686]: https://eips.ethereum.org/EIPS/eip-7686
+
     Parameters
     ----------
     size_in_bytes :
@@ -728,9 +748,7 @@ def calculate_memory_gas_cost(size_in_bytes: Uint) -> ExecutionGas:
 
     """
     size_in_words = ceil32(size_in_bytes) // Uint(32)
-    linear_cost = size_in_words * GasCosts.MEMORY_PER_WORD
-    quadratic_cost = size_in_words ** Uint(2) // Uint(512)
-    total_gas_cost = linear_cost + quadratic_cost
+    total_gas_cost = size_in_words * GasCosts.MEMORY_PER_WORD
     try:
         return ExecutionGas(total_gas_cost)
     except ValueError as e:
@@ -738,10 +756,16 @@ def calculate_memory_gas_cost(size_in_bytes: Uint) -> ExecutionGas:
 
 
 def calculate_gas_extend_memory(
-    memory: bytearray, extensions: List[Tuple[U256, U256]]
+    memory: bytearray,
+    extensions: List[Tuple[U256, U256]],
+    gas_grant: ExecutionGas,
 ) -> ExtendMemory:
     """
     Calculates the gas amount to extend memory.
+
+    An extension that would grow the memory strictly beyond one byte
+    per gas of the frame's execution-gas grant raises
+    [`MemoryLimitExceeded`][limit] ([EIP-7686]).
 
     Parameters
     ----------
@@ -750,10 +774,16 @@ def calculate_gas_extend_memory(
     extensions:
         List of extensions to be made to the memory.
         Consists of a tuple of start position and size.
+    gas_grant :
+        The frame's execution-gas grant at entry, which is also its
+        hard memory limit in bytes.
 
     Returns
     -------
     extend_memory: `ExtendMemory`
+
+    [limit]: ref:ethereum.forks.amsterdam.vm.exceptions.MemoryLimitExceeded
+    [EIP-7686]: https://eips.ethereum.org/EIPS/eip-7686
 
     """
     size_to_extend = Uint(0)
@@ -766,6 +796,9 @@ def calculate_gas_extend_memory(
         after_size = ceil32(Uint(start_position) + Uint(size))
         if after_size <= before_size:
             continue
+
+        if after_size > gas_grant:
+            raise MemoryLimitExceeded
 
         size_to_extend += after_size - before_size
         already_paid = calculate_memory_gas_cost(before_size)
@@ -783,6 +816,7 @@ def calculate_message_call_gas(
     gas_left: ExecutionGas,
     memory_cost: ExecutionGas,
     extra_gas: ExecutionGas,
+    memory_byte_size: Uint,
     call_stipend: ExecutionGas = GasCosts.CALL_STIPEND,
 ) -> MessageCallGas:
     """
@@ -802,6 +836,9 @@ def calculate_message_call_gas(
     extra_gas :
         The amount of gas needed for transferring value + creating a new
         account inside a message call.
+    memory_byte_size :
+        The size of the calling frame's memory at the time of the
+        call, including the extension the call itself performs.
     call_stipend :
         The amount of stipend provided to a message call to execute code while
         transferring value (ETH).
@@ -815,27 +852,46 @@ def calculate_message_call_gas(
     if gas_left < extra_gas + memory_cost:
         return MessageCallGas(gas + extra_gas, gas + call_stipend)
 
-    gas = min(gas, max_message_call_gas(gas_left - memory_cost - extra_gas))
+    gas = min(
+        gas,
+        max_message_call_gas(
+            gas_left - memory_cost - extra_gas, memory_byte_size
+        ),
+    )
 
     return MessageCallGas(gas + extra_gas, gas + call_stipend)
 
 
-def max_message_call_gas(gas: ExecutionGas) -> ExecutionGas:
+def max_message_call_gas(
+    gas: ExecutionGas, memory_byte_size: Uint
+) -> ExecutionGas:
     """
     Calculates the maximum gas that is allowed for making a message call.
+
+    The caller withholds the larger of one 64th of its remaining gas
+    and one gas per byte of its memory, so a frame's memory stays
+    bounded by its execution-gas grant across sub-calls ([EIP-7686],
+    which names this function `max_call_gas`).
 
     Parameters
     ----------
     gas :
         The amount of gas provided to the message-call.
+    memory_byte_size :
+        The size of the calling frame's memory.
 
     Returns
     -------
     max_allowed_message_call_gas: `ExecutionGas`
         The maximum gas allowed for making the message-call.
 
+    [EIP-7686]: https://eips.ethereum.org/EIPS/eip-7686
+
     """
-    return ExecutionGas(gas - (gas // Uint(64)))
+    withheld = max(gas // Uint(64), memory_byte_size)
+    if withheld >= gas:
+        return ExecutionGas(Uint(0))
+    return ExecutionGas(gas - withheld)
 
 
 def init_code_cost(init_code_length: Uint) -> ExecutionGas:

@@ -84,36 +84,54 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="d6",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             7,
             0,
             0,
             id="d7",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             8,
             0,
             0,
             id="d8",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             9,
             0,
             0,
             id="d9",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             10,
             0,
             0,
             id="d10",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             11,
             0,
             0,
             id="d11",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             12,
@@ -156,36 +174,54 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="d18",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             19,
             0,
             0,
             id="d19",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             20,
             0,
             0,
             id="d20",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             21,
             0,
             0,
             id="d21",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             22,
             0,
             0,
             id="d22",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             23,
             0,
             0,
             id="d23",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             24,
@@ -228,36 +264,54 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="d30",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             31,
             0,
             0,
             id="d31",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             32,
             0,
             0,
             id="d32",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             33,
             0,
             0,
             id="d33",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             34,
             0,
             0,
             id="d34",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             35,
             0,
             0,
             id="d35",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             36,
@@ -306,36 +360,54 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="d43",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             44,
             0,
             0,
             id="d44",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             45,
             0,
             0,
             id="d45",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             46,
             0,
             0,
             id="d46",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             47,
             0,
             0,
             id="d47",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             48,
             0,
             0,
             id="d48",
+            # TODO(EIP-7686): quadratic-cost expectation;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             49,

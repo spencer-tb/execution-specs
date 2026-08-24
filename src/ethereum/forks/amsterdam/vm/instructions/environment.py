@@ -227,7 +227,7 @@ def calldatacopy(evm: Evm) -> None:
     words = ceil32(Uint(size)) // Uint(32)
     copy_gas_cost = ExecutionGas(GasCosts.OPCODE_COPY_PER_WORD * words)
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(memory_start_index, size)]
+        evm.memory, [(memory_start_index, size)], evm.gas_meter.gas_grant
     )
     charge_gas(
         evm,
@@ -288,7 +288,7 @@ def codecopy(evm: Evm) -> None:
     words = ceil32(Uint(size)) // Uint(32)
     copy_gas_cost = ExecutionGas(GasCosts.OPCODE_COPY_PER_WORD * words)
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(memory_start_index, size)]
+        evm.memory, [(memory_start_index, size)], evm.gas_meter.gas_grant
     )
     charge_gas(
         evm,
@@ -381,7 +381,7 @@ def extcodecopy(evm: Evm) -> None:
     words = ceil32(Uint(size)) // Uint(32)
     copy_gas_cost = ExecutionGas(GasCosts.OPCODE_COPY_PER_WORD * words)
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(memory_start_index, size)]
+        evm.memory, [(memory_start_index, size)], evm.gas_meter.gas_grant
     )
 
     if address in evm.accessed_addresses:
@@ -452,7 +452,7 @@ def returndatacopy(evm: Evm) -> None:
         GasCosts.OPCODE_RETURNDATACOPY_PER_WORD * words
     )
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(memory_start_index, size)]
+        evm.memory, [(memory_start_index, size)], evm.gas_meter.gas_grant
     )
     charge_gas(
         evm,

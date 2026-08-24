@@ -137,3 +137,12 @@ class KZGProofError(ExceptionalHalt):
     """
 
     pass
+
+
+class MemoryLimitExceeded(ExceptionalHalt):
+    """
+    Raised when a memory expansion would grow a frame's memory
+    strictly beyond one byte per gas of its execution-gas grant.
+    """
+
+    pass

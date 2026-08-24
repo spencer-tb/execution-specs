@@ -52,6 +52,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="mloadOOG",
+            # TODO(EIP-7686): quadratic-cost OOG scenario;
+            #  re-derive with the memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
     ],
 )

@@ -306,15 +306,19 @@ def test_top_frame_new_account_skipped_for_nonce_only_recipient(
     state_test(pre=pre, tx=tx, post=post)
 
 
-def creation_tx_init_code(fork: Fork) -> tuple[Bytecode, int]:
+def creation_tx_init_code(fork: Fork) -> tuple[Bytecode, int, int]:
     """
     Build init code for exact-gas creation-transaction tests and return
-    it with its execution gas.
+    it with its execution gas and the top frame's required grant.
 
     The code deploys empty code (no deposit charges) and expands memory
     so that its execution gas lifts the transaction's exact total above
     the calldata floor, which would otherwise bind once the top-frame
     ``NEW_ACCOUNT`` charge is skipped.
+
+    The required grant exceeds the execution gas once EIP-7686 caps a
+    frame's memory at one byte per gas of its grant; the surplus is
+    returned unspent, so receipts still pin the execution gas alone.
     """
     memory_offset = 30_000
     init_code = (
@@ -323,7 +327,9 @@ def creation_tx_init_code(fork: Fork) -> tuple[Bytecode, int]:
         )(memory_offset, 0)
         + Op.STOP
     )
-    return init_code, init_code.gas_cost(fork)
+    exec_gas = init_code.gas_cost(fork)
+    required_grant = max(exec_gas, fork.memory_grant_floor(memory_offset + 32))
+    return init_code, exec_gas, required_grant
 
 
 @pytest.mark.parametrize(
@@ -364,7 +370,7 @@ def test_top_frame_new_account_skipped_for_prefunded_create_target(
     prefund = 1
     pre.fund_address(created, prefund)
 
-    init_code, exec_gas = creation_tx_init_code(fork)
+    init_code, exec_gas, required_grant = creation_tx_init_code(fork)
 
     intrinsic_gas = fork.transaction_intrinsic_cost_calculator()(
         calldata=init_code,
@@ -398,7 +404,7 @@ def test_top_frame_new_account_skipped_for_prefunded_create_target(
         to=None,
         data=init_code,
         value=value,
-        gas_limit=total_gas,
+        gas_limit=intrinsic_gas + required_grant,
         expected_receipt=TransactionReceipt(cumulative_gas_used=total_gas),
     )
 
@@ -473,7 +479,7 @@ def test_top_frame_new_account_skipped_for_create_target_funded_same_block(
     # Transaction 2: the creation transaction, with gas headroom; the
     # receipt pins the consumed gas to exactly the ``NEW_ACCOUNT``-free
     # total.
-    init_code, exec_gas = creation_tx_init_code(fork)
+    init_code, exec_gas, required_grant = creation_tx_init_code(fork)
     create_intrinsic = fork.transaction_intrinsic_cost_calculator()(
         calldata=init_code,
         contract_creation=True,
@@ -496,7 +502,7 @@ def test_top_frame_new_account_skipped_for_create_target_funded_same_block(
         to=None,
         data=init_code,
         value=value,
-        gas_limit=create_total,
+        gas_limit=create_intrinsic + required_grant,
         expected_receipt=TransactionReceipt(
             cumulative_gas_used=fund_total + create_total
         ),

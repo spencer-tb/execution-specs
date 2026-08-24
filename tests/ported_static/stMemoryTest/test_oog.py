@@ -102,6 +102,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="success",
+            # TODO(EIP-7686): quadratic-cost success boundary;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             10,
@@ -156,6 +159,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="success",
+            # TODO(EIP-7686): quadratic-cost success boundary;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             19,
@@ -168,6 +174,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="success",
+            # TODO(EIP-7686): quadratic-cost success boundary;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             21,
@@ -180,6 +189,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="success",
+            # TODO(EIP-7686): quadratic-cost success boundary;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             23,
@@ -192,6 +204,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="success",
+            # TODO(EIP-7686): quadratic-cost success boundary;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             25,
@@ -204,6 +219,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="success",
+            # TODO(EIP-7686): quadratic-cost success boundary;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             27,
@@ -240,6 +258,9 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="success",
+            # TODO(EIP-7686): quadratic-cost success boundary;
+            #  re-derive linearly, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             33,

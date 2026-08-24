@@ -55,7 +55,7 @@ def log_n(evm: Evm, num_topics: int) -> None:
 
     # GAS
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(memory_start_index, size)]
+        evm.memory, [(memory_start_index, size)], evm.gas_meter.gas_grant
     )
     charge_gas(
         evm,
