@@ -185,7 +185,13 @@ class DynamicCallContextTestCases(EnumMeta):
                 "expected_callee_storage": {},
             }
 
-            callee_bytecode = Op.TSTORE(1, 69) + Op.STOP
+            # Under CALLCODE/DELEGATECALL the callee writes the
+            # caller's already-allocated slot 1, which prices the
+            # TSTORE correctly under EIP-7971.
+            callee_bytecode = (
+                Op.TSTORE(1, 69, slot_allocated=call_opcode != Op.CALL)
+                + Op.STOP
+            )
             classdict[f"{call_opcode._name_}_WITH_OUT_OF_GAS"] = {
                 "description": (
                     "Transient storage usage is discarded from sub-call with "

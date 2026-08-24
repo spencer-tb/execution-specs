@@ -1025,6 +1025,14 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
         pass
 
     @classmethod
+    def max_transient_storage_slots(cls) -> int | None:
+        """
+        Return the maximum number of unique transient storage slots a
+        transaction may write, or None if no limit is imposed.
+        """
+        return None
+
+    @classmethod
     @abstractmethod
     def state_gas_reservoir_enabled(cls) -> bool:
         """

@@ -64,6 +64,7 @@ def test_tstore_unique_keys(
         attack_contract_address=attack_contract_address,
         setup_cost=setup.gas_cost(fork),
         iteration_cost=loop.gas_cost(fork),
+        max_iterations_per_tx=fork.max_transient_storage_slots(),
     )
 
     benchmark_test(

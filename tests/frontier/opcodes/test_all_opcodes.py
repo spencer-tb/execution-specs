@@ -326,6 +326,8 @@ def test_constant_gas(
         warm_opcode_metadata["address_warm"] = True
     if "key_warm" in opcode.metadata:
         warm_opcode_metadata["key_warm"] = True
+    if "slot_allocated" in opcode.metadata:
+        warm_opcode_metadata["slot_allocated"] = True
     if warm_opcode_metadata:
         warm_opcode = opcode(**warm_opcode_metadata)
     else:

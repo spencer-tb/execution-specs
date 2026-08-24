@@ -854,7 +854,9 @@ def test_set_code_max_depth_call_stack(
             max_depth = 1025
         case 16_777_216:
             gas_limit = tx_gas_limit_cap
-            max_depth = 389
+            # EIP-7971 cheapens the TSTORE/TLOAD depth bookkeeping, so
+            # the same gas budget reaches deeper.
+            max_depth = 431 if fork.is_eip_enabled(7971) else 389
         case _:
             raise NotImplementedError(
                 f"Unexpected transaction gas limit cap: {tx_gas_limit_cap}"

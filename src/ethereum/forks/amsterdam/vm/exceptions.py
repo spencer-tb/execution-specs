@@ -98,6 +98,15 @@ class WriteInStaticContext(ExceptionalHalt):
     pass
 
 
+class TransientStorageLimitError(ExceptionalHalt):
+    """
+    Raised when a transaction writes more unique transient storage slots
+    than ``MAX_TRANSIENT_SLOTS`` allows.
+    """
+
+    pass
+
+
 class OutOfBoundsRead(ExceptionalHalt):
     """
     Raised when an attempt was made to read data beyond the

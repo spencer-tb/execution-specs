@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Callable, Dict, Optional, Set, Tuple, final
 
 from ethereum_types.bytes import Bytes, Bytes32
 from ethereum_types.frozen import modify
-from ethereum_types.numeric import U256, Uint
+from ethereum_types.numeric import U256, Uint, ulen
 
 from ethereum.crypto.hash import Hash32, keccak256
 from ethereum.state import (
@@ -37,6 +37,11 @@ from ethereum.state import (
 
 if TYPE_CHECKING:
     from .block_access_lists import BlockAccessListBuilder
+
+# The maximum number of unique transient storage slots a transaction may
+# write. Bounds the memory a client must reserve for transient storage
+# to roughly 8 MiB per transaction (131072 slots of 64 bytes each).
+MAX_TRANSIENT_SLOTS = Uint(131072)
 
 
 @final
@@ -89,6 +94,12 @@ class TransactionState:
     created_accounts: Set[Address] = field(default_factory=set)
     transient_storage: Dict[Tuple[Address, Bytes32], U256] = field(
         default_factory=dict
+    )
+    # Unique slots written by `TSTORE` this transaction. Bounded by
+    # ``MAX_TRANSIENT_SLOTS``; rolled back when a frame reverts, which
+    # deallocates the slots the frame wrote.
+    transient_slots_written: Set[Tuple[Address, Bytes32]] = field(
+        default_factory=set
     )
 
 
@@ -323,6 +334,53 @@ def get_transient_storage(
 
     """
     return tx_state.transient_storage.get((address, key), U256(0))
+
+
+def transient_slot_allocated(
+    tx_state: TransactionState, address: Address, key: Bytes32
+) -> bool:
+    """
+    Check whether a transient storage slot has already been written to
+    during this transaction.
+
+    A slot stays allocated when a later write clears its value; only a
+    frame revert deallocates the slots the frame wrote.
+
+    Parameters
+    ----------
+    tx_state :
+        The transaction state.
+    address :
+        Address of the account.
+    key :
+        Key to check.
+
+    Returns
+    -------
+    allocated : ``bool``
+        `True` if the slot was written to during this transaction.
+
+    """
+    return (address, key) in tx_state.transient_slots_written
+
+
+def count_transient_slots_written(tx_state: TransactionState) -> Uint:
+    """
+    Count the unique transient storage slots written during this
+    transaction, across all accounts.
+
+    Parameters
+    ----------
+    tx_state :
+        The transaction state.
+
+    Returns
+    -------
+    count : ``Uint``
+        Number of unique slots written.
+
+    """
+    return ulen(tx_state.transient_slots_written)
 
 
 def account_exists(tx_state: TransactionState, address: Address) -> bool:
@@ -581,6 +639,9 @@ def set_transient_storage(
     """
     Set a value at a storage key on an account in transient storage.
 
+    Record the slot as written for the transaction-global allocation
+    accounting, even when a zero value clears its stored value.
+
     Parameters
     ----------
     tx_state :
@@ -593,6 +654,7 @@ def set_transient_storage(
         Value to set at the key.
 
     """
+    tx_state.transient_slots_written.add((address, key))
     if value == U256(0):
         tx_state.transient_storage.pop((address, key), None)
     else:
@@ -746,9 +808,10 @@ def copy_tx_state(tx_state: TransactionState) -> TransactionState:
     """
     Create a snapshot of the transaction state for rollback.
 
-    Deep-copy writes and transient storage.  The parent reference,
-    ``created_accounts``, ``storage_reads``, and ``account_reads``
-    are shared (not rolled back).
+    Deep-copy writes, transient storage, and the transient slot
+    allocations.  The parent reference, ``created_accounts``,
+    ``storage_reads``, and ``account_reads`` are shared (not rolled
+    back).
 
     Parameters
     ----------
@@ -771,6 +834,7 @@ def copy_tx_state(tx_state: TransactionState) -> TransactionState:
         code_writes=dict(tx_state.code_writes),
         created_accounts=tx_state.created_accounts,
         transient_storage=dict(tx_state.transient_storage),
+        transient_slots_written=set(tx_state.transient_slots_written),
         storage_reads=tx_state.storage_reads,
         account_reads=tx_state.account_reads,
     )
@@ -794,6 +858,7 @@ def restore_tx_state(
     tx_state.storage_writes = snapshot.storage_writes
     tx_state.code_writes = snapshot.code_writes
     tx_state.transient_storage = snapshot.transient_storage
+    tx_state.transient_slots_written = snapshot.transient_slots_written
 
 
 # -- Lifecycle --------------------------------------------------------------
@@ -845,6 +910,7 @@ def incorporate_tx_into_block(
     tx_state.code_writes.clear()
     tx_state.created_accounts.clear()
     tx_state.transient_storage.clear()
+    tx_state.transient_slots_written.clear()
     tx_state.storage_reads = set()
     tx_state.account_reads = set()
 

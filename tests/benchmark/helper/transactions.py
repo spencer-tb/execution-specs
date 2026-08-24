@@ -24,6 +24,7 @@ def build_benchmark_txs(
     attack_contract_address: Address,
     setup_cost: int,
     iteration_cost: int,
+    max_iterations_per_tx: int | None = None,
     calldata_builder: Callable[[int, int], bytes] | None = None,
     access_list: list[AccessList] | None = None,
 ) -> tuple[list[Transaction], int]:
@@ -31,8 +32,8 @@ def build_benchmark_txs(
     Build benchmark transactions filling gas_benchmark_value.
 
     Partition the total gas budget into transactions, each
-    containing as many loop iterations as the per-tx gas limit
-    allows.  Return (txs, total_gas_consumed).
+    containing as many loop iterations as the per-tx gas limit and
+    ``max_iterations_per_tx`` allow. Return (txs, total_gas_consumed).
 
     The default calldata layout is ``Hash(num_iters) +
     Hash(counter_offset)``.  Pass *calldata_builder* to override.
@@ -54,9 +55,12 @@ def build_benchmark_txs(
         if gas_available < max_intrinsic + setup_cost:
             break
 
-        num_iters = (
+        gas_limited_num_iters = (
             gas_available - max_intrinsic - setup_cost
         ) // iteration_cost
+        num_iters = gas_limited_num_iters
+        if max_iterations_per_tx is not None:
+            num_iters = min(num_iters, max_iterations_per_tx)
 
         if num_iters == 0:
             break
@@ -83,7 +87,13 @@ def build_benchmark_txs(
         )
 
         total_gas_consumed += tx_gas
-        gas_remaining -= gas_available
+        # When a protocol limit caps the iteration count, carry the unused
+        # per-transaction gas into another transaction so the benchmark still
+        # executes the requested aggregate gas budget.
+        if num_iters < gas_limited_num_iters:
+            gas_remaining -= tx_gas
+        else:
+            gas_remaining -= gas_available
         counter_offset += num_iters
 
     assert txs, "Gas loop produced zero transactions"
