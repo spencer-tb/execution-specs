@@ -360,6 +360,15 @@ class T8N(Load):
                 record_rejected_tx(self, 0, e)
                 self.logger.warning(f"Transaction 0 failed: {e!r}")
 
+        # EIP-8115: A state test is a one-transaction block; the batched
+        # priority fee credit lands right after that transaction. The
+        # fork function itself is a no-op when the transaction above was
+        # rejected (no receipts were produced).
+        if self.fork.has_process_priority_fees:
+            self.fork.process_priority_fees(
+                self._block_env, self._block_output
+            )
+
         self._block_exception = None
         self.result = build_result(
             self,
@@ -391,6 +400,11 @@ class T8N(Load):
             block_env.block_access_list_builder.block_access_index = (
                 self.fork.BlockAccessIndex(Uint(len(self.txs)) + Uint(1))
             )
+
+        # EIP-8115: Batched priority fees are credited after all
+        # transactions but before withdrawals.
+        if self.fork.has_process_priority_fees:
+            self.fork.process_priority_fees(block_env, block_output)
 
         if not self.fork.proof_of_stake and self.state_reward != -1:
             # ``-1`` is the sentinel for "skip block rewards entirely"

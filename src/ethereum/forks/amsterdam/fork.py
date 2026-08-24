@@ -838,6 +838,8 @@ def apply_body(
         ulen(transactions) + Uint(1)
     )
 
+    process_priority_fees(block_env, block_output)
+
     process_withdrawals(block_env, block_output, withdrawals)
 
     process_general_purpose_requests(
@@ -970,22 +972,27 @@ def update_sender_state(
 
 def disburse_gas_fees(
     block_env: vm.BlockEnvironment,
+    block_output: vm.BlockOutput,
     tx_env: vm.TransactionEnvironment,
     settlement: TransactionGasSettlement,
     payer: Address,
 ) -> None:
     """
-    Refund the payer's unspent gas and pay the priority fee.
+    Refund the payer's unspent gas and accrue the priority fee.
 
     Return the gas the transaction did not use to the ``payer`` that
     fronted the maximum fee at inclusion, priced at the effective gas
-    price, and credit the coinbase with the priority fee on the gas that
-    was used.
+    price. The priority fee on the gas that was used is not paid out
+    here: it is added to the block's running total and credited to the
+    fee recipient in one batch by [`process_priority_fees`] after all
+    transactions are processed ([EIP-8115]).
 
     Parameters
     ----------
     block_env :
         The block scoped environment.
+    block_output :
+        The block output accruing the priority fees.
     tx_env :
         The transaction's execution environment.
     settlement :
@@ -994,7 +1001,10 @@ def disburse_gas_fees(
         The account that fronted the maximum gas fee and receives the
         refund.
 
-    """
+    [`process_priority_fees`]: ref:ethereum.forks.amsterdam.fork.process_priority_fees
+    [EIP-8115]: https://eips.ethereum.org/EIPS/eip-8115
+
+    """  # noqa: E501
     tx_state = tx_env.state
     gas_refund_amount = settlement.gas_left * tx_env.effective_gas_price
 
@@ -1004,7 +1014,7 @@ def disburse_gas_fees(
     transaction_fee = settlement.gas_used * priority_fee_per_gas
 
     create_ether(tx_state, payer, U256(gas_refund_amount))
-    create_ether(tx_state, block_env.coinbase, U256(transaction_fee))
+    block_output.block_priority_fees += transaction_fee
 
 
 def process_transaction(
@@ -1069,7 +1079,9 @@ def process_transaction(
         tx_output.state_gas_used,
     )
 
-    disburse_gas_fees(block_env, tx_env, settlement, tx_env.origin)
+    disburse_gas_fees(
+        block_env, block_output, tx_env, settlement, tx_env.origin
+    )
 
     block_output.block_gas_used += settlement.execution_gas_used
     block_output.block_state_gas_used += settlement.state_gas_used
@@ -1097,6 +1109,41 @@ def process_transaction(
     incorporate_tx_into_block(
         tx_env.state, block_env.block_access_list_builder
     )
+
+
+def process_priority_fees(
+    block_env: vm.BlockEnvironment,
+    block_output: vm.BlockOutput,
+) -> None:
+    """
+    Credit the block's accrued priority fees to the fee recipient.
+
+    Priority fees are no longer paid out after each transaction
+    ([EIP-8115]). Each transaction adds its fee to
+    `block_output.block_priority_fees` in [`disburse_gas_fees`], and the
+    total is credited to the coinbase here, after all transactions are
+    processed but before withdrawals.
+
+    The credit is performed only when the block processed at least one
+    transaction, mirroring the per-transaction crediting it replaces: a
+    zero-fee transaction still touches the fee recipient (destroying it
+    if empty), while a block without transactions leaves it untouched.
+
+    [`disburse_gas_fees`]: ref:ethereum.forks.amsterdam.fork.disburse_gas_fees
+    [EIP-8115]: https://eips.ethereum.org/EIPS/eip-8115
+    """  # noqa: E501
+    if len(block_output.receipt_keys) == 0:
+        return
+
+    fee_state = TransactionState(parent=block_env.state)
+
+    create_ether(
+        fee_state,
+        block_env.coinbase,
+        U256(block_output.block_priority_fees),
+    )
+
+    incorporate_tx_into_block(fee_state, block_env.block_access_list_builder)
 
 
 def process_withdrawals(

@@ -163,11 +163,14 @@ def test_transfer_logs_and_bal_balance_changes(
                 ),
                 # The tip is a BAL-only flow: it must never produce a
                 # Transfer log, and the zero-tip second transaction must
-                # not add a second balance change.
+                # not add a second balance change. Under EIP-8115 the
+                # credit moves to the post-execution index.
                 coinbase: BalAccountExpectation(
                     balance_changes=[
                         BalBalanceChange(
-                            block_access_index=1,
+                            block_access_index=(
+                                3 if fork.batched_priority_fees() else 1
+                            ),
                             post_balance=tip_to_coinbase,
                         )
                     ],
