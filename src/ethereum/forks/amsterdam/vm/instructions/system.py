@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from typing import final
 
 from ethereum_types.bytes import Bytes
-from ethereum_types.numeric import U256, Uint
+from ethereum_types.numeric import U256, Uint, ulen
 
 from ethereum.state import Address
 from ethereum.utils.numeric import ceil32
@@ -116,8 +116,9 @@ def generic_create(
         charge_state_gas(evm, StateGasCosts.NEW_ACCOUNT)
 
     # CHILD GRANT
-    # Withhold all but one 64th of the execution gas.
-    create_message_gas = withhold_create_gas(evm.gas_meter)
+    # Withhold the larger of one 64th of the execution gas and one
+    # gas per byte of the frame's memory.
+    create_message_gas = withhold_create_gas(evm.gas_meter, ulen(evm.memory))
 
     # On a collision the child's execution-gas grant is consumed and no
     # account is created; a storage-only collision target is
@@ -162,6 +163,7 @@ def generic_create(
             gas_left=create_message_gas,
             state_gas_left=create_message_state_gas_reservoir,
             state_gas_baseline=create_message_state_gas_reservoir,
+            gas_grant=create_message_gas,
         ),
         pc=Uint(0),
         stack=[],
@@ -218,7 +220,9 @@ def create(evm: Evm) -> None:
 
     # GAS
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(memory_start_position, memory_size)]
+        evm.memory,
+        [(memory_start_position, memory_size)],
+        evm.gas_meter.gas_grant,
     )
     init_code_gas = init_code_cost(Uint(memory_size))
     charge_gas(
@@ -276,7 +280,9 @@ def create2(evm: Evm) -> None:
 
     # GAS
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(memory_start_position, memory_size)]
+        evm.memory,
+        [(memory_start_position, memory_size)],
+        evm.gas_meter.gas_grant,
     )
     call_data_words = ceil32(Uint(memory_size)) // Uint(32)
     init_code_gas = init_code_cost(Uint(memory_size))
@@ -329,7 +335,9 @@ def return_(evm: Evm) -> None:
 
     # GAS
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(memory_start_position, memory_size)]
+        evm.memory,
+        [(memory_start_position, memory_size)],
+        evm.gas_meter.gas_grant,
     )
 
     charge_gas(evm, GasCosts.ZERO + extend_memory.cost)
@@ -431,6 +439,7 @@ def generic_call(evm: Evm, params: GenericCall) -> None:
             gas_left=params.gas,
             state_gas_left=params.state_gas_reservoir,
             state_gas_baseline=params.state_gas_reservoir,
+            gas_grant=params.gas,
         ),
         pc=Uint(0),
         stack=[],
@@ -502,6 +511,7 @@ def call(evm: Evm) -> None:
             (memory_input_start_position, memory_input_size),
             (memory_output_start_position, memory_output_size),
         ],
+        evm.gas_meter.gas_grant,
     )
 
     is_cold_access = to not in evm.accessed_addresses
@@ -563,6 +573,7 @@ def call(evm: Evm) -> None:
         evm.gas_meter.gas_left,
         memory_cost=GasCosts.ZERO,
         extra_gas=GasCosts.ZERO,
+        memory_byte_size=ulen(evm.memory) + extend_memory.expand_by,
     )
     charge_gas(evm, message_call_gas.cost)
     call_state_gas_reservoir = drain_state_gas_reservoir(evm.gas_meter)
@@ -628,6 +639,7 @@ def callcode(evm: Evm) -> None:
             (memory_input_start_position, memory_input_size),
             (memory_output_start_position, memory_output_size),
         ],
+        evm.gas_meter.gas_grant,
     )
 
     is_cold_access = code_address not in evm.accessed_addresses
@@ -678,6 +690,7 @@ def callcode(evm: Evm) -> None:
         evm.gas_meter.gas_left,
         extend_memory.cost,
         extra_gas,
+        memory_byte_size=ulen(evm.memory) + extend_memory.expand_by,
     )
     charge_gas(evm, message_call_gas.cost + extend_memory.cost)
     call_state_gas_reservoir = drain_state_gas_reservoir(evm.gas_meter)
@@ -814,6 +827,7 @@ def delegatecall(evm: Evm) -> None:
             (memory_input_start_position, memory_input_size),
             (memory_output_start_position, memory_output_size),
         ],
+        evm.gas_meter.gas_grant,
     )
 
     is_cold_access = code_address not in evm.accessed_addresses
@@ -859,6 +873,7 @@ def delegatecall(evm: Evm) -> None:
         evm.gas_meter.gas_left,
         extend_memory.cost,
         extra_gas,
+        memory_byte_size=ulen(evm.memory) + extend_memory.expand_by,
     )
     charge_gas(evm, message_call_gas.cost + extend_memory.cost)
     call_state_gas_reservoir = drain_state_gas_reservoir(evm.gas_meter)
@@ -917,6 +932,7 @@ def staticcall(evm: Evm) -> None:
             (memory_input_start_position, memory_input_size),
             (memory_output_start_position, memory_output_size),
         ],
+        evm.gas_meter.gas_grant,
     )
 
     is_cold_access = to not in evm.accessed_addresses
@@ -962,6 +978,7 @@ def staticcall(evm: Evm) -> None:
         evm.gas_meter.gas_left,
         extend_memory.cost,
         extra_gas,
+        memory_byte_size=ulen(evm.memory) + extend_memory.expand_by,
     )
     charge_gas(evm, message_call_gas.cost + extend_memory.cost)
     call_state_gas_reservoir = drain_state_gas_reservoir(evm.gas_meter)
@@ -1010,7 +1027,7 @@ def revert(evm: Evm) -> None:
 
     # GAS
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(memory_start_index, size)]
+        evm.memory, [(memory_start_index, size)], evm.gas_meter.gas_grant
     )
 
     charge_gas(evm, extend_memory.cost)

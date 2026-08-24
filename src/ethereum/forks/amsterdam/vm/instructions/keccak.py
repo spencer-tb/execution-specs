@@ -48,7 +48,7 @@ def keccak(evm: Evm) -> None:
     words = ceil32(Uint(size)) // Uint(32)
     word_gas_cost = ExecutionGas(GasCosts.OPCODE_KECCAK256_PER_WORD * words)
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(memory_start_index, size)]
+        evm.memory, [(memory_start_index, size)], evm.gas_meter.gas_grant
     )
     charge_gas(
         evm,

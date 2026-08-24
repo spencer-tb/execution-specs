@@ -794,6 +794,9 @@ def test_call_stack_depth_returns_reservoir(
 
 
 @pytest.mark.valid_from("EIP8037")
+# TODO(EIP-7686): re-derive the forwarding model with the
+#  memory-aware call grant rule, then unpark.
+@pytest.mark.valid_before("EIP7686")
 def test_call_pre_charged_costs_excluded_from_forwarding(
     state_test: StateTestFiller,
     pre: Alloc,

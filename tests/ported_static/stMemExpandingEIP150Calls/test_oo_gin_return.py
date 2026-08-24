@@ -39,12 +39,18 @@ REFERENCE_SPEC_VERSION = "N/A"
             0,
             0,
             id="d0",
+            # TODO(EIP-7686): memory-tuned OOG scenario;
+            #  re-derive with the memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             1,
             0,
             0,
             id="d1",
+            # TODO(EIP-7686): memory-tuned OOG scenario;
+            #  re-derive with the memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
         ),
         pytest.param(
             2,

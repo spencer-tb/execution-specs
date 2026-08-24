@@ -769,6 +769,15 @@ class Frontier(BaseFork):
         return fn
 
     @classmethod
+    def memory_grant_floor(cls, memory_byte_size: int) -> int:
+        """
+        Return the minimum gas grant a frame needs to expand its memory
+        to the given size. No floor before EIP-7686.
+        """
+        del memory_byte_size
+        return 0
+
+    @classmethod
     def calldata_gas_calculator(cls) -> CalldataGasCalculator:
         """
         Return callable that calculates the transaction gas cost for its
@@ -1642,3 +1651,18 @@ class Amsterdam(
         limit.
         """
         return True
+
+
+class Bogota(
+    eips.EIP7686,
+    Amsterdam,
+    deployed=False,
+):
+    """
+    Pseudo Bogota fork.
+    For testing purposes only. Labels fixtures for features slated for the
+    fork after Amsterdam while the specs repository has no dedicated Bogota
+    fork module yet; execution uses the Amsterdam spec module.
+    """
+
+    pass

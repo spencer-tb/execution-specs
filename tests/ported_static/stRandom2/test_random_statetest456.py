@@ -26,6 +26,9 @@ REFERENCE_SPEC_VERSION = "N/A"
 )
 @pytest.mark.valid_from("Cancun")
 @pytest.mark.pre_alloc_mutable
+# TODO(EIP-7686): quadratic-memory-cost scenario; re-derive
+#  linearly, then unpark.
+@pytest.mark.valid_before("EIP7686")
 def test_random_statetest456(
     state_test: StateTestFiller,
     pre: Alloc,

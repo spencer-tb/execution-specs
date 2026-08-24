@@ -154,6 +154,16 @@ def test_measure_gas(
 ) -> None:
     """One gas decides whether the opcode's frame completes."""
     threshold = probe_code.gas_cost(fork)
+    # EIP-7686 caps a frame's memory at one byte per gas of its grant;
+    # the largest probe footprints are MEMORY_OFFSET + 0x20 bytes and
+    # the HASH_SIZE hash input, so the success grant is floored at
+    # their maximum. The floor is zero before the EIP, keeping the
+    # one-gas boundary exact there; the insufficient run stays one
+    # below the cost either way.
+    sufficient_gas = max(
+        threshold,
+        fork.memory_grant_floor(max(MEMORY_OFFSET + 0x20, HASH_SIZE)),
+    )
     probe = pre.deploy_contract(code=probe_code)
 
     # Handing the probe exactly its own cost is what makes the boundary
@@ -162,7 +172,7 @@ def test_measure_gas(
         code=Op.SSTORE(
             FLAG_SLOT,
             Op.CALL(
-                gas=threshold if sufficient else threshold - 1,
+                gas=sufficient_gas if sufficient else threshold - 1,
                 address=probe,
             ),
         )

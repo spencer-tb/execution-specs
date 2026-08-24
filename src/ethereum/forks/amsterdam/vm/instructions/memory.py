@@ -45,7 +45,9 @@ def mstore(evm: Evm) -> None:
 
     # GAS
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(start_position, U256(len(value)))]
+        evm.memory,
+        [(start_position, U256(len(value)))],
+        evm.gas_meter.gas_grant,
     )
 
     charge_gas(evm, GasCosts.OPCODE_MSTORE_BASE + extend_memory.cost)
@@ -76,7 +78,7 @@ def mstore8(evm: Evm) -> None:
 
     # GAS
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(start_position, U256(1))]
+        evm.memory, [(start_position, U256(1))], evm.gas_meter.gas_grant
     )
 
     charge_gas(evm, GasCosts.OPCODE_MSTORE8_BASE + extend_memory.cost)
@@ -105,7 +107,7 @@ def mload(evm: Evm) -> None:
 
     # GAS
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(start_position, U256(32))]
+        evm.memory, [(start_position, U256(32))], evm.gas_meter.gas_grant
     )
     charge_gas(evm, GasCosts.OPCODE_MLOAD_BASE + extend_memory.cost)
 
@@ -163,7 +165,9 @@ def mcopy(evm: Evm) -> None:
     copy_gas_cost = ExecutionGas(GasCosts.OPCODE_COPY_PER_WORD * words)
 
     extend_memory = calculate_gas_extend_memory(
-        evm.memory, [(source, length), (destination, length)]
+        evm.memory,
+        [(source, length), (destination, length)],
+        evm.gas_meter.gas_grant,
     )
     charge_gas(
         evm,

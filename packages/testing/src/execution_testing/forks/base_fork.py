@@ -744,6 +744,19 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
 
     @classmethod
     @abstractmethod
+    def memory_grant_floor(cls, memory_byte_size: int) -> int:
+        """
+        Return the minimum gas grant a frame needs to expand its memory
+        to the given size, independently of the expansion's gas cost.
+
+        Zero before EIP-7686; the memory size itself afterwards, since
+        the fork caps a frame's memory at one byte per gas of its
+        grant.
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
     def calldata_gas_calculator(cls) -> CalldataGasCalculator:
         """
         Return callable that calculates the transaction gas cost for its

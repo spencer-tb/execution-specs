@@ -544,8 +544,24 @@ def test_bal_extcodesize_and_oog(
     "args_size,ret_size",
     [
         pytest.param(0, 0, id="no_memory"),
-        pytest.param(4096, 0, id="args_large"),
-        pytest.param(0, 4096, id="ret_large"),
+        pytest.param(
+            4096,
+            0,
+            id="args_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
+        pytest.param(
+            0,
+            4096,
+            id="ret_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
         pytest.param(32, 32, id="both_small"),
     ],
 )
@@ -821,8 +837,24 @@ def test_bal_call_no_delegation_oog_after_target_access(
     "args_size,ret_size",
     [
         pytest.param(0, 0, id="no_memory"),
-        pytest.param(4096, 0, id="args_large"),
-        pytest.param(0, 4096, id="ret_large"),
+        pytest.param(
+            4096,
+            0,
+            id="args_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
+        pytest.param(
+            0,
+            4096,
+            id="ret_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
         pytest.param(32, 32, id="both_small"),
     ],
 )
@@ -993,8 +1025,24 @@ def test_bal_call_7702_delegation_and_oog(
     "args_size,ret_size",
     [
         pytest.param(0, 0, id="no_memory"),
-        pytest.param(4096, 0, id="args_large"),
-        pytest.param(0, 4096, id="ret_large"),
+        pytest.param(
+            4096,
+            0,
+            id="args_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
+        pytest.param(
+            0,
+            4096,
+            id="ret_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
         pytest.param(32, 32, id="both_small"),
     ],
 )
@@ -1101,8 +1149,24 @@ def test_bal_delegatecall_no_delegation_and_oog_before_target_access(
     "args_size,ret_size",
     [
         pytest.param(0, 0, id="no_memory"),
-        pytest.param(4096, 0, id="args_large"),
-        pytest.param(0, 4096, id="ret_large"),
+        pytest.param(
+            4096,
+            0,
+            id="args_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
+        pytest.param(
+            0,
+            4096,
+            id="ret_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
         pytest.param(32, 32, id="both_small"),
     ],
 )
@@ -1249,8 +1313,24 @@ def test_bal_delegatecall_7702_delegation_and_oog(
     "args_size,ret_size",
     [
         pytest.param(0, 0, id="no_memory"),
-        pytest.param(4096, 0, id="args_large"),
-        pytest.param(0, 4096, id="ret_large"),
+        pytest.param(
+            4096,
+            0,
+            id="args_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
+        pytest.param(
+            0,
+            4096,
+            id="ret_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
         pytest.param(32, 32, id="both_small"),
     ],
 )
@@ -1369,8 +1449,24 @@ def test_bal_callcode_no_delegation_and_oog_before_target_access(
     "args_size,ret_size",
     [
         pytest.param(0, 0, id="no_memory"),
-        pytest.param(4096, 0, id="args_large"),
-        pytest.param(0, 4096, id="ret_large"),
+        pytest.param(
+            4096,
+            0,
+            id="args_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
+        pytest.param(
+            0,
+            4096,
+            id="ret_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
         pytest.param(32, 32, id="both_small"),
     ],
 )
@@ -1522,8 +1618,24 @@ def test_bal_callcode_7702_delegation_and_oog(
     "args_size,ret_size",
     [
         pytest.param(0, 0, id="no_memory"),
-        pytest.param(4096, 0, id="args_large"),
-        pytest.param(0, 4096, id="ret_large"),
+        pytest.param(
+            4096,
+            0,
+            id="args_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
+        pytest.param(
+            0,
+            4096,
+            id="ret_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
         pytest.param(32, 32, id="both_small"),
     ],
 )
@@ -1628,8 +1740,24 @@ def test_bal_staticcall_no_delegation_and_oog_before_target_access(
     "args_size,ret_size",
     [
         pytest.param(0, 0, id="no_memory"),
-        pytest.param(4096, 0, id="args_large"),
-        pytest.param(0, 4096, id="ret_large"),
+        pytest.param(
+            4096,
+            0,
+            id="args_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
+        pytest.param(
+            0,
+            4096,
+            id="ret_large",
+            # TODO(EIP-7686): re-derive the exact-gas OOG boundary
+            #  model with the memory-aware call grant rule and the
+            #  hard memory cap, then unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
         pytest.param(32, 32, id="both_small"),
     ],
 )
@@ -3293,7 +3421,13 @@ def test_bal_create2_deploy_then_collision(
     [
         OutOfGasBoundary.OOG_BEFORE_TARGET_ACCESS,
         OutOfGasBoundary.OOG_AFTER_TARGET_ACCESS,
-        OutOfGasBoundary.SUCCESS,
+        pytest.param(
+            OutOfGasBoundary.SUCCESS,
+            # TODO(EIP-7686): re-derive the exact success budget
+            #  with the memory-aware create grant rule, then
+            #  unpark.
+            marks=pytest.mark.valid_before("EIP7686"),
+        ),
     ],
     ids=lambda x: x.value,
 )

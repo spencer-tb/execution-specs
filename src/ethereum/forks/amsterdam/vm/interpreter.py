@@ -267,6 +267,7 @@ def process_top_level(
         gas_left=tx_env.execution_gas_grant,
         state_gas_left=tx_env.state_gas_reservoir,
         state_gas_baseline=tx_env.state_gas_reservoir,
+        gas_grant=tx_env.execution_gas_grant,
     )
 
     prep_snapshot = copy_tx_state(tx_env.state)

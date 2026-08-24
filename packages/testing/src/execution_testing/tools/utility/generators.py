@@ -558,6 +558,11 @@ def gas_test(
         Op.GAS + Op.CALL(gas=Op.GAS, address_warm=True) + Op.POP
     ).gas_cost(fork=fork)
 
+    # EIP-7686 caps a frame's memory at one byte per gas of its grant,
+    # so an exactly-priced grant no longer covers the subject frame's
+    # one-word memory warm-up; pad the sanity grant up to the floor.
+    sanity_gas_headroom = fork.memory_grant_floor(32)
+
     address_legacy_harness = pre.deploy_contract(
         code=(
             # warm subject and baseline without executing
@@ -638,7 +643,12 @@ def gas_test(
                     + Op.SSTORE(
                         slot_sanity_call_result,
                         Op.CALL(
-                            gas=Op.ADD(warm_gas - gas_single_gas_run, Op.DUP7),
+                            gas=Op.ADD(
+                                warm_gas
+                                - gas_single_gas_run
+                                + sanity_gas_headroom,
+                                Op.DUP7,
+                            ),
                             address=address_subject,
                         ),
                     )

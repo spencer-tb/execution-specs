@@ -27,6 +27,11 @@ EXCEPTION_MAPS = {
     "BPO4": {
         "fork_blocks": [("osaka", 0)],
     },
+    # TODO: Remove once a dedicated bogota fork module exists; the
+    # pseudo-fork executes on the amsterdam spec module.
+    "Bogota": {
+        "fork_blocks": [("amsterdam", 0)],
+    },
     "FrontierToHomesteadAt5": {
         "fork_blocks": [("frontier", 0), ("homestead", 5)],
     },
@@ -140,6 +145,9 @@ _SPEC_SHORT_NAME_OVERRIDES: Dict[str, str] = {
     "Merge": "paris",
     "DAOFork": "dao_fork",
     "ConstantinopleFix": "constantinople",
+    # TODO: Remove once a dedicated bogota fork module exists; the
+    # pseudo-fork executes on the amsterdam spec module.
+    "Bogota": "amsterdam",
 }
 
 
