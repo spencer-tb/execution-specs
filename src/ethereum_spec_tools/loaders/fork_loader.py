@@ -85,6 +85,16 @@ class ForkLoad:
         return self._module("fork").process_withdrawals
 
     @property
+    def process_priority_fees(self) -> Any:
+        """process_priority_fees function of the given fork."""
+        return self._module("fork").process_priority_fees
+
+    @property
+    def has_process_priority_fees(self) -> bool:
+        """Check if the fork has a `process_priority_fees` function."""
+        return hasattr(self._module("fork"), "process_priority_fees")
+
+    @property
     def calculate_block_difficulty(self) -> Any:
         """calculate_block_difficulty function of the given fork."""
         return self._module("fork").calculate_block_difficulty

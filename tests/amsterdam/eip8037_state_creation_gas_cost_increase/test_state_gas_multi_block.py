@@ -67,7 +67,10 @@ def test_exact_coinbase_fee_simple_sstore(
     )
     expected_coinbase = tx1_gas_used
 
-    # Tx 2: reporter reads BALANCE(COINBASE) into slot 0
+    # Tx 2: reporter reads BALANCE(COINBASE) into slot 0. It runs in a
+    # second block so the read sees block 1's credited fee regardless
+    # of whether the fork credits per transaction or batches the fees
+    # at the end of the block (EIP-8115).
     reporter = pre.deploy_contract(
         code=(Op.SSTORE(0, Op.BALANCE(Op.COINBASE)) + Op.SSTORE(1, 1)),
     )
@@ -82,6 +85,10 @@ def test_exact_coinbase_fee_simple_sstore(
                     max_fee_per_gas=8,
                     sender=pre.fund_eoa(),
                 ),
+            ]
+        ),
+        Block(
+            txs=[
                 Transaction(
                     to=reporter,
                     state_gas_reservoir=0,

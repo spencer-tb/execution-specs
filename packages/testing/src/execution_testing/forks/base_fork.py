@@ -1373,6 +1373,15 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
         return cls._bpo_fork
 
     @classmethod
+    def batched_priority_fees(cls) -> bool:
+        """
+        Return whether priority fees are summed and credited to the fee
+        recipient once at the end of the block (EIP-8115) rather than
+        after each transaction.
+        """
+        return False
+
+    @classmethod
     def is_eip(cls) -> bool:
         """Return whether this class is an EIP."""
         return cls.__name__.startswith("EIP") and cls.__name__[-1].isdigit()

@@ -98,6 +98,10 @@ class BlockOutput:
         Hash of all the requests in the block.
     block_access_list: `BlockAccessList`
         The block access list for the block.
+    block_priority_fees : `ethereum.base_types.Uint`
+        Priority fees accrued by the block's transactions, credited to
+        the fee recipient in one batch after all transactions are
+        processed.
     """
 
     block_gas_used: ExecutionGas = ExecutionGas(Uint(0))
@@ -117,6 +121,7 @@ class BlockOutput:
     blob_gas_used: U64 = U64(0)
     requests: List[Bytes] = field(default_factory=list)
     block_access_list: BlockAccessList = field(default_factory=list)
+    block_priority_fees: Uint = Uint(0)
 
 
 @final

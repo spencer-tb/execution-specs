@@ -772,6 +772,26 @@ def test_bal_withdrawal_to_coinbase(
     withdrawal_amount = 10
     coinbase_final_balance = tip_to_coinbase + (withdrawal_amount * GWEI)
 
+    if fork.batched_priority_fees():
+        # EIP-8115: the tip is credited at the post-execution index,
+        # where it merges with the withdrawal into one balance change.
+        coinbase_balance_changes = [
+            BalBalanceChange(
+                block_access_index=2,
+                post_balance=coinbase_final_balance,
+            ),
+        ]
+    else:
+        coinbase_balance_changes = [
+            BalBalanceChange(
+                block_access_index=1, post_balance=tip_to_coinbase
+            ),
+            BalBalanceChange(
+                block_access_index=2,
+                post_balance=coinbase_final_balance,
+            ),
+        ]
+
     block = Block(
         txs=[tx],
         fee_recipient=coinbase,
@@ -799,15 +819,7 @@ def test_bal_withdrawal_to_coinbase(
                     ],
                 ),
                 coinbase: BalAccountExpectation(
-                    balance_changes=[
-                        BalBalanceChange(
-                            block_access_index=1, post_balance=tip_to_coinbase
-                        ),
-                        BalBalanceChange(
-                            block_access_index=2,
-                            post_balance=coinbase_final_balance,
-                        ),
-                    ],
+                    balance_changes=coinbase_balance_changes,
                 ),
             }
         ),

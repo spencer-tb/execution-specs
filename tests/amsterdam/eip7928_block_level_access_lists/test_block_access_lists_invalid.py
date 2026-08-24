@@ -1494,6 +1494,9 @@ def test_bal_invalid_missing_coinbase(
     )
     tip = (gas_price - base_fee_per_gas) * total_intrinsic_gas
 
+    # EIP-8115 batches the fee credit at the post-execution index.
+    fee_credit_index = 2 if fork.batched_priority_fees() else 1
+
     blockchain_test(
         pre=pre,
         post={},
@@ -1523,7 +1526,8 @@ def test_bal_invalid_missing_coinbase(
                         charlie: BalAccountExpectation(
                             balance_changes=[
                                 BalBalanceChange(
-                                    block_access_index=1, post_balance=tip
+                                    block_access_index=fee_credit_index,
+                                    post_balance=tip,
                                 )
                             ],
                         ),
@@ -1583,6 +1587,9 @@ def test_bal_invalid_coinbase_balance_value(
     )
     tip = (gas_price - base_fee_per_gas) * total_intrinsic_gas
 
+    # EIP-8115 batches the fee credit at the post-execution index.
+    fee_credit_index = 2 if fork.batched_priority_fees() else 1
+
     blockchain_test(
         pre=pre,
         post={},
@@ -1612,13 +1619,18 @@ def test_bal_invalid_coinbase_balance_value(
                         charlie: BalAccountExpectation(
                             balance_changes=[
                                 BalBalanceChange(
-                                    block_access_index=1, post_balance=tip
+                                    block_access_index=fee_credit_index,
+                                    post_balance=tip,
                                 )
                             ],
                         ),
                     }
                 ).modify(
-                    modify_balance(charlie, block_access_index=1, balance=999)
+                    modify_balance(
+                        charlie,
+                        block_access_index=fee_credit_index,
+                        balance=999,
+                    )
                 ),
             )
         ],

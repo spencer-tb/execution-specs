@@ -545,6 +545,9 @@ def test_bal_block_rewards(
 
     alice_final_balance = alice_initial_balance - tx_value - total_gas_cost
 
+    # EIP-8115 batches the fee credit at the post-execution index.
+    fee_credit_index = 2 if fork.batched_priority_fees() else 1
+
     block = Block(
         txs=[tx],
         fee_recipient=charlie,  # Set Charlie as the fee recipient
@@ -572,7 +575,8 @@ def test_bal_block_rewards(
                 charlie: BalAccountExpectation(
                     balance_changes=[
                         BalBalanceChange(
-                            block_access_index=1, post_balance=tip_to_charlie
+                            block_access_index=fee_credit_index,
+                            post_balance=tip_to_charlie,
                         )
                     ],
                 ),
