@@ -1,0 +1,12 @@
+precompile/ = EIP-7971 does not introduce a precompile
+removed_precompile/ = EIP-7971 does not remove a precompile
+system_contract/ = EIP-7971 does not introduce a system contract
+transaction_type/ = EIP-7971 does not introduce a transaction type
+block_header_field/ = EIP-7971 does not change block header fields
+block_body_field/ = EIP-7971 does not change block body fields
+blob_count_changes/ = EIP-7971 does not change blob counts
+execution_layer_request/ = EIP-7971 does not introduce an execution layer request
+gas_refunds_changes/ = EIP-7971 does not change gas refunds
+new_transaction_validity_constraint/ = the slot limit halts execution, it does not affect transaction validity
+modified_transaction_validity_constraint/ = EIP-7971 does not modify transaction validity
+block_level_constraint/ = the slot limit is transaction-scoped, not block-scoped

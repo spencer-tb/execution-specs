@@ -189,7 +189,9 @@ class GasMeasureTestCases(PytestParameterEnum):
     TSTORE_WARM = {
         "description": "Test that tstore() of a previously used slot "
         "consumes the expected gas.",
-        "bytecode": Op.TSTORE(10, 10) + Op.TSTORE(10, 11),
+        # The second write's slot is already allocated in the
+        # transaction, which prices it correctly under EIP-7971.
+        "bytecode": Op.TSTORE(10, 10) + Op.TSTORE(10, 11, slot_allocated=True),
         "extra_stack_items": 0,
     }
 

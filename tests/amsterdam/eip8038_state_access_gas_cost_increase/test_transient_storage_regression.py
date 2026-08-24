@@ -3,9 +3,9 @@ Tests for [EIP-8038: State Access Gas Cost Increase](https://eips.ethereum.org/E
 
 Regression guard: EIP-8038 reprices persistent storage and account
 access but must NOT touch transient storage. ``TLOAD`` and ``TSTORE``
-remain at their EIP-1153 cost of ``OPCODE_TLOAD`` / ``OPCODE_TSTORE``
-(100 each), unchanged by the persistent-storage repricing and distinct
-from the (repriced) persistent ``COLD_STORAGE_WRITE``.
+remain at the fork's declared transient-storage costs, unchanged by the
+persistent-storage repricing and distinct from the (repriced)
+persistent ``COLD_STORAGE_WRITE``.
 """
 
 import pytest
@@ -38,10 +38,12 @@ def test_transient_storage_gas_unchanged(
 ) -> None:
     """
     Measure ``TLOAD`` and ``TSTORE`` gas and confirm EIP-8038 left them
-    at the transient-storage price of 100 each.
+    at the fork's declared transient-storage costs.
 
     The bare-opcode costs (excluding their PUSH wrappers) must equal
-    ``OPCODE_TLOAD`` / ``OPCODE_TSTORE``. The guard
+    ``OPCODE_TLOAD`` and, for a first write,
+    ``OPCODE_TSTORE + OPCODE_TSTORE_ALLOCATE`` (the allocation cost is
+    zero before EIP-7971). The guard
     ``OPCODE_TSTORE != COLD_STORAGE_WRITE`` ensures the persistent
     write repricing did not bleed into transient storage.
     """
@@ -76,7 +78,7 @@ def test_transient_storage_gas_unchanged(
     post = {
         contract: Account(
             storage={
-                0: gas_costs.OPCODE_TSTORE,
+                0: gas_costs.OPCODE_TSTORE + gas_costs.OPCODE_TSTORE_ALLOCATE,
                 1: gas_costs.OPCODE_TLOAD,
             }
         )

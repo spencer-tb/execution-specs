@@ -2885,7 +2885,12 @@ class Opcodes(Opcode, Enum):
     Source: [eips.ethereum.org/EIPS/eip-1153](https://eips.ethereum.org/EIPS/eip-1153)
     """
 
-    TSTORE = Opcode(0x5D, popped_stack_items=2, kwargs=["key", "value"])
+    TSTORE = Opcode(
+        0x5D,
+        popped_stack_items=2,
+        kwargs=["key", "value"],
+        metadata={"slot_allocated": False},
+    )
     """
     TSTORE(key, value)
     ----

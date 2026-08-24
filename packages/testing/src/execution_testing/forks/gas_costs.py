@@ -157,3 +157,6 @@ class GasCosts:
     OPCODE_CLZ: int = 0
     OPCODE_TLOAD: int = 0
     OPCODE_TSTORE: int = 0
+    # Extra cost of the first `TSTORE` write to a slot in a transaction;
+    # 0 before the transient storage repricing introduces it.
+    OPCODE_TSTORE_ALLOCATE: int = 0

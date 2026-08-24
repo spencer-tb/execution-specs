@@ -15,14 +15,17 @@ from ethereum_types.numeric import Uint
 
 from ...fork_types import ExecutionGas, StateGas
 from ...state_tracker import (
+    MAX_TRANSIENT_SLOTS,
+    count_transient_slots_written,
     get_storage,
     get_storage_original,
     get_transient_storage,
     set_storage,
     set_transient_storage,
+    transient_slot_allocated,
 )
 from .. import Evm
-from ..exceptions import WriteInStaticContext
+from ..exceptions import TransientStorageLimitError, WriteInStaticContext
 from ..gas import (
     GasCosts,
     StateGasCosts,
@@ -189,6 +192,11 @@ def tstore(evm: Evm) -> None:
     """
     Stores a value at a certain key in the current context's transient storage.
 
+    The first write to a slot in a transaction additionally pays the
+    allocation cost, and a transaction may write at most
+    ``MAX_TRANSIENT_SLOTS`` unique slots across all accounts; exceeding
+    the limit is an exceptional halt.
+
     Parameters
     ----------
     evm :
@@ -203,13 +211,17 @@ def tstore(evm: Evm) -> None:
     new_value = pop(evm.stack)
 
     # GAS
-    charge_gas(evm, GasCosts.OPCODE_TSTORE)
-    set_transient_storage(
-        evm.tx_env.state,
-        evm.current_target,
-        key,
-        new_value,
-    )
+    # The first write to a slot this transaction pays for allocating it.
+    tx_state = evm.tx_env.state
+    gas_cost = GasCosts.OPCODE_TSTORE
+    if not transient_slot_allocated(tx_state, evm.current_target, key):
+        gas_cost += GasCosts.OPCODE_TSTORE_ALLOCATE
+    charge_gas(evm, gas_cost)
+
+    # OPERATION
+    set_transient_storage(tx_state, evm.current_target, key, new_value)
+    if count_transient_slots_written(tx_state) > MAX_TRANSIENT_SLOTS:
+        raise TransientStorageLimitError
 
     # PROGRAM COUNTER
     evm.pc += Uint(1)
