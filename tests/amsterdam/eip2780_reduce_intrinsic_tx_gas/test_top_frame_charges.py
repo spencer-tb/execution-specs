@@ -129,13 +129,13 @@ def test_top_frame_state_charge_empty_precompile(
     ``NEW_ACCOUNT`` state-gas charge.
 
     The gas limit is one short of covering that state charge. Without
-    the charge, the transaction would reach the identity precompile and
-    transfer value, which makes this a direct regression test for a
-    precompile carve-out.
+    the charge, the transaction would reach the precompile and transfer
+    value, which makes this a direct regression test for a precompile
+    carve-out.
     """
     sender_initial_balance = 10**18
     sender = pre.fund_eoa(sender_initial_balance)
-    identity_precompile = Address(0x04)
+    precompile = fork.precompiles()[0]
 
     value = 1
     intrinsic_gas = fork.transaction_intrinsic_cost_calculator()(
@@ -155,7 +155,7 @@ def test_top_frame_state_charge_empty_precompile(
     gas_limit = intrinsic_gas + top_frame_state_gas - 1
     tx = Transaction(
         sender=sender,
-        to=identity_precompile,
+        to=precompile,
         value=value,
         gas_limit=gas_limit,
         gas_price=gas_price,
@@ -166,7 +166,7 @@ def test_top_frame_state_charge_empty_precompile(
             nonce=1,
             balance=sender_initial_balance - gas_limit * gas_price,
         ),
-        identity_precompile: None,
+        precompile: None,
     }
 
     state_test(pre=pre, tx=tx, post=post)

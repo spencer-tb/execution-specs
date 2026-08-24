@@ -31,6 +31,7 @@ REFERENCE_SPEC_VERSION = "N/A"
     ["state_tests/stPreCompiledContracts2/modexp_0_0_0_35000Filler.json"],
 )
 @pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_before("EIP7666")
 @pytest.mark.parametrize(
     "d, g, v",
     [

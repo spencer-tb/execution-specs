@@ -684,8 +684,8 @@ def test_top_frame_charges_delegation_is_precompile(
 ) -> None:
     """
     Recipient holds a pre-existing EIP-7702 delegation pointing at a
-    precompile address (``IDENTITY``, ``0x04``), which is warm, so the
-    top-frame charges ``WARM_ACCESS``; the dispatched EVM frame sets
+    precompile address, which is warm, so the top-frame charges
+    ``WARM_ACCESS``; the dispatched EVM frame sets
     ``disable_precompiles = True`` for delegated calls, so the
     precompile body does not run. The code lookup at the precompile
     address returns the empty byte string and the frame exits
@@ -694,7 +694,7 @@ def test_top_frame_charges_delegation_is_precompile(
     sender_initial_balance = 10**18
     sender = pre.fund_eoa(sender_initial_balance)
 
-    delegated_to = Address(0x04)
+    delegated_to = fork.precompiles()[0]
     target_code = Spec7702.delegation_designation(delegated_to)
     target = pre.deploy_contract(code=target_code)
 
