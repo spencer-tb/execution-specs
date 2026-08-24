@@ -91,3 +91,33 @@ def compute_create2_contract_address(
     padded_address = left_pad_zero_bytes(canonical_address, 20)
 
     return Address(padded_address)
+
+
+def compute_setdelegate_address(address: Address, salt: Bytes32) -> Address:
+    """
+    Computes the address the SETDELEGATE instruction writes a
+    delegation designation to, based on the calling account and a salt.
+
+    The preimage starts with the EIP-7702 delegation marker and is 55
+    bytes long, which keeps it disjoint from the preimages of the
+    `CREATE` and `CREATE2` address derivations.
+
+    Parameters
+    ----------
+    address :
+        The address of the account executing the instruction.
+    salt :
+        Address generation salt.
+
+    Returns
+    -------
+    address: `ethereum.forks.amsterdam.fork_types.Address`
+        The computed address of the delegation designation account.
+
+    """
+    preimage = b"\xef\x01\x00" + address + salt
+    computed_address = keccak256(preimage)
+    canonical_address = computed_address[-20:]
+    padded_address = left_pad_zero_bytes(canonical_address, 20)
+
+    return Address(padded_address)

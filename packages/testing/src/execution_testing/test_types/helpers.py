@@ -104,6 +104,19 @@ def compute_create2_address(
     return Address(hash_bytes[-20:])
 
 
+def compute_setdelegate_address(
+    address: FixedSizeBytesConvertible,
+    salt: FixedSizeBytesConvertible,
+) -> Address:
+    """
+    Compute the address written by the `SETDELEGATE` opcode (EIP-7819).
+    """
+    hash_bytes = Bytes(
+        b"\xef\x01\x00" + Address(address) + Hash(salt)
+    ).keccak256()
+    return Address(hash_bytes[-20:])
+
+
 def compute_deterministic_create2_address(
     *,
     salt: FixedSizeBytesConvertible,

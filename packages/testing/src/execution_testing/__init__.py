@@ -92,6 +92,7 @@ from .test_types import (
     compute_create2_address,
     compute_create_address,
     compute_deterministic_create2_address,
+    compute_setdelegate_address,
     keccak256,
     relay_contract_code,
 )
@@ -240,6 +241,7 @@ __all__ = (
     "compute_create_address",
     "compute_create2_address",
     "compute_deterministic_create2_address",
+    "compute_setdelegate_address",
     "Create2PreimageLayout",
     "CreatePreimageLayout",
     "extend_with_defaults",
