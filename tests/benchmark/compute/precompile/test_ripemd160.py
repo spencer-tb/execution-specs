@@ -22,6 +22,8 @@ from tests.benchmark.helper.precompile import (
 )
 from tests.frontier.precompiles.spec import Spec as PrecompilesSpec
 
+pytestmark = pytest.mark.valid_before("EIP8200")
+
 
 def test_ripemd160(
     benchmark_test: BenchmarkTestFiller,

@@ -20,6 +20,8 @@ from tests.benchmark.helper.precompile import Precompile
 from tests.istanbul.eip152_blake2.common import Blake2bInput
 from tests.istanbul.eip152_blake2.spec import Spec as Blake2bSpec
 
+pytestmark = pytest.mark.valid_before("EIP8200")
+
 
 @pytest.mark.parametrize(
     "precompile_address,calldata",

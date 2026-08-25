@@ -287,6 +287,7 @@ pytestmark = pytest.mark.ported_from(
     ],
 )
 @pytest.mark.slow()
+@pytest.mark.valid_before("EIP8200")
 def test_blake2b(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -372,6 +373,7 @@ def test_blake2b(
     ],
 )
 @pytest.mark.parametrize("precompile_gas", [0, 200_000])
+@pytest.mark.valid_before("EIP8200")
 def test_blake2b_invalid_input(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -464,6 +466,7 @@ def test_blake2b_invalid_input(
     ],
 )
 @pytest.mark.eels_base_coverage
+@pytest.mark.valid_before("EIP8200")
 def test_blake2b_gas(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -525,6 +528,7 @@ def test_blake2b_gas(
     ],
 )
 @pytest.mark.slow()
+@pytest.mark.valid_before("EIP8200")
 def test_blake2b_large_gas_limit(
     state_test: StateTestFiller,
     pre: Alloc,
