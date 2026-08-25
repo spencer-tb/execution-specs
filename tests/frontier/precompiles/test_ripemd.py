@@ -139,7 +139,15 @@ from execution_testing.vm import Opcodes as Op
         ),
     ],
 )
-@pytest.mark.parametrize("oog", [True, False])
+@pytest.mark.parametrize(
+    "oog",
+    [
+        True,
+        # The sufficient budget models precompile pricing, which
+        # the EIP-8200 EVM replacement exceeds.
+        pytest.param(False, marks=pytest.mark.valid_before("EIP8200")),
+    ],
+)
 @pytest.mark.eels_base_coverage
 def test_precompiles(
     state_test: StateTestFiller,

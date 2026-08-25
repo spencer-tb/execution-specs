@@ -37,10 +37,19 @@ def test_precompile_absence(
     fork.
     """
     active_precompiles = fork.precompiles()
+    # Addresses holding pre-allocated code (the EIP-8200 replacements)
+    # are not precompiles but do not behave like empty accounts either.
+    predeployed = {
+        address
+        for address, account in fork.pre_allocation_blockchain().items()
+        if account.get("code")
+    }
     storage = Storage()
     call_code = Bytecode()
     for address in range(1, UPPER_BOUND + 1):
         if Address(address) in active_precompiles:
+            continue
+        if address in predeployed:
             continue
         call_code += Op.SSTORE(
             address,

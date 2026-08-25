@@ -29,13 +29,26 @@ def precompile_addresses(fork: Fork) -> Iterator[Tuple[Address, bool]]:
 
     """
     supported_precompiles = fork.precompiles()
+    # Addresses holding pre-allocated code (the EIP-8200 replacements)
+    # are not precompiles but do not behave like empty accounts either.
+    predeployed = {
+        address
+        for address, account in fork.pre_allocation_blockchain().items()
+        if account.get("code")
+    }
 
     for address in supported_precompiles:
         address_int = int.from_bytes(address, byteorder="big")
         yield (address, True)
-        if address_int > 0 and (address_int - 1) not in supported_precompiles:
+        if (
+            address_int > 0
+            and (address_int - 1) not in supported_precompiles
+            and (address_int - 1) not in predeployed
+        ):
             yield (Address(address_int - 1), False)
-        if (address_int + 1) not in supported_precompiles:
+        if (address_int + 1) not in supported_precompiles and (
+            address_int + 1
+        ) not in predeployed:
             yield (Address(address_int + 1), False)
 
 

@@ -21,6 +21,8 @@ from tests.benchmark.helper.precompile import Precompile
 from tests.byzantium.eip198_modexp_precompile.helpers import ModExpInput
 from tests.osaka.eip7883_modexp_gas_increase.spec import Spec, Spec7883
 
+pytestmark = pytest.mark.valid_before("EIP8200")
+
 
 def create_random_modexp_test_case(
     test_id: str,

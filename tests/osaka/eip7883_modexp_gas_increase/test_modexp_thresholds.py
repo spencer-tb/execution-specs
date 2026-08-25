@@ -40,6 +40,7 @@ REFERENCE_SPEC_VERSION = ref_spec_7883.version
 @EIPChecklist.GasCostChanges.Test.GasUpdatesMeasurement()
 @pytest.mark.valid_from("Berlin")
 @pytest.mark.slow()
+@pytest.mark.valid_before("EIP8200")
 def test_vectors_from_eip(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -61,6 +62,7 @@ def test_vectors_from_eip(
 )
 @EIPChecklist.Precompile.Test.Inputs.Invalid()
 @pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_before("EIP8200")
 def test_vectors_from_legacy_tests(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -289,6 +291,7 @@ def test_modexp_boundary_inputs(
 @EIPChecklist.Precompile.Test.CallContexts.Callcode()
 @EIPChecklist.Precompile.Test.CallContexts.Normal()
 @pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_before("EIP8200")
 def test_modexp_call_operations(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -312,6 +315,7 @@ def test_modexp_call_operations(
             1,
             True,
             id="extra_gas",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             Spec.modexp_input,
@@ -319,6 +323,7 @@ def test_modexp_call_operations(
             0,
             True,
             id="exact_gas",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
         pytest.param(
             Spec.modexp_input,
@@ -333,6 +338,7 @@ def test_modexp_call_operations(
             float("inf"),
             True,
             id="excessive_gas",
+            marks=pytest.mark.valid_before("EIP8200"),
         ),
     ],
 )
@@ -494,6 +500,7 @@ def test_contract_creation_transaction(
 @pytest.mark.parametrize("opcode", [Op.CREATE, Op.CREATE2])
 @EIPChecklist.Precompile.Test.CallContexts.Initcode.CREATE()
 @pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_before("EIP8200")
 def test_contract_initcode(
     state_test: StateTestFiller,
     pre: Alloc,
@@ -782,6 +789,7 @@ def create_modexp_variable_gas_test_cases() -> Generator:
 @EIPChecklist.GasCostChanges.Test.GasUpdatesMeasurement()
 @pytest.mark.valid_from("Berlin")
 @pytest.mark.eels_base_coverage
+@pytest.mark.valid_before("EIP8200")
 def test_modexp_variable_gas_cost(
     state_test: StateTestFiller,
     precompile_gas: int,
@@ -813,6 +821,7 @@ def test_modexp_variable_gas_cost(
     ],
 )
 @pytest.mark.valid_from("Berlin")
+@pytest.mark.valid_before("EIP8200")
 def test_modexp_variable_gas_cost_exceed_tx_gas_cap(
     state_test: StateTestFiller, pre: Alloc, tx: Transaction, post: Dict
 ) -> None:
