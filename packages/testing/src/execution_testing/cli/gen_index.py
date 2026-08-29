@@ -6,7 +6,7 @@ import datetime
 import json
 import os
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 import click
 import rich
@@ -90,6 +90,24 @@ def generate_fixtures_index_cli(
         quiet_mode=quiet_mode,
         force_flag=force_flag,
     )
+
+
+def _witness_index_metadata(
+    fixture: object,
+) -> Tuple[bool | None, bool | None]:
+    """
+    Return witness index metadata for one fixture.
+
+    Engine-family fixtures report whether any payload carries an
+    execution witness and whether any witness was deliberately mutated;
+    other formats report unknown.
+    """
+    payloads = getattr(fixture, "payloads", None)
+    if payloads is None:
+        return None, None
+    has_witness = any(p.execution_witness is not None for p in payloads)
+    mutated = any(bool(p.execution_witness_mutated) for p in payloads)
+    return has_witness, mutated
 
 
 def generate_fixtures_index(
@@ -179,6 +197,7 @@ def generate_fixtures_index(
             )
             for fixture_name, fixture in fixtures.items():
                 fixture_fork = fixture.get_fork()
+                has_witness, witness_mutated = _witness_index_metadata(fixture)
                 test_cases.append(
                     TestCaseIndexFile(
                         id=fixture_name,
@@ -189,6 +208,8 @@ def generate_fixtures_index(
                         fork=fixture_fork,
                         format=fixture.__class__,
                         pre_hash=getattr(fixture, "pre_hash", None),
+                        has_execution_witness=has_witness,
+                        execution_witness_mutated=witness_mutated,
                     )
                 )
                 if fixture_fork:
