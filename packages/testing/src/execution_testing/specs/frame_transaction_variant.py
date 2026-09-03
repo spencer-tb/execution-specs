@@ -170,6 +170,7 @@ def as_frame_transaction(
     tx: Transaction,
     fork: Fork,
     env_gas_limit: int,
+    chain_id: int,
     pre: Any = None,
 ) -> Transaction:
     """
@@ -244,6 +245,7 @@ def as_frame_transaction(
     execution_budget, state_budget = frame_budgets(fork, tx, env_gas_limit)
 
     return Transaction(
+        chain_id=chain_id,
         sender=tx.sender,
         nonce=tx.nonce,
         expected_receipt=expected_receipt,
@@ -304,6 +306,7 @@ def convert_to_frame_transaction_variant(test: "StateTest") -> "StateTest":
         test.tx,
         fork=fork,
         env_gas_limit=int(env.gas_limit),
+        chain_id=test.chain_id,
         pre=test.pre,
     )
     update["tx"] = tx
