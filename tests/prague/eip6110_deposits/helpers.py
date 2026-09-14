@@ -15,19 +15,6 @@ from execution_testing import (
 )
 from py_ecc.bls import G2ProofOfPossession
 
-# Well-known BLS secret key used in eth2 tests (`SkToPk(1)`).
-_RECOVERABLE_BLS_SECRET_KEY = 1
-_ETH1_WITHDRAWAL_PREFIX = 0x01
-# `compute_domain(DOMAIN_DEPOSIT)` with genesis fork version and zero GVR.
-_DEPOSIT_DOMAIN = bytes.fromhex(
-    "03000000f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a9"
-)
-
-
-def _sha256(*parts: bytes) -> bytes:
-    """Return SHA-256 of the concatenated parts."""
-    return sha256(b"".join(parts)).digest()
-
 
 def recoverable_deposit_request(
     *,
@@ -36,37 +23,40 @@ def recoverable_deposit_request(
     withdrawal_address: Address | None = None,
 ) -> DepositRequest:
     """
-    Return a deposit signed so mainnet execution can recover the ETH.
+    Return a deposit that the mainnet beacon chain accepts.
 
-    Uses BLS secret key ``1`` and ``0x01`` eth1 withdrawal credentials pointing
-    at ``withdrawal_address`` (default: the well-known ``TestPrivateKey``
-    address). The beacon chain accepts the proof-of-possession, and Capella+
-    withdrawals can sweep to that execution address after exit.
+    The deposit is signed with BLS secret key 1 over the mainnet deposit
+    domain and carries eth1 withdrawal credentials for `withdrawal_address`,
+    which defaults to the `TestPrivateKey` address. Both keys are public, so
+    the ETH is not burned but recoverable by anyone: a minimum deposit never
+    activates the validator on its own, but top-ups to the same pubkey need
+    no signature, and once the balance reaches the activation minimum the
+    validator can be exited and swept to that address.
     """
     if withdrawal_address is None:
         withdrawal_address = EOA(key=TestPrivateKey)
-    pubkey = G2ProofOfPossession.SkToPk(_RECOVERABLE_BLS_SECRET_KEY)
-    withdrawal_credentials = (
-        bytes([_ETH1_WITHDRAWAL_PREFIX])
-        + b"\x00" * 11
-        + bytes(withdrawal_address)
-    )
-    pubkey_root = _sha256(pubkey, b"\x00" * 16)
-    amount_root = amount.to_bytes(8, "little") + b"\x00" * 24
-    deposit_message_root = _sha256(
-        _sha256(pubkey_root, withdrawal_credentials),
-        _sha256(amount_root, b"\x00" * 32),
-    )
-    signing_root = _sha256(deposit_message_root, _DEPOSIT_DOMAIN)
-    signature = G2ProofOfPossession.Sign(
-        _RECOVERABLE_BLS_SECRET_KEY, signing_root
-    )
-    assert G2ProofOfPossession.Verify(pubkey, signing_root, signature)
+    secret_key = 1
+    pubkey = G2ProofOfPossession.SkToPk(secret_key)
+    withdrawal_credentials = b"\x01" + b"\x00" * 11 + bytes(withdrawal_address)
+    # hash_tree_root(DepositMessage(pubkey, withdrawal_credentials, amount)):
+    # each field is padded to 32-byte chunks and the three leaves are hashed
+    # pairwise with one zero leaf.
+    deposit_message_root = sha256(
+        sha256(
+            sha256(pubkey + b"\x00" * 16).digest() + withdrawal_credentials
+        ).digest()
+        + sha256(amount.to_bytes(8, "little") + b"\x00" * 56).digest()
+    ).digest()
+    # compute_domain(DOMAIN_DEPOSIT): mainnet's genesis fork version and
+    # genesis validators root are both zero, so the fork data root is the
+    # hash of 64 zero bytes. Other networks reject this signature.
+    domain = b"\x03\x00\x00\x00" + sha256(b"\x00" * 64).digest()[:28]
+    signing_root = sha256(deposit_message_root + domain).digest()
     return DepositRequest(
         pubkey=pubkey,
         withdrawal_credentials=withdrawal_credentials,
         amount=amount,
-        signature=signature,
+        signature=G2ProofOfPossession.Sign(secret_key, signing_root),
         index=index,
     )
 
