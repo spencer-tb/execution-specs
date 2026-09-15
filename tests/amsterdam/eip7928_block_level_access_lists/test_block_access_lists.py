@@ -782,7 +782,7 @@ def test_bal_2930_account_listed_but_untouched(
 def test_bal_2930_precompile_listed_but_untouched(
     pre: Alloc,
     state_test: StateTestFiller,
-    precompile: int,
+    precompile: Address,
 ) -> None:
     """
     Ensure a precompile named in the access list but never called stays
@@ -2103,7 +2103,7 @@ def test_bal_precompile_funded(
 def test_bal_precompile_call_opcode(
     pre: Alloc,
     blockchain_test: BlockchainTestFiller,
-    precompile: int,
+    precompile: Address,
     call_opcode: Op,
 ) -> None:
     """
