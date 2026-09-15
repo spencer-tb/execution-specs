@@ -247,3 +247,17 @@ An existing empty account is a different case: EIP-7523 excludes such accounts
 from post-Merge test states, and #1160 deliberately removed their legacy touch
 and deletion tracking. These tests cover valid Amsterdam states; they do not
 claim to test deletion of pre-existing empty accounts.
+
+### Pre-fork Engine API field policy
+
+`test_invalid_pre_fork_block_with_bal_hash_field` keeps the engine payload's
+`blockAccessList` field absent. The supplied block hash still commits to the
+illegal extra header field, so rejection checks the hash without an unrelated
+API parameter error. The RLP fixture retains the extra header field.
+
+`test_bal_invalid_engine_payload_field_before_fork` requires `-32602` for the
+extra field. [Prague newPayloadV4](https://github.com/ethereum/execution-apis/blob/main/src/engine/prague.md#specification)
+inherits [Cancun newPayloadV3's strict parameter and field matching rule](https://github.com/ethereum/execution-apis/blob/main/src/engine/cancun.md#specification).
+Its ExecutionPayloadV3 has no `blockAccessList` field; returning `VALID` is an
+Engine API conformance failure. Amsterdam missing-BAL and malformed-BAL checks
+remain active with their existing expectations.
