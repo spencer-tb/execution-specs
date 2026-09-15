@@ -4278,7 +4278,8 @@ def test_bal_gas_limit_boundary(
         # charge that would otherwise inflate the tx's gas needs past
         # the BAL-sized ``block_gas_limit``.
         bob = pre.fund_eoa(amount=1)
-        # alice (sender) + bob (recipient) + coinbase (EIP-3651 warm).
+        # alice (sender) + bob (recipient) + coinbase, touched by the
+        # zero priority-fee credit.
         extra_items += 3
         txs.append(
             Transaction(
@@ -4400,7 +4401,8 @@ def test_bal_gas_limit_boundary_storage_keys(
         for _ in range(2)
     ]
 
-    # alice + counter + coinbase (EIP-3651 warm), then one item per key.
+    # alice + counter + coinbase (touched by the zero priority-fee
+    # credit), then one item per key.
     storage_keys = [written_slot, read_slot]
     total_items = fork.empty_block_bal_item_count() + 3 + len(storage_keys)
     gas_limit = (
