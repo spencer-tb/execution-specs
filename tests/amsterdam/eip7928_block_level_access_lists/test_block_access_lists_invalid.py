@@ -1890,27 +1890,32 @@ def test_bal_invalid_extraneous_coinbase(
         pytest.param(b"\xc1", id="rlp_truncated_list"),
     ],
 )
+@pytest.mark.parametrize("header_commits_to", ["canonical_rlp", "payload_rlp"])
 def test_bal_invalid_engine_payload_encoding(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
     invalid_bal_payload: bytes,
+    header_commits_to: str,
 ) -> None:
     """
-    Reject a `newPayload` whose `blockAccessList` does not decode as an RLP
-    list: the empty byte string `0x` (an empty BAL is `0xc0`), the RLP
-    empty byte string `0x80` (valid RLP but not a list), or a truncated
-    list header `0xc1`.
-
-    The field is present but not a valid encoding, so the payload is
-    invalid rather than the request being malformed. A client that hashes
-    the bytes as received into its reconstructed header reports the block
-    hash mismatch instead of the decoding failure; both verdicts reject
-    the block, so both are accepted.
+    Reject malformed BAL RLP with both matching and mismatched header
+    commitments, so a block-hash check cannot hide missing RLP validation.
     """
     sender = pre.fund_eoa()
     receiver = pre.nonexistent_account()
-
     tx = Transaction(sender=sender, to=receiver)
+
+    expectation = BlockAccessListExpectation()
+    exceptions = [BlockException.INVALID_BLOCK_ACCESS_LIST]
+    if header_commits_to == "canonical_rlp":
+        expectation = expectation.modify_rlp(
+            lambda _: Bytes(invalid_bal_payload)
+        )
+        exceptions.append(BlockException.INVALID_BLOCK_HASH)
+    else:
+        expectation = expectation.modify(
+            override_rlp(lambda _: Bytes(invalid_bal_payload))
+        )
 
     blockchain_test(
         pre=pre,
@@ -1921,13 +1926,8 @@ def test_bal_invalid_engine_payload_encoding(
         blocks=[
             Block(
                 txs=[tx],
-                engine_new_payload_block_access_list=Bytes(
-                    invalid_bal_payload
-                ),
-                exception=[
-                    BlockException.INVALID_BLOCK_ACCESS_LIST,
-                    BlockException.INVALID_BLOCK_HASH,
-                ],
+                expected_block_access_list=expectation,
+                exception=exceptions,
             )
         ],
     )

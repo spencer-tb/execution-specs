@@ -227,3 +227,11 @@
 | `test_bal_2930_precompile_listed_but_untouched` | Ensure a precompile named in a transaction's access list but never called stays out of the BAL, for every precompile. | A plain transfer whose access list declares the precompile, via `@pytest.mark.with_all_precompiles`. | The precompile **MUST NOT** appear. A client that tracks precompiles apart from other accounts would leak the declaration here and in no other fixture. | ✅ Completed |
 | `test_sstore_clear_then_reset_nets_zero` (EIP-8038) | Ensure a slot cleared and then reset within one transaction is a single BAL change holding the final value. File: `tests/amsterdam/eip8038_state_access_gas_cost_increase/test_sstore_refunds.py`. | `SSTORE` clears a non-zero slot and rewrites it to a different non-zero value in the same frame, which also reverses the clear refund; the receipt pins the gas. | The slot **MUST** carry exactly one change at index 1 with the final value and **MUST NOT** appear in `storage_reads`; one entry per write would be rejected as a duplicate index. | ✅ Completed |
 | `test_bal_6110_deposit` | Ensure a deposit reaches the BAL as the deposit contract's balance change at the transaction's own index. | A single 32 ETH deposit sent by an EOA through `SystemContractInteractionTransaction`; the request is pinned in the header with `requests_hash`. | The deposit contract **MUST** record one balance change at index 1 holding the deposited value and no nonce or code change; the request is read from its log, so nothing touches it at the post-execution index. | ✅ Completed |
+
+### Malformed BAL encoding
+
+`test_bal_invalid_engine_payload_encoding` covers empty bytes, an RLP string
+instead of a list, and a truncated list. Each payload is tested with the header
+committing to either the canonical BAL or the malformed bytes. Matching-header
+cases require `INVALID_BLOCK_ACCESS_LIST`; mismatched-header cases also accept
+`INVALID_BLOCK_HASH`.
