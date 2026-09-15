@@ -1068,7 +1068,7 @@ def test_bal_zero_value_transfer(
                     ],
                 ),
                 # Include the address; omit from balance_changes.
-                bob: BalAccountExpectation(balance_changes=[]),
+                bob: BalAccountExpectation.empty(),
             }
         ),
     )
@@ -2182,10 +2182,10 @@ def test_bal_nonexistent_value_transfer(
                         BalBalanceChange(
                             block_access_index=1, post_balance=value
                         )
-                    ]
-                    if value > 0
-                    else [],
-                ),
+                    ],
+                )
+                if value > 0
+                else BalAccountExpectation.empty(),
             }
         ),
     )
@@ -2360,10 +2360,10 @@ def test_bal_nonexistent_account_access_value_transfer(
                             block_access_index=1,
                             post_balance=bob_final_balance,
                         )
-                    ]
-                    if bob_has_balance_change
-                    else [],
-                ),
+                    ],
+                )
+                if bob_has_balance_change
+                else BalAccountExpectation.empty(),
             }
         ),
     )

@@ -235,3 +235,15 @@ instead of a list, and a truncated list. Each payload is tested with the header
 committing to either the canonical BAL or the malformed bytes. Matching-header
 cases require `INVALID_BLOCK_ACCESS_LIST`; mismatched-header cases also accept
 `INVALID_BLOCK_HASH`.
+
+### Zero-value touches and empty accounts (#3341)
+
+`test_bal_zero_value_transfer`, `test_bal_nonexistent_value_transfer`, and
+`test_bal_nonexistent_account_access_value_transfer` require empty change lists
+for recipients whose state is unchanged. The nonexistent-recipient cases also
+assert that no account is created.
+
+An existing empty account is a different case: EIP-7523 excludes such accounts
+from post-Merge test states, and #1160 deliberately removed their legacy touch
+and deletion tracking. These tests cover valid Amsterdam states; they do not
+claim to test deletion of pre-existing empty accounts.
