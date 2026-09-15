@@ -1902,7 +1902,10 @@ def test_bal_invalid_engine_payload_encoding(
     list header `0xc1`.
 
     The field is present but not a valid encoding, so the payload is
-    invalid rather than the request being malformed.
+    invalid rather than the request being malformed. A client that hashes
+    the bytes as received into its reconstructed header reports the block
+    hash mismatch instead of the decoding failure; both verdicts reject
+    the block, so both are accepted.
     """
     sender = pre.fund_eoa()
     receiver = pre.nonexistent_account()
@@ -1921,7 +1924,10 @@ def test_bal_invalid_engine_payload_encoding(
                 engine_new_payload_block_access_list=Bytes(
                     invalid_bal_payload
                 ),
-                exception=BlockException.INVALID_BLOCK_ACCESS_LIST,
+                exception=[
+                    BlockException.INVALID_BLOCK_ACCESS_LIST,
+                    BlockException.INVALID_BLOCK_HASH,
+                ],
             )
         ],
     )
@@ -1960,6 +1966,10 @@ def test_bal_invalid_non_minimal_scalar_encoding(
     a matching hash and accepts. With the header committing to the
     payload RLP, a client that decodes leniently and hashes the bytes as
     received accepts instead.
+
+    A strict client may notice the bad scalar while decoding, or only
+    once the hash it derives from the payload disagrees with the header;
+    both verdicts reject the block, so both are accepted.
     """
     alice = pre.fund_eoa()
     oracle = pre.deploy_contract(code=Op.SSTORE(1, 1) + Op.SLOAD(2))
@@ -2020,7 +2030,10 @@ def test_bal_invalid_non_minimal_scalar_encoding(
         blocks=[
             Block(
                 txs=[tx],
-                exception=BlockException.INVALID_BLOCK_ACCESS_LIST,
+                exception=[
+                    BlockException.INVALID_BLOCK_ACCESS_LIST,
+                    BlockException.INVALID_BLOCK_HASH,
+                ],
                 expected_block_access_list=expectation,
             )
         ],
