@@ -17,6 +17,8 @@ from execution_testing import (
     AccessList,
     Account,
     Alloc,
+    BalAccountExpectation,
+    BlockAccessListExpectation,
     Bytecode,
     CodeGasMeasure,
     Fork,
@@ -226,7 +228,19 @@ def test_sstore_stipend_sentry_boundary(
         caller: Account(storage=storage),
         child: Account(storage={slot: 1}),
     }
-    state_test(pre=pre, post=post, tx=tx)
+    state_test(
+        pre=pre,
+        post=post,
+        tx=tx,
+        expected_block_access_list=BlockAccessListExpectation(
+            account_expectations={
+                child: BalAccountExpectation(
+                    storage_reads=[slot] if sufficient_gas else [],
+                    storage_changes=[],
+                )
+            }
+        ),
+    )
 
 
 @EIPChecklist.GasCostChanges.Test.GasUpdatesMeasurement()
