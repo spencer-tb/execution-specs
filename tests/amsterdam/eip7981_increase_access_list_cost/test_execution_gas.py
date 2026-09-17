@@ -7,9 +7,12 @@ from execution_testing import (
     Alloc,
     EIPChecklist,
     Fork,
+    GasConsumer,
     Hash,
+    Header,
     Op,
     StateTestFiller,
+    Storage,
     Transaction,
     TransactionReceipt,
 )
@@ -116,4 +119,53 @@ def test_access_list_surcharge_with_refund(
         pre=pre,
         post={contract: Account(storage={0: 1 if reverts else 0})},
         tx=tx,
+    )
+
+
+@EIPChecklist.GasCostChanges.Test.GasUpdatesMeasurement()
+@pytest.mark.with_all_tx_types(selector=lambda tx_type: tx_type in (1, 2))
+def test_access_list_execution_dominates_block_gas(
+    state_test: StateTestFiller,
+    pre: Alloc,
+    fork: Fork,
+    tx_type: int,
+) -> None:
+    """
+    Bill the execution dimension when it exceeds both floor and state gas.
+
+    An over-cap reservoir funds a storage set, separating the header's
+    execution charge from the transaction's total gas bill.
+    """
+    storage = Storage()
+    code = Op.SSTORE(storage.store_next(1), 1, new_value=1, key_warm=True)
+    state_cost = code.state_cost(fork)
+    assert state_cost > 0
+    code += GasConsumer(gas=state_cost, fork=fork)
+    contract = pre.deploy_contract(code=code)
+    access_list = [AccessList(address=contract, storage_keys=[Hash(0)])]
+    intrinsic = fork.transaction_intrinsic_cost_calculator()(
+        access_list=access_list,
+        return_cost_deducted_prior_execution=True,
+    )
+    execution_gas = intrinsic + code.execution_cost(fork)
+    floor = fork.transaction_data_floor_cost_calculator()(
+        data=b"", access_list=access_list
+    )
+    assert execution_gas > max(floor, state_cost)
+
+    tx = Transaction(
+        ty=tx_type,
+        sender=pre.fund_eoa(),
+        to=contract,
+        access_list=access_list,
+        state_gas_reservoir=state_cost,
+        expected_receipt=TransactionReceipt(
+            status=1, gas_used=execution_gas + state_cost
+        ),
+    )
+    state_test(
+        pre=pre,
+        post={contract: Account(storage=storage)},
+        tx=tx,
+        blockchain_test_header_verify=Header(gas_used=execution_gas),
     )
