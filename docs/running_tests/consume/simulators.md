@@ -8,6 +8,14 @@ The `engine` and `rlp` simulators test clients by importing blocks through diffe
 uv run consume <engine|rlp> [OPTIONS]
 ```
 
+## Stateless Witness Mode
+
+The engine simulators accept `--stateless` to execute payloads through the witness-emitting `engine_newPayloadWithWitnessVX` endpoint and verify the client-generated execution witness against the fixture. Pass `--ssz` to use the REST `POST /new-payload-with-witness` endpoint with an SSZ-encoded response instead of JSON-RPC. In this mode the hive test suite name gains a `-stateless` suffix (e.g. `eels/consume-engine-stateless`), and fixtures without a witness — or with a deliberately mutated one — are skipped before client startup.
+
+```bash
+uv run consume engine --stateless [--ssz] [OPTIONS]
+```
+
 ## Relevant Information
 
 - To install the `consume` command, see [Installation](../../getting_started/installation.md).

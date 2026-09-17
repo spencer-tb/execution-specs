@@ -45,8 +45,38 @@ pytest_plugins = (
 )
 
 
+def pytest_addoption(parser: pytest.Parser) -> None:
+    """Register the stateless witness flags for the enginex simulator."""
+    parser.addoption(
+        "--stateless",
+        action="store_true",
+        default=False,
+        help=(
+            "Execute payloads through the witness-emitting "
+            "engine_newPayloadWithWitnessVX endpoint and verify the "
+            "client-generated execution witness against the fixture."
+        ),
+    )
+    parser.addoption(
+        "--ssz",
+        action="store_true",
+        default=False,
+        help=(
+            "With --stateless: use the REST POST /new-payload-with-witness "
+            "endpoint with SSZ-encoded response instead of the default "
+            "JSON-RPC engine_newPayloadWithWitnessVX with RLP-encoded "
+            "witness."
+        ),
+    )
+
+
 def pytest_configure(config: pytest.Config) -> None:
     """Set the supported fixture formats for the enginex simulator."""
+    if config.getoption("--ssz") and not config.getoption("--stateless"):
+        raise pytest.UsageError(
+            "--ssz selects the stateless witness transport and requires "
+            "--stateless"
+        )
     config.supported_fixture_formats = [BlockchainEngineXFixture]  # type: ignore[attr-defined]
 
 
@@ -156,14 +186,23 @@ def _configure_client_manager(
 
 
 @pytest.fixture(scope="module")
-def test_suite_name() -> str:
+def test_suite_name(request: pytest.FixtureRequest) -> str:
     """The name of the hive test suite used in this simulator."""
+    if request.config.getoption("--stateless"):
+        return "eels/consume-enginex-stateless"
     return "eels/consume-enginex"
 
 
 @pytest.fixture(scope="module")
-def test_suite_description() -> str:
+def test_suite_description(request: pytest.FixtureRequest) -> str:
     """The description of the hive test suite used in this simulator."""
+    if request.config.getoption("--stateless"):
+        return (
+            "Execute blockchain tests against clients through the "
+            "witness-emitting Engine API path with pre-allocation group "
+            "optimization, verifying the client-generated execution "
+            "witness against the fixture."
+        )
     return (
         "Execute blockchain tests against clients using the Engine API with "
         "pre-allocation group optimization using Engine X fixtures."

@@ -591,6 +591,20 @@ def fixtures_source(request: pytest.FixtureRequest) -> FixturesSource:  # noqa: 
     return request.config.fixtures_source  # type: ignore[attr-defined]
 
 
+def _stateless_index_skip_reason(test_case: TestCaseBase) -> str | None:
+    """
+    Return the stateless skip reason recorded on the index, if any.
+
+    Cases from old indexes carry no witness metadata and return None;
+    the runtime gate before client startup covers them instead.
+    """
+    if getattr(test_case, "execution_witness_mutated", None):
+        return "fixture contains a deliberately mutated executionWitness"
+    if getattr(test_case, "has_execution_witness", None) is False:
+        return "fixture has no executionWitness on any payload"
+    return None
+
+
 def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
     """
     Generate test cases for every test fixture in all the JSON fixture files
@@ -604,6 +618,7 @@ def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
     supported_fixture_formats: List[FixtureFormat] = getattr(
         metafunc.config, "supported_fixture_formats", []
     )
+    stateless = bool(metafunc.config.getoption("--stateless", False))
     param_list = []
     for test_case in test_cases:
         if test_case.format not in supported_fixture_formats:
@@ -616,6 +631,10 @@ def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
         marks = [getattr(pytest.mark, m) for m in fork_markers] + [
             getattr(pytest.mark, test_case.format.format_name)
         ]
+        if stateless:
+            skip_reason = _stateless_index_skip_reason(test_case)
+            if skip_reason is not None:
+                marks.append(pytest.mark.skip(reason=skip_reason))
 
         param = pytest.param(
             test_case,

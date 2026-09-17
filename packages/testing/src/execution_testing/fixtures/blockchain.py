@@ -75,6 +75,7 @@ from execution_testing.test_types import (
     AllocGroupHash,
     BlockAccessList,
     Environment,
+    ExecutionWitness,
     Removable,
     Requests,
     TestPhase,
@@ -609,6 +610,8 @@ class FixtureEngineNewPayload(CamelModel):
     params: EngineNewPayloadParameters
     new_payload_version: Number
     forkchoice_updated_version: Number
+    execution_witness: ExecutionWitness | None = None
+    execution_witness_mutated: bool | None = None
     validation_error: ExceptionInstanceOrList | None = None
     error_code: (
         Annotated[
