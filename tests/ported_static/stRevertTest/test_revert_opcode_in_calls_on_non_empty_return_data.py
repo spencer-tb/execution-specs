@@ -51,7 +51,7 @@ STARVE_MARGIN = 1_000
         "state_tests/stRevertTest/RevertOpcodeInCallsOnNonEmptyReturnDataFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Berlin")
 @pytest.mark.parametrize(
     "call_op",
     [Op.CALL, Op.CALLCODE, Op.DELEGATECALL, None],
@@ -89,7 +89,7 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
     def prober_code(
         op: Op, callee: Address, result_slot: int, rds_slot: int
     ) -> Bytecode:
-        """Call the callee and record its result and RETURNDATASIZE."""
+        """Fill the buffer, record its size, then probe and record again."""
         return (
             prelude
             + Op.SSTORE(key=PRELUDE_SIZE_SLOT, value=Op.RETURNDATASIZE)
@@ -159,7 +159,9 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
         )
         forwarded = STARVE_MARGIN - STARVE_MARGIN // 64
         assert forwarded < prelude.gas_cost(fork), "prober must starve"
-        assert STARVE_MARGIN // 64 <= 2300, "entry store must halt"
+        assert STARVE_MARGIN // 64 <= fork.gas_costs().CALL_STIPEND, (
+            "entry store must halt"
+        )
         tx = Transaction(
             sender=sender,
             to=entry,

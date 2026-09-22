@@ -31,9 +31,6 @@ from execution_testing.vm import Op
 REFERENCE_SPEC_GIT_PATH = "N/A"
 REFERENCE_SPEC_VERSION = "N/A"
 
-# Gas left in the creator frame after its CREATE: enough to reach the
-# following store, never enough to pay for it.
-PARTIAL_MARGIN = 5_000
 # Head room on top of a derived budget.
 BUDGET_MARGIN = 5_000
 
@@ -41,7 +38,7 @@ BUDGET_MARGIN = 5_000
 @pytest.mark.ported_from(
     ["state_tests/stRevertTest/RevertDepthCreateOOGFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.parametrize(
     "full_grant",
     [False, True],
@@ -81,14 +78,13 @@ def test_revert_depth_create_oog(
     creator = pre.deploy_contract(code=creator_code)
     created = compute_create_address(address=creator, nonce=1)
 
-    # The grant covers the creator completely, or only up to and
-    # including its CREATE, leaving too little for the following store.
+    # The grant covers the creator exactly, or falls one gas short of it:
+    # the creator then completes its CREATE and dies on the store after.
     if full_grant:
-        grant = creator_code.gas_cost(fork) + BUDGET_MARGIN
-        inner_consumed = creator_code.gas_cost(fork)
+        grant = creator_code.gas_cost(fork)
     else:
-        grant = (creator_store + create_code).gas_cost(fork) + PARTIAL_MARGIN
-        inner_consumed = grant
+        grant = creator_code.gas_cost(fork) - 1
+    inner_consumed = grant
     inner_succeeds = ample_budget and full_grant
     inner_fails_reaching_create = ample_budget and not full_grant
 
@@ -137,14 +133,14 @@ def test_revert_depth_create_oog(
         )
         assert grant <= available - available // 64, "grant must be granted"
     else:
-        # The grant is granted in full but nothing is budgeted for the
-        # caller's post-call stores: the 1/64 retention plus whatever the
-        # creator hands back cannot pay them, so the whole transaction
-        # runs dry after the creator ran.
+        # The grant is granted in full and consumed in full, and nothing
+        # is budgeted for the caller's post-call stores: the 1/64
+        # retention cannot clear the EIP-2200 sentry on its result store
+        # (nor pay any pre-Istanbul store), so the whole transaction runs
+        # dry after the creator ran.
         available = -(-grant * 64 // 63) + 64
         assert grant <= available - available // 64, "grant must be granted"
-        creator_spare = grant - inner_consumed
-        assert available // 64 + creator_spare < tail_store.gas_cost(fork), (
+        assert available // 64 <= fork.gas_costs().CALL_STIPEND, (
             "caller must die"
         )
         gas_limit = (

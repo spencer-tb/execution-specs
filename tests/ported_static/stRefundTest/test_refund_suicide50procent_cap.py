@@ -36,7 +36,6 @@ RESULT_SLOT = 0xB
 GAS_SLOT = 0x17
 SNAPSHOT_OFFSET = 0x16
 MEMORY_SIZE = SNAPSHOT_OFFSET + 32
-GRANT_MARGIN = 1_000
 
 
 @pytest.mark.ported_from(
@@ -67,11 +66,11 @@ def test_refund_suicide50procent_cap(
         balance=DESTRUCTOR_BALANCE,
     )
 
-    # The grant either covers the destructor completely or falls one gas
+    # The grant either covers the destructor exactly or falls one gas
     # short, so the sub-call forfeits its whole grant.
     destructor_cost = destructor_code.gas_cost(fork)
     if call_succeeds:
-        grant = destructor_cost + GRANT_MARGIN
+        grant = destructor_cost
         inner_consumed = destructor_cost
     else:
         grant = destructor_cost - 1

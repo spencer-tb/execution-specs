@@ -77,9 +77,15 @@ then clear it (`sstore(k, 1); sstore(k, 0)`) to earn a refund. In a fresh
 `CREATE` frame slot `k` is already zero, so solc folds the pair down to
 `sstore(k, 0)` — a no-op that generates **no refund at all**, leaving the test
 vacuous while still passing. Validated on `test_create_oog_from_call_refunds`,
-where 2 of 24 init codes had lost their `sstore(1, 1)`: the OoG arms assert the
-sender's balance reaches exactly zero, which *is* the "refund earned inside a
-reverted frame must be discarded" check — and it was asserting nothing.
+where 2 of 24 init codes had lost their `sstore(1, 1)`.
+
+**Restoring the pair is necessary, not sufficient.** A refund is only
+observable through the gas the transaction is charged. Both
+`*_oog_from_call_refunds` tests end their entry frame in `INVALID` when the
+creation fails, which zeroes the refund counter at the top frame, so their OoG
+arms' zero balance pins nothing about refunds (dropping the restored pairs
+fills green). Pinning it means letting the entry complete and asserting the
+receipt; that is an open follow-up.
 
 **How to check.** Disassemble every bytecode blob and diff it against the comment
 above it. Comparing opcode *counts* per mnemonic (`sstore(` in the Yul vs.
@@ -574,7 +580,8 @@ plus 5,000 / 800 / 100), so a derived budget needs no extra headroom
 constant for those forks (an earlier note here claimed otherwise; the
 padding it prescribed also masked a wrongful new-account charge on
 Amsterdam). Checked on
-`test_revert_depth_create_address_collision`'s ConstantinopleFix sweep.
+`stCreate2/test_revert_depth_create_address_collision`'s ConstantinopleFix
+sweep.
 
 **A starved arm must still reach the opcode under test.** When a
 "RevertDepth" style filler proves that a completed nested CREATE is
