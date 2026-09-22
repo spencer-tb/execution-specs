@@ -2,7 +2,7 @@
 Verify a CREATE2 two frames deep under out-of-gas pressure: the calldata
 sets the grant a caller forwards to a creating contract, and the two
 budgets decide whether the creation stands, the creator dies after it,
-or the whole outer frame runs dry, each with a distinct post-state.
+or the whole outer frame runs dry.
 
 Ported from:
 state_tests/stCreate2/RevertDepthCreate2OOGFiller.json
@@ -159,8 +159,8 @@ def test_revert_depth_create2_oog(
         sends_value=tx_value > 0,
         return_cost_deducted_prior_execution=True,
     ) + sstore_0.gas_cost(fork)
-    # Enough at the CALL that the EIP-150 clamp still grants the full
-    # ask.
+    # What the caller holds once the CALL's own charge is paid: enough
+    # that the EIP-150 clamp still grants the full ask.
     available = -(-forwarded * 64 // 63) + 64
     assert available - available // 64 >= forwarded, (
         "the full ask must be granted"
@@ -180,7 +180,7 @@ def test_revert_depth_create2_oog(
         assert available // 64 + CREATOR_SPARE < store_cost, (
             "the retention must not afford the post-call store"
         )
-        gas_limit = overhead + available
+        gas_limit = overhead + call_code.gas_cost(fork) + available
 
     sender = pre.fund_eoa()
     tx = Transaction(

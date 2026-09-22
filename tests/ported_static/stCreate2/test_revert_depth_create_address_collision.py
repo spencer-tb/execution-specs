@@ -181,8 +181,8 @@ def test_revert_depth_create_address_collision(
         sends_value=tx_value > 0,
         return_cost_deducted_prior_execution=True,
     ) + sstore_0.gas_cost(fork)
-    # Enough at the CALL that the EIP-150 clamp still grants the full
-    # ask.
+    # What the caller holds once the CALL's own charge is paid: enough
+    # that the EIP-150 clamp still grants the full ask.
     available = -(-forwarded * 64 // 63) + 64
     assert available - available // 64 >= forwarded, (
         "the full ask must be granted"
@@ -203,7 +203,7 @@ def test_revert_depth_create_address_collision(
         assert available // 64 + creator_spare < sstore_4.gas_cost(fork), (
             "the retention must not afford the post-call stores"
         )
-        gas_limit = overhead + available
+        gas_limit = overhead + call_code.gas_cost(fork) + available
 
     sender = pre.fund_eoa()
     tx = Transaction(

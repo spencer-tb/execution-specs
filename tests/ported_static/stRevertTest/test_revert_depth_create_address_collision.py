@@ -128,8 +128,8 @@ def test_revert_depth_create_address_collision(
             return_cost_deducted_prior_execution=True,
         ) + head_store.gas_cost(fork)
 
-    # Enough at the CALL that the EIP-150 clamp still grants the full
-    # ask.
+    # What the caller holds once the CALL's own charge is paid: enough
+    # that the EIP-150 clamp still grants the full ask.
     available = -(-ask * 64 // 63) + 64
     assert available - available // 64 >= ask, "the full ask must be granted"
     data = Hash(ask)
@@ -141,7 +141,7 @@ def test_revert_depth_create_address_collision(
         # while the caller keeps one 64th, never enough for its stores.
         data = Hash(gas_limit)
         gas_limit = overhead(data) + post_call + available
-        remaining = post_call + available
+        remaining = post_call - call_code.gas_cost(fork) + available
         granted = remaining - remaining // 64
         creator_left = granted - (creator_store + create_code).gas_cost(fork)
         assert creator_left // 64 < tail, "the creator must die"
@@ -150,7 +150,7 @@ def test_revert_depth_create_address_collision(
         # Nothing is budgeted for the caller's post-call stores: the
         # 1/64 retention cannot pay them, so the whole transaction runs
         # dry after the collision.
-        gas_limit = overhead(data) + available
+        gas_limit = overhead(data) + call_code.gas_cost(fork) + available
         assert available // 64 < tail_store.gas_cost(fork), "caller must die"
 
     sender = pre.fund_eoa()
