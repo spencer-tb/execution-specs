@@ -567,12 +567,13 @@ shift explained (±1 frame ≈ 64·ln(cost ratio)). Validated on
 `test_loop_calls_depth_then_revert`.
 
 **The SSTORE dirty-rewrite composite tracks the pre-Berlin schedules.**
-`Op.SSTORE(key_warm=True, original_value=0, current_value=0xFF,
-new_value=1).gas_cost(fork)` prices 5,006 on ConstantinopleFix, 806 on
-Istanbul and 106 from Berlin, so a derived budget needs no extra
-headroom constant for those forks (an earlier note here claimed
-otherwise; the padding it prescribed also masked a wrongful new-account
-charge on Amsterdam). Checked on
+`Op.SSTORE(key=k, value=1, key_warm=True, original_value=0,
+current_value=0xFF, new_value=1).gas_cost(fork)` prices 5,006 on
+ConstantinopleFix, 806 on Istanbul and 106 from Berlin (the two pushes
+plus 5,000 / 800 / 100), so a derived budget needs no extra headroom
+constant for those forks (an earlier note here claimed otherwise; the
+padding it prescribed also masked a wrongful new-account charge on
+Amsterdam). Checked on
 `test_revert_depth_create_address_collision`'s ConstantinopleFix sweep.
 
 **A starved arm must still reach the opcode under test.** When a
