@@ -154,6 +154,8 @@ def test_create2_oo_gafter_init_code_revert(
         storage={PAYLOAD_SLOT: 0x1},
     )
 
+    # No reservoir: the child's state gas must come out of its grant, or
+    # the one-gas boundary above would not hold on EIP-8037 forks.
     tx = Transaction(
         sender=pre.fund_eoa(),
         to=caller,

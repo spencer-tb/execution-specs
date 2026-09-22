@@ -25,6 +25,7 @@ from execution_testing import (
     Hash,
     StateTestFiller,
     Transaction,
+    TransactionReceipt,
     compute_create_address,
 )
 from execution_testing.vm import Op
@@ -44,7 +45,7 @@ RETENTION_MARGIN = 100
 @pytest.mark.ported_from(
     ["state_tests/stRevertTest/RevertDepthCreateAddressCollisionFiller.json"],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("SpuriousDragon")
 @pytest.mark.parametrize(
     "scenario",
     ["creator_oog", "creator_ok", "caller_oog", "tx_oog"],
@@ -113,9 +114,11 @@ def test_revert_depth_create_address_collision(
     tail = creator_tail.gas_cost(fork)
     if scenario == "creator_ok":
         slack = 64 * (stipend + tail + RETENTION_MARGIN)
-    else:
+    elif scenario in ("creator_oog", "caller_oog", "tx_oog"):
         slack = tail + SLACK_MARGIN
         assert slack // 64 < tail, "the retention must not afford the marker"
+    else:
+        raise ValueError(scenario)
     ask = (creator_store + create_code).gas_cost(fork) + slack
 
     intrinsic_calculator = fork.transaction_intrinsic_cost_calculator()
@@ -128,30 +131,36 @@ def test_revert_depth_create_address_collision(
             return_cost_deducted_prior_execution=True,
         ) + head_store.gas_cost(fork)
 
-    # Enough at the CALL that the EIP-150 clamp still grants the full
-    # ask.
+    # What the caller holds once the CALL's own charge is paid: enough
+    # that the EIP-150 clamp still grants the full ask.
     available = -(-ask * 64 // 63) + 64
     assert available - available // 64 >= ask, "the full ask must be granted"
     data = Hash(ask)
     post_call = call_store.gas_cost(fork) + tail_store.gas_cost(fork)
     gas_limit = overhead(data) + post_call + available
+    # A caller left with no more than the stipend after a failed CALL
+    # dies on its result store: the EIP-2200 sentry rejects the store,
+    # and before Istanbul the store itself costs more.
     if scenario == "caller_oog":
         # An oversized ask is clamped to the EIP-150 cap: the creator
         # gets everything the caller has and still dies on the collision,
         # while the caller keeps one 64th, never enough for its stores.
         data = Hash(gas_limit)
         gas_limit = overhead(data) + post_call + available
-        remaining = post_call + available
+        remaining = post_call - call_code.gas_cost(fork) + available
         granted = remaining - remaining // 64
         creator_left = granted - (creator_store + create_code).gas_cost(fork)
         assert creator_left // 64 < tail, "the creator must die"
-        assert remaining // 64 < tail_store.gas_cost(fork), "caller must die"
+        assert remaining // 64 <= stipend, "caller must die"
     elif scenario == "tx_oog":
-        # Nothing is budgeted for the caller's post-call stores: the
-        # 1/64 retention cannot pay them, so the whole transaction runs
-        # dry after the collision.
-        gas_limit = overhead(data) + available
-        assert available // 64 < tail_store.gas_cost(fork), "caller must die"
+        # Nothing is budgeted for the caller's post-call stores, so the
+        # whole transaction runs dry after the collision.
+        gas_limit = overhead(data) + call_code.gas_cost(fork) + available
+        assert available // 64 <= stipend, "caller must die"
+
+    expected_receipt: TransactionReceipt | None = None
+    if scenario in ("caller_oog", "tx_oog"):
+        expected_receipt = TransactionReceipt(cumulative_gas_used=gas_limit)
 
     sender = pre.fund_eoa()
     tx = Transaction(
@@ -160,6 +169,7 @@ def test_revert_depth_create_address_collision(
         data=data,
         gas_limit=gas_limit,
         value=tx_value,
+        expected_receipt=expected_receipt,
     )
 
     if scenario == "creator_ok":
@@ -182,13 +192,15 @@ def test_revert_depth_create_address_collision(
             nonce=1,
         )
         creator_account = Account(storage={}, nonce=1)
-    else:
+    elif scenario in ("caller_oog", "tx_oog"):
         # The transaction ran dry after the collision: only the code
         # survives.
         caller_account = Account(
             storage={}, code=caller_code, balance=0, nonce=1
         )
         creator_account = Account(storage={}, nonce=1)
+    else:
+        raise ValueError(scenario)
 
     post = {
         sender: Account(nonce=1),

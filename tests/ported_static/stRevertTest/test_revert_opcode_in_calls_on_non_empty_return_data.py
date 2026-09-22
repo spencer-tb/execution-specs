@@ -26,6 +26,7 @@ from execution_testing import (
     Hash,
     StateTestFiller,
     Transaction,
+    TransactionReceipt,
 )
 from execution_testing.vm import Bytecode, Op
 
@@ -36,6 +37,7 @@ RESULT_SLOT = 0x0
 RETURN_DATA_SIZE_SLOT = 0x2
 NESTED_RESULT_SLOT = 0x4
 NESTED_RETURN_DATA_SIZE_SLOT = 0x5
+PRELUDE_SIZE_SLOT = 0x6
 ENTRY_SLOT = 0xA
 ENTRY_SLOT_INITIAL = 255
 RETURNED_SIZE = 0x40
@@ -49,7 +51,7 @@ STARVE_MARGIN = 1_000
         "state_tests/stRevertTest/RevertOpcodeInCallsOnNonEmptyReturnDataFiller.json"  # noqa: E501
     ],
 )
-@pytest.mark.valid_from("Cancun")
+@pytest.mark.valid_from("Berlin")
 @pytest.mark.parametrize(
     "call_op",
     [Op.CALL, Op.CALLCODE, Op.DELEGATECALL, None],
@@ -87,9 +89,10 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
     def prober_code(
         op: Op, callee: Address, result_slot: int, rds_slot: int
     ) -> Bytecode:
-        """Call the callee and record its result and RETURNDATASIZE."""
+        """Fill the buffer, record its size, then probe and record again."""
         return (
             prelude
+            + Op.SSTORE(key=PRELUDE_SIZE_SLOT, value=Op.RETURNDATASIZE)
             + Op.SSTORE(key=result_slot, value=op(address=callee))
             + Op.SSTORE(key=rds_slot, value=Op.RETURNDATASIZE)
             + Op.STOP
@@ -156,8 +159,16 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
         )
         forwarded = STARVE_MARGIN - STARVE_MARGIN // 64
         assert forwarded < prelude.gas_cost(fork), "prober must starve"
-        assert STARVE_MARGIN // 64 <= 2300, "entry store must halt"
-        tx = Transaction(sender=sender, to=entry, data=data, gas_limit=starved)
+        assert STARVE_MARGIN // 64 <= fork.gas_costs().CALL_STIPEND, (
+            "entry store must halt"
+        )
+        tx = Transaction(
+            sender=sender,
+            to=entry,
+            data=data,
+            gas_limit=starved,
+            expected_receipt=TransactionReceipt(cumulative_gas_used=starved),
+        )
 
     untouched = {
         reverter: Account(storage={}),
@@ -181,8 +192,15 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
         post = {
             **untouched,
             entry: Account(storage={ENTRY_SLOT: 1}),
-            prober_nested: Account(storage={RESULT_SLOT: 1}),
-            inner_prober: Account(storage={NESTED_RETURN_DATA_SIZE_SLOT: 1}),
+            prober_nested: Account(
+                storage={PRELUDE_SIZE_SLOT: RETURNED_SIZE, RESULT_SLOT: 1}
+            ),
+            inner_prober: Account(
+                storage={
+                    PRELUDE_SIZE_SLOT: RETURNED_SIZE,
+                    NESTED_RETURN_DATA_SIZE_SLOT: 1,
+                }
+            ),
         }
     else:
         # The probed call reverts with one byte of return data: result 0,
@@ -190,7 +208,12 @@ def test_revert_opcode_in_calls_on_non_empty_return_data(
         post = {
             **untouched,
             entry: Account(storage={ENTRY_SLOT: 1}),
-            prober: Account(storage={RETURN_DATA_SIZE_SLOT: 1}),
+            prober: Account(
+                storage={
+                    PRELUDE_SIZE_SLOT: RETURNED_SIZE,
+                    RETURN_DATA_SIZE_SLOT: 1,
+                }
+            ),
         }
 
     state_test(pre=pre, post=post, tx=tx)

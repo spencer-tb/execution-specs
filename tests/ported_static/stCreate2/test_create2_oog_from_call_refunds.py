@@ -46,6 +46,7 @@ OOG_DEPOSIT_SIZE = 0x1388
 # Init codes return from here, past anything any of them writes to
 # memory, so the byte a completing arm deposits is always zero.
 DEPOSIT_OFFSET = 0x20
+SELFDESTRUCT_TARGET_BALANCE = 1
 
 
 class Refund(Enum):
@@ -163,11 +164,14 @@ def test_create2_oog_from_call_refunds(
                 }
             )
         case Refund.SELFDESTRUCT:
-            # The callee destroys itself.
+            # The callee destroys itself. Its one wei moves to the origin
+            # only when the creation commits, so the post can tell whether
+            # the self-destruct ran.
             selfdestruct_target_code = Op.SELFDESTRUCT(address=Op.ORIGIN)
             selfdestruct_target = pre.deploy_contract(
                 code=selfdestruct_target_code,
                 storage={1: 1},
+                balance=SELFDESTRUCT_TARGET_BALANCE,
             )
             body = Op.SSTORE(key=0x0, value=0x1) + Op.CALL(
                 gas=Op.GAS, address=selfdestruct_target
@@ -176,7 +180,10 @@ def test_create2_oog_from_call_refunds(
                 post[selfdestruct_target] = Account(balance=0, nonce=1)
             else:
                 post[selfdestruct_target] = Account(
-                    storage={1: 1}, code=selfdestruct_target_code, nonce=1
+                    storage={1: 1},
+                    code=selfdestruct_target_code,
+                    balance=SELFDESTRUCT_TARGET_BALANCE,
+                    nonce=1,
                 )
         case Refund.LOGS:
             # The callee only emits logs, so nothing is refunded.
