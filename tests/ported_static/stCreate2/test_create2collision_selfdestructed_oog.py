@@ -24,6 +24,7 @@ from execution_testing import (
     Fork,
     StateTestFiller,
     Transaction,
+    TransactionReceipt,
     compute_create2_address,
     compute_create_address,
 )
@@ -176,6 +177,7 @@ def test_create2collision_selfdestructed_oog(
         to=None,
         data=outer_initcode,
         gas_limit=gas_limit,
+        expected_receipt=TransactionReceipt(cumulative_gas_used=gas_limit),
     )
 
     post = {

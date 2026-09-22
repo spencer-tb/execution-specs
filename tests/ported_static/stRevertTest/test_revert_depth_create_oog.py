@@ -23,6 +23,7 @@ from execution_testing import (
     Hash,
     StateTestFiller,
     Transaction,
+    TransactionReceipt,
     compute_create_address,
 )
 from execution_testing.vm import Op
@@ -117,6 +118,7 @@ def test_revert_depth_create_oog(
         sends_value=tx_value > 0,
         return_cost_deducted_prior_execution=True,
     )
+    expected_receipt: TransactionReceipt | None = None
     if ample_budget:
         gas_limit = (
             intrinsic
@@ -151,6 +153,7 @@ def test_revert_depth_create_oog(
             + call_code.gas_cost(fork)
             + available
         )
+        expected_receipt = TransactionReceipt(cumulative_gas_used=gas_limit)
 
     sender = pre.fund_eoa()
     tx = Transaction(
@@ -159,6 +162,7 @@ def test_revert_depth_create_oog(
         data=data,
         gas_limit=gas_limit,
         value=tx_value,
+        expected_receipt=expected_receipt,
     )
 
     post: dict
@@ -166,19 +170,19 @@ def test_revert_depth_create_oog(
         post = {
             created: Account(nonce=1),
             caller: Account(storage={0: 1, 1: 1, 4: 0xC}, balance=tx_value),
-            creator: Account(storage={2: 8, 3: 0xC}),
+            creator: Account(storage={2: 8, 3: 0xC}, nonce=2),
         }
     elif inner_fails_reaching_create:
         post = {
             created: Account.NONEXISTENT,
             caller: Account(storage={0: 1, 4: 0xC}, balance=tx_value),
-            creator: Account(storage={}),
+            creator: Account(storage={}, nonce=1),
         }
     else:
         post = {
             created: Account.NONEXISTENT,
             caller: Account(storage={}, balance=0),
-            creator: Account(storage={}),
+            creator: Account(storage={}, nonce=1),
         }
 
     state_test(pre=pre, post=post, tx=tx)

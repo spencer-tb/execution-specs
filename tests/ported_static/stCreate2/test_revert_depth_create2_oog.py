@@ -24,6 +24,7 @@ from execution_testing import (
     Hash,
     StateTestFiller,
     Transaction,
+    TransactionReceipt,
     compute_create2_address,
 )
 from execution_testing.vm import Op
@@ -165,6 +166,7 @@ def test_revert_depth_create2_oog(
     assert available - available // 64 >= forwarded, (
         "the full ask must be granted"
     )
+    expected_receipt: TransactionReceipt | None = None
     if outer_covered:
         gas_limit = (
             overhead
@@ -181,6 +183,7 @@ def test_revert_depth_create2_oog(
             "the retention must not afford the post-call store"
         )
         gas_limit = overhead + call_code.gas_cost(fork) + available
+        expected_receipt = TransactionReceipt(cumulative_gas_used=gas_limit)
 
     sender = pre.fund_eoa()
     tx = Transaction(
@@ -189,6 +192,7 @@ def test_revert_depth_create2_oog(
         data=tx_data,
         gas_limit=gas_limit,
         value=tx_value,
+        expected_receipt=expected_receipt,
     )
 
     created = compute_create2_address(creator, 0, b"")

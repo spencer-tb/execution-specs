@@ -26,6 +26,7 @@ from execution_testing import (
     Hash,
     StateTestFiller,
     Transaction,
+    TransactionReceipt,
     compute_create2_address,
 )
 from execution_testing.vm import Op
@@ -187,6 +188,7 @@ def test_revert_depth_create_address_collision(
     assert available - available // 64 >= forwarded, (
         "the full ask must be granted"
     )
+    expected_receipt: TransactionReceipt | None = None
     if outer_covered:
         gas_limit = (
             overhead
@@ -204,6 +206,7 @@ def test_revert_depth_create_address_collision(
             "the retention must not afford the post-call stores"
         )
         gas_limit = overhead + call_code.gas_cost(fork) + available
+        expected_receipt = TransactionReceipt(cumulative_gas_used=gas_limit)
 
     sender = pre.fund_eoa()
     tx = Transaction(
@@ -212,6 +215,7 @@ def test_revert_depth_create_address_collision(
         data=tx_data,
         gas_limit=gas_limit,
         value=tx_value,
+        expected_receipt=expected_receipt,
     )
 
     if not outer_covered:

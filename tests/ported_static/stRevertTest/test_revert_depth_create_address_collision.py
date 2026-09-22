@@ -25,6 +25,7 @@ from execution_testing import (
     Hash,
     StateTestFiller,
     Transaction,
+    TransactionReceipt,
     compute_create_address,
 )
 from execution_testing.vm import Op
@@ -153,6 +154,10 @@ def test_revert_depth_create_address_collision(
         gas_limit = overhead(data) + call_code.gas_cost(fork) + available
         assert available // 64 < tail_store.gas_cost(fork), "caller must die"
 
+    expected_receipt: TransactionReceipt | None = None
+    if scenario in ("caller_oog", "tx_oog"):
+        expected_receipt = TransactionReceipt(cumulative_gas_used=gas_limit)
+
     sender = pre.fund_eoa()
     tx = Transaction(
         sender=sender,
@@ -160,6 +165,7 @@ def test_revert_depth_create_address_collision(
         data=data,
         gas_limit=gas_limit,
         value=tx_value,
+        expected_receipt=expected_receipt,
     )
 
     if scenario == "creator_ok":
