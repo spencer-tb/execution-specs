@@ -250,6 +250,8 @@ class FrameTransactionIntrinsicCostCalculator(Protocol):
         frames: Sequence[FrameGasInfo] | int,
         signatures: Sequence[FrameSignatureGasInfo] = (),
         sender: BytesConvertible | None = None,
+        nonce_keys: Sequence[int] = (0,),
+        nonce_seq: int = 0,
         return_cost_deducted_prior_execution: bool = False,
     ) -> int:
         """
@@ -273,6 +275,14 @@ class FrameTransactionIntrinsicCostCalculator(Protocol):
                   explicit target differs from the sender. May be
                   omitted when no frame carries value to an explicit
                   target.
+          nonce_keys: The transaction's EIP-8250 nonce keys, priced as
+                      calldata through `keyed_nonce_calldata` on forks
+                      with keyed nonces and free before them. The
+                      default is the legacy key set.
+          nonce_seq: The transaction's EIP-8250 nonce sequence, priced
+                     alongside the keys. The default prices the same as
+                     any sequence below 128, which covers a
+                     transaction carrying a fresh sender's nonce.
           return_cost_deducted_prior_execution: If set to False, the
                                                 returned value is equal
                                                 to the transaction's
@@ -310,16 +320,20 @@ class FrameTransactionDataFloorCostCalculator(Protocol):
         frames: Sequence[FrameGasInfo] | int,
         signatures: Sequence[FrameSignatureGasInfo] = (),
         sender: BytesConvertible | None = None,
+        nonce_keys: Sequence[int] = (0,),
+        nonce_seq: int = 0,
     ) -> int:
         """
         Return the calldata floor anchor of a frame transaction given
         its frames and signature entries: every charged byte — frame
-        `data` and signature entry bytes — is counted uniformly at the
-        floor price on top of the costs the transaction always pays
+        `data`, signature entry bytes, and the EIP-8250 nonce field
+        encodings where the fork prices them — is counted uniformly at
+        the floor price on top of the costs the transaction always pays
         regardless of execution, including the value transfer cost of
         each value-bearing frame whose explicit target differs from
         `sender`. An integer stands for that many frames carrying no
-        data and no value.
+        data and no value; the nonce arguments default as in
+        ``FrameTransactionIntrinsicCostCalculator``.
         """
         pass
 
@@ -1425,8 +1439,27 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
         storage the account had before the fork are kept. In a blockchain
         test that starts at a fork already including them, the installs are
         applied to the genesis allocation instead.
+
+        A value is the code itself, or a mapping with the `code` and the
+        minimum `nonce` the install leaves at the address — for a fork
+        that initializes a system contract's nonce along with its code
+        (EIP-8250's nonce manager), where an existing higher nonce is
+        kept.
         """
         pass
+
+    @classmethod
+    def keyed_nonce_calldata(
+        cls,
+        nonce_keys: Sequence[int],  # noqa: ARG003
+        nonce_seq: int,  # noqa: ARG003
+    ) -> bytes:
+        """
+        Return the bytes a frame transaction's nonce fields contribute to
+        its calldata pricing: empty before EIP-8250 introduces keyed
+        nonces, so call sites stay fork-correct at every fork.
+        """
+        return b""
 
     # Engine API information abstract methods
     @classmethod

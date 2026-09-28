@@ -99,6 +99,8 @@ from .transactions import (
 from .transactions.frame_transaction import (
     EXPIRY_VERIFIER,
     EXPIRY_VERIFIER_CODE,
+    NONCE_MANAGER,
+    NONCE_MANAGER_CODE,
     FrameTransaction,
 )
 from .utils.address import compute_contract_address
@@ -198,9 +200,21 @@ def apply_fork(old: BlockChain) -> BlockChain:
     previously nonexistent account keeps a zero nonce and any balance
     the account held before the fork is preserved.
 
+    As required by [EIP-8250], the nonce manager contract
+    ([`NONCE_MANAGER_CODE`][nmc]) is initialized at
+    [`NONCE_MANAGER`][nm]: a nonexistent account is created with a zero
+    balance and nonce one, and an existing account with no code gets
+    the code, a nonce of at least one, and keeps its balance. The EIP
+    requires the address to hold neither code nor storage on every
+    network it activates on and defines no transition for an account
+    that does; an account that already has code is left untouched.
+
     [EIP-8141]: https://eips.ethereum.org/EIPS/eip-8141
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
     [ev]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.EXPIRY_VERIFIER
     [evc]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.EXPIRY_VERIFIER_CODE
+    [nm]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER
+    [nmc]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER_CODE
     """  # noqa: E501
     state = old.state
     existing_account = state.get_account_optional(EXPIRY_VERIFIER)
@@ -217,6 +231,21 @@ def apply_fork(old: BlockChain) -> BlockChain:
             code_hash=code_hash,
         ),
     )
+
+    nonce_manager = state.get_account_optional(NONCE_MANAGER)
+    if nonce_manager is None:
+        nonce_manager = EMPTY_ACCOUNT
+    if nonce_manager.code_hash == EMPTY_CODE_HASH:
+        code_hash = store_code(state, NONCE_MANAGER_CODE)
+        set_account(
+            state,
+            NONCE_MANAGER,
+            Account(
+                nonce=max(nonce_manager.nonce, Uint(1)),
+                balance=nonce_manager.balance,
+                code_hash=code_hash,
+            ),
+        )
     return old
 
 

@@ -93,6 +93,72 @@ Exact length, in bytes, of an expiry verifier frame's data: an unsigned
 big-endian expiry timestamp.
 """
 
+NONCE_MANAGER: Final[Address] = Address(
+    bytes.fromhex("0000000000000000000000000000000000008250")
+)
+"""
+Address of the nonce manager system contract of [EIP-8250].
+
+Its storage holds the sequence of every keyed nonce domain a sender has
+used (see [`keyed_nonce_slot`][kns]). Only the protocol reads and writes
+these slots: the contract's code reverts every ordinary call.
+
+[EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
+[kns]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.keyed_nonce_slot
+"""  # noqa: E501
+
+NONCE_MANAGER_CODE: Final[Bytes] = Bytes(bytes.fromhex("60006000fd"))
+"""
+Runtime code of the nonce manager contract, installed at
+[`NONCE_MANAGER`][nm] when the fork activates (see [`apply_fork`][af]):
+`revert(0, 0)`, so any ordinary call reverts with empty return data.
+
+[nm]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER
+[af]: ref:ethereum.forks.amsterdam.fork.apply_fork
+"""  # noqa: E501
+
+MAX_NONCE_SEQ: Final[U64] = U64.MAX_VALUE
+"""
+The exhausted sequence value of a nonce domain. A frame transaction's
+[`nonce_seq`][ns] must be below it, so a domain whose sequence reaches
+it can never be selected again.
+
+[ns]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.FrameTransaction.nonce_seq
+"""  # noqa: E501
+
+MAX_NONCE_KEYS: Final[Uint] = Uint(16)
+"""
+Maximum number of nonce keys a [`FrameTransaction`][ftx] may select.
+
+[ftx]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.FrameTransaction
+"""  # noqa: E501
+
+
+def keyed_nonce_slot(sender: Address, nonce_key: U256) -> Bytes32:
+    """
+    Return the [`NONCE_MANAGER`][nm] storage slot holding the sequence of
+    `sender`'s nonce domain selected by the non-zero `nonce_key`: the
+    hash of the sender address left-padded to 32 bytes, followed by the
+    key's 32-byte big-endian encoding.
+
+    [nm]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER
+    """  # noqa: E501
+    padded_sender = bytes(32 - Address.LENGTH) + bytes(sender)
+    return Bytes32(keccak256(padded_sender + nonce_key.to_be_bytes32()))
+
+
+def nonce_keys_hash(nonce_keys: Tuple[U256, ...]) -> Hash32:
+    """
+    Return the canonical hash of a selected key set, as exposed by
+    `TXPARAM`: the key count followed by every key, each as a 32-byte
+    big-endian word. Valid key sets are strictly increasing, so each
+    set has exactly one hash.
+    """
+    encoded = bytes(U256(len(nonce_keys)).to_be_bytes32())
+    for nonce_key in nonce_keys:
+        encoded += nonce_key.to_be_bytes32()
+    return keccak256(encoded)
+
 
 @final
 class FrameMode(UintEnum, boundary=STRICT):
@@ -395,12 +461,30 @@ class FrameTransaction:
     The ID of the chain on which this transaction is executed.
     """
 
-    nonce: U256
+    nonce_keys: Tuple[U256, ...]
     """
-    A scalar value equal to the number of transactions sent by the
-    [`sender`][s].
+    The nonce domains the transaction selects, per [EIP-8250].
 
+    The single key `0` aliases the [`sender`][s]'s account nonce; every
+    other key selects an independent sequence stored under
+    [`NONCE_MANAGER`][nm]. A valid key set holds between one and
+    [`MAX_NONCE_KEYS`][mnk] keys, strictly increasing, and contains `0`
+    only as its sole key.
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
     [s]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.FrameTransaction.sender
+    [nm]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER
+    [mnk]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.MAX_NONCE_KEYS
+    """  # noqa: E501
+
+    nonce_seq: U64
+    """
+    The sequence number every selected domain in [`nonce_keys`][nk] must
+    currently hold for the transaction to be valid; below
+    [`MAX_NONCE_SEQ`][mns].
+
+    [nk]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.FrameTransaction.nonce_keys
+    [mns]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.MAX_NONCE_SEQ
     """  # noqa: E501
 
     sender: Address
@@ -624,8 +708,9 @@ def validate_frame_transaction(
     Constraints on individual fields — frame modes and flags, signature
     schemes, and field lengths — are mostly enforced by their types
     while the transaction is decoded. Checked here instead are the
-    nonce and fee-cap upper bounds, which are tighter than the decoded
-    types enforce, and the constraints that span several fields.
+    nonce sequence and fee-cap upper bounds, which are tighter than the
+    decoded types enforce, the structure of the selected nonce key set,
+    and the constraints that span several fields.
 
     A frame transaction has no gas limit field; its two gas anchors are
     derived instead. The per-transaction gas cap of [EIP-7825] bounds
@@ -641,8 +726,17 @@ def validate_frame_transaction(
         VERSIONED_HASH_VERSION_KZG,
     )
 
-    if tx.nonce >= U256(U64.MAX_VALUE):
-        raise NonceOverflowError("Nonce too high")
+    if tx.nonce_seq >= MAX_NONCE_SEQ:
+        raise NonceOverflowError("Nonce sequence too high")
+
+    key_count = ulen(tx.nonce_keys)
+    if key_count < Uint(1) or key_count > MAX_NONCE_KEYS:
+        raise InvalidFrameError("nonce key count out of bounds")
+    for index, nonce_key in enumerate(tx.nonce_keys):
+        if index > 0 and nonce_key <= tx.nonce_keys[index - 1]:
+            raise InvalidFrameError("nonce keys not strictly increasing")
+        if nonce_key == U256(0) and key_count != Uint(1):
+            raise InvalidFrameError("zero nonce key in a multi-key set")
 
     if tx.fees.max_fee_per_gas > Uint(U256.MAX_VALUE):
         raise FeeOverflowError("Max fee per gas too high")
@@ -796,14 +890,18 @@ def calculate_frame_transaction_intrinsic_cost(
     before execution is started.
 
     The intrinsic cost is the base cost, the per-frame cost, the calldata
-    cost of the byte fields priced as calldata — the `data` of each frame
-    and the `signer`, `message`, and `signature` bytes of each signature
-    entry — the signature verification cost, and the value transfer cost
-    of each value-bearing frame with an explicit target other than the
-    sender, covering the recipient balance write and transfer log.
-    Unlike other transaction types, there is no recipient component:
-    target access is paid during frame execution from each frame's own
-    execution gas budget.
+    cost of the byte fields priced as calldata — the encodings of the
+    nonce fields, the `data` of each frame, and the `signer`, `message`,
+    and `signature` bytes of each signature entry — the signature
+    verification cost, and the value transfer cost of each value-bearing
+    frame with an explicit target other than the sender, covering the
+    recipient balance write and transfer log. Unlike other transaction
+    types, there is no recipient component: target access is paid during
+    frame execution from each frame's own execution gas budget.
+
+    The nonce fields are priced as the RLP encoding of the key list
+    followed by the RLP encoding of the sequence ([EIP-8250]), exactly
+    as frame and signature data.
 
     The calldata floor of [EIP-7623] counts every charged byte uniformly
     per [EIP-7976] and is anchored on the costs the transaction always
@@ -813,12 +911,14 @@ def calculate_frame_transaction_intrinsic_cost(
 
     [EIP-7623]: https://eips.ethereum.org/EIPS/eip-7623
     [EIP-7976]: https://eips.ethereum.org/EIPS/eip-7976
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
     """
     from ..vm.gas import GasCosts
     from . import IntrinsicGasCost, count_tokens_in_data
 
-    tokens = Uint(0)
-    data_length = Uint(0)
+    nonce_calldata = rlp.encode(tx.nonce_keys) + rlp.encode(tx.nonce_seq)
+    tokens = count_tokens_in_data(nonce_calldata)
+    data_length = ulen(nonce_calldata)
     value_transfer_gas = Uint(0)
     for frame in tx.frames:
         tokens += count_tokens_in_data(frame.data)

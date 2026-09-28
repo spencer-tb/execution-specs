@@ -66,6 +66,18 @@ class StateGasCosts:
     AUTH_BASE: Final[StateGas] = (
         STATE_BYTES_PER_AUTH_BASE * COST_PER_STATE_BYTE
     )
+    KEYED_NONCE_FIRST_USE: Final[StateGas] = (
+        STATE_BYTES_PER_STORAGE_SET * COST_PER_STATE_BYTE
+    )
+    """
+    State gas charged for each keyed nonce domain a frame transaction
+    uses for the first time ([EIP-8250]): the first use creates the
+    domain's slot under the nonce manager, so it pays for one storage
+    set. Charged by the payment-scoped `APPROVE` from the approving
+    frame's state gas pool.
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
+    """
 
 
 # These values may be patched at runtime by a future gas repricing utility

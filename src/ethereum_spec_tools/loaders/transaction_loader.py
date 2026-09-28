@@ -50,6 +50,44 @@ class TransactionLoad:
         """Get the nonce for the transaction."""
         return hex_to_u256(self.raw.get("nonce"))
 
+    def json_to_nonce_keys(self) -> Any:
+        """
+        Get the nonce keys of a frame transaction.
+
+        A frame transaction authored without keyed nonce fields selects
+        the legacy account nonce, the single key zero.
+        """
+        raw_keys = self.raw.get("nonceKeys")
+        if raw_keys is None:
+            return (U256(0),)
+        try:
+            return tuple(hex_to_u256(key) for key in raw_keys)
+        except (ValueError, OverflowError) as e:
+            # A key beyond the field's width never decodes, so reject
+            # the transaction instead of crashing.
+            raise UnsupportedTxError(
+                None, f"invalid frame nonce field: {e}"
+            ) from e
+
+    def json_to_nonce_seq(self) -> U64:
+        """
+        Get the nonce sequence of a frame transaction.
+
+        A frame transaction authored without keyed nonce fields carries
+        its sequence in the legacy `nonce` field.
+        """
+        raw_seq = self.raw.get("nonceSeq")
+        if raw_seq is None:
+            return hex_to_u64(self.raw.get("nonce"))
+        try:
+            return hex_to_u64(raw_seq)
+        except (ValueError, OverflowError) as e:
+            # A sequence beyond the field's width never decodes, so
+            # reject the transaction instead of crashing.
+            raise UnsupportedTxError(
+                None, f"invalid frame nonce field: {e}"
+            ) from e
+
     def json_to_gas_price(self) -> Uint:
         """Get the gas price for the transaction."""
         return hex_to_uint(self.raw.get("gasPrice"))
