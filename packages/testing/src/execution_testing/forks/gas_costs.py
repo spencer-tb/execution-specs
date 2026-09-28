@@ -83,6 +83,10 @@ class GasCosts:
     FRAME_SIGNATURE_SCHEME_ARBITRARY: int = 0
     FRAME_SIGNATURE_SCHEME_SECP256K1: int = 0
     FRAME_SIGNATURE_SCHEME_P256: int = 0
+    # State gas a frame transaction's payment approval charges per keyed
+    # nonce domain it uses for the first time (EIP-8250); 0 before keyed
+    # nonces are introduced.
+    KEYED_NONCE_FIRST_USE: int = 0
 
     # Refunds
     REFUND_STORAGE_CLEAR: int

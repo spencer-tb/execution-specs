@@ -17,6 +17,7 @@ from ...transactions.frame_transaction import (
     APPROVE_SCOPE_MASK,
     FrameFlag,
     FrameSignatureScheme,
+    nonce_keys_hash,
     resolve_frame_target,
 )
 from ...vm.memory import buffer_read, memory_read_bytes, memory_write
@@ -89,6 +90,12 @@ def txparam(evm: Evm) -> None:
     """
     Push transaction-scoped information of the executing frame
     transaction onto the stack, selected by the parameter operand.
+
+    Parameters `0x0D` through `0x10` expose the keyed nonce fields of
+    [EIP-8250]: the pre-state legacy sender nonce, the selected key
+    count, the canonical key-set hash, and the first selected key.
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
     """
     # STACK
     param = pop(evm.stack)
@@ -104,7 +111,9 @@ def txparam(evm: Evm) -> None:
         # The frame transaction's type identifier.
         value = U256(0x06)
     elif param == U256(0x01):
-        value = U256(tx.nonce)
+        # The replay-protection sequence, which equals the sender's
+        # account nonce only when the transaction selects key zero.
+        value = U256(tx.nonce_seq)
     elif param == U256(0x02):
         value = U256.from_be_bytes(tx.sender)
     elif param == U256(0x03):
@@ -128,6 +137,17 @@ def txparam(evm: Evm) -> None:
     elif param == U256(0x0C):
         # State gas remaining in the executing frame's pool.
         value = U256(frame_context.state_gas_left)
+    elif param == U256(0x0D):
+        # The sender's account nonce as observed by stateful validity,
+        # before any frame executed; never updated within the
+        # transaction.
+        value = U256(frame_context.tx_legacy_nonce)
+    elif param == U256(0x0E):
+        value = U256(len(tx.nonce_keys))
+    elif param == U256(0x0F):
+        value = U256.from_be_bytes(nonce_keys_hash(tx.nonce_keys))
+    elif param == U256(0x10):
+        value = tx.nonce_keys[0]
     else:
         raise InvalidParameter("undefined TXPARAM parameter")
 

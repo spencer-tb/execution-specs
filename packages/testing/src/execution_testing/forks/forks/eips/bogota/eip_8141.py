@@ -99,13 +99,19 @@ class EIP8141(BaseFork):
         cls,
         frames: Sequence[FrameGasInfo],
         signatures: Sequence[FrameSignatureGasInfo],
+        nonce_keys: Sequence[int],
+        nonce_seq: int,
     ) -> List[Bytes]:
         """
         Return the transaction's byte fields priced as calldata: the
-        `data` of each frame and the `signer`, `msg`, and `signature`
-        bytes of each signature entry.
+        nonce field encodings — empty until a later EIP prices them —
+        the `data` of each frame and the `signer`, `msg`, and
+        `signature` bytes of each signature entry.
         """
-        charged_bytes = [Bytes(frame.data) for frame in frames]
+        charged_bytes = [
+            Bytes(cls.keyed_nonce_calldata(nonce_keys, nonce_seq))
+        ]
+        charged_bytes += [Bytes(frame.data) for frame in frames]
         for signature in signatures:
             charged_bytes += [
                 Bytes(signature.signer),
@@ -181,12 +187,14 @@ class EIP8141(BaseFork):
             frames: Sequence[FrameGasInfo] | int,
             signatures: Sequence[FrameSignatureGasInfo] = (),
             sender: BytesConvertible | None = None,
+            nonce_keys: Sequence[int] = (0,),
+            nonce_seq: int = 0,
         ) -> int:
             frame_list = cls._frame_list(frames)
             data_length = sum(
                 len(data)
                 for data in cls._frame_transaction_charged_bytes(
-                    frame_list, signatures
+                    frame_list, signatures, nonce_keys, nonce_seq
                 )
             )
             return cls._frame_transaction_base_cost(
@@ -245,10 +253,11 @@ class EIP8141(BaseFork):
         The intrinsic cost is the base cost, the per-frame cost, the
         verification cost of each signature entry, the value transfer
         cost of each qualifying value-bearing frame, and the calldata
-        cost of the charged byte fields. The transaction's derived gas
-        limit is the larger of the intrinsic cost plus the frame gas
-        limits in both dimensions and the calldata floor anchor plus
-        the frame state gas limits.
+        cost of the charged byte fields — including the nonce field
+        encodings once a later EIP prices them. The transaction's
+        derived gas limit is the larger of the intrinsic cost plus the
+        frame gas limits in both dimensions and the calldata floor
+        anchor plus the frame state gas limits.
         """
         calldata_gas_calculator = cls.calldata_gas_calculator()
         floor_cost_calculator = (
@@ -260,6 +269,8 @@ class EIP8141(BaseFork):
             frames: Sequence[FrameGasInfo] | int,
             signatures: Sequence[FrameSignatureGasInfo] = (),
             sender: BytesConvertible | None = None,
+            nonce_keys: Sequence[int] = (0,),
+            nonce_seq: int = 0,
             return_cost_deducted_prior_execution: bool = False,
         ) -> int:
             frame_list = cls._frame_list(frames)
@@ -268,7 +279,7 @@ class EIP8141(BaseFork):
             ) + sum(
                 calldata_gas_calculator(data=data)
                 for data in cls._frame_transaction_charged_bytes(
-                    frame_list, signatures
+                    frame_list, signatures, nonce_keys, nonce_seq
                 )
             )
 
@@ -286,7 +297,11 @@ class EIP8141(BaseFork):
             return max(
                 standard_gas_limit,
                 floor_cost_calculator(
-                    frames=frame_list, signatures=signatures, sender=sender
+                    frames=frame_list,
+                    signatures=signatures,
+                    sender=sender,
+                    nonce_keys=nonce_keys,
+                    nonce_seq=nonce_seq,
                 )
                 + total_state_gas,
             )

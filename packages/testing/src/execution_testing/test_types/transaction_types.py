@@ -444,6 +444,18 @@ class Transaction(
     frames: List[Frame] | None = None
     signatures: List[FrameSignature] | None = None
 
+    nonce_keys: List[HexNumber] | None = None
+    """
+    EIP-8250 nonce keys of a frame transaction. Unset selects the legacy
+    key set `[0]`, aliasing the sender's account nonce.
+    """
+    nonce_seq: HexNumber | None = None
+    """
+    EIP-8250 nonce sequence of a frame transaction. Unset mirrors the
+    legacy `nonce` field, which is only meaningful for the legacy key
+    set: a keyed transaction must set it explicitly.
+    """
+
     secret_key: Hash | None = None
     error: List[TransactionException] | TransactionException | None = Field(
         None, exclude=True
@@ -676,6 +688,31 @@ class Transaction(
             self.max_fee_per_gas,
             self.max_fee_per_blob_gas,
         ]
+
+    @property
+    def rlp_nonce_keys(self) -> List[HexNumber]:
+        """
+        Return the frame transaction's EIP-8250 `nonce_keys` RLP list:
+        the legacy key set when unset.
+        """
+        if self.nonce_keys is None:
+            return [HexNumber(0)]
+        return self.nonce_keys
+
+    @property
+    def rlp_nonce_seq(self) -> HexNumber:
+        """
+        Return the frame transaction's EIP-8250 `nonce_seq`: the legacy
+        `nonce` when unset, which only the legacy key set may rely on.
+        """
+        if self.nonce_seq is not None:
+            return self.nonce_seq
+        if self.nonce_keys is not None and self.nonce_keys != [0]:
+            raise ValueError(
+                "a frame transaction selecting keyed nonce domains "
+                "must set `nonce_seq` explicitly"
+            )
+        return self.nonce
 
     @property
     def signing_signatures(self) -> List[FrameSignature]:
@@ -1033,9 +1070,12 @@ class Transaction(
         field_list: List[str]
         if self.ty == 6 and self.frames is not None:
             # EIP-8141: https://eips.ethereum.org/EIPS/eip-8141
+            # EIP-8250 replaces `nonce` with `nonce_keys`, `nonce_seq`:
+            # https://eips.ethereum.org/EIPS/eip-8250
             field_list = [
                 "chain_id",
-                "nonce",
+                "rlp_nonce_keys",
+                "rlp_nonce_seq",
                 "sender",
                 "frames",
                 "signing_signatures",

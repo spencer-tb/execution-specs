@@ -4,11 +4,13 @@ Frame transaction processing.
 The block-level flow for [EIP-8141] frame transactions, separate from
 the regular flow in `fork.py` from admission onwards: a frame
 transaction has no single top-level call to dispatch — it executes a
-list of frames — and no upfront sender payment: the sender's nonce
-increment and the collection of the transaction's maximum cost are
-effects of the `APPROVE` instruction, during execution.
+list of frames — and no upfront sender payment: the consumption of the
+transaction's selected nonce domains ([EIP-8250]) and the collection of
+the transaction's maximum cost are effects of the `APPROVE`
+instruction, during execution.
 
 [EIP-8141]: https://eips.ethereum.org/EIPS/eip-8141
+[EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
 """
 
 from typing import Tuple
@@ -17,6 +19,7 @@ from ethereum_rlp import rlp
 from ethereum_types.bytes import Bytes
 from ethereum_types.numeric import U256, Uint
 
+from ethereum.exceptions import NonceMismatchError
 from ethereum.merkle_patricia_trie import trie_set
 from ethereum.state import Address
 
@@ -38,7 +41,6 @@ from .state_tracker import (
 )
 from .transactions import (
     calculate_effective_gas_price,
-    check_nonce,
     encode_transaction,
     get_transaction_hash,
 )
@@ -73,7 +75,12 @@ def check_frame_transaction(
     explicit field, authenticated by the signature entries during
     static validation — and no balance or EOA check: payment is
     collected from the payer during execution, when a frame `APPROVE`s
-    it.
+    it. The nonce check covers every domain the transaction selects
+    ([EIP-8250]): each must currently hold the transaction's sequence,
+    read from the actual pre-state at the transaction's position in
+    the block.
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
 
     Parameters
     ----------
@@ -106,7 +113,8 @@ def check_frame_transaction(
     GasUsedExceedsLimitError :
         If the gas used by the transaction exceeds the block's gas limit.
     NonceMismatchError :
-        If the nonce of the transaction is not equal to the sender's nonce.
+        If the transaction's nonce sequence differs from the current
+        sequence of any selected nonce domain.
     InsufficientMaxFeePerGasError :
         If the maximum fee per gas is insufficient for the transaction.
     InsufficientMaxFeePerBlobGasError :
@@ -161,7 +169,12 @@ def check_frame_transaction(
         block_env.excess_blob_gas,
     )
 
-    check_nonce(tx, sender_account.nonce)
+    for nonce_key in tx.nonce_keys:
+        current_seq = vm.current_nonce_seq(tx_state, tx.sender, nonce_key)
+        if current_seq > U256(tx.nonce_seq):
+            raise NonceMismatchError("nonce too low")
+        elif current_seq < U256(tx.nonce_seq):
+            raise NonceMismatchError("nonce too high")
 
     max_cost = validation.max_gas * tx.fees.max_fee_per_gas + Uint(
         calculate_total_blob_gas(tx)
@@ -197,6 +210,7 @@ def check_frame_transaction(
             sender_approved=False,
             state_gas_left=StateGas(Uint(0)),
             outstanding_charge_owners={},
+            tx_legacy_nonce=sender_account.nonce,
         ),
     )
 
