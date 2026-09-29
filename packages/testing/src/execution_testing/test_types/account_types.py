@@ -294,15 +294,27 @@ class Alloc(BaseAlloc):
         all three zero. This is how a fork installs code when it activates
         (EIP-8141's expiry verifier), as opposed to a predeploy that is part
         of the genesis allocation.
+
+        An install given as a mapping with a `nonce` also raises the
+        account's nonce to that minimum, keeping a higher existing one
+        (EIP-8272's recent root contract).
         """
         if not installs:
             return self
         root: Dict[Address, Account | None] = dict(self.root)
-        for address, code in installs.items():
+        for address, install in installs.items():
             address = Address(address)
-            root[address] = Account.merge(
-                root.get(address), Account(code=code)
-            )
+            existing = root.get(address)
+            if isinstance(install, Mapping):
+                code = install["code"]
+                nonce_floor = int(install.get("nonce", 0))
+            else:
+                code = install
+                nonce_floor = 0
+            installed_account = Account(code=code)
+            if nonce_floor > (existing.nonce if existing else 0):
+                installed_account = Account(code=code, nonce=nonce_floor)
+            root[address] = Account.merge(existing, installed_account)
         installed = Alloc(root)
         installed.migrate_state_commitment(self.state_commitment())
         return installed

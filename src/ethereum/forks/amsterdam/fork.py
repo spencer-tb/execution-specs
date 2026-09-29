@@ -27,7 +27,7 @@ from ethereum.exceptions import (
     InvalidSenderError,
 )
 from ethereum.forks.bpo5.blocks import Header as PreviousHeader
-from ethereum.merkle_patricia_trie import root, trie_set
+from ethereum.merkle_patricia_trie import EMPTY_TRIE_ROOT, root, trie_set
 from ethereum.state import (
     EMPTY_ACCOUNT,
     EMPTY_CODE_HASH,
@@ -39,6 +39,7 @@ from ethereum.state_mpt import (
     State,
     apply_changes_to_state,
     set_account,
+    storage_root,
     store_code,
 )
 
@@ -59,6 +60,11 @@ from .fork_types import (
     StateGas,
 )
 from .frame_processing import process_frame_transaction
+from .recent_roots import (
+    RECENT_ROOT_ADDRESS,
+    RECENT_ROOT_CODE,
+    RECENT_ROOT_NONCE,
+)
 from .requests import (
     BUILDER_DEPOSIT_REQUEST_TYPE,
     BUILDER_EXIT_REQUEST_TYPE,
@@ -198,11 +204,33 @@ def apply_fork(old: BlockChain) -> BlockChain:
     previously nonexistent account keeps a zero nonce and any balance
     the account held before the fork is preserved.
 
+    As required by [EIP-8272], the recent root contract
+    ([`RECENT_ROOT_CODE`][rrc]) is initialized at
+    [`RECENT_ROOT_ADDRESS`][rra]: a nonexistent account is created with
+    the code and nonce [`RECENT_ROOT_NONCE`][rrn]; an existing account
+    with empty code gets the code, its nonce raised to at least
+    [`RECENT_ROOT_NONCE`][rrn] and its balance preserved. The fork
+    configuration must select an address without code or storage in the
+    parent state of the first active block: an account already holding
+    code or storage makes that block invalid.
+
     [EIP-8141]: https://eips.ethereum.org/EIPS/eip-8141
     [ev]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.EXPIRY_VERIFIER
     [evc]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.EXPIRY_VERIFIER_CODE
+    [EIP-8272]: https://eips.ethereum.org/EIPS/eip-8272
+    [rrc]: ref:ethereum.forks.amsterdam.recent_roots.RECENT_ROOT_CODE
+    [rra]: ref:ethereum.forks.amsterdam.recent_roots.RECENT_ROOT_ADDRESS
+    [rrn]: ref:ethereum.forks.amsterdam.recent_roots.RECENT_ROOT_NONCE
     """  # noqa: E501
     state = old.state
+    recent_root_account = state.get_account_optional(RECENT_ROOT_ADDRESS)
+    if recent_root_account is None:
+        recent_root_account = EMPTY_ACCOUNT
+    if recent_root_account.code_hash != EMPTY_CODE_HASH:
+        raise InvalidBlock("recent root address already holds code")
+    if storage_root(state, RECENT_ROOT_ADDRESS) != EMPTY_TRIE_ROOT:
+        raise InvalidBlock("recent root address already holds storage")
+
     existing_account = state.get_account_optional(EXPIRY_VERIFIER)
     if existing_account is None:
         existing_account = EMPTY_ACCOUNT
@@ -214,6 +242,17 @@ def apply_fork(old: BlockChain) -> BlockChain:
         Account(
             nonce=existing_account.nonce,
             balance=existing_account.balance,
+            code_hash=code_hash,
+        ),
+    )
+
+    code_hash = store_code(state, RECENT_ROOT_CODE)
+    set_account(
+        state,
+        RECENT_ROOT_ADDRESS,
+        Account(
+            nonce=max(recent_root_account.nonce, RECENT_ROOT_NONCE),
+            balance=recent_root_account.balance,
             code_hash=code_hash,
         ),
     )
