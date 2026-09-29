@@ -206,6 +206,14 @@ def set_storage(
         del state._storage_tries[address]
 
 
+def storage_root(state: State, address: Address) -> Root:
+    """
+    Return the storage commitment of an account, including empty storage.
+    """
+    trie = state._storage_tries.get(address)
+    return EMPTY_TRIE_ROOT if trie is None else root(trie)
+
+
 def state_root(state: State) -> Root:
     """
     Compute the state root of the current state.

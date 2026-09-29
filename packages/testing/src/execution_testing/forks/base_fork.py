@@ -1425,6 +1425,12 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
         storage the account had before the fork are kept. In a blockchain
         test that starts at a fork already including them, the installs are
         applied to the genesis allocation instead.
+
+        A value is the code itself, or a mapping with the `code` and the
+        minimum `nonce` the install leaves at the address — for a fork
+        that initializes a system contract's nonce along with its code
+        (EIP-8272's recent root contract), where an existing higher nonce
+        is kept.
         """
         pass
 
