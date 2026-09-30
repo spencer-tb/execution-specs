@@ -81,6 +81,12 @@ slots, or an account creation plus fresh slots.
 WORKER_FRAME_GAS = 200_000
 """Execution gas budget of the frames running worker contracts."""
 
+NESTED_CALL_GAS = 100_000
+"""
+Execution gas a frame forwards to a nested call that approves: enough
+for a `CREATE` followed by the `APPROVE`.
+"""
+
 
 def delegated_sender_code(sender_work: Bytecode) -> Bytecode:
     """
@@ -1139,6 +1145,92 @@ def test_legacy_nonce_exhaustion_halts_approval(
         tx=tx,
         post={
             sender: Account(nonce=Spec.MAX_NONCE_SEQ),
+            created: Account.NONEXISTENT,
+            Spec.NONCE_MANAGER: Account(storage={}),
+        },
+    )
+
+
+@pytest.mark.pre_alloc_mutable
+def test_legacy_nonce_exhaustion_halts_nested_approval(
+    state_test: StateTestFiller, pre: Alloc, fork: Fork
+) -> None:
+    """
+    Exhaust the legacy nonce in a payment approval made by a nested
+    call: only that call halts, consuming its gas and undoing its
+    `CREATE`, while the enclosing `SENDER` frame carries on and
+    succeeds, so the later `VERIFY` frame approves payment instead.
+    """
+    sender_nonce = Spec.MAX_NONCE_SEQ - 1
+    frame_index = Op.TXPARAM(Spec8141.TXPARAM_FRAME_INDEX)
+    approve_allowed_scope = Op.APPROVE(
+        0, 0, Op.FRAMEPARAM(frame_index, Spec8141.FRAMEPARAM_ALLOWED_SCOPE)
+    )
+    nested_call = Op.CALL(
+        gas=NESTED_CALL_GAS,
+        address=Op.ADDRESS,
+        args_size=1,
+        # The first frame warmed both the sender and its delegate.
+        address_warm=True,
+        delegated_address=True,
+        delegated_address_warm=True,
+        new_memory_size=32,
+    )
+    measure_nested_call = CodeGasMeasure(
+        code=nested_call, extra_stack_items=1, sstore_key=SLOT_RESULT
+    )
+    outer_work = measure_nested_call + Op.SSTORE(SLOT_EXECUTED, 1) + Op.STOP
+    exhauster = pre.deploy_contract(
+        code=Conditional(
+            # Only the nested call has calldata.
+            condition=Op.CALLDATASIZE,
+            if_true=Op.POP(Op.CREATE(0, 0, 0)) + approve_allowed_scope,
+            if_false=delegated_sender_code(outer_work),
+        )
+    )
+    sender = pre.fund_eoa(nonce=sender_nonce, delegation=exhauster)
+    tx = Transaction(
+        sender=sender,
+        nonce=sender_nonce,
+        frames=[
+            verify_frame(flags=Spec8141.APPROVE_EXECUTION),
+            sender_frame(
+                flags=Spec8141.APPROVE_PAYMENT,
+                gas_limit=PROBE_FRAME_GAS,
+                state_gas_limit=PROBE_FRAME_STATE_GAS,
+            ),
+            verify_frame(flags=Spec8141.APPROVE_PAYMENT),
+        ],
+        nonce_keys=[0],
+        nonce_seq=sender_nonce,
+        expected_receipt=TransactionReceipt(
+            payer=sender,
+            frame_receipts=[
+                FrameReceipt(status=Spec8141.STATUS_SUCCESS, state_gas_used=0),
+                # The halted call's `CREATE` refills its state gas, so
+                # only the two recorded slots remain charged.
+                FrameReceipt(
+                    status=Spec8141.STATUS_SUCCESS,
+                    state_gas_used=outer_work.state_cost(fork),
+                ),
+                FrameReceipt(status=Spec8141.STATUS_SUCCESS, state_gas_used=0),
+            ],
+        ),
+    )
+    created = compute_create_address(address=sender, nonce=sender_nonce)
+    state_test(
+        pre=pre,
+        tx=tx,
+        post={
+            sender: Account(
+                nonce=Spec.MAX_NONCE_SEQ,
+                storage={
+                    # The halt forfeits all of the call's gas.
+                    SLOT_RESULT: nested_call.execution_cost(fork)
+                    + NESTED_CALL_GAS,
+                    SLOT_EXECUTED: 1,
+                },
+            ),
             created: Account.NONEXISTENT,
             Spec.NONCE_MANAGER: Account(storage={}),
         },
