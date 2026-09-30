@@ -14,6 +14,7 @@ from execution_testing import (
     Account,
     Alloc,
     Bytes,
+    CodeGasMeasure,
     Conditional,
     Fork,
     Frame,
@@ -43,6 +44,15 @@ SLOT_EXECUTED = 0x01
 
 SLOT_CALL_OUTCOME = 0x02
 """Storage slot used by target contracts to record a nested call's success."""
+
+SLOT_CALL_GAS = 0x03
+"""Storage slot used by target contracts to record a nested call's gas."""
+
+APPROVE_REGION_OFFSET = 0x100
+"""Offset of the return-data region a refused `APPROVE` names."""
+
+APPROVE_REGION_SIZE = 0x10000
+"""Size of the return-data region a refused `APPROVE` names."""
 
 
 def test_transfer_with_default_code(
@@ -549,6 +559,103 @@ def test_refused_approval_reverts_only_its_call_frame(
                     SLOT_CALL_OUTCOME: 0 if inner_attempts_approval else 1,
                     SLOT_EXECUTED: 1,
                 }
+            ),
+        },
+    )
+
+
+@pytest.mark.parametrize(
+    "region_size",
+    [
+        pytest.param(APPROVE_REGION_SIZE, id="large_region"),
+        pytest.param(0, id="zero_size"),
+    ],
+)
+@pytest.mark.parametrize(
+    "refusal",
+    [
+        pytest.param("foreign_target", id="foreign_target"),
+        pytest.param("disallowed_scope", id="disallowed_scope"),
+    ],
+)
+def test_refused_approval_charges_memory_expansion(
+    state_test: StateTestFiller,
+    pre: Alloc,
+    fork: Fork,
+    refusal: str,
+    region_size: int,
+) -> None:
+    """
+    Charge a refused `APPROVE`'s return-data memory expansion before
+    refusing it, as `RETURN` would, so the reverted call keeps that
+    gas consumed; the zero-size region is the control that expands
+    nothing.
+    """
+    sender = pre.fund_eoa()
+
+    # The frame carries no approval flags. A contract other than the
+    # frame's target is refused for its address, and code run in the
+    # target's context through `DELEGATECALL` for its scope.
+    inner_code = Op.APPROVE(
+        APPROVE_REGION_OFFSET,
+        region_size,
+        Spec.APPROVE_EXECUTION,
+        new_memory_size=APPROVE_REGION_OFFSET + region_size
+        if region_size
+        else 0,
+    )
+    inner = pre.deploy_contract(code=inner_code)
+    call_opcode = Op.CALL if refusal == "foreign_target" else Op.DELEGATECALL
+    inner_call = call_opcode(gas=Op.GAS, address=inner)
+    target_code = CodeGasMeasure(
+        code=inner_call, extra_stack_items=1, sstore_key=SLOT_CALL_GAS
+    ) + Op.SSTORE(SLOT_EXECUTED, 1)
+    target = pre.deploy_contract(code=target_code)
+
+    # The revert returns the inner call's unspent gas: its consumption
+    # is the call itself plus the inner code, memory expansion included.
+    call_gas = inner_call.execution_cost(fork) + inner_code.execution_cost(
+        fork
+    )
+
+    tx = Transaction(
+        sender=sender,
+        frames=[
+            Frame(
+                mode=Spec.MODE_VERIFY,
+                flags=Spec.APPROVE_EXECUTION_AND_PAYMENT,
+            ),
+            Frame(
+                mode=Spec.MODE_DEFAULT,
+                target=target,
+            ),
+        ],
+        expected_receipt=TransactionReceipt(
+            payer=sender,
+            frame_receipts=[
+                FrameReceipt(
+                    status=Spec.STATUS_SUCCESS,
+                    gas_used=default_code_frame_gas(fork, target_warm=True),
+                    logs=[],
+                ),
+                FrameReceipt(
+                    status=Spec.STATUS_SUCCESS,
+                    gas_used=fork.frame_entry_gas_calculator()()
+                    + target_code.execution_cost(fork)
+                    + inner_code.execution_cost(fork),
+                    state_gas_used=target_code.state_cost(fork),
+                ),
+            ],
+        ),
+    )
+
+    state_test(
+        pre=pre,
+        tx=tx,
+        post={
+            sender: Account(nonce=1),
+            target: Account(
+                storage={SLOT_CALL_GAS: call_gas, SLOT_EXECUTED: 1}
             ),
         },
     )
