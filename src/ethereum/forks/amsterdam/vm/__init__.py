@@ -37,17 +37,23 @@ from ..state_tracker import (
     BlockState,
     TransactionState,
     get_account,
+    get_storage,
     increment_nonce,
     is_account_alive,
     set_account_balance,
+    set_storage,
 )
 from ..transactions import LegacyTransaction
 from ..transactions.frame_transaction import (
     APPROVE_SCOPE_MASK,
+    MAX_NONCE_SEQ,
+    NONCE_MANAGER,
     FrameFlag,
     FrameTransaction,
+    keyed_nonce_slot,
     resolve_frame_target,
 )
+from .exceptions import NonceExhausted
 from .gas import (
     GasMeter,
     StateGasCosts,
@@ -272,6 +278,18 @@ class FrameContext:
     and clears the entry either way.
     """
 
+    tx_legacy_nonce: Uint
+    """
+    The sender's account nonce as observed by stateful validity, from
+    the transaction's actual pre-state before any frame executed
+    ([EIP-8250]). Transaction-scoped and never updated: payment
+    approval, keyed nonce consumption, account deployment, and
+    `CREATE` or `CREATE2` at the sender within the transaction leave it
+    unchanged. Exposed by `TXPARAM`.
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
+    """
+
 
 @final
 @dataclass
@@ -363,6 +381,93 @@ def restore_frame_context(
     )
 
 
+def current_nonce_seq(
+    tx_state: TransactionState, sender: Address, nonce_key: U256
+) -> U256:
+    """
+    Return the current sequence of `sender`'s nonce domain selected by
+    `nonce_key` ([EIP-8250]): the account nonce for key zero, and the
+    value of the key's [`NONCE_MANAGER`][nm] slot otherwise. An absent
+    slot reads as zero, and the protocol never writes zero, so a zero
+    read marks a domain never used.
+
+    The read is protocol bookkeeping: it neither warms the nonce
+    manager or its slot nor charges any access.
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
+    [nm]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER
+    """  # noqa: E501
+    if nonce_key == U256(0):
+        return U256(get_account(tx_state, sender).nonce)
+    return get_storage(
+        tx_state, NONCE_MANAGER, keyed_nonce_slot(sender, nonce_key)
+    )
+
+
+def nonce_transition_state_gas(tx_env: TransactionEnvironment) -> StateGas:
+    """
+    Return the state gas the payment approval's nonce transition
+    charges ([EIP-8250]).
+
+    For the legacy key set — the single key zero — it is the sender's
+    account creation when the sender does not exist as a live account
+    immediately before the approval, and nothing otherwise. For a keyed
+    set it is one storage set per selected domain used for the first
+    time, since consuming such a domain creates its slot.
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
+    """
+    frame_context = tx_env.frame_context
+    assert frame_context is not None
+    tx = frame_context.tx
+
+    if tx.nonce_keys == (U256(0),):
+        if is_account_alive(tx_env.state, tx.sender):
+            return StateGas(Uint(0))
+        return StateGasCosts.NEW_ACCOUNT
+
+    first_use_count = Uint(0)
+    for nonce_key in tx.nonce_keys:
+        if current_nonce_seq(tx_env.state, tx.sender, nonce_key) == U256(0):
+            first_use_count += Uint(1)
+    return StateGas(
+        Uint(StateGasCosts.KEYED_NONCE_FIRST_USE) * first_use_count
+    )
+
+
+def consume_nonce_set(
+    tx_state: TransactionState,
+    sender: Address,
+    nonce_keys: Tuple[U256, ...],
+    nonce_seq: U64,
+) -> None:
+    """
+    Advance every nonce domain the transaction selected ([EIP-8250]).
+
+    The legacy key set increments the sender's account nonce from its
+    current value — not to `nonce_seq + 1` — so an earlier frame that
+    already advanced the account nonce, by deploying the account or
+    executing `CREATE` at the sender, is respected. Each keyed domain's
+    slot is instead set to the sequence after the transaction's, which
+    stateful validity guarantees is in range.
+
+    The writes are protocol bookkeeping: they are not priced as
+    `SSTORE`s and leave the nonce manager and its slots cold.
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
+    """
+    if nonce_keys == (U256(0),):
+        increment_nonce(tx_state, sender)
+        return
+    for nonce_key in nonce_keys:
+        set_storage(
+            tx_state,
+            NONCE_MANAGER,
+            keyed_nonce_slot(sender, nonce_key),
+            U256(Uint(nonce_seq) + Uint(1)),
+        )
+
+
 def attempt_approval(
     tx_env: TransactionEnvironment,
     scope: FrameFlag,
@@ -377,22 +482,33 @@ def attempt_approval(
     transaction's sender. Approving payment requires that no payer is
     set, that execution is approved (by this same scope or earlier),
     and that the resolved target can cover the transaction's maximum
-    cost; it increments the sender's nonce and collects the maximum
-    cost from the resolved target, which becomes the payer. The payer
-    needs no warming here: it is the frame's resolved target, whose
-    access the frame charged and warmed at frame entry.
+    cost; it consumes the transaction's selected nonce domains and
+    collects the maximum cost from the resolved target, which becomes
+    the payer. The payer needs no warming here: it is the frame's
+    resolved target, whose access the frame charged and warmed at frame
+    entry.
 
-    When incrementing the nonce creates the sender account, the
-    account creation is charged from the executing frame's state gas
-    pool immediately before the increment. A pool that cannot cover
-    the charge halts the current call frame exceptionally — the halt's
-    rollback discards every approval effect, including an execution
-    approval this same call already recorded.
+    The nonce transition of [EIP-8250] runs once every check has
+    passed and before any approval effect is committed: its state gas
+    — the sender's account creation for the legacy key set, one
+    storage set per keyed domain used for the first time — is charged
+    from the executing frame's state gas pool, then the domains are
+    consumed. A pool that cannot cover the charge, or a legacy account
+    nonce that cannot advance without exceeding [`MAX_NONCE_SEQ`][mns],
+    halts the current call frame exceptionally — the halt's rollback
+    discards every approval effect, including an execution approval
+    this same call already recorded. The charge, the consumption, the
+    payment escrow, and the approval fields commit as one transition:
+    once the enclosing frame succeeds, no later frame's failure undoes
+    it.
 
     Return whether the approval was granted; a refusal reverts the
     requesting call frame, which is the frame itself only when the
     protocol default code is the caller.
-    """
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
+    [mns]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.MAX_NONCE_SEQ
+    """  # noqa: E501
     frame_context = tx_env.frame_context
     assert frame_context is not None
     tx = frame_context.tx
@@ -430,9 +546,14 @@ def attempt_approval(
     if approves_execution:
         frame_context.sender_approved = True
     if approves_payment:
-        if not is_account_alive(tx_env.state, tx.sender):
-            charge_frame_state_gas(frame_context, StateGasCosts.NEW_ACCOUNT)
-        increment_nonce(tx_env.state, tx.sender)
+        if tx.nonce_keys == (U256(0),) and get_account(
+            tx_env.state, tx.sender
+        ).nonce >= Uint(MAX_NONCE_SEQ):
+            raise NonceExhausted
+        charge_frame_state_gas(
+            frame_context, nonce_transition_state_gas(tx_env)
+        )
+        consume_nonce_set(tx_env.state, tx.sender, tx.nonce_keys, tx.nonce_seq)
         set_account_balance(
             tx_env.state,
             resolved_target,

@@ -137,3 +137,15 @@ class KZGProofError(ExceptionalHalt):
     """
 
     pass
+
+
+class NonceExhausted(ExceptionalHalt):
+    """
+    Raised when a frame transaction's payment approval would advance
+    the sender's account nonce beyond the maximum nonce sequence
+    ([EIP-8250]).
+
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
+    """
+
+    pass

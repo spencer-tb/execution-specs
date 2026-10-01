@@ -317,9 +317,10 @@ class ExecutionSpecsExceptionMapper(ExceptionMapper):
         # The "invalid frame ... field" messages come from the t8n
         # transaction loader for field values the transaction types
         # reject as they are constructed (undefined modes, flags, or
-        # schemes), which on a real client fail to decode.
+        # schemes, and EIP-8250 nonce fields beyond their width), which
+        # on a real client fail to decode.
         TransactionException.TYPE_6_INVALID_FRAME_FORMAT: (
             r"FrameCountError|InvalidMaxFeePerBlobGasError"
-            r"|invalid frame (signature )?field"
+            r"|invalid frame (signature |nonce )?field"
         ),
     }

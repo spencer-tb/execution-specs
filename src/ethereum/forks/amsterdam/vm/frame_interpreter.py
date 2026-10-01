@@ -331,9 +331,10 @@ def execute_default_verify_code(
     The default code draws no execution gas of its own: the frame's
     only execution charge is the resolved target's access, taken by
     `execute_frame` at frame entry. It can consume state gas through
-    `APPROVE`, when incrementing the nonce creates the sender
-    account; a pool that cannot cover that charge raises, halting the
-    frame exceptionally.
+    `APPROVE`'s nonce transition — the sender's account creation for
+    the legacy key set, the first use of keyed nonce domains otherwise;
+    a pool that cannot cover that charge raises, halting the frame
+    exceptionally.
 
     The default code approves the scope allowed by the frame's flags,
     provided the transaction carries an authorizing secp256k1
@@ -465,9 +466,10 @@ def execute_frame(
         try:
             status = execute_default_verify_code(tx_env, frame)
         except ExceptionalHalt:
-            # `APPROVE` could not cover the sender-creation state
-            # charge: the frame halts exceptionally with no approval
-            # effects, consuming its execution budget.
+            # `APPROVE`'s nonce transition failed — its state charge
+            # exceeded the pool, or the legacy nonce cannot advance:
+            # the frame halts exceptionally with no approval effects,
+            # consuming its execution budget.
             restore_frame_context(tx_env, entry_snapshot)
             return FrameOutcome(
                 receipt=FrameReceipt(

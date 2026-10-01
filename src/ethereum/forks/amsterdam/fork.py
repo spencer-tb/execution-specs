@@ -27,7 +27,7 @@ from ethereum.exceptions import (
     InvalidSenderError,
 )
 from ethereum.forks.bpo5.blocks import Header as PreviousHeader
-from ethereum.merkle_patricia_trie import root, trie_set
+from ethereum.merkle_patricia_trie import EMPTY_TRIE_ROOT, root, trie_set
 from ethereum.state import (
     EMPTY_ACCOUNT,
     EMPTY_CODE_HASH,
@@ -39,6 +39,7 @@ from ethereum.state_mpt import (
     State,
     apply_changes_to_state,
     set_account,
+    storage_root,
     store_code,
 )
 
@@ -99,6 +100,8 @@ from .transactions import (
 from .transactions.frame_transaction import (
     EXPIRY_VERIFIER,
     EXPIRY_VERIFIER_CODE,
+    NONCE_MANAGER,
+    NONCE_MANAGER_CODE,
     FrameTransaction,
 )
 from .utils.address import compute_contract_address
@@ -198,11 +201,34 @@ def apply_fork(old: BlockChain) -> BlockChain:
     previously nonexistent account keeps a zero nonce and any balance
     the account held before the fork is preserved.
 
+    As required by [EIP-8250], the nonce manager contract
+    ([`NONCE_MANAGER_CODE`][nmc]) is initialized at
+    [`NONCE_MANAGER`][nm]: a nonexistent account is created with a zero
+    balance and nonce one, and an existing account with empty code and
+    empty storage gets the code, a nonce of at least one, and keeps its
+    balance. The EIP requires the fork configuration to select an
+    address without code or storage on every network it activates on,
+    and defines no transition for an account that has either. Such an
+    account in the parent state of the first active block makes that
+    block invalid; the check runs before any account is modified, so a
+    rejected block leaves the parent state untouched.
+
     [EIP-8141]: https://eips.ethereum.org/EIPS/eip-8141
+    [EIP-8250]: https://eips.ethereum.org/EIPS/eip-8250
     [ev]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.EXPIRY_VERIFIER
     [evc]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.EXPIRY_VERIFIER_CODE
+    [nm]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER
+    [nmc]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.NONCE_MANAGER_CODE
     """  # noqa: E501
     state = old.state
+    nonce_manager = state.get_account_optional(NONCE_MANAGER)
+    if nonce_manager is None:
+        nonce_manager = EMPTY_ACCOUNT
+    if nonce_manager.code_hash != EMPTY_CODE_HASH:
+        raise InvalidBlock("nonce manager address already holds code")
+    if storage_root(state, NONCE_MANAGER) != EMPTY_TRIE_ROOT:
+        raise InvalidBlock("nonce manager address already holds storage")
+
     existing_account = state.get_account_optional(EXPIRY_VERIFIER)
     if existing_account is None:
         existing_account = EMPTY_ACCOUNT
@@ -214,6 +240,17 @@ def apply_fork(old: BlockChain) -> BlockChain:
         Account(
             nonce=existing_account.nonce,
             balance=existing_account.balance,
+            code_hash=code_hash,
+        ),
+    )
+
+    code_hash = store_code(state, NONCE_MANAGER_CODE)
+    set_account(
+        state,
+        NONCE_MANAGER,
+        Account(
+            nonce=max(nonce_manager.nonce, Uint(1)),
+            balance=nonce_manager.balance,
             code_hash=code_hash,
         ),
     )
