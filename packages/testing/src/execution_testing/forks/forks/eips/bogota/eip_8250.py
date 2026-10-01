@@ -10,10 +10,12 @@ https://eips.ethereum.org/EIPS/eip-8250
 """
 
 from dataclasses import replace
-from typing import Mapping, Sequence
+from typing import FrozenSet, Mapping, Sequence
 
 from ethereum_rlp import rlp
 from ethereum_types.numeric import U64, U256
+
+from execution_testing.base_types import Address
 
 from ....base_fork import BaseFork
 from ....gas_costs import GasCosts
@@ -77,3 +79,13 @@ class EIP8250(BaseFork):
                 "nonce": NONCE_MANAGER_NONCE,
             },
         } | super(EIP8250, cls).activation_code_installs()  # type: ignore
+
+    @classmethod
+    def recorded_activation_installs(cls) -> FrozenSet[Address]:
+        """
+        Record the nonce manager's initialization in the fork block's
+        block access list, at block access index 0.
+        """
+        parent = super(EIP8250, cls)
+        inherited = parent.recorded_activation_installs()  # type: ignore
+        return frozenset({Address(NONCE_MANAGER_ADDRESS)}) | inherited

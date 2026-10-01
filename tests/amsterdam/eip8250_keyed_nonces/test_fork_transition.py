@@ -22,6 +22,8 @@ from execution_testing import (
     Account,
     Alloc,
     BalAccountExpectation,
+    BalCodeChange,
+    BalNonceChange,
     Block,
     BlockAccessListExpectation,
     BlockchainTestFiller,
@@ -51,10 +53,41 @@ NONCE_MANAGER_UNTOUCHED = BlockAccessListExpectation(
 )
 """
 The nonce manager is in the block access list, read by a probe, and
-records no change: the initialization is not a block-level operation,
-so neither its code nor its nonce write appears there, not even in the
-block that performs it.
+records no code, nonce or storage change: outside the fork block the
+initialization does not run.
 """
+
+
+def nonce_manager_installed(
+    pre_fork_nonce: int | None,
+) -> BlockAccessListExpectation:
+    """
+    Return the fork block's expectation: the initialization recorded at
+    block access index 0 (EIP-7928's pre-execution index) as the code
+    change and, when the nonce moves, the nonce change to one; an
+    account that already had a higher nonce records no nonce change.
+    """
+    nonce_changes = []
+    if (pre_fork_nonce or 0) < Spec.NONCE_MANAGER_NONCE:
+        nonce_changes = [
+            BalNonceChange(
+                block_access_index=0, post_nonce=Spec.NONCE_MANAGER_NONCE
+            )
+        ]
+    return BlockAccessListExpectation(
+        account_expectations={
+            Spec.NONCE_MANAGER: BalAccountExpectation(
+                nonce_changes=nonce_changes,
+                code_changes=[
+                    BalCodeChange(
+                        block_access_index=0,
+                        new_code=Spec.NONCE_MANAGER_CODE,
+                    )
+                ],
+                storage_changes=[],
+            ),
+        }
+    )
 
 
 @pytest.mark.pre_alloc_mutable
@@ -81,6 +114,8 @@ def test_nonce_manager_initialized_at_fork_transition(
     The post-state pins the nonce at one for an account that did not
     exist or had a zero nonce, at its own value for one with a higher
     nonce, and the balance as it was — including a pre-fork transfer.
+    The fork block's access list records the initialization at block
+    access index 0, and no other block records a change.
     """
     sender = pre.fund_eoa()
     probe = pre.deploy_contract(
@@ -105,7 +140,7 @@ def test_nonce_manager_initialized_at_fork_transition(
         Block(
             timestamp=FORK_TIMESTAMP,
             txs=[Transaction(sender=sender, to=probe)],
-            expected_block_access_list=NONCE_MANAGER_UNTOUCHED,
+            expected_block_access_list=nonce_manager_installed(pre_fork_nonce),
         ),
         Block(
             timestamp=FORK_TIMESTAMP + 1,

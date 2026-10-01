@@ -10,6 +10,7 @@ from typing import (
     Callable,
     ClassVar,
     Dict,
+    FrozenSet,
     List,
     Mapping,
     Optional,
@@ -1445,6 +1446,19 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
         that initializes a system contract's nonce along with its code
         (EIP-8250's nonce manager), where an existing higher nonce is
         kept.
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def recorded_activation_installs(cls) -> FrozenSet[Address]:
+        """
+        Return the addresses whose activation install the fork block's
+        block access list records, at block access index 0.
+
+        An EIP that requires its initialization to appear in the block
+        access list adds its address here; every other install in
+        `activation_code_installs` stays out of the list.
         """
         pass
 
