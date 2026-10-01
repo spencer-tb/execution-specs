@@ -51,7 +51,8 @@ def test_sequence_progression(
 
     The second transaction carries the next sequence and pays no
     first-use state gas; the slot ends holding the sequence after the
-    last use.
+    last use. The block access list records the slot's write at each
+    transaction's own index.
     """
     sender = pre.fund_eoa()
     txs = [
@@ -69,14 +70,99 @@ def test_sequence_progression(
     txs[1].expected_receipt = TransactionReceipt(
         cumulative_gas_used=first_gas + second_gas
     )
+    nonce_manager_writes = BalAccountExpectation(
+        nonce_changes=[],
+        balance_changes=[],
+        code_changes=[],
+        storage_changes=[
+            BalStorageSlot(
+                slot=keyed_nonce_slot(sender, NONCE_KEY),
+                slot_changes=[
+                    BalStorageChange(block_access_index=1, post_value=1),
+                    BalStorageChange(block_access_index=2, post_value=2),
+                ],
+            )
+        ],
+    )
     blockchain_test(
         pre=pre,
-        blocks=[Block(txs=txs)],
+        blocks=[
+            Block(
+                txs=txs,
+                expected_block_access_list=BlockAccessListExpectation(
+                    account_expectations={
+                        Spec.NONCE_MANAGER: nonce_manager_writes,
+                    }
+                ),
+            )
+        ],
         post={
             Spec.NONCE_MANAGER: Account(
                 storage={keyed_nonce_slot(sender, NONCE_KEY): 2}
             ),
             sender: Account(nonce=0),
+        },
+    )
+
+
+def test_sequences_are_per_sender(
+    blockchain_test: BlockchainTestFiller, pre: Alloc
+) -> None:
+    """
+    Use one key from two senders in a block.
+
+    Each sender's domain is its own slot, so after the first sender
+    consumes the key at sequence zero, sequence zero is still current
+    for the second; both transactions are valid and each writes its
+    own slot at its own index in the block access list.
+    """
+    senders = [pre.fund_eoa(), pre.fund_eoa()]
+    txs = [
+        Transaction(
+            sender=sender,
+            frames=[verify_frame()],
+            nonce_keys=[NONCE_KEY],
+            nonce_seq=0,
+        )
+        for sender in senders
+    ]
+    slot_writes = sorted(
+        (
+            BalStorageSlot(
+                slot=keyed_nonce_slot(sender, NONCE_KEY),
+                slot_changes=[
+                    BalStorageChange(block_access_index=index, post_value=1)
+                ],
+            )
+            for index, sender in enumerate(senders, start=1)
+        ),
+        key=lambda write: int(write.slot),
+    )
+    blockchain_test(
+        pre=pre,
+        blocks=[
+            Block(
+                txs=txs,
+                expected_block_access_list=BlockAccessListExpectation(
+                    account_expectations={
+                        Spec.NONCE_MANAGER: BalAccountExpectation(
+                            nonce_changes=[],
+                            balance_changes=[],
+                            code_changes=[],
+                            storage_changes=slot_writes,
+                        ),
+                    }
+                ),
+            )
+        ],
+        post={
+            Spec.NONCE_MANAGER: Account(
+                storage={
+                    keyed_nonce_slot(sender, NONCE_KEY): 1
+                    for sender in senders
+                }
+            ),
+            **{sender: Account(nonce=0) for sender in senders},
         },
     )
 

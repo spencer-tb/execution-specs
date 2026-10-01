@@ -24,6 +24,8 @@ from execution_testing import (
     BalAccountExpectation,
     BalCodeChange,
     BalNonceChange,
+    BalStorageChange,
+    BalStorageSlot,
     Block,
     BlockAccessListExpectation,
     BlockchainTestFiller,
@@ -173,7 +175,9 @@ def test_keyed_transaction_in_first_post_fork_block(
 
     The nonce manager is initialized before the block's transactions
     run, so the approval finds the account in place and writes the
-    consumed key's slot into it.
+    consumed key's slot into it. The fork block's access list records
+    the initialization at block access index 0 and the slot write at
+    the transaction's index.
     """
     sender = pre.fund_eoa()
     tx = Transaction(
@@ -184,7 +188,39 @@ def test_keyed_transaction_in_first_post_fork_block(
     )
     blocks = [
         Block(timestamp=FORK_TIMESTAMP - 1),
-        Block(timestamp=FORK_TIMESTAMP, txs=[tx]),
+        Block(
+            timestamp=FORK_TIMESTAMP,
+            txs=[tx],
+            expected_block_access_list=BlockAccessListExpectation(
+                account_expectations={
+                    Spec.NONCE_MANAGER: BalAccountExpectation(
+                        nonce_changes=[
+                            BalNonceChange(
+                                block_access_index=0,
+                                post_nonce=Spec.NONCE_MANAGER_NONCE,
+                            )
+                        ],
+                        balance_changes=[],
+                        code_changes=[
+                            BalCodeChange(
+                                block_access_index=0,
+                                new_code=Spec.NONCE_MANAGER_CODE,
+                            )
+                        ],
+                        storage_changes=[
+                            BalStorageSlot(
+                                slot=keyed_nonce_slot(sender, NONCE_KEY),
+                                slot_changes=[
+                                    BalStorageChange(
+                                        block_access_index=1, post_value=1
+                                    )
+                                ],
+                            )
+                        ],
+                    ),
+                }
+            ),
+        ),
     ]
     post = {
         Spec.NONCE_MANAGER: Account(
