@@ -446,6 +446,16 @@ def test_frame_mode_count() -> None:
     assert Bogota.frame_mode_count() == 4
 
 
+def test_frame_flag_bit_count() -> None:
+    """
+    Count no frame flag bits before frame transactions, the three
+    EIP-8141 bits, and EIP-7906's `POST_TX_EXEMPT` bit on top of them.
+    """
+    assert Osaka.frame_flag_bit_count() == 0
+    assert Amsterdam.frame_flag_bit_count() == 0
+    assert Bogota.frame_flag_bit_count() == 4
+
+
 def test_tx_types() -> None:  # noqa: D103
     assert Cancun.tx_types() == list(reversed(range(4)))
 

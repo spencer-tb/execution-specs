@@ -160,37 +160,38 @@ class AtomicBatch:
 @dataclass
 class ExecutionBody:
     """
-    Rollback point captured when the validation prefix ends.
+    Rollback point captured when the validation prefix ends, and moved
+    past each `POST_TX_EXEMPT` frame of the execution body.
 
     The validation prefix is the shortest prefix of frames whose
     execution sets `payer`, and every frame after it is the execution
     body. When a `POST_TX` frame fails, `revert_execution_body`
     restores everything captured here, the same three rollback domains
-    an atomic batch captures, so the transaction keeps the prefix's
-    effects, the gas payment included, and loses the body's
-    ([EIP-7906]).
+    an atomic batch captures, so the transaction keeps the effects of
+    the prefix and of the exempt frames, the gas payment included, and
+    loses the rest of the body ([EIP-7906]).
 
     [EIP-7906]: https://eips.ethereum.org/EIPS/eip-7906
     """
 
     first_frame_index: Uint
     """
-    Index of the first frame of the execution body.
+    Index of the first frame the rollback reverts.
     """
 
     state_snapshot: TransactionState
     """
-    Copy of the transaction state taken when the prefix ended.
+    Copy of the transaction state taken at the rollback point.
     """
 
     context_snapshot: FrameContext
     """
-    Copy of the frame context taken when the prefix ended.
+    Copy of the frame context taken at the rollback point.
     """
 
     journal: FrameJournal
     """
-    Copy of the frame journal taken when the prefix ended.
+    Copy of the frame journal taken at the rollback point.
     """
 
 
@@ -286,6 +287,25 @@ def unroll_atomic_batch(
     return batch.journal
 
 
+def checkpoint_execution_body(
+    tx_env: TransactionEnvironment,
+    journal: FrameJournal,
+    first_frame_index: Uint,
+) -> ExecutionBody:
+    """
+    Capture the rollback point a failing `POST_TX` frame restores to,
+    reverting the frames from `first_frame_index` on.
+    """
+    context_snapshot = copy_frame_context(tx_env)
+    assert context_snapshot is not None
+    return ExecutionBody(
+        first_frame_index=first_frame_index,
+        state_snapshot=copy_tx_state(tx_env.state),
+        context_snapshot=context_snapshot,
+        journal=copy_frame_journal(journal),
+    )
+
+
 def revert_execution_body(
     tx_env: TransactionEnvironment,
     body: ExecutionBody,
@@ -294,8 +314,9 @@ def revert_execution_body(
     Revert the execution body after a `POST_TX` frame failed.
 
     The transaction state and the frame context are restored to the
-    condition at the end of the validation prefix, and the receipts of
-    the executed body frames, the failed `POST_TX` frame's included,
+    condition at the end of the validation prefix, or after the last
+    `POST_TX_EXEMPT` frame of the body, and the receipts of the frames
+    executed after that point, the failed `POST_TX` frame's included,
     are re-appended keeping their status and execution gas, with their
     logs emptied and their state gas zeroed, as an atomic batch unroll
     does. The payer stays charged for the gas the body consumed up to
@@ -670,10 +691,11 @@ def process_frames(
 
     A failing frame of an atomic batch unrolls the batch, and the
     remaining batch frames are skipped. A failing `POST_TX` frame
-    reverts the whole execution body instead, whatever batches it
-    held. The remaining frames, all `POST_TX` frames since the mode
-    forms a trailing suffix, are skipped: the transaction's outcome is
-    already reverted, so they have nothing left to assert.
+    reverts the execution body instead, whatever batches it held,
+    keeping only its leading `POST_TX_EXEMPT` frames. The remaining
+    frames, all `POST_TX` frames since the mode forms a trailing
+    suffix, are skipped: the transaction's outcome is already
+    reverted, so they have nothing left to assert.
 
     Both gas dimensions settle from the final receipts: each frame's
     unused gas is its budget less its receipt's usage, so gas a
@@ -754,6 +776,9 @@ def process_frames(
                 "SENDER frame before execution approval"
             )
 
+        in_body = body is not None
+        is_exempt = FrameFlag.POST_TX_EXEMPT in frame.flags
+
         # Transient storage is discarded between frames.
         tx_state.transient_storage.clear()
 
@@ -805,19 +830,23 @@ def process_frames(
         elif terminates_batch:
             open_batch = None
 
+        if (
+            in_body
+            and is_exempt
+            and frame.mode in (FrameMode.DEFAULT, FrameMode.SENDER)
+        ):
+            # Move the rollback point past this exempt frame. Every
+            # frame of an exempt batch is exempt, and no batch holds a
+            # `POST_TX` frame, so a point taken inside a batch is
+            # replaced before any assertion runs.
+            body = checkpoint_execution_body(tx_env, journal, Uint(index + 1))
+
         if body is None and frame_context.payer is not None:
             # The validation prefix ended with this frame: checkpoint
             # the state a failing `POST_TX` frame restores to. Approval
             # scope is banned on batch frames, so no batch is open.
             assert open_batch is None
-            context_snapshot = copy_frame_context(tx_env)
-            assert context_snapshot is not None
-            body = ExecutionBody(
-                first_frame_index=Uint(index + 1),
-                state_snapshot=copy_tx_state(tx_state),
-                context_snapshot=context_snapshot,
-                journal=copy_frame_journal(journal),
-            )
+            body = checkpoint_execution_body(tx_env, journal, Uint(index + 1))
 
     if frame_context.payer is None:
         raise FrameTransactionExecutionError("no frame approved gas payment")

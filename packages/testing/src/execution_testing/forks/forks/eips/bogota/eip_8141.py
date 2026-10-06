@@ -57,6 +57,11 @@ class EIP8141(BaseFork):
         return 3
 
     @classmethod
+    def frame_flag_bit_count(cls) -> int:
+        """The approval scope bits and the atomic batch bit are introduced."""
+        return 3
+
+    @classmethod
     def gas_costs(cls) -> GasCosts:
         """Add the frame transaction intrinsic gas constants."""
         return replace(

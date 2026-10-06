@@ -175,6 +175,20 @@ class FrameFlag(UintFlag, boundary=STRICT):
     [`Frame`]: ref:ethereum.forks.bogota.transactions.frame_transaction.Frame
     """  # noqa: E501
 
+    POST_TX_EXEMPT = Uint(8)
+    """
+    [`Frame`] keeps its state changes when a `POST_TX` frame fails, as
+    defined by [EIP-7906].
+
+    Valid only on `DEFAULT` and `SENDER` frames. Exempt frames precede
+    every other `DEFAULT` or `SENDER` frame of the execution body, so a
+    failing `POST_TX` frame restores a single checkpoint taken after the
+    last of them.
+
+    [`Frame`]: ref:ethereum.forks.bogota.transactions.frame_transaction.Frame
+    [EIP-7906]: https://eips.ethereum.org/EIPS/eip-7906
+    """  # noqa: E501
+
 
 APPROVE_SCOPE_MASK: Final[FrameFlag] = (
     FrameFlag.APPROVE_PAYMENT | FrameFlag.APPROVE_EXECUTION
@@ -639,8 +653,10 @@ def validate_frame_transaction(
     while the transaction is decoded. Checked here instead are the
     nonce and fee-cap upper bounds, which are tighter than the decoded
     types enforce, and the constraints that span several fields,
-    including [EIP-7906]'s rule that `POST_TX` frames form a trailing
-    suffix of the frame list.
+    including [EIP-7906]'s rules that `POST_TX` frames form a trailing
+    suffix of the frame list and that no `POST_TX_EXEMPT` frame follows
+    a non-exempt `DEFAULT` or `SENDER` frame once a frame carries the
+    payment approval scope.
 
     [EIP-7906]: https://eips.ethereum.org/EIPS/eip-7906
 
@@ -765,6 +781,25 @@ def validate_frame_transaction(
                 "atomic batch frames cannot carry approval scope"
             )
 
+        # EIP-7906: only `DEFAULT` and `SENDER` frames may be exempt, and
+        # an atomic batch is exempt as a whole or not at all, so a failed
+        # assertion never keeps part of a batch.
+        if FrameFlag.POST_TX_EXEMPT in frame.flags and frame.mode not in (
+            FrameMode.DEFAULT,
+            FrameMode.SENDER,
+        ):
+            raise InvalidFrameError(
+                "POST_TX_EXEMPT is valid only on DEFAULT and SENDER frames"
+            )
+        if index > 0 and FrameFlag.ATOMIC_BATCH in tx.frames[index - 1].flags:
+            previous_exempt = (
+                FrameFlag.POST_TX_EXEMPT in tx.frames[index - 1].flags
+            )
+            if (FrameFlag.POST_TX_EXEMPT in frame.flags) != previous_exempt:
+                raise InvalidFrameError(
+                    "atomic batch frames must agree on POST_TX_EXEMPT"
+                )
+
         if frame.mode == FrameMode.VERIFY and frame.to == EXPIRY_VERIFIER:
             if has_expiry_verifier_frame:
                 raise InvalidFrameError("multiple expiry verifier frames")
@@ -779,6 +814,23 @@ def validate_frame_transaction(
                 raise InvalidFrameError(
                     "expiry verifier frame data must be an expiry timestamp"
                 )
+
+    exempt_allowed = True
+    payment_seen = False
+    for frame in tx.frames:
+        is_exempt = FrameFlag.POST_TX_EXEMPT in frame.flags
+        if is_exempt and not exempt_allowed:
+            raise InvalidFrameError(
+                "POST_TX_EXEMPT frame after a non-exempt body frame"
+            )
+        if FrameFlag.APPROVE_PAYMENT in frame.flags:
+            payment_seen = True
+        elif (
+            payment_seen
+            and frame.mode in (FrameMode.DEFAULT, FrameMode.SENDER)
+            and not is_exempt
+        ):
+            exempt_allowed = False
 
     intrinsic = calculate_frame_transaction_intrinsic_cost(tx)
     standard_gas_limit = Uint(intrinsic.execution) + total_frame_gas

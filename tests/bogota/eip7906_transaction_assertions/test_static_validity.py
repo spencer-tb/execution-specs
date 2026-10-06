@@ -1,7 +1,9 @@
 """
 Static validity of frame transactions carrying `POST_TX` frames
-(EIP-7906): the mode's suffix rule, its value restriction, and its
-place outside atomic batches.
+(EIP-7906): the mode's suffix rule, its value restriction, its place
+outside atomic batches, the frames that may be `POST_TX_EXEMPT`, and
+the order of exempt frames once a frame carries the payment approval
+scope.
 
 The first mode value beyond `POST_TX` is rejected by the EIP-8141
 suite's `test_first_undefined_frame_mode`, which reads the boundary
@@ -38,7 +40,7 @@ from tests.bogota.eip8141_frame_transactions.helpers import (
 from tests.bogota.eip8141_frame_transactions.spec import Spec as Spec8141
 
 from .helpers import post_tx_frame, success_receipts
-from .spec import ref_spec_7906
+from .spec import Spec, ref_spec_7906
 
 REFERENCE_SPEC_GIT_PATH = ref_spec_7906.git_path
 REFERENCE_SPEC_VERSION = ref_spec_7906.version
@@ -105,11 +107,80 @@ INVALID_FRAME_LISTS = [
         ],
         id="failing_batch_skips_assertion",
     ),
+    pytest.param(
+        lambda fork, noop, _: [
+            verify_frame(
+                flags=Spec8141.APPROVE_EXECUTION_AND_PAYMENT
+                | Spec.POST_TX_EXEMPT_FLAG
+            ),
+            post_tx_frame(fork, target=noop),
+        ],
+        id="verify_with_exempt_flag",
+    ),
+    pytest.param(
+        lambda fork, noop, _: [
+            verify_frame(),
+            post_tx_frame(fork, target=noop, flags=Spec.POST_TX_EXEMPT_FLAG),
+        ],
+        id="post_tx_with_exempt_flag",
+    ),
+    pytest.param(
+        lambda fork, noop, _: [
+            verify_frame(),
+            sender_frame(
+                target=noop,
+                flags=Spec8141.ATOMIC_BATCH_FLAG | Spec.POST_TX_EXEMPT_FLAG,
+            ),
+            sender_frame(target=noop),
+            post_tx_frame(fork, target=noop),
+        ],
+        id="exempt_batch_with_non_exempt_terminator",
+    ),
+    pytest.param(
+        lambda fork, noop, _: [
+            verify_frame(),
+            sender_frame(target=noop, flags=Spec8141.ATOMIC_BATCH_FLAG),
+            sender_frame(target=noop, flags=Spec.POST_TX_EXEMPT_FLAG),
+            post_tx_frame(fork, target=noop),
+        ],
+        id="exempt_terminator_of_non_exempt_batch",
+    ),
+    pytest.param(
+        lambda fork, noop, _: [
+            verify_frame(),
+            sender_frame(target=noop),
+            sender_frame(target=noop, flags=Spec.POST_TX_EXEMPT_FLAG),
+            post_tx_frame(fork, target=noop),
+        ],
+        id="exempt_after_non_exempt_sender",
+    ),
+    pytest.param(
+        lambda fork, noop, _: [
+            verify_frame(),
+            default_frame(target=noop),
+            sender_frame(target=noop, flags=Spec.POST_TX_EXEMPT_FLAG),
+            post_tx_frame(fork, target=noop),
+        ],
+        id="exempt_after_non_exempt_default",
+    ),
+    pytest.param(
+        lambda fork, noop, _: [
+            verify_frame(flags=Spec8141.APPROVE_EXECUTION),
+            verify_frame(target=noop, flags=Spec8141.APPROVE_PAYMENT),
+            sender_frame(target=noop),
+            sender_frame(target=noop, flags=Spec.POST_TX_EXEMPT_FLAG),
+            post_tx_frame(fork, target=noop),
+        ],
+        id="exempt_after_non_exempt_sponsored",
+    ),
 ]
 """
 Frame lists breaking one `POST_TX` static rule each: only `POST_TX`
 frames may follow one, a `POST_TX` frame carries no value and no atomic
-batch flag, and no atomic batch may end on a `POST_TX` frame.
+batch flag, no atomic batch may end on a `POST_TX` frame, only `DEFAULT`
+and `SENDER` frames may be exempt, a batch is exempt as a whole, and
+no exempt frame follows a non-exempt `DEFAULT` or `SENDER` frame once a
+frame carries the payment approval scope.
 
 The `VERIFY` frame after a `POST_TX` frame carries only the payment
 scope, so no rule but the suffix rule rejects it. A failing batch

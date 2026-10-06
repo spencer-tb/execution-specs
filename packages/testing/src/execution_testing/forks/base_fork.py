@@ -1287,6 +1287,18 @@ class BaseFork(ForkOpcodeInterface, metaclass=BaseForkMeta):
 
     @classmethod
     @abstractmethod
+    def frame_flag_bit_count(cls) -> int:
+        """
+        Return the number of flag bits an EIP-8141 frame may carry at the
+        fork, zero before frame transactions exist.
+
+        Flag bits are numbered from zero, so one shifted left by the
+        count is the smallest reserved flag.
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
     def contract_creating_tx_types(cls) -> List[int]:
         """
         Return list of the transaction types supported by the fork that can

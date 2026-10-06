@@ -387,18 +387,10 @@ FRAME_CASES = [
     ),
     # Decode-time rejections: field values outside their type's
     # domain never construct, so the transaction never decodes.
-    # The first undefined mode moves as later EIPs add modes. It is
-    # covered by `test_first_undefined_frame_mode` through the fork.
     pytest.param(
         [verify_frame(), default_frame(mode=255)],
         TransactionException.TYPE_6_INVALID_FRAME_FORMAT,
         id="undefined_frame_mode_high",
-        marks=pytest.mark.exception_test,
-    ),
-    pytest.param(
-        [verify_frame(), default_frame(flags=0x08)],
-        TransactionException.TYPE_6_INVALID_FRAME_FORMAT,
-        id="reserved_frame_flag",
         marks=pytest.mark.exception_test,
     ),
     pytest.param(
@@ -516,6 +508,53 @@ def test_first_undefined_frame_mode_transaction(
     tx = Transaction(
         sender=sender,
         frames=[verify_frame(), default_frame(mode=fork.frame_mode_count())],
+        error=TransactionException.TYPE_6_INVALID_FRAME_FORMAT,
+    )
+
+    transaction_test(pre=pre, tx=tx)
+
+
+@pytest.mark.exception_test
+def test_first_reserved_frame_flag(
+    state_test: StateTestFiller,
+    pre: Alloc,
+    fork: Fork,
+) -> None:
+    """
+    Reject a frame carrying the first flag bit the fork leaves reserved:
+    the value never decodes into frame flags, so the transaction never
+    decodes.
+    """
+    sender = pre.fund_eoa()
+    tx = Transaction(
+        sender=sender,
+        frames=[
+            verify_frame(),
+            default_frame(flags=1 << fork.frame_flag_bit_count()),
+        ],
+        error=TransactionException.TYPE_6_INVALID_FRAME_FORMAT,
+    )
+
+    state_test(pre=pre, tx=tx, post={sender: Account(nonce=0)})
+
+
+@pytest.mark.exception_test
+def test_first_reserved_frame_flag_transaction(
+    transaction_test: TransactionTestFiller,
+    pre: Alloc,
+    fork: Fork,
+) -> None:
+    """
+    Assert `test_first_reserved_frame_flag` on the transaction itself
+    rather than on a block containing it.
+    """
+    sender = pre.fund_eoa()
+    tx = Transaction(
+        sender=sender,
+        frames=[
+            verify_frame(),
+            default_frame(flags=1 << fork.frame_flag_bit_count()),
+        ],
         error=TransactionException.TYPE_6_INVALID_FRAME_FORMAT,
     )
 

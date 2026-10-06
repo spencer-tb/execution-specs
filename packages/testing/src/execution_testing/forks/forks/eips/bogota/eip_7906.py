@@ -22,6 +22,9 @@ from ....gas_costs import GasCosts
 POST_TX_MODE = 3
 """Frame mode value of a `POST_TX` assertion frame."""
 
+POST_TX_EXEMPT_BIT = 3
+"""Frame flag bit of `POST_TX_EXEMPT`."""
+
 
 class EIP7906(BaseFork):
     """EIP-7906 class."""
@@ -31,6 +34,13 @@ class EIP7906(BaseFork):
         """The `POST_TX` frame mode is introduced after the existing ones."""
         count = super(EIP7906, cls).frame_mode_count()
         assert count == POST_TX_MODE, "POST_TX must be the next frame mode"
+        return count + 1
+
+    @classmethod
+    def frame_flag_bit_count(cls) -> int:
+        """The `POST_TX_EXEMPT` bit follows the atomic batch bit."""
+        count = super(EIP7906, cls).frame_flag_bit_count()
+        assert count == POST_TX_EXEMPT_BIT, "POST_TX_EXEMPT must be next"
         return count + 1
 
     @classmethod

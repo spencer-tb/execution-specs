@@ -28,6 +28,9 @@ class Spec:
     MODE_POST_TX = 3
     """The `POST_TX` frame mode value."""
 
+    POST_TX_EXEMPT_FLAG = 0x8
+    """The `POST_TX_EXEMPT` frame flag, from ethereum/EIPs#12304."""
+
     # The EIP defers the opcode bytes to EIP-8141's frame-family
     # registry, which is still unmerged. Use the candidate allocation in
     # ethereum/EIPs#12253 (head 678733edeb35f7fed84f3cc637bfd0d0749e92d6).
