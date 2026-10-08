@@ -5,11 +5,13 @@ introduces frame transactions.
 ### Changes
 
 - [EIP-8141: Frame Transaction][EIP-8141]
+- [EIP-8272: Recent Roots for Frame Transactions][EIP-8272]
 
 ### Releases
 
 [EIP-8081]: https://eips.ethereum.org/EIPS/eip-8081
 [EIP-8141]: https://eips.ethereum.org/EIPS/eip-8141
+[EIP-8272]: https://eips.ethereum.org/EIPS/eip-8272
 """
 
 from ethereum.fork_criteria import ForkCriteria, Unscheduled
