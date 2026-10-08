@@ -34,9 +34,9 @@ class Spec:
     # The EIP defers the opcode bytes to EIP-8141's frame-family
     # registry, which is still unmerged. Use the candidate allocation in
     # ethereum/EIPs#12253 (head 678733edeb35f7fed84f3cc637bfd0d0749e92d6).
-    TXTRACE_OPCODE = 0xB7
-    TXDIFF_OPCODE = 0xB8
-    EVENTDATACOPY_OPCODE = 0xB9
+    TXTRACE_OPCODE = 0xB6
+    TXDIFF_OPCODE = 0xB7
+    EVENTDATACOPY_OPCODE = 0xB8
 
     # `TXTRACE` parameters.
     TXTRACE_BALANCES_CHANGED = 0x00
