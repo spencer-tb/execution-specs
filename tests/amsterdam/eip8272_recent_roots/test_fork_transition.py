@@ -1,22 +1,10 @@
 """
 Tests for the EIP-8272 fork transition.
 
-The fork initializes the recent root contract at `Spec.RECENT_ROOT_ADDRESS`
-when it activates: a nonexistent account is created with the code and
-nonce one; an existing account with empty code gets the code, its nonce
-raised to at least one and its balance kept. Every other EIP-8272 test
-starts at a fork where the contract is already in the genesis allocation,
-so these tests are the only ones exercising the initialization itself.
-
-Under the pseudo-fork model the transition tool runs every block of a
-transition fixture with EIP-8272's spec module, the pre-fork blocks
-included. These tests work because their pre-fork blocks contain nothing
-the two sides disagree on: a plain transfer and an `EXTCODESIZE` probe.
-The case where activation finds an occupied address, which the EIP makes
-an invalid block, cannot be filled: fills apply the install through the
-framework, not through the spec's `apply_fork`. Direct activation tests
-in `tests/json_loader/test_recent_root_activation.py` cover rejection of
-both nonempty code and nonempty storage.
+The recent root contract is an ordinary contract created by its
+deployment transaction, so the fork writes nothing at
+`Spec.RECENT_ROOT_ADDRESS` when it activates. These fixtures start with
+the contract already deployed and cross the fork boundary.
 """
 
 import pytest
@@ -66,8 +54,8 @@ CONTRACT_WITHOUT_CODE_CHANGE = BlockAccessListExpectation(
 )
 """
 The contract's address is in the block access list, reached by a
-transaction, and records no code change: the install is not a block-level
-operation and never appears there, in the fork block included.
+transaction, and records no code change: the fork writes nothing at the
+address, in the fork block included.
 """
 
 CONTRACT_UNTOUCHED = BlockAccessListExpectation(
@@ -78,74 +66,45 @@ CONTRACT_UNTOUCHED = BlockAccessListExpectation(
 """The contract's address is read by a transaction and records no change."""
 
 
-@pytest.mark.pre_alloc_mutable
-@pytest.mark.parametrize(
-    "pre_fork_nonce,pre_fork_balance",
-    [
-        pytest.param(None, None, id="absent_before_fork"),
-        pytest.param(0, 1, id="balance_before_fork"),
-        pytest.param(7, 1, id="nonce_and_balance_before_fork"),
-    ],
-)
-def test_recent_root_contract_initialized_at_fork_transition(
+def test_fork_transition_leaves_recent_root_contract_unchanged(
     blockchain_test: BlockchainTestFiller,
     pre: Alloc,
     fork: Fork,
-    pre_fork_nonce: int | None,
-    pre_fork_balance: int | None,
 ) -> None:
     """
-    Initialize the recent root contract at the fork block and nothing
-    else.
+    Leave the deployed recent root contract as it was when the fork
+    activates.
 
-    A probe records `EXTCODESIZE` of the contract's address keyed by block
-    number: no code before the fork, the runtime code from the fork block
-    on. An address nobody touched ends with nonce one and a zero balance;
-    an account that already existed keeps its balance and gets nonce one
-    unless its nonce was already higher.
+    The contract is an ordinary contract created by its deployment
+    transaction, so activation writes nothing at its address. A probe
+    records `EXTCODESIZE` of the address keyed by block number: the same
+    code is there before, at and after the fork block, and the account
+    keeps nonce one and a zero balance.
     """
     sender = pre.fund_eoa()
     probe = pre.deploy_contract(
         Op.SSTORE(Op.NUMBER, Op.EXTCODESIZE(Spec.RECENT_ROOT_ADDRESS))
         + Op.STOP
     )
-    if pre_fork_nonce is not None and pre_fork_balance is not None:
-        pre[Spec.RECENT_ROOT_ADDRESS] = Account(
-            nonce=pre_fork_nonce, balance=pre_fork_balance
-        )
-
     blocks = [
         Block(
-            timestamp=FORK_TIMESTAMP - 1,
-            slot_number=FORK_SLOT - 1,
-            txs=[
-                Transaction(sender=sender, to=probe),
-                # Before the fork there is no code at the address: the
-                # call is a plain transfer of nothing.
-                Transaction(sender=sender, to=Spec.RECENT_ROOT_ADDRESS),
-            ],
-            expected_block_access_list=CONTRACT_WITHOUT_CODE_CHANGE,
-        ),
-        Block(
-            timestamp=FORK_TIMESTAMP,
-            slot_number=FORK_SLOT,
+            timestamp=timestamp,
+            slot_number=slot_number,
             txs=[Transaction(sender=sender, to=probe)],
             expected_block_access_list=CONTRACT_UNTOUCHED,
-        ),
-        Block(
-            timestamp=FORK_TIMESTAMP + 1,
-            slot_number=FORK_SLOT + 1,
-            txs=[Transaction(sender=sender, to=probe)],
-            expected_block_access_list=CONTRACT_UNTOUCHED,
-        ),
+        )
+        for timestamp, slot_number in (
+            (FORK_TIMESTAMP - 1, FORK_SLOT - 1),
+            (FORK_TIMESTAMP, FORK_SLOT),
+            (FORK_TIMESTAMP + 1, FORK_SLOT + 1),
+        )
     ]
-
     code_size = len(Spec.RECENT_ROOT_CODE)
     post = {
-        probe: Account(storage={1: 0, 2: code_size, 3: code_size}),
+        probe: Account(storage={1: code_size, 2: code_size, 3: code_size}),
         Spec.RECENT_ROOT_ADDRESS: Account(
-            nonce=max(pre_fork_nonce or 0, Spec.RECENT_ROOT_NONCE),
-            balance=pre_fork_balance or 0,
+            nonce=Spec.RECENT_ROOT_NONCE,
+            balance=0,
             code=Spec.RECENT_ROOT_CODE,
             storage={},
         ),

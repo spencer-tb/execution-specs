@@ -1,6 +1,5 @@
 """
-Tests pinning the candidate recent root code and the EIP's reference
-vector for
+Tests pinning the recent root code and the EIP's reference vector for
 [EIP-8272: Recent Roots for Frame Transactions](https://eips.ethereum.org/EIPS/eip-8272).
 """
 
@@ -20,7 +19,6 @@ from execution_testing import (
 
 from ..eip8141_frame_transactions.helpers import sender_frame, verify_frame
 from ..eip8141_frame_transactions.spec import Spec as FrameSpec
-from .contract import recent_root_code
 from .helpers import recent_root_frame, validation_gas
 from .spec import Spec, ref_spec_8272, validation_tuple
 
@@ -57,15 +55,14 @@ def test_reference_vector(
     Verify the EIP's reference vector through a recent root verifier
     frame.
 
-    The candidate code assembled from `contract.py` must be the code the
-    spec installs and the testing framework pre-allocates. With the
+    The code the testing framework pre-allocates must be the runtime
+    code the EIP's deployment transaction creates. With the
     vector's entry hash stored under its storage key, the 72-byte tuple
     validates at `current_slot = 2`; any other root reverts, which for a
     `VERIFY` frame invalidates the transaction.
     """
     installed = fork.pre_allocation()[Spec.RECENT_ROOT_ADDRESS_INT]
-    assert bytes(recent_root_code()) == bytes(installed["code"])
-    assert bytes(recent_root_code()) == Spec.RECENT_ROOT_CODE
+    assert bytes(installed["code"]) == Spec.RECENT_ROOT_CODE
 
     sender = pre.fund_eoa()
     target = pre.deploy_contract(code=Op.SSTORE(SLOT_EXECUTED, 1) + Op.STOP)

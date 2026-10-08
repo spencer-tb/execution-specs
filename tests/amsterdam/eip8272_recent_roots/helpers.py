@@ -13,23 +13,18 @@ State gas budget of a frame publishing a root: a fresh recent root entry
 is one EIP-8037 storage set (97,920 state gas), with headroom.
 """
 
-VALIDATION_FIXED_GAS = 154
+VALIDATION_FIXED_GAS = 119
 """
-Execution gas of the validation operation outside the tuple loop: the
-value check (37), the calldata length dispatch (26) and checks (64), the
-loop offset initialization with its memory expansion to five words (24),
-the loop entry `JUMPDEST` (1), and the first tuple's memory expansion to
-six words less the loop re-entry every later tuple pays instead (2).
-Zero literals assemble as `PUSH1 0`, costing three gas each.
+Execution gas of the validation operation outside the tuple loop, for
+the pinned bytecode.
 """
 
-VALIDATION_TUPLE_GAS = 429
+VALIDATION_TUPLE_GAS = 296
 """
-Execution gas of the candidate's successful tuple path, excluding SLOAD
+Execution gas of the contract's successful tuple path, excluding SLOAD
 and the initial memory expansion accounted for in VALIDATION_FIXED_GAS.
-These costs are specific to the pinned candidate bytecode; re-derive them
-when canonical code is selected. Exact and one-short tests cover cold,
-duplicate and previously warmed references.
+These costs are specific to the pinned bytecode. Exact and one-short
+tests cover cold, duplicate and previously warmed references.
 """
 
 
@@ -41,7 +36,7 @@ def validation_gas(
     `tuples` references of which `cold_keys` read distinct storage keys
     for the first time in the transaction.
 
-    The frame charges its target's access at entry, then the candidate
+    The frame charges its target's access at entry, then the
     contract's fixed cost, its per-tuple cost, and one warm or cold
     storage read per tuple.
     """

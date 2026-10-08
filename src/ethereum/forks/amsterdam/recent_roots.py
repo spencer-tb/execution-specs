@@ -5,13 +5,13 @@ transactions verify recent application roots.
 A frame transaction verifies recent application roots by
 running an ordinary [`VERIFY`][v] frame against
 [`RECENT_ROOT_ADDRESS`][rra]; root sources publish roots by calling the
-same contract. The contract is installed when the fork activates (see
-[`apply_fork`][af]); nothing else in the state transition changes.
+same contract. The contract is an ordinary contract created by the
+deployment transaction in the EIP; the fork writes nothing at its
+address.
 
 [EIP-8272]: https://eips.ethereum.org/EIPS/eip-8272
 [v]: ref:ethereum.forks.amsterdam.transactions.frame_transaction.FrameMode.VERIFY
 [rra]: ref:ethereum.forks.amsterdam.recent_roots.RECENT_ROOT_ADDRESS
-[af]: ref:ethereum.forks.amsterdam.fork.apply_fork
 """  # noqa: E501
 
 from typing import Final
@@ -24,7 +24,7 @@ from ethereum.crypto.hash import Hash32, keccak256
 from .fork_types import Address
 
 RECENT_ROOT_ADDRESS: Final[Address] = Address(
-    bytes.fromhex("0000000000000000000000000000000000008272")
+    bytes.fromhex("8272D9679689Ea2f307140CdF9002D27dC00Ffff")
 )
 """
 Address of the recent root contract.
@@ -43,8 +43,7 @@ invalid, as for any [`VERIFY`][v] frame.
 
 RECENT_ROOT_NONCE: Final[Uint] = Uint(1)
 """
-Nonce the recent root contract is given at activation; a higher existing
-nonce is kept.
+Nonce of the recent root contract after its deployment transaction.
 """
 
 RECENT_ROOT_LENGTH: Final[Uint] = Uint(8192)
@@ -79,31 +78,23 @@ RECENT_ROOT_STORAGE_DOMAIN: Final[Hash32] = keccak256(b"RECENT_ROOT_STORAGE")
 
 RECENT_ROOT_CODE: Final[Bytes] = Bytes(
     bytes.fromhex(
-        "34600858015760095801565b60006000fd5b6040361461010e5801576104"
-        "8036116048360617361517600858015760095801565b60006000fd5b6000"
-        "6080525b608051356020526020608051013560c01c60a0524b60a0511015"
-        "600858015760095801565b60006000fd5b611fff60a0514b031160085801"
-        "5760095801565b60006000fd5b7f8f42481679c8e6fefa040974b3c905e0"
-        "ce3f2e464ba93acdb074a41181617efc60005260a05160c01b6040526028"
-        "608051013560485260686000207fbdc897da2177d260ff5f4be5d4b2aad4"
-        "3f89c3347a305b584fa5a2546d053daa60005261200060a0510660c01b60"
-        "40526048600020541415600858015760095801565b60006000fd5b604860"
-        "805101608052366080511063000000df5803570060855801565b3360601b"
-        "60005260003560145260346000206020527f8f42481679c8e6fefa040974"
-        "b3c905e0ce3f2e464ba93acdb074a41181617efc6000524b60c01b604052"
-        "60203560485260686000207fbdc897da2177d260ff5f4be5d4b2aad43f89"
-        "c3347a305b584fa5a2546d053daa6000526120004b0660c01b6040526048"
-        "60002055005b"
+        "346100ba57366040146100c05736604836066100ba5780156100ba57610480811161"
+        "00ba574b60005b602081013560c01c828110156100ba5780830361200011156100ba"
+        "577f8f42481679c8e6fefa040974b3c905e0ce3f2e464ba93acdb074a41181617efc"
+        "60005260488260203760686000207fbdc897da2177d260ff5f4be5d4b2aad43f89c3"
+        "347a305b584fa5a2546d053daa60005290611fff1660c01b60405260486000205414"
+        "156100ba5760480182811061002857005b60006000fd5b3360005260206000602037"
+        "6034600c20807f8f42481679c8e6fefa040974b3c905e0ce3f2e464ba93acdb074a4"
+        "1181617efc6040524b606852606052602060206088376068604020817fbdc897da21"
+        "77d260ff5f4be5d4b2aad43f89c3347a305b584fa5a2546d053daa60a852611fff4b"
+        "1660d05260c852604860a8205500"
     )
 )
 """
-Runtime code of the recent root contract, installed at
-[`RECENT_ROOT_ADDRESS`][rra] when the fork activates (see
-[`apply_fork`][af]).
-
-[EIP-8272] leaves this code to be determined. This is a candidate
-implementing the specified behaviour (keccak256
-`0x92581be6144206cc1ba9f655324d74f0a49f20661ff2d31975aefb2449884342`):
+Runtime code of the recent root contract, as created at
+[`RECENT_ROOT_ADDRESS`][rra] by the deployment transaction in
+[EIP-8272] (keccak256
+`0xda160390a838ee04013b2ff3abf4decc9aa3cc6c2f59dd90ca176c2b850be4e3`):
 
 * A call carrying value reverts.
 * With exactly [`RECENT_ROOT_WRITE_BYTES`][rwb] bytes of calldata, the
@@ -127,7 +118,6 @@ calldata.
 
 [EIP-8272]: https://eips.ethereum.org/EIPS/eip-8272
 [rra]: ref:ethereum.forks.amsterdam.recent_roots.RECENT_ROOT_ADDRESS
-[af]: ref:ethereum.forks.amsterdam.fork.apply_fork
 [rwb]: ref:ethereum.forks.amsterdam.recent_roots.RECENT_ROOT_WRITE_BYTES
 [reh]: ref:ethereum.forks.amsterdam.recent_roots.recent_root_entry_hash
 [rsk]: ref:ethereum.forks.amsterdam.recent_roots.recent_root_storage_key
