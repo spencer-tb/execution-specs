@@ -90,6 +90,7 @@ from execution_testing.test_types import (
     Alloc,
     Environment,
     PostStateContext,
+    RecursiveStark,
     Removable,
     TestPhase,
     Transaction,
@@ -215,6 +216,7 @@ class Header(CamelModel):
     requests_hash: Removable | Hash | None = None
     block_access_list_hash: Removable | Hash | None = None
     slot_number: Removable | HexNumber | None = None
+    recursive_stark: Removable | RecursiveStark | None = None
 
     REMOVE_FIELD: ClassVar[Removable] = Removable()
     """
