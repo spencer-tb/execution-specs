@@ -28,10 +28,8 @@ class EIP7906(BaseFork):
 
     @classmethod
     def frame_mode_count(cls) -> int:
-        """The `POST_TX` frame mode is introduced after the existing ones."""
-        count = super(EIP7906, cls).frame_mode_count()
-        assert count == POST_TX_MODE, "POST_TX must be the next frame mode"
-        return count + 1
+        """The `POST_TX` frame mode is introduced."""
+        return max(super(EIP7906, cls).frame_mode_count(), POST_TX_MODE + 1)
 
     @classmethod
     def gas_costs(cls) -> GasCosts:
