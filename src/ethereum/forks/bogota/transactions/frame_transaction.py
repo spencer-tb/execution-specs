@@ -617,8 +617,19 @@ def transaction_dependency_triples(
 def transaction_dependencies(tx: FrameTransaction) -> Tuple[Dependency, ...]:
     """
     Return the claims the transaction declares, deduplicated and sorted.
+    A zero `data_hash` stands for the transaction's signature hash.
     """
-    return tuple(sorted(set(transaction_dependency_triples(tx))))
+    sig_hash = compute_frame_signature_hash(tx)
+    return tuple(
+        sorted(
+            {
+                replace(dependency, data_hash=sig_hash)
+                if dependency.data_hash == Hash32(bytes(32))
+                else dependency
+                for dependency in transaction_dependency_triples(tx)
+            }
+        )
+    )
 
 
 def validate_dependency_frame(tx: FrameTransaction, index: int) -> None:
