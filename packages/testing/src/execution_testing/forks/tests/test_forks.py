@@ -20,8 +20,6 @@ from ..forks.forks import (
     Amsterdam,
     Berlin,
     Bogota,
-    BPODecrease,
-    BPOIncrease,
     Cancun,
     Frontier,
     Homestead,
@@ -34,13 +32,11 @@ from ..forks.forks import (
 )
 from ..forks.transition import (
     AmsterdamToBogotaAtTime15k,
-    AmsterdamToBPOIncreaseAtTime15k,
     BerlinToLondonAt5,
     BPO1ToBPO2AtTime15k,
     BPO2ToAmsterdamAtTime15k,
     BPO2ToBPO3AtTime15k,
     BPO3ToBPO4AtTime15k,
-    BPOIncreaseToBPODecreaseAtTime15k,
     CancunToPragueAtTime15k,
     OsakaToBPO1AtTime15k,
     ParisToShanghaiAtTime15k,
@@ -1079,43 +1075,3 @@ def test_abstract_memoized_declarations_are_left_alone() -> None:
         declaration = BaseFork.__dict__[method_name]
         assert getattr(declaration, "__isabstractmethod__", False)
         assert not hasattr(declaration.__func__, "cache_info")
-
-
-@pytest.mark.parametrize("fork", [BPOIncrease, BPODecrease])
-def test_amsterdam_bpo_rules(fork: Fork) -> None:
-    """Retain Amsterdam execution rules with a distinct blob schedule."""
-    assert fork.non_bpo_ancestor() is Amsterdam
-    assert fork.transition_tool_name() == "Amsterdam"
-    assert (
-        fork.engine_new_payload_version()
-        == Amsterdam.engine_new_payload_version()
-    )
-    assert fork.header_bal_hash_required()
-    assert not fork.is_deployed()
-
-
-def test_amsterdam_bpo_selection() -> None:
-    """Select both synthetic schedules and transitions without legacy BPOs."""
-    selected = get_selected_fork_set(
-        single_fork=set(), forks_from={Amsterdam}, forks_until={BPODecrease}
-    )
-    assert selected == {
-        Amsterdam,
-        BPOIncrease,
-        BPODecrease,
-        BPO2ToAmsterdamAtTime15k,
-        AmsterdamToBPOIncreaseAtTime15k,
-        BPOIncreaseToBPODecreaseAtTime15k,
-    }
-    assert (
-        BPOIncrease.target_blobs_per_block()
-        > Amsterdam.target_blobs_per_block()
-    )
-    assert BPOIncrease.max_blobs_per_block() > Amsterdam.max_blobs_per_block()
-    assert (
-        BPODecrease.target_blobs_per_block()
-        < BPOIncrease.target_blobs_per_block()
-    )
-    assert (
-        BPODecrease.max_blobs_per_block() < BPOIncrease.max_blobs_per_block()
-    )

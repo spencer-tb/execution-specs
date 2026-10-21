@@ -29,11 +29,7 @@ class ChecklistCommand(PytestCommand):
 
 def _last_development_fork() -> str | None:
     """Return the name of the last development fork, if any."""
-    # Skip opt-in BPO scenarios: they branch off an earlier fork, so using
-    # one as `--until` would drop the newest protocol upgrade.
-    dev_forks = [
-        fork for fork in get_development_forks() if not fork.bpo_fork()
-    ]
+    dev_forks = get_development_forks()
     return dev_forks[-1].name() if dev_forks else None
 
 
