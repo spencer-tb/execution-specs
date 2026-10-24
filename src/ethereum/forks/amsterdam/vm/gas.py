@@ -18,6 +18,7 @@ from ethereum_types.numeric import U64, U256, Uint, ulen
 
 from ethereum.exceptions import GasUsedExceedsLimitError
 from ethereum.forks.bpo5.blocks import Header as PreviousHeader
+from ethereum.forks.bpo5.vm.gas import GasCosts as PreviousGasCosts
 from ethereum.trace import GasAndRefund, StateGasAndRefund, evm_trace
 from ethereum.utils.numeric import ceil32, taylor_exponential
 
@@ -250,6 +251,53 @@ class GasCosts:
     OPCODE_SELFDESTRUCT_BASE: Final[ExecutionGas] = ExecutionGas(Uint(5000))
 
 
+class LegacyStateGasShares:
+    """
+    Parts of state-gas charges that `gas_left` pays even when the
+    reservoir could.
+
+    Each share is the operation's price in the previous fork, less the
+    execution gas the operation already charges, so a new storage
+    slot, a new account and the account of a `CREATE*` still take at
+    least their earlier price from `gas_left`. A frame cannot create
+    state with less `gas_left` than it needed before.
+    """
+
+    NONE: Final[StateGas] = StateGas(Uint(0))
+    """
+    No share: the code deposit and the charges taken before the top
+    frame runs.
+    """
+
+    STORAGE_SET: Final[StateGas] = StateGas(
+        Uint(
+            max(
+                0,
+                int(PreviousGasCosts.STORAGE_SET)
+                - int(GasCosts.STORAGE_WRITE),
+            )
+        )
+    )
+    """Share of a new storage slot's charge."""
+
+    NEW_ACCOUNT: Final[StateGas] = StateGas(PreviousGasCosts.NEW_ACCOUNT)
+    """
+    Share of a new account's charge, for a `CALL*` with value or a
+    `SELFDESTRUCT`.
+    """
+
+    CREATE: Final[StateGas] = StateGas(
+        Uint(
+            max(
+                0,
+                int(PreviousGasCosts.OPCODE_CREATE_BASE)
+                - int(GasCosts.CREATE_ACCESS),
+            )
+        )
+    )
+    """Share of the account-creation charge of a `CREATE*`."""
+
+
 MAX_BLOB_GAS_PER_BLOCK: Final[U64] = (
     GasCosts.BLOB_SCHEDULE_MAX * GasCosts.PER_BLOB
 )
@@ -297,13 +345,14 @@ class GasMeter:
 
     state_gas_spilled: StateGas = StateGas(Uint(0))
     """
-    Execution gas spent covering state charges after the reservoir
-    emptied, not yet credited back. Credited back to `gas_left` first,
-    in LIFO order, on a refund or failure, and repaid from the
-    reservoir when a successful child merges
-    ([`repay_state_gas_spill`][repay]). [EIP-8037] names this
-    quantity `state_gas_from_gas_left`.
+    Execution gas spent covering state charges, not yet credited back:
+    the [legacy share] of each charge, and the rest of a charge once
+    the reservoir empties. Credited back to `gas_left` first, in LIFO
+    order, on a refund or failure, and repaid from the reservoir when
+    a successful child merges ([`repay_state_gas_spill`][repay]).
+    [EIP-8037] names this quantity `state_gas_from_gas_left`.
 
+    [legacy share]: ref:ethereum.forks.amsterdam.vm.gas.LegacyStateGasShares
     [repay]: ref:ethereum.forks.amsterdam.vm.gas.repay_state_gas_spill
     [EIP-8037]: https://eips.ethereum.org/EIPS/eip-8037
     """
@@ -410,10 +459,18 @@ def charge_gas(evm: "Evm", amount: ExecutionGas) -> None:
     charge_gas_from_meter(evm.gas_meter, amount)
 
 
-def charge_state_gas_from_meter(gas_meter: GasMeter, amount: StateGas) -> None:
+def charge_state_gas_from_meter(
+    gas_meter: GasMeter,
+    amount: StateGas,
+    legacy_share: StateGas = LegacyStateGasShares.NONE,
+) -> None:
     """
-    Subtracts `amount` from the state gas reservoir, then from
-    `gas_left` when the reservoir is empty, tracking any [spill].
+    Subtracts the [legacy share] of `amount` from `gas_left`, the rest
+    from the state gas reservoir, and then from `gas_left` when the
+    reservoir is empty, tracking any [spill].
+
+    The share counts as state gas paid from `gas_left`. If `gas_left`
+    cannot pay it, the charge fails whatever the reservoir holds.
 
     Parameters
     ----------
@@ -421,10 +478,20 @@ def charge_state_gas_from_meter(gas_meter: GasMeter, amount: StateGas) -> None:
         The gas meter.
     amount :
         The amount of state gas the current operation requires.
+    legacy_share :
+        The part of `amount` that `gas_left` pays first.
 
+    [legacy share]: ref:ethereum.forks.amsterdam.vm.gas.LegacyStateGasShares
     [spill]: ref:ethereum.forks.amsterdam.vm.gas.GasMeter.state_gas_spilled
 
-    """
+    """  # noqa: E501
+    assert legacy_share <= amount
+    if Uint(gas_meter.gas_left) < Uint(legacy_share):
+        raise OutOfGasError
+    gas_meter.gas_left = ExecutionGas(gas_meter.gas_left - Uint(legacy_share))
+    gas_meter.state_gas_spilled += legacy_share
+    amount = StateGas(amount - legacy_share)
+
     if gas_meter.state_gas_left >= amount:
         gas_meter.state_gas_left -= amount
     elif Uint(gas_meter.state_gas_left) + Uint(gas_meter.gas_left) >= amount:
@@ -436,10 +503,15 @@ def charge_state_gas_from_meter(gas_meter: GasMeter, amount: StateGas) -> None:
         raise OutOfGasError
 
 
-def charge_state_gas(evm: "Evm", amount: StateGas) -> None:
+def charge_state_gas(
+    evm: "Evm",
+    amount: StateGas,
+    legacy_share: StateGas = LegacyStateGasShares.NONE,
+) -> None:
     """
-    Subtracts `amount` from the state gas reservoir, then from
-    `gas_left` when the reservoir is empty, tracking any [spill].
+    Subtracts the [legacy share] of `amount` from `gas_left`, the rest
+    from the state gas reservoir, and then from `gas_left` when the
+    reservoir is empty, tracking any [spill].
 
     Parameters
     ----------
@@ -447,13 +519,16 @@ def charge_state_gas(evm: "Evm", amount: StateGas) -> None:
         The current EVM.
     amount :
         The amount of state gas the current operation requires.
+    legacy_share :
+        The part of `amount` that `gas_left` pays first.
 
+    [legacy share]: ref:ethereum.forks.amsterdam.vm.gas.LegacyStateGasShares
     [spill]: ref:ethereum.forks.amsterdam.vm.gas.GasMeter.state_gas_spilled
 
-    """
+    """  # noqa: E501
     evm_trace(evm, StateGasAndRefund(int(amount)))
 
-    charge_state_gas_from_meter(evm.gas_meter, amount)
+    charge_state_gas_from_meter(evm.gas_meter, amount, legacy_share)
 
 
 def commit_state_gas(gas_meter: GasMeter) -> None:

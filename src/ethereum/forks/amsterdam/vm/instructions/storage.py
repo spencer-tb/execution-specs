@@ -25,6 +25,7 @@ from .. import Evm
 from ..exceptions import WriteInStaticContext
 from ..gas import (
     GasCosts,
+    LegacyStateGasShares,
     StateGasCosts,
     charge_gas,
     charge_state_gas,
@@ -116,6 +117,7 @@ def sstore(evm: Evm) -> None:
     current_value = get_storage(tx_state, evm.current_target, key)
 
     state_gas = StateGas(Uint(0))
+    legacy_share = LegacyStateGasShares.NONE
 
     # Write cost: charged each time the slot moves away from its
     # transaction-start value; restoring it refunds the charge below.
@@ -144,6 +146,7 @@ def sstore(evm: Evm) -> None:
     if original_value == current_value and current_value != new_value:
         if original_value == 0:
             state_gas = StateGasCosts.STORAGE_SET
+            legacy_share = LegacyStateGasShares.STORAGE_SET
 
     if current_value != new_value and original_value == new_value:
         if original_value == 0:
@@ -154,7 +157,7 @@ def sstore(evm: Evm) -> None:
     # OOG does not consume state gas that would inflate the parent's
     # reservoir on frame failure.
     charge_gas(evm, gas_cost)
-    charge_state_gas(evm, state_gas)
+    charge_state_gas(evm, state_gas, legacy_share)
     set_storage(tx_state, evm.current_target, key, new_value)
 
     # PROGRAM COUNTER
