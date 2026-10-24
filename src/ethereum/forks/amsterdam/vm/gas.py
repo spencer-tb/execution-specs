@@ -298,13 +298,11 @@ class GasMeter:
     state_gas_spilled: StateGas = StateGas(Uint(0))
     """
     Execution gas spent covering state charges after the reservoir
-    emptied, not yet credited back. Credited back to `gas_left` first,
-    in LIFO order, on a refund or failure, and repaid from the
-    reservoir when a successful child merges
-    ([`repay_state_gas_spill`][repay]). [EIP-8037] names this
-    quantity `state_gas_from_gas_left`.
+    emptied. Only a rollback of the frame credits it back to
+    `gas_left`: a refund credits the reservoir instead, so `gas_left`
+    never grows from state gas while the frame runs. [EIP-8037] names
+    this quantity `state_gas_from_gas_left`.
 
-    [repay]: ref:ethereum.forks.amsterdam.vm.gas.repay_state_gas_spill
     [EIP-8037]: https://eips.ethereum.org/EIPS/eip-8037
     """
 
@@ -469,8 +467,8 @@ def commit_state_gas(gas_meter: GasMeter) -> None:
     [`restore_state_gas_to_entry`][entry].
 
     Move the baseline down to the current reservoir level and fold the
-    spill into `state_gas_committed_spill`, so later refunds route to
-    the reservoir instead of back into `gas_left`.
+    spill into `state_gas_committed_spill`, out of reach of the
+    rollback.
 
     Parameters
     ----------
@@ -593,12 +591,13 @@ def tx_state_gas_used(
 
 def credit_state_gas_refund(gas_meter: GasMeter, amount: StateGas) -> None:
     """
-    Credit a state gas refund to the local frame, in LIFO order.
+    Credit a state gas refund to the reservoir.
 
-    State-gas charges draw from the reservoir first and from `gas_left`
-    last, so refunds credit the pool charged last first: `gas_left` up
-    to the [spill], then the reservoir. This restores the exact pools
-    the charge drew from, so the two never drift.
+    The refund never credits `gas_left`, whichever pool the charge drew
+    from: a charge paid from `gas_left` stays spent there, and the
+    refilled state gas can pay for later state creation or return to
+    the sender when the transaction settles. So `gas_left`, and what
+    the `GAS` opcode reports, never grows from a refund.
 
     Parameters
     ----------
@@ -607,44 +606,8 @@ def credit_state_gas_refund(gas_meter: GasMeter, amount: StateGas) -> None:
     amount :
         The refund amount to credit.
 
-    [spill]: ref:ethereum.forks.amsterdam.vm.gas.GasMeter.state_gas_spilled
-
     """
-    from_gas_left = min(amount, gas_meter.state_gas_spilled)
-    gas_meter.gas_left = ExecutionGas(gas_meter.gas_left + Uint(from_gas_left))
-    gas_meter.state_gas_spilled -= from_gas_left
-    gas_meter.state_gas_left += amount - from_gas_left
-
-
-def repay_state_gas_spill(gas_meter: GasMeter) -> None:
-    """
-    Repay outstanding [spill] from the reservoir after a child merges.
-
-    A refund may land in a different frame than the charge it undoes:
-    the refunding frame's spill can be smaller than the refund, so the
-    excess credits the reservoir even though the charge drew from
-    `gas_left`. Once a successful child's meter is absorbed, the claim
-    and the credit sit in one meter, and the reservoir repays
-    `gas_left` up to the spill still outstanding. No state creation is
-    undone, so the used counters do not move; gas only crosses back
-    between the two pools it drifted across.
-
-    Parameters
-    ----------
-    gas_meter :
-        The merged gas meter.
-
-    [spill]: ref:ethereum.forks.amsterdam.vm.gas.GasMeter.state_gas_spilled
-
-    """  # noqa: E501
-    repayment = min(gas_meter.state_gas_left, gas_meter.state_gas_spilled)
-    gas_meter.gas_left = ExecutionGas(gas_meter.gas_left + Uint(repayment))
-    gas_meter.state_gas_left -= repayment
-    gas_meter.state_gas_spilled -= repayment
-    # The claim and the credit cannot both survive a repayment.
-    assert gas_meter.state_gas_left == Uint(0) or (
-        gas_meter.state_gas_spilled == Uint(0)
-    )
+    gas_meter.state_gas_left += amount
 
 
 def forfeit_remaining_gas(gas_meter: GasMeter) -> None:
