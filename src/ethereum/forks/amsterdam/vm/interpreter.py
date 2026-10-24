@@ -57,6 +57,7 @@ from ..vm.gas import (
     charge_state_gas_from_meter,
     commit_state_gas,
     forfeit_remaining_gas,
+    forfeit_state_gas_spill,
     restore_state_gas,
     restore_state_gas_to_entry,
     tx_state_gas_used,
@@ -459,8 +460,10 @@ def process_call(evm: Evm) -> Evm:
         evm.error = error
     except Revert as error:
         evm_trace(evm, OpException(error))
-        # Frame settlement: refill state gas to the baseline -- a
-        # reverted frame returns its unspent `gas_left` to its parent.
+        # Frame settlement: consume the spill and reset the reservoir
+        # to the baseline -- a reverted frame returns only its unspent
+        # `gas_left` to its parent.
+        forfeit_state_gas_spill(evm.gas_meter)
         restore_state_gas(evm.gas_meter)
         evm.error = error
 
