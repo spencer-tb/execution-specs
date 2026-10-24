@@ -663,6 +663,30 @@ def forfeit_remaining_gas(gas_meter: GasMeter) -> None:
     gas_meter.gas_left = ExecutionGas(Uint(0))
 
 
+def forfeit_state_gas_spill(gas_meter: GasMeter) -> None:
+    """
+    Consume the frame's [spill] on a revert.
+
+    The reverted state is undone, but the execution gas that paid for
+    it stays spent, as it does on an exceptional halt and as all gas a
+    reverted frame used always has. The parent gets back only the
+    frame's unused `gas_left`, never more than the frame had left
+    before it paid for state. Applied before
+    [`restore_state_gas`][restore], which then resets only the
+    reservoir.
+
+    Parameters
+    ----------
+    gas_meter :
+        The reverted frame's gas meter.
+
+    [spill]: ref:ethereum.forks.amsterdam.vm.gas.GasMeter.state_gas_spilled
+    [restore]: ref:ethereum.forks.amsterdam.vm.gas.restore_state_gas
+
+    """
+    gas_meter.state_gas_spilled = StateGas(Uint(0))
+
+
 def withhold_create_gas(gas_meter: GasMeter) -> ExecutionGas:
     """
     Withhold and return the gas made available to a `CREATE*` child.
