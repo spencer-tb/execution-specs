@@ -40,6 +40,7 @@ from ..exceptions import OutOfGasError, Revert, WriteInStaticContext
 from ..gas import (
     GasCosts,
     GasMeter,
+    LegacyStateGasShares,
     StateGasCosts,
     calculate_gas_extend_memory,
     calculate_message_call_gas,
@@ -106,7 +107,9 @@ def generic_create(
 
     new_account_charged = not is_account_alive(tx_state, contract_address)
     if new_account_charged:
-        charge_state_gas(evm, StateGasCosts.NEW_ACCOUNT)
+        charge_state_gas(
+            evm, StateGasCosts.NEW_ACCOUNT, LegacyStateGasShares.CREATE
+        )
 
     # CHILD GRANT
     # Withhold all but one 64th of the execution gas.
@@ -542,7 +545,9 @@ def call(evm: Evm) -> None:
     has_value = value != 0
     new_account_charged = has_value and not is_account_alive(tx_state, to)
     if new_account_charged:
-        charge_state_gas(evm, StateGasCosts.NEW_ACCOUNT)
+        charge_state_gas(
+            evm, StateGasCosts.NEW_ACCOUNT, LegacyStateGasShares.NEW_ACCOUNT
+        )
 
     # CHILD GRANT
     # Computed after every charge above, so any state-gas spill has
@@ -742,19 +747,21 @@ def selfdestruct(evm: Evm) -> None:
     # and the creation, charged by the frame whose opcode causes it;
     # it refills only through the frame's own rollback.
     state_gas = StateGas(Uint(0))
+    legacy_share = LegacyStateGasShares.NONE
     account_write_gas = GasCosts.ZERO
     if (
         not is_account_alive(tx_state, beneficiary)
         and get_account(tx_state, evm.current_target).balance != 0
     ):
         state_gas = StateGasCosts.NEW_ACCOUNT
+        legacy_share = LegacyStateGasShares.NEW_ACCOUNT
         account_write_gas = GasCosts.ACCOUNT_WRITE
 
     # Charge execution gas before state gas so that an execution-gas
     # OOG does not consume state gas that would inflate the parent's
     # reservoir on frame failure.
     charge_gas(evm, gas_cost + account_write_gas)
-    charge_state_gas(evm, state_gas)
+    charge_state_gas(evm, state_gas, legacy_share)
 
     # OPERATION
     originator = evm.current_target
