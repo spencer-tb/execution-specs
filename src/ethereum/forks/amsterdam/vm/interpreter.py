@@ -59,6 +59,7 @@ from ..vm.gas import (
     forfeit_remaining_gas,
     restore_state_gas,
     restore_state_gas_to_entry,
+    restore_state_gas_to_reservoir,
     tx_state_gas_used,
 )
 from ..vm.precompiled_contracts.mapping import PRE_COMPILED_CONTRACTS
@@ -459,9 +460,10 @@ def process_call(evm: Evm) -> Evm:
         evm.error = error
     except Revert as error:
         evm_trace(evm, OpException(error))
-        # Frame settlement: refill state gas to the baseline -- a
-        # reverted frame returns its unspent `gas_left` to its parent.
-        restore_state_gas(evm.gas_meter)
+        # Frame settlement: reset the reservoir to the baseline and
+        # credit it with the spill -- a reverted frame returns only its
+        # unspent `gas_left` to its parent.
+        restore_state_gas_to_reservoir(evm.gas_meter)
         evm.error = error
 
     if evm.error:

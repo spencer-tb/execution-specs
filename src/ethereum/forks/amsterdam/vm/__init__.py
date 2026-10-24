@@ -192,8 +192,9 @@ def incorporate_child(evm: Evm, child_evm: Evm) -> None:
 
     Gas flows back to the parent regardless of the child's fate. A
     failed child settles its own meter before returning -- its state
-    gas rolled back to the baseline, its [spill] refilled, and its
-    refunds discarded -- so absorbing the meter unconditionally
+    gas rolled back to the baseline, its [spill] moved into the
+    reservoir on a revert or consumed on a halt, and its refunds
+    discarded -- so absorbing the meter unconditionally
     reclaims exactly the gas the child gives back. Everything else the
     child accumulated -- logs, scheduled self-destructs, refunds, and
     warmed access sets -- survives only on success, dying with a
@@ -219,11 +220,13 @@ def incorporate_child(evm: Evm, child_evm: Evm) -> None:
     assert child_meter.state_gas_committed_spill == Uint(0)
 
     if child_evm.error:
-        # A failed child arrives settled: rolled back to its baseline,
-        # spill refilled, refunds discarded.
-        assert child_meter.state_gas_spilled == Uint(0)
+        # A failed child arrives settled: rolled back to its baseline
+        # plus any spill a revert moved into the reservoir, refunds
+        # discarded.
         assert child_meter.refund_counter == 0
-        assert child_meter.state_gas_left == child_meter.state_gas_baseline
+        assert child_meter.state_gas_left == (
+            child_meter.state_gas_baseline + child_meter.state_gas_spilled
+        )
 
     # Gas returns to the parent regardless of the child's fate.
     # Note that upon failure, the child already arrives settled.
