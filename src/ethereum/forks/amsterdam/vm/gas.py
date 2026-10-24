@@ -348,12 +348,17 @@ class GasMeter:
     Execution gas spent covering state charges: the [legacy share] of
     each charge, and the rest of a charge once the reservoir empties.
     Nothing returns it to `gas_left` for further use: a refund credits
-    the reservoir, and a rollback consumes it with the frame's other
-    spent gas. [EIP-8037] names this quantity `state_gas_from_gas_left`.
+    the reservoir, a revert consumes it with the frame's other spent
+    gas, and an exceptional halt moves it into the reservoir
+    ([`restore_state_gas_to_reservoir`][to-reservoir]). After a halt it
+    stays counted here, so the reservoir it now sits in still nets to
+    zero state gas used. [EIP-8037] names this quantity
+    `state_gas_from_gas_left`.
 
     [legacy share]: ref:ethereum.forks.amsterdam.vm.gas.LegacyStateGasShares
+    [to-reservoir]: ref:ethereum.forks.amsterdam.vm.gas.restore_state_gas_to_reservoir
     [EIP-8037]: https://eips.ethereum.org/EIPS/eip-8037
-    """
+    """  # noqa: E501
 
     state_gas_committed_spill: StateGas = StateGas(Uint(0))
     """
@@ -590,6 +595,35 @@ def restore_state_gas(gas_meter: GasMeter) -> None:
     gas_meter.refund_counter = 0
 
 
+def restore_state_gas_to_reservoir(gas_meter: GasMeter) -> None:
+    """
+    Roll the frame's state gas back on an exceptional halt, into the
+    reservoir.
+
+    The frame's state changes are undone, so the reservoir resets to
+    the [baseline] and is credited with the [spill], the state gas the
+    frame and its descendants paid from `gas_left`. The halt still
+    consumes the frame's `gas_left`, but the credited state gas can pay
+    for later state creation or return to the sender when the
+    transaction settles. The spill stays counted, so the transaction's
+    state gas used nets to zero for the undone changes. The refunds
+    accrued on them are discarded with them.
+
+    Parameters
+    ----------
+    gas_meter :
+        The halted frame's gas meter.
+
+    [baseline]: ref:ethereum.forks.amsterdam.vm.gas.GasMeter.state_gas_baseline
+    [spill]: ref:ethereum.forks.amsterdam.vm.gas.GasMeter.state_gas_spilled
+
+    """  # noqa: E501
+    gas_meter.state_gas_left = StateGas(
+        gas_meter.state_gas_baseline + gas_meter.state_gas_spilled
+    )
+    gas_meter.refund_counter = 0
+
+
 def restore_state_gas_to_entry(
     gas_meter: GasMeter, state_gas_reservoir: StateGas
 ) -> None:
@@ -695,9 +729,11 @@ def forfeit_remaining_gas(gas_meter: GasMeter) -> None:
         The halted frame's gas meter.
 
     """
-    # A rollback owes any outstanding spill back to `gas_left`; it
-    # must be restored before the remainder burns.
-    assert gas_meter.state_gas_spilled == Uint(0)
+    # A rollback settles the spill, back into the reservoir or back to
+    # entry, before the remainder burns.
+    assert gas_meter.state_gas_left == (
+        gas_meter.state_gas_baseline + gas_meter.state_gas_spilled
+    )
     gas_meter.gas_left = ExecutionGas(Uint(0))
 
 

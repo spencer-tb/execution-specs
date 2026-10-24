@@ -60,6 +60,7 @@ from ..vm.gas import (
     forfeit_state_gas_spill,
     restore_state_gas,
     restore_state_gas_to_entry,
+    restore_state_gas_to_reservoir,
     tx_state_gas_used,
 )
 from ..vm.precompiled_contracts.mapping import PRE_COMPILED_CONTRACTS
@@ -382,7 +383,7 @@ def process_create(evm: Evm) -> Evm:
             restore_tx_state(tx_state, snapshot)
             # A create frame never applies authorizations, so its
             # baseline is still the frame's entry reservoir.
-            restore_state_gas(evm.gas_meter)
+            restore_state_gas_to_reservoir(evm.gas_meter)
             forfeit_remaining_gas(evm.gas_meter)
             evm.output = b""
             evm.error = error
@@ -450,11 +451,11 @@ def process_call(evm: Evm) -> Evm:
 
     except ExceptionalHalt as error:
         evm_trace(evm, OpException(error))
-        # Frame settlement: refill state gas to the baseline, then
+        # Frame settlement: move the spill into the reservoir, then
         # forfeit -- a halted frame returns no execution gas to its
         # parent. After these handlers the meter states exactly what
         # the frame gives back, so parents absorb unconditionally.
-        restore_state_gas(evm.gas_meter)
+        restore_state_gas_to_reservoir(evm.gas_meter)
         forfeit_remaining_gas(evm.gas_meter)
         evm.output = b""
         evm.error = error
